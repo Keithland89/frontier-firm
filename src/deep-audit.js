@@ -148,7 +148,7 @@ if (typeof data.agents_keep === 'number' && typeof data.agents_review === 'numbe
 }
 // Recommendation KPI derived values
 if (data.m365_frequency) addVal(Math.max(Math.round(data.m365_frequency * 2), 25));
-if (data.agent_adoption) addVal(Math.round(data.agent_adoption * 2));
+if (data.agent_adoption) { addVal(Math.round(data.agent_adoption * 2)); addVal(data.agent_adoption * 2); }
 if (data.m365_breadth) addVal(Math.max((data.m365_breadth || 3) + 2, 7));
 if (data.chat_users) addVal(Math.min(Math.round(data.chat_users * 0.13), 5000));
 // Org scatter derived values (agent adoption %, etc.)
