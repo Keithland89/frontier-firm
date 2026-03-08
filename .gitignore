@@ -1,0 +1,29 @@
+# Customer data (never commit real customer data)
+data/*.json
+!data/sample_contoso.json
+
+# Generated reports and screenshots
+output/*.html
+output/*.pdf
+output/screenshots/
+
+# Temp files from insight generation
+temp/
+
+# Node
+node_modules/
+package-lock.json
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/settings.json
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local

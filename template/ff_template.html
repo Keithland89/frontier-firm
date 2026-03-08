@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{CUSTOMER_NAME}} — Frontier Firm Assessment</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   CSS VARIABLES & THEME
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  /* Microsoft Copilot Brand */
+  --brand: #2264E5;
+  --brand-dark: #1A4FBF;
+  --copilot-purple: #7B2FF2;
+  --copilot-blue: #2264E5;
+  --copilot-teal: #0EA5E9;
+  --copilot-green: #10B981;
+  --copilot-gradient: linear-gradient(135deg, #7B2FF2, #2264E5, #0EA5E9, #10B981);
+  --copilot-gradient-h: linear-gradient(90deg, #7B2FF2, #2264E5, #0EA5E9, #10B981);
+  --purple: #7B2FF2;
+  --teal: #0EA5E9;
+  --dark-teal: #0284C7;
+  --lime: #10B981;
+  --amber: #F59E0B;
+  --orange: #F97316;
+  --green: #10B981;
+  --red-soft: #EF4444;
+  --hero-bg: #0A0A1A;
+  --section-dark: #0F1024;
+  --bg: #FAFAFA;
+  --surface: #FFFFFF;
+  --border: #E2E8F0;
+  --text: #0F172A;
+  --text-2: #475569;
+  --text-3: #94A3B8;
+  --nav-bg: rgba(255,255,255,0.92);
+  --toggle-bg: #E2E8F0;
+  --tier-1: #2264E5;   /* Foundation */
+  --tier-2: #2264E5;   /* Foundation */
+  --tier-3: #7B2FF2;   /* Expansion */
+  --tier-4: #10B981;   /* Frontier */
+  /* Semantic product-tier colors */
+  --color-m365: #2264E5;
+  --color-chat: #7B2FF2;
+  --color-agents: #0EA5E9;
+  /* Sentiment */
+  --color-positive: #10B981;
+  --color-caution: #F59E0B;
+  --color-negative: #EF4444;
+  /* Elevation */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.04), 0 1px 2px rgba(0,0,0,.02);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.03);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.04);
+}
+body{counter-reset:section-counter}
+[data-theme="dark"] {
+  --bg: #0A0A1A;
+  --surface: #161630;
+  --border: #252550;
+  --text: #F1F5F9;
+  --text-2: #CBD5E1;
+  --text-3: #64748B;
+  --nav-bg: rgba(10,10,26,0.94);
+  --toggle-bg: #334155;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;transition:background .4s,color .4s;-webkit-font-smoothing:antialiased}
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════════════ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transform:translateY(-100%);transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.nav.visible{transform:translateY(0)}
+.nav-inner{max-width:1600px;margin:0 auto;display:flex;align-items:center;padding:0 1rem;height:46px;gap:.4rem}
+.nav-brand{display:flex;align-items:center;gap:.4rem;font-weight:800;font-size:.65rem;color:var(--brand);text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
+.nav-links{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;flex:1;justify-content:center}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-link{padding:.3rem .45rem;font-size:.58rem;font-weight:600;color:var(--text-3);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;transition:all .3s;text-transform:uppercase;letter-spacing:.02em}
+.nav-link:hover,.nav-link.active{color:var(--brand);border-bottom-color:var(--brand)}
+.theme-toggle{width:42px;height:22px;border-radius:11px;background:var(--toggle-bg);border:none;cursor:pointer;position:relative;transition:background .3s}
+.theme-toggle::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .3s}
+[data-theme="dark"] .theme-toggle{background:var(--brand)}
+[data-theme="dark"] .theme-toggle::after{transform:translateX(20px)}
+
+/* ═══════════════════════════════════════════════════════════
+   SECTIONS & LAYOUT
+   ═══════════════════════════════════════════════════════════ */
+.section{position:relative;overflow:hidden}
+.section-inner{max-width:1120px;margin:0 auto;padding:4rem 2.5rem}
+.section-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--brand);margin-bottom:.6rem;display:inline-flex;align-items:center;gap:.35rem}
+.section-label::before{content:'';width:4px;height:4px;border-radius:50%;background:currentColor}
+.section-title{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;line-height:1.2;margin-bottom:.6rem;color:var(--text);letter-spacing:-.01em}
+.section-subtitle{font-size:.95rem;color:var(--text-2);max-width:600px;line-height:1.65;font-weight:400}
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLL REVEAL ANIMATIONS
+   ═══════════════════════════════════════════════════════════ */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:.1s}.reveal-d2{transition-delay:.2s}.reveal-d3{transition-delay:.3s}.reveal-d4{transition-delay:.4s}.reveal-d5{transition-delay:.5s}
+
+/* ═══════════════════════════════════════════════════════════
+   1. HERO
+   ═══════════════════════════════════════════════════════════ */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--hero-bg);position:relative;overflow:hidden}
+.hero-mesh{position:absolute;inset:0;opacity:.08;background-image:radial-gradient(circle at 20% 50%,var(--copilot-purple) 0%,transparent 50%),radial-gradient(circle at 80% 20%,var(--copilot-teal) 0%,transparent 40%),radial-gradient(circle at 60% 80%,var(--copilot-green) 0%,transparent 45%),radial-gradient(circle at 40% 20%,var(--copilot-blue) 0%,transparent 35%)}
+.hero-grid{position:absolute;inset:0;opacity:.03;background-image:linear-gradient(rgba(255,255,255,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.1) 1px,transparent 1px);background-size:60px 60px}
+.hero-content{position:relative;z-index:2;text-align:center;max-width:920px;padding:2rem}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.18em;color:var(--copilot-teal);margin-bottom:2rem;padding:.45rem 1.2rem;border:1px solid rgba(14,165,233,.3);border-radius:100px;background:rgba(14,165,233,.06)}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:var(--brand);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-size:clamp(2.4rem,5vw,3.8rem);font-weight:900;color:#fff;line-height:1.08;margin-bottom:1rem}
+.hero h1 .accent{background:var(--copilot-gradient-h);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.1rem;color:rgba(255,255,255,.55);font-weight:300;margin-bottom:3.5rem;max-width:600px;margin-left:auto;margin-right:auto}
+.hero-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;max-width:820px;margin:0 auto}
+.hero-kpi{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-top:3px solid var(--kpi-color,var(--brand));padding:1.25rem 1rem .9rem;text-align:center;transition:background .3s}
+.hero-kpi:hover{background:rgba(255,255,255,.07)}
+.hero-kpi-val{font-size:clamp(1.8rem,3vw,2.6rem);font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums}
+.hero-kpi-label{font-size:.7rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em;margin-top:.35rem;font-weight:500;line-height:1.3}
+.hero-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;color:rgba(255,255,255,.25);font-size:.65rem;text-transform:uppercase;letter-spacing:.15em;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+.scroll-arrow{width:16px;height:16px;border-right:2px solid rgba(255,255,255,.25);border-bottom:2px solid rgba(255,255,255,.25);transform:rotate(45deg)}
+
+/* ═══════════════════════════════════════════════════════════
+   2. EXECUTIVE SUMMARY — THEME CARDS
+   ═══════════════════════════════════════════════════════════ */
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
+.theme-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent,var(--brand));border-radius:0 12px 12px 0;padding:1.5rem;position:relative;transition:transform .3s,box-shadow .3s}
+.theme-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.05)}
+.theme-card-label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent,var(--brand));margin-bottom:.4rem}
+.theme-card h3{font-size:.88rem;font-weight:600;color:var(--text);margin-bottom:.4rem;line-height:1.3}
+.theme-card p{font-size:.78rem;color:var(--text-2);line-height:1.55}
+.theme-card-stat{margin-top:.6rem;font-size:1.3rem;font-weight:800;color:var(--accent,var(--brand));font-variant-numeric:tabular-nums}
+
+/* ═══════════════════════════════════════════════════════════
+   3. SCORECARD
+   ═══════════════════════════════════════════════════════════ */
+.scorecard{background:var(--section-dark);color:#fff}
+.scorecard .section-title{color:#fff}
+.scorecard .section-subtitle{color:rgba(255,255,255,.5)}
+.scorecard .section-label{color:rgba(255,255,255,.4)}
+.score-overall{text-align:center;margin-bottom:3rem;padding:2rem;background:rgba(255,255,255,.03);border-radius:16px;border:1px solid rgba(255,255,255,.06)}
+.score-overall-number{font-size:4rem;font-weight:900;color:var(--amber)}
+.score-overall-label{font-size:.85rem;color:rgba(255,255,255,.45);margin-top:.25rem}
+.score-overall-tag{display:inline-block;margin-top:.75rem;padding:.3rem 1rem;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);border-radius:100px;color:var(--amber);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.gauges-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2.5rem}
+.gauge-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.5rem 1.25rem;text-align:center}
+.gauge-svg{width:160px;height:160px;margin:0 auto 1rem}
+.gauge-track{fill:none;stroke:rgba(255,255,255,.07);stroke-width:10}
+.gauge-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1.6s cubic-bezier(.16,1,.3,1)}
+.gauge-value{font-size:1.8rem;font-weight:800;fill:#fff;text-anchor:middle}
+.gauge-sublabel{font-size:.6rem;fill:rgba(255,255,255,.35);text-anchor:middle;text-transform:uppercase;letter-spacing:.08em}
+.gauge-card h3{font-size:1rem;font-weight:700;margin-bottom:.5rem}
+.gauge-status{display:inline-block;padding:.2rem .6rem;border-radius:100px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.75rem}
+.status-expansion{background:rgba(123,47,242,.12);color:var(--purple)}
+.status-foundation{background:rgba(34,100,229,.12);color:var(--brand)}
+.gauge-metrics{text-align:left;font-size:.78rem;color:rgba(255,255,255,.6);line-height:1.6}
+.gauge-metrics li{list-style:none;padding:.25rem 0;padding-left:1rem;position:relative}
+.gauge-metrics li::before{content:'';position:absolute;left:0;top:.55rem;width:4px;height:4px;border-radius:50%;background:var(--brand)}
+.gauge-metrics strong{color:#fff;font-weight:600}
+.radar-container{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.25rem;text-align:center}
+.radar-container h3{font-size:.85rem;font-weight:600;color:#fff;margin-bottom:.75rem}
+.chart-wrap{position:relative;width:100%;max-width:440px;margin:0 auto}
+
+/* ═══════════════════════════════════════════════════════════
+   4. SCALE & REACH
+   ═══════════════════════════════════════════════════════════ */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:stretch}
+.two-col-60{grid-template-columns:1.5fr 1fr}
+.chart-card{background:var(--surface);border:1px solid var(--border);padding:1.5rem;position:relative}
+.chart-card-title{font-size:.82rem;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem}
+.chart-card-sub{font-size:.78rem;color:var(--text-3);margin-bottom:1rem}
+.stat-callout{padding:1.25rem 1.5rem;border-left:4px solid var(--accent,var(--brand));background:var(--surface);margin-bottom:1rem;border:1px solid var(--border);border-left:4px solid var(--accent,var(--brand))}
+.stat-callout-val{font-size:2rem;font-weight:900;color:var(--accent,var(--brand));line-height:1;font-variant-numeric:tabular-nums}
+.stat-callout-label{font-size:.8rem;color:var(--text-2);margin-top:.2rem;line-height:1.4}
+.insight-box{padding:.85rem 1.1rem;border-left:3px solid var(--accent,var(--teal));border-radius:0 8px 8px 0;margin-top:.75rem;font-size:.78rem;color:var(--text-2);line-height:1.55;background:rgba(0,0,0,.015)}
+.insight-callout{padding:.75rem 1rem;border-radius:8px;font-size:.8rem;line-height:1.6;color:var(--text-2);background:linear-gradient(135deg,rgba(34,100,229,.04),rgba(123,47,242,.04));border:1px solid rgba(34,100,229,.1);position:relative;padding-left:2rem}
+.insight-callout::before{content:'💡';position:absolute;left:.7rem;top:.7rem;font-size:.85rem}
+[data-theme="dark"] .insight-callout{background:linear-gradient(135deg,rgba(34,100,229,.06),rgba(123,47,242,.06));border-color:rgba(34,100,229,.12)}
+[data-theme="dark"] .insight-box{background:rgba(255,255,255,.02)}
+.insight-box-eyebrow{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent,var(--teal));margin-bottom:.3rem}
+.insight-box strong{color:var(--text);font-weight:700}
+
+/* ═══════════════════════════════════════════════════════════
+   5. HABIT GAP — FUNNEL + BARS
+   ═══════════════════════════════════════════════════════════ */
+.habit-section{background:var(--bg)}
+.funnel-container{display:flex;flex-direction:column;align-items:center;gap:0;margin-top:2rem;margin-bottom:2.5rem}
+.funnel-layer{width:100%;display:flex;align-items:center;height:64px}
+.funnel-bar{height:100%;border-radius:6px;display:flex;align-items:center;padding:0 1.25rem;transition:width 1.6s cubic-bezier(.16,1,.3,1);overflow:visible;white-space:nowrap}
+.funnel-bar-num{font-size:1.4rem;font-weight:800;margin-right:.75rem}
+.funnel-bar-text{font-size:.8rem;font-weight:500}
+.funnel-bar-pct{font-size:.72rem;color:rgba(255,255,255,.55);margin-left:.5rem}
+
+/* ═══════════════════════════════════════════════════════════
+   6. AGENT PARADOX
+   ═══════════════════════════════════════════════════════════ */
+.agent-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem}
+.agent-panel{background:var(--surface);border:1px solid var(--border);padding:1.75rem;border-radius:12px}
+.agent-panel h3{font-size:1rem;font-weight:700;margin-bottom:1rem;color:var(--text)}
+.circle-compare{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin:1.5rem 0}
+.compare-circle{border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .4s}
+.compare-big{width:140px;height:140px;background:rgba(34,100,229,.05);border:2px solid rgba(34,100,229,.2)}
+.compare-small{width:80px;height:80px;background:rgba(14,165,233,.08);border:2px solid rgba(14,165,233,.25)}
+.compare-circle .num{font-size:1.2rem;font-weight:800;color:var(--text)}
+.compare-small .num{font-size:.95rem}
+.compare-circle .lbl{font-size:.55rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.04em;text-align:center;line-height:1.2;font-weight:600}
+.compare-vs{font-size:.75rem;font-weight:700;color:var(--text-3)}
+.top-agents{margin-top:2rem}
+.top-agent-row{display:grid;grid-template-columns:130px 1fr 50px;align-items:center;gap:.75rem;margin-bottom:.6rem}
+.top-agent-name{font-size:.8rem;font-weight:600;color:var(--text);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top-agent-track{height:28px;background:var(--border);border-radius:4px;overflow:hidden}
+.top-agent-fill{height:100%;border-radius:4px;transition:width 1.2s cubic-bezier(.16,1,.3,1);display:flex;align-items:center;padding-left:8px}
+.top-agent-fill span{color:#fff;font-size:.7rem;font-weight:700}
+.top-agent-count{font-size:.78rem;font-weight:700;color:var(--text)}
+
+/* ═══════════════════════════════════════════════════════════
+   7. RETENTION STORY
+   ═══════════════════════════════════════════════════════════ */
+.retention-section{background:var(--section-dark);color:#fff}
+.retention-section .section-title{color:#fff}
+.retention-section .section-subtitle{color:rgba(255,255,255,.5)}
+.retention-section .section-label{color:rgba(255,255,255,.4)}
+.retention-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem}
+.retention-bar-container{margin-bottom:1.5rem}
+.retention-bar-label{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.4rem}
+.retention-bar-label span:first-child{color:rgba(255,255,255,.7);font-weight:500}
+.retention-bar-label span:last-child{color:#fff;font-weight:800;font-size:1rem}
+.retention-track{height:36px;background:rgba(255,255,255,.06);border-radius:6px;overflow:hidden;position:relative}
+.retention-fill{height:100%;border-radius:6px;transition:width 1.6s cubic-bezier(.16,1,.3,1);display:flex;align-items:center;justify-content:flex-end;padding-right:8px}
+.retention-threshold{position:absolute;top:0;height:100%;width:2px;background:rgba(255,255,255,.3)}
+.retention-threshold-label{position:absolute;top:-18px;transform:translateX(-50%);font-size:.55rem;color:rgba(255,255,255,.35);white-space:nowrap}
+
+/* ═══════════════════════════════════════════════════════════
+   8. METRICS GRID
+   ═══════════════════════════════════════════════════════════ */
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-top:1.5rem}
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem;border-left:3px solid var(--tier-color,var(--border));transition:transform .2s,box-shadow .2s}
+.metric-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.06)}
+.metric-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem}
+.metric-card-id{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3)}
+.metric-tier-badge{padding:.15rem .45rem;border-radius:100px;font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#fff}
+.tier-1{background:var(--tier-1)}.tier-2{background:var(--tier-2)}.tier-3{background:var(--tier-3)}.tier-4{background:var(--tier-4)}
+.metric-card-name{font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:.3rem;line-height:1.3}
+.metric-card-value{font-size:1.3rem;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
+.metric-card-unit{font-size:.65rem;color:var(--text-3);margin-top:.1rem}
+.metric-card{cursor:pointer;position:relative}
+.metric-card::after{content:'Click for PBI detail';position:absolute;bottom:.35rem;right:.5rem;font-size:.5rem;color:var(--text-3);opacity:0;transition:opacity .2s;text-transform:uppercase;letter-spacing:.04em}
+.metric-card:hover::after{opacity:.7}
+.metric-card.expanded{grid-column:1/-1;transform:none!important}
+.metric-detail{display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);animation:fadeSlide .3s ease}
+.metric-card.expanded .metric-detail{display:block}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.md-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:768px){.md-grid{grid-template-columns:1fr}}
+.md-block{margin-bottom:.75rem}
+.md-label{font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-bottom:.3rem}
+.md-val{font-size:.78rem;color:var(--text);line-height:1.5}
+.md-val code{font-size:.7rem;background:rgba(14,165,233,.08);color:var(--teal);padding:.1rem .3rem;border-radius:3px;font-family:'Consolas','Monaco',monospace}
+.md-pbi-ref{background:rgba(14,165,233,.04);border:1px solid rgba(14,165,233,.12);border-radius:8px;padding:.75rem;margin-bottom:.5rem}
+.md-pbi-page{font-size:.75rem;font-weight:700;color:var(--teal);margin-bottom:.25rem}
+.md-pbi-type{display:inline-block;font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:rgba(14,165,233,.12);color:var(--dark-teal);padding:.1rem .4rem;border-radius:100px;margin-bottom:.25rem}
+.md-pbi-measures{font-size:.65rem;color:var(--text-2);margin:.25rem 0}
+.md-pbi-measures code{font-size:.6rem;background:rgba(123,47,242,.06);color:var(--purple);padding:.05rem .25rem;border-radius:2px;margin-right:.3rem;display:inline-block;margin-bottom:.15rem}
+.md-pbi-instruction{font-size:.68rem;color:var(--text-3);font-style:italic;line-height:1.4}
+.md-threshold-track{display:flex;align-items:center;height:24px;background:var(--border);border-radius:12px;overflow:hidden;margin:.3rem 0;position:relative}
+.md-threshold-segment{height:100%;display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:700;color:#fff}
+.md-threshold-marker{position:absolute;width:3px;height:28px;background:var(--text);border-radius:2px;top:-2px;z-index:2}
+.md-close-btn{position:absolute;top:.5rem;right:.5rem;background:none;border:1px solid var(--border);color:var(--text-3);font-size:.65rem;padding:.2rem .5rem;border-radius:4px;cursor:pointer;z-index:1}
+.md-close-btn:hover{background:var(--border);color:var(--text)}
+
+/* ═══════════════════════════════════════════════════════════
+   9-10. JOURNEY + RECS
+   ═══════════════════════════════════════════════════════════ */
+.journey-section{background:var(--section-dark);color:#fff}
+.journey-section .section-title{color:#fff}
+.journey-section .section-subtitle{color:rgba(255,255,255,.5)}
+.journey-section .section-label{color:rgba(255,255,255,.4)}
+.journey-track{margin-top:3rem;position:relative;padding:4.5rem 0 3rem}
+.journey-line{position:absolute;top:55%;left:5%;right:5%;height:4px;background:rgba(255,255,255,.08);border-radius:2px;transform:translateY(-50%)}
+.journey-progress{position:absolute;top:0;left:0;height:100%;background:var(--copilot-gradient-h);border-radius:2px;transition:width 1.6s cubic-bezier(.16,1,.3,1);width:0}
+.journey-stages{display:flex;justify-content:space-between;position:relative;padding:0 5%}
+.journey-stage{display:flex;flex-direction:column;align-items:center;flex:1;text-align:center;min-width:0}
+.journey-dot{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);margin-bottom:.75rem;position:relative;z-index:2;transition:all .4s}
+.journey-stage.passed .journey-dot{background:var(--brand);border-color:var(--brand)}
+.journey-stage.current .journey-dot{background:var(--brand);border-color:#fff;box-shadow:0 0 0 5px rgba(34,100,229,.25),0 0 16px rgba(34,100,229,.35);width:28px;height:28px}
+.journey-stage-name{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:.25rem}
+.journey-stage-desc{font-size:.65rem;color:rgba(255,255,255,.4);max-width:120px}
+.journey-stage.future .journey-stage-name{color:rgba(255,255,255,.25)}
+.journey-current-label{position:absolute;top:-3.5rem;left:50%;transform:translateX(-50%);background:var(--copilot-gradient-h);color:#fff;padding:.3rem .9rem;border-radius:100px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;box-shadow:0 4px 16px rgba(34,100,229,.3)}
+.journey-current-label::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:2px;height:10px;background:var(--brand);border-radius:1px}
+.recs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin-top:1.5rem}
+.rec-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.rec-card:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(0,0,0,.06)}
+.rec-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem}
+.rec-num{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#fff;background:var(--brand);flex-shrink:0}
+.rec-priority{padding:.15rem .5rem;border-radius:100px;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.priority-high{background:rgba(34,100,229,.08);color:var(--brand)}
+.priority-med{background:rgba(245,158,11,.08);color:var(--amber)}
+.rec-card h3{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.4rem;line-height:1.3}
+.rec-card p{font-size:.82rem;color:var(--text-2);line-height:1.6}
+.rec-kpi{margin-top:.75rem;padding:.6rem .75rem;background:rgba(14,165,233,.04);border-radius:6px;font-size:.75rem;color:var(--dark-teal);font-weight:600}
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLL PROGRESS + PREMIUM POLISH
+   ═══════════════════════════════════════════════════════════ */
+.scroll-progress{position:fixed;top:0;left:0;width:0%;height:3px;background:var(--copilot-gradient-h);z-index:1001;transition:width .1s linear}
+/* Section numbering */
+.section-label{counter-increment:section-counter}
+.section-label::before{content:counter(section-counter,decimal-leading-zero);font-size:.55rem;font-weight:800;color:var(--brand);background:rgba(34,100,229,.06);border:1px solid rgba(34,100,229,.12);padding:.15rem .45rem;border-radius:100px;margin-right:.35rem}
+.signal-section>.section-inner>.section-label{font-size:0;line-height:0;margin-bottom:.25rem}
+.signal-section>.section-inner>.section-label::before{font-size:.55rem;line-height:normal}
+/* Premium headings */
+.section-title,.hero h1,h2{font-family:'Outfit','Segoe UI Variable',sans-serif}
+.section-title{position:relative;display:inline-block}
+.section-title::after{content:'';position:absolute;bottom:-.15rem;left:0;width:60px;height:3px;background:var(--copilot-gradient-h);border-radius:2px;opacity:.6}
+.section-subtitle{line-height:1.75}
+/* Upgraded section rule */
+.section-rule{height:3px;background:var(--copilot-gradient-h);margin:0;opacity:.35}
+/* Card elevation */
+.chart-card{box-shadow:var(--shadow-sm);border-radius:12px;border:1px solid rgba(0,0,0,.04);transition:box-shadow .3s,transform .3s}
+[data-theme="dark"] .chart-card{border:1px solid rgba(255,255,255,.06)}
+.chart-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.stat-callout{box-shadow:var(--shadow-sm);border-radius:10px}
+.stat-callout-val{font-family:'Outfit','Segoe UI Variable',sans-serif;font-size:2.2rem}
+.theme-card{box-shadow:var(--shadow-sm)}
+.theme-card:hover{box-shadow:var(--shadow-lg)}
+.theme-card-stat{font-size:1.6rem;font-weight:900;font-family:'Outfit','Segoe UI Variable',sans-serif}
+/* Chart card titles */
+.chart-card-title{font-family:'Outfit','Segoe UI Variable',sans-serif;font-size:.85rem;letter-spacing:.03em}
+/* Metric card hover glow */
+.metric-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.06),0 0 0 1px var(--tier-color,transparent)}
+/* Insight box variants */
+.insight-box--opportunity{background:linear-gradient(135deg,rgba(14,165,233,.04),rgba(34,100,229,.02));border-left-color:#0EA5E9}
+.insight-box--opportunity .insight-box-eyebrow{color:#0EA5E9}
+.insight-box--warning{background:linear-gradient(135deg,rgba(245,158,11,.05),rgba(249,115,22,.02));border-left-color:#F59E0B}
+.insight-box--warning .insight-box-eyebrow{color:#F59E0B}
+.insight-box--success{background:linear-gradient(135deg,rgba(16,185,129,.05),rgba(16,185,129,.01));border-left-color:#10B981}
+.insight-box--success .insight-box-eyebrow{color:#10B981}
+.insight-box--critical{background:linear-gradient(135deg,rgba(239,68,68,.04),rgba(239,68,68,.01));border-left-color:#EF4444;border-left-width:5px}
+.insight-box--critical .insight-box-eyebrow{color:#EF4444}
+[data-theme="dark"] .insight-box--opportunity{background:linear-gradient(135deg,rgba(14,165,233,.06),transparent)}
+[data-theme="dark"] .insight-box--warning{background:linear-gradient(135deg,rgba(245,158,11,.06),transparent)}
+[data-theme="dark"] .insight-box--success{background:linear-gradient(135deg,rgba(16,185,129,.06),transparent)}
+[data-theme="dark"] .insight-box--critical{background:linear-gradient(135deg,rgba(239,68,68,.06),transparent)}
+/* Funnel conversion target glow */
+.funnel-container .funnel-layer:nth-child(2) .funnel-bar{box-shadow:0 0 0 2px rgba(245,158,11,.3),0 4px 20px rgba(245,158,11,.15);position:relative}
+.funnel-container .funnel-layer:nth-child(2) .funnel-bar::after{content:'CONVERSION TARGET';position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#F59E0B;background:rgba(245,158,11,.1);padding:.15rem .5rem;border-radius:100px;border:1px solid rgba(245,158,11,.2)}
+/* Rec card hover */
+.rec-card{transition:transform .3s cubic-bezier(.16,1,.3,1),box-shadow .3s}
+.rec-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.08)}
+
+/* ═══════════════════════════════════════════════════════════
+   TIER NAV + SIGNPOSTING
+   ═══════════════════════════════════════════════════════════ */
+.tier-nav{display:flex;gap:.5rem;margin:1.25rem 0;flex-wrap:wrap}
+.tier-nav-btn{padding:.4rem 1rem;border-radius:100px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);font-size:.7rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.tier-nav-btn:hover{border-color:var(--brand);color:var(--brand)}
+.tier-nav-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.tier-nav-btn[data-tier="m365"].active{background:#2264E5;border-color:#2264E5}
+.tier-nav-btn[data-tier="agents"].active{background:#7B2FF2;border-color:#7B2FF2}
+.tier-nav-btn[data-tier="chat"].active{background:#0EA5E9;border-color:#0EA5E9}
+.tier-toggle{display:flex;gap:.4rem;margin:.75rem 0 .5rem;flex-wrap:wrap}
+.tier-header{padding:.65rem 1.1rem;margin-top:2.5rem;margin-bottom:1.25rem;border-left:4px solid var(--tier-color,var(--brand));border-radius:0 8px 8px 0;background:linear-gradient(90deg,rgba(34,100,229,.04),transparent);display:flex;align-items:center;gap:.6rem}
+.tier-header[data-tier="agents"]{background:linear-gradient(90deg,rgba(123,47,242,.04),transparent);border-left-color:#7B2FF2}
+.tier-header[data-tier="m365"]{background:linear-gradient(90deg,rgba(34,100,229,.04),transparent);border-left-color:#2264E5}
+.tier-header-label{font-size:.78rem;font-weight:700;color:var(--text)}
+.tier-header-badge{display:inline-block;padding:.15rem .55rem;border-radius:100px;font-size:.58rem;font-weight:600}
+.tier-header-badge.m365{background:rgba(34,100,229,.1);color:#2264E5;border:1px solid rgba(34,100,229,.15)}
+.tier-header-badge.agents{background:rgba(123,47,242,.1);color:#7B2FF2;border:1px solid rgba(123,47,242,.15)}
+/* Details/Summary for framework */
+.framework-details{margin-top:1.5rem}
+.framework-details summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:.5rem;padding:.65rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;transition:all .2s}
+.framework-details summary:hover{border-color:var(--brand);background:rgba(34,100,229,.02)}
+.framework-details summary::-webkit-details-marker{display:none}
+.framework-details summary::marker{display:none}
+.framework-details .chevron{display:inline-block;transition:transform .25s;font-size:.55rem;color:var(--text-3)}
+.framework-details[open] .chevron{transform:rotate(180deg)}
+.framework-details .fw-summary-text{font-size:.78rem;font-weight:600;color:var(--brand)}
+.framework-details .fw-summary-sub{font-size:.65rem;color:var(--text-3);margin-left:auto}
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER + MISC
+   ═══════════════════════════════════════════════════════════ */
+.footer{background:var(--hero-bg);color:rgba(255,255,255,.35);padding:2.5rem 2rem;text-align:center}
+.footer-inner{max-width:600px;margin:0 auto}
+.footer p{font-size:.72rem;line-height:1.8}
+.export-btn{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;align-items:center;gap:.4rem;padding:.6rem 1.25rem;border:none;border-radius:10px;background:var(--brand);color:#fff;font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;box-shadow:0 6px 24px rgba(34,100,229,.25);transition:all .3s}
+.export-btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(34,100,229,.35);background:var(--brand-dark)}
+.insight-toggle{display:inline-flex;align-items:center;gap:.4rem;background:none;border:1px solid var(--border);border-radius:20px;padding:.4rem 1rem;font-size:.72rem;font-weight:600;color:var(--teal);cursor:pointer;margin-top:.75rem;font-family:inherit;transition:all .3s}
+.insight-toggle:hover{background:rgba(14,165,233,.06);border-color:var(--teal)}
+.insight-toggle .arr{display:inline-block;transition:transform .3s;font-size:.55rem}
+.insight-toggle.open .arr{transform:rotate(180deg)}
+.insight-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.16,1,.3,1),opacity .4s;opacity:0;margin-top:0}
+.insight-body.open{max-height:600px;opacity:1;margin-top:.75rem}
+.insight-content{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--teal);padding:1rem 1.25rem;font-size:.78rem;line-height:1.7;color:var(--text-2)}
+.insight-content strong{color:var(--text);font-weight:600}
+.evidence-label{display:block;font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);font-weight:700;margin-top:.5rem;margin-bottom:.2rem}
+
+@media(max-width:1024px){.gauges-row,.agent-grid,.two-col,.two-col-60,.retention-grid{grid-template-columns:1fr}.hero-kpis{grid-template-columns:repeat(2,1fr)}.metrics-grid{grid-template-columns:repeat(2,1fr)}.recs-grid{grid-template-columns:1fr}.journey-stages{flex-direction:column;align-items:center;gap:1.5rem}.journey-line{display:none}}
+@media(max-width:640px){.section-inner{padding:3rem 1rem}.nav-links{display:none}.hero-kpis{grid-template-columns:1fr 1fr}.metrics-grid,.theme-grid{grid-template-columns:1fr}}
+
+/* ═══════════════════════════════════════════════════════════
+   PREMIUM VISUAL POLISH (v2)
+   ═══════════════════════════════════════════════════════════ */
+
+/* Hero -- animated mesh drift + shimmer + vignette */
+.hero-mesh{opacity:.12;animation:heroMeshDrift 20s ease-in-out infinite alternate}
+@keyframes heroMeshDrift{0%{filter:hue-rotate(0deg) blur(60px);transform:scale(1) translate(0,0)}50%{filter:hue-rotate(15deg) blur(80px);transform:scale(1.1) translate(2%,-3%)}100%{filter:hue-rotate(-10deg) blur(70px);transform:scale(1.05) translate(-1%,2%)}}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(123,47,242,.04) 45%,rgba(34,100,229,.06) 50%,rgba(14,165,233,.04) 55%,transparent 60%);background-size:200% 100%;animation:heroShimmer 8s ease-in-out infinite;z-index:1;pointer-events:none}
+@keyframes heroShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.hero-badge{box-shadow:0 0 20px rgba(14,165,233,.15),0 0 60px rgba(14,165,233,.05);animation:badgeGlow 3s ease-in-out infinite alternate}
+@keyframes badgeGlow{0%{box-shadow:0 0 20px rgba(14,165,233,.1),0 0 60px rgba(14,165,233,.03)}100%{box-shadow:0 0 30px rgba(14,165,233,.2),0 0 80px rgba(14,165,233,.08)}}
+.hero h1{text-shadow:0 2px 40px rgba(0,0,0,.3)}
+
+/* Hero KPI glassmorphism */
+.hero-kpi{background:rgba(255,255,255,.03);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);border-radius:12px;position:relative;overflow:hidden;transition:all .4s cubic-bezier(.16,1,.3,1)}
+.hero-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:100%;background:linear-gradient(180deg,rgba(255,255,255,.04) 0%,transparent 60%);pointer-events:none}
+.hero-kpi:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);box-shadow:0 8px 32px rgba(0,0,0,.2);transform:translateY(-3px)}
+
+/* Card inner highlight + reveal gradient on hover */
+.chart-card{overflow:hidden;position:relative}
+.chart-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--copilot-gradient-h);opacity:0;transition:opacity .4s}
+.chart-card:hover::before{opacity:.6}
+[data-theme="dark"] .chart-card{box-shadow:0 1px 2px rgba(0,0,0,.15),0 4px 16px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.04)}
+
+/* Theme card -- gradient hover overlay */
+.theme-card{overflow:hidden;position:relative}
+.theme-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0) 60%,rgba(255,255,255,.04) 100%);pointer-events:none}
+.theme-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.06),0 0 0 1px var(--accent,var(--brand))}
+
+/* Stat callout gradient accent wash */
+.stat-callout{overflow:hidden;position:relative}
+.stat-callout::before{content:'';position:absolute;left:0;top:0;bottom:0;width:60px;background:linear-gradient(90deg,rgba(34,100,229,.04),transparent);pointer-events:none}
+[data-theme="dark"] .stat-callout::before{background:linear-gradient(90deg,rgba(34,100,229,.08),transparent)}
+.stat-callout-val{position:relative;display:inline-block}
+
+/* Section transitions -- gradient wash */
+.section-rule{height:0;border:none;position:relative;opacity:1}
+.section-rule::before{content:'';display:block;height:80px;background:linear-gradient(180deg,var(--bg) 0%,rgba(123,47,242,.03) 30%,rgba(34,100,229,.04) 50%,rgba(14,165,233,.03) 70%,var(--bg) 100%)}
+.section-rule::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:40px;height:1px;background:var(--copilot-gradient-h);opacity:.4}
+[data-theme="dark"] .section-rule::before{background:linear-gradient(180deg,var(--bg) 0%,rgba(123,47,242,.05) 30%,rgba(34,100,229,.06) 50%,rgba(14,165,233,.05) 70%,var(--bg) 100%)}
+
+/* 3x3 Matrix -- premium artifact reveal */
+.framework-details[open]>div{animation:matrixReveal .6s cubic-bezier(.16,1,.3,1)}
+@keyframes matrixReveal{from{opacity:0;transform:translateY(-12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* 18 Metrics grid -- dashboard treatment */
+.metric-card{border-left:4px solid var(--tier-color,var(--border));overflow:hidden;transition:all .3s cubic-bezier(.16,1,.3,1)}
+.metric-card::after{content:'Click to explore';position:absolute;bottom:.5rem;right:.65rem;font-size:.5rem;color:var(--tier-color,var(--text-3));opacity:0;transition:opacity .3s,transform .3s;text-transform:uppercase;letter-spacing:.06em;font-weight:600;transform:translateY(4px)}
+.metric-card:hover::after{opacity:.5;transform:translateY(0)}
+.metric-card:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 8px 32px rgba(0,0,0,.06),0 0 0 1px var(--tier-color,var(--border));z-index:2}
+.metric-card.expanded{border-radius:16px;box-shadow:0 12px 48px rgba(0,0,0,.08),0 0 0 2px var(--tier-color,var(--brand))}
+.metric-card-value{font-family:'Outfit','Segoe UI Variable',sans-serif;font-size:1.5rem;font-weight:900;letter-spacing:-.02em}
+.metric-tier-badge.tier-4{position:relative;padding-left:.6rem}
+.metric-tier-badge.tier-4::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:#10B981;animation:tierPulse 2s ease-in-out infinite}
+@keyframes tierPulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.4)}50%{box-shadow:0 0 0 4px rgba(16,185,129,0)}}
+
+/* Nav link underline animation */
+.nav-link{position:relative;border-bottom:none}
+.nav-link::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:var(--brand);transition:width .3s cubic-bezier(.16,1,.3,1),left .3s cubic-bezier(.16,1,.3,1)}
+.nav-link:hover::after,.nav-link.active::after{width:100%;left:0}
+
+/* Tier nav buttons -- smoother */
+.tier-nav-btn{transition:all .25s cubic-bezier(.16,1,.3,1);border-width:1.5px}
+.tier-nav-btn.active{box-shadow:0 2px 8px rgba(34,100,229,.2)}
+.tier-nav-btn:hover:not(.active){background:rgba(34,100,229,.04);transform:translateY(-1px)}
+
+/* Insight box -- gradient left border */
+.insight-box{border-left:none;position:relative;padding-left:1.4rem}
+.insight-box::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px;background:linear-gradient(180deg,var(--accent,var(--teal)),transparent)}
+
+/* Export button -- gradient */
+.export-btn{background:linear-gradient(135deg,var(--brand),var(--copilot-purple));border-radius:12px}
+.export-btn:hover{background:linear-gradient(135deg,var(--brand-dark),#6B21A8)}
+
+/* Dark mode -- deeper surfaces */
+[data-theme="dark"] .theme-card,[data-theme="dark"] .agent-panel,[data-theme="dark"] .rec-card{border-color:rgba(255,255,255,.06)}
+[data-theme="dark"] .insight-box{background:rgba(255,255,255,.015);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+[data-theme="dark"] .metric-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.25),0 0 0 1px var(--tier-color,var(--border))}
+[data-theme="dark"] .metric-card.expanded{box-shadow:0 12px 48px rgba(0,0,0,.35),0 0 0 2px var(--tier-color,var(--brand))}
+[data-theme="dark"] .scroll-progress{box-shadow:0 1px 8px rgba(123,47,242,.3)}
+[data-theme="dark"] .export-btn{box-shadow:0 6px 24px rgba(34,100,229,.35),0 0 60px rgba(34,100,229,.1)}
+
+/* Scroll progress -- glow */
+.scroll-progress{box-shadow:0 1px 6px rgba(123,47,242,.15)}
+
+/* Section dimension accent washes */
+#scale{position:relative}
+#scale::before{content:'';position:absolute;top:0;left:0;right:0;height:200px;background:linear-gradient(180deg,rgba(14,165,233,.03) 0%,transparent 100%);pointer-events:none}
+#scale .section-label{color:var(--copilot-teal)}
+#frequency{position:relative}
+#frequency::before{content:'';position:absolute;top:0;left:0;right:0;height:200px;background:linear-gradient(180deg,rgba(245,158,11,.03) 0%,transparent 100%);pointer-events:none}
+#proficiency{position:relative}
+#proficiency::before{content:'';position:absolute;top:0;left:0;right:0;height:200px;background:linear-gradient(180deg,rgba(123,47,242,.03) 0%,transparent 100%);pointer-events:none}
+[data-theme="dark"] #scale::before{background:linear-gradient(180deg,rgba(14,165,233,.06) 0%,transparent 100%)}
+[data-theme="dark"] #frequency::before{background:linear-gradient(180deg,rgba(245,158,11,.06) 0%,transparent 100%)}
+[data-theme="dark"] #proficiency::before{background:linear-gradient(180deg,rgba(123,47,242,.06) 0%,transparent 100%)}
+
+/* Footer gradient top line */
+.footer{position:relative}
+.footer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--copilot-gradient-h);opacity:.2}
+
+/* Agent panel hover */
+.agent-panel{transition:transform .3s cubic-bezier(.16,1,.3,1),box-shadow .3s}
+.agent-panel:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.06)}
+[data-theme="dark"] .agent-panel:hover{box-shadow:0 12px 40px rgba(0,0,0,.3)}
+
+/* Rec card premium */
+.rec-card{border-radius:14px;overflow:hidden;position:relative}
+.rec-card::before{content:'';position:absolute;top:0;left:0;right:0;height:100px;background:linear-gradient(180deg,rgba(34,100,229,.03),transparent);pointer-events:none;z-index:0}
+
+/* Focus states */
+.nav-link:focus-visible,.tier-nav-btn:focus-visible,.metric-card:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+/* ═══════════════════════════════════════════════════════════
+   ENHANCEMENT: PULL-QUOTE STRIPS
+   ═══════════════════════════════════════════════════════════ */
+.pull-quote-strip{background:var(--hero-bg);padding:2rem 2.5rem;text-align:center;position:relative;overflow:hidden}
+.pull-quote-strip::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--copilot-gradient-h);opacity:.4}
+.pull-quote-strip::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--copilot-gradient-h);opacity:.4}
+.pull-quote-text{font-family:'Outfit','Segoe UI Variable',sans-serif;font-size:clamp(1.1rem,2.2vw,1.5rem);font-weight:700;color:#fff;max-width:900px;margin:0 auto;line-height:1.4;letter-spacing:-.01em}
+.pull-quote-text .pq-highlight{background:var(--copilot-gradient-h);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:900}
+.pull-quote-source{font-size:.65rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.12em;margin-top:.6rem}
+[data-theme="light"] .pull-quote-strip{background:linear-gradient(135deg,#0F172A,#1E1B4B)}
+
+/* ═══════════════════════════════════════════════════════════
+   ENHANCEMENT: MINI THRESHOLD BAR ON METRIC CARDS
+   ═══════════════════════════════════════════════════════════ */
+.mini-threshold{margin-top:.6rem;height:6px;border-radius:3px;background:var(--border);position:relative;overflow:visible}
+.mini-threshold-fill{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(.16,1,.3,1)}
+.mini-threshold-marker{position:absolute;top:-3px;width:3px;height:12px;border-radius:1.5px;background:var(--text);transition:left 1.2s cubic-bezier(.16,1,.3,1)}
+.mini-threshold-labels{display:flex;justify-content:space-between;margin-top:.2rem;font-size:.45rem;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:.02em}
+[data-theme="dark"] .mini-threshold{background:rgba(255,255,255,.08)}
+[data-theme="dark"] .mini-threshold-marker{background:#fff}
+
+/* ═══════════════════════════════════════════════════════════
+   ENHANCEMENT: HERO SCORE RING
+   ═══════════════════════════════════════════════════════════ */
+.hero-score-ring{display:flex;align-items:center;justify-content:center;margin:0 auto 2rem;position:relative}
+.hero-score-svg{width:180px;height:180px;filter:drop-shadow(0 0 20px rgba(245,158,11,.2))}
+.hero-score-track{fill:none;stroke:rgba(255,255,255,.06);stroke-width:8}
+.hero-score-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 2s cubic-bezier(.16,1,.3,1)}
+.hero-score-val{font-family:'Outfit',sans-serif;font-size:2.4rem;font-weight:900;fill:#fff;text-anchor:middle}
+.hero-score-label{font-size:.5rem;fill:rgba(255,255,255,.4);text-anchor:middle;text-transform:uppercase;letter-spacing:.12em}
+.hero-score-tier{font-size:.65rem;fill:var(--amber);text-anchor:middle;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+
+/* ═══════════════════════════════════════════════════════════
+   ENHANCEMENT: EXEC SUMMARY CARDS REDESIGN
+   ═══════════════════════════════════════════════════════════ */
+.theme-card-verdict{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:.35rem;line-height:1.2;font-family:'Outfit','Segoe UI Variable',sans-serif}
+.theme-card-body{display:flex;align-items:center;gap:1rem;margin-top:.6rem}
+.theme-card-spark{flex-shrink:0}
+.theme-card-spark svg{display:block}
+.theme-card-sentiment{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;border-radius:100px;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:.5rem}
+.sentiment-strong{background:rgba(16,185,129,.08);color:#10B981;border:1px solid rgba(16,185,129,.15)}
+.sentiment-caution{background:rgba(245,158,11,.08);color:#F59E0B;border:1px solid rgba(245,158,11,.15)}
+.sentiment-alert{background:rgba(239,68,68,.08);color:#EF4444;border:1px solid rgba(239,68,68,.15)}
+
+/* ═══════════════════════════════════════════════════════════
+   ENHANCEMENT: GHOST RINGS ON SCORECARD GAUGES
+   ═══════════════════════════════════════════════════════════ */
+.gauge-ghost{fill:none;stroke:rgba(255,255,255,.03);stroke-width:10;stroke-dasharray:4,4}
+.gauge-target-label{font-size:.45rem;fill:rgba(255,255,255,.2);text-anchor:middle;text-transform:uppercase;letter-spacing:.06em}
+
+
+/* ===============================================================
+   5-SIGNAL HEALTH CARDS
+   =============================================================== */
+.signal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin-top:1.5rem}
+.signal-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.25rem;position:relative;overflow:hidden;transition:all .4s cubic-bezier(.16,1,.3,1)}
+.signal-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--signal-color,var(--brand))}
+.signal-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.06),0 0 0 1px var(--signal-color,var(--brand))}
+[data-theme="dark"] .signal-card:hover{box-shadow:0 12px 40px rgba(0,0,0,.3),0 0 0 1px var(--signal-color,var(--brand))}
+.signal-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--signal-color) 10%,transparent);margin-bottom:.6rem}
+.signal-icon svg{width:18px;height:18px;stroke:var(--signal-color);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.signal-question{font-size:.62rem;color:var(--text-3);font-weight:500;font-style:italic;margin-bottom:.5rem;line-height:1.3}
+.signal-value{font-family:'Outfit','Segoe UI Variable',sans-serif;font-size:1.6rem;font-weight:900;color:var(--text);line-height:1;margin-bottom:.15rem;letter-spacing:-.02em}
+.signal-sub{font-size:.62rem;color:var(--text-3);font-weight:500;margin-bottom:.6rem}
+.signal-gauge{height:5px;border-radius:3px;background:var(--border);position:relative;margin-bottom:.2rem;overflow:visible}
+[data-theme="dark"] .signal-gauge{background:rgba(255,255,255,.08)}
+.signal-gauge-fill{height:100%;border-radius:3px;background:var(--signal-color);transition:width 1.5s cubic-bezier(.16,1,.3,1)}
+.signal-gauge-labels{display:flex;justify-content:space-between;font-size:.42rem;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.6rem}
+.signal-tier{display:inline-flex;padding:.15rem .45rem;border-radius:100px;font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem}
+.signal-tier.tier-f{background:rgba(34,100,229,.1);color:#2264E5;border:1px solid rgba(34,100,229,.15)}
+.signal-tier.tier-e{background:rgba(123,47,242,.1);color:#7B2FF2;border:1px solid rgba(123,47,242,.15)}
+.signal-tier.tier-fr{background:rgba(16,185,129,.1);color:#10B981;border:1px solid rgba(16,185,129,.15)}
+.signal-insight{font-size:.7rem;color:var(--text-2);line-height:1.45}
+.signal-insight strong{color:var(--text);font-weight:600}
+.signal-metrics{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.6rem}
+.signal-metric-pill{font-size:.5rem;padding:.12rem .35rem;border-radius:4px;background:color-mix(in srgb,var(--signal-color) 6%,transparent);color:var(--signal-color);font-weight:600;border:1px solid color-mix(in srgb,var(--signal-color) 12%,transparent)}
+.detail-toggle-bar{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-top:2rem;padding:.6rem 1.2rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:.72rem;font-weight:600;color:var(--text-2);transition:all .3s}
+.detail-toggle-bar:hover{background:color-mix(in srgb,var(--brand) 4%,var(--surface));border-color:var(--brand);color:var(--brand)}
+.detail-toggle-bar .arr{display:inline-block;transition:transform .3s;font-size:.55rem}
+.detail-toggle-bar.open .arr{transform:rotate(180deg)}
+.detail-section{max-height:0;overflow:hidden;transition:max-height .6s cubic-bezier(.16,1,.3,1),opacity .4s;opacity:0}
+.detail-section.open{max-height:5000px;opacity:1;margin-top:1.5rem}
+@media(max-width:1024px){.signal-grid{grid-template-columns:repeat(2,1fr)}.signal-grid>:last-child{grid-column:span 2;max-width:50%;margin:0 auto}}
+@media(max-width:640px){.signal-grid{grid-template-columns:1fr}.signal-grid>:last-child{max-width:100%}}
+
+/* Print enhancements (v2) */
+
+
+/* PRINT - LANDSCAPE A4 */
+@page { size: A4 landscape; margin: 8mm 10mm; }
+
+@media print {
+  html { font-size: 8.5px !important; }
+  body { background: #fff !important; color: #1A1A2E !important; line-height: 1.4 !important; }
+  * { transition: none !important; animation: none !important; box-shadow: none !important; }
+
+  .nav, .scroll-progress, .theme-toggle, .export-btn,
+  .hero-scroll, .tier-nav, .insight-toggle, .tier-header,
+  .hero-mesh, .hero-grid, .hero::before, .hero::after,
+  .hero-badge, .section-rule, .section-rule::before,
+  .section-rule::after { display: none !important; }
+
+  .pull-quote-strip { display: none !important; }
+
+  .tier-group[data-tier-content="all"] { display: block !important; }
+  .tier-group:not([data-tier-content="all"]) { display: none !important; }
+
+  .insight-body { display: none !important; }
+
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .framework-details[open] > div { animation: none !important; }
+
+  .section { overflow: visible !important; }
+  .section-inner { max-width: 100% !important; padding: 0.8rem 0.4rem !important; }
+  .section-title { font-size: 1.3rem !important; margin-bottom: 0.3rem !important; }
+  .section-subtitle { font-size: 0.72rem !important; margin-bottom: 0.4rem !important; }
+  .section-label { font-size: 0.55rem !important; margin-bottom: 0.2rem !important; }
+
+  #hero { page-break-after: always; min-height: auto !important; padding: 1.2rem 1rem !important; }
+  #methodology { page-break-before: auto; }
+  #summary     { page-break-before: always; }
+  #scale       { page-break-before: always; }
+  #frequency   { page-break-before: always; }
+  #proficiency { page-break-before: always; }
+  #metrics     { page-break-before: always; }
+  #license     { page-break-before: always; }
+  #actions     { page-break-before: always; }
+
+  .chart-card, .theme-card, .stat-callout, .metric-card,
+  .rec-card, .agent-panel, .insight-box, .funnel-container,
+  .retention-grid { page-break-inside: avoid; border: 1px solid #E2E8F0 !important; }
+
+  .chart-card::before, .theme-card::after, .stat-callout::before,
+  .metric-card::after, .rec-card::before, .insight-box::before { display: none !important; }
+
+  canvas { max-height: 180px !important; page-break-inside: avoid; }
+
+  .hero { background: #fff !important; }
+  .hero h1 { color: #0F172A !important; text-shadow: none !important; font-size: 1.8rem !important; }
+  .hero-sub { color: #475569 !important; font-size: 0.78rem !important; }
+  .hero-kpis { gap: 0.5rem !important; }
+  .hero-kpi { background: rgba(34,100,229,.04) !important; border: 1px solid rgba(34,100,229,.15) !important;
+    -webkit-backdrop-filter: none !important; backdrop-filter: none !important; padding: 0.5rem !important; }
+  .hero-kpi-val { -webkit-text-fill-color: #2264E5 !important; background: none !important; font-size: 1.3rem !important; }
+  .hero-kpi-label { font-size: 0.58rem !important; }
+
+  #license { background: #F8FAFC !important; color: #1A1A2E !important; }
+  #license * { color: #1A1A2E !important; }
+  #license .section-label { color: #2264E5 !important; }
+  #license strong { color: #0F172A !important; }
+  #license div[style*="Outfit"] { -webkit-text-fill-color: initial !important; background: none !important; }
+
+  .retention-grid { background: #F1F5F9 !important; color: #1A1A2E !important; padding: 0.8rem !important; }
+  .retention-grid * { color: #1A1A2E !important; }
+  .retention-fill { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .retention-track { background: #E2E8F0 !important; }
+  .habit-section { background: #fff !important; color: #1A1A2E !important; }
+
+  .stat-callout-val, .theme-card-stat, .metric-card-value {
+    -webkit-text-fill-color: var(--accent, #2264E5) !important; background: none !important; }
+
+  .two-col, .two-col-60 { gap: 0.5rem !important; }
+  .theme-grid { gap: 0.4rem !important; }
+  .theme-card { padding: 0.6rem !important; }
+  .stat-callout { padding: 0.5rem 0.6rem !important; margin-bottom: 0.3rem !important; }
+
+  .metrics-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 0.35rem !important; }
+  .metric-card { padding: 0.35rem !important; font-size: 0.58rem !important; }
+  .metric-card-value { font-size: 1rem !important; }
+
+  #actions .recs-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.4rem !important; }
+  #actions div[style*="grid-template-columns:repeat(3"] { gap: 0.35rem !important; }
+  .rec-card { padding: 0.5rem !important; }
+  .rec-card h3 { font-size: 0.7rem !important; }
+  .rec-card p { font-size: 0.6rem !important; }
+
+  .footer { background: #F8FAFC !important; color: #475569 !important;
+    border-top: 2px solid #E2E8F0 !important; padding: 0.6rem !important; }
+  .footer * { color: #475569 !important; }
+  .footer strong { color: #1A1A2E !important; }
+
+  #scorecard { display: none !important; }
+}
+
+
+
+/* v2 additions */
+.signal-grid{grid-template-columns:repeat(4,1fr) !important}
+@media(max-width:1024px){.signal-grid{grid-template-columns:repeat(2,1fr) !important}}
+@media(max-width:640px){.signal-grid{grid-template-columns:1fr !important}}
+.signal-grid > :last-child{grid-column:auto;max-width:100%;margin:0}
+
+/* ===============================================================
+   v2 DESIGN ENHANCEMENTS
+   =============================================================== */
+
+/* Signal identity borders */
+.signal-section{position:relative;border-left:6px solid var(--signal-accent,var(--brand));box-shadow:inset 6px 0 20px -6px color-mix(in srgb,var(--signal-accent) 20%,transparent)}
+.signal-section .section-inner{padding-left:2rem}
+
+
+/* Signal name badge — pinned top of each signal section */
+.signal-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .9rem .35rem .7rem;border-radius:100px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#fff;background:var(--signal-accent,var(--brand));margin-bottom:1.25rem;position:relative;box-shadow:0 2px 8px color-mix(in srgb,var(--signal-accent) 30%,transparent)}
+.signal-badge svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* Slide frames pick up signal colour on left border */
+.signal-section .slide-frame{border-left:3px solid color-mix(in srgb,var(--signal-accent) 25%,var(--border))}
+
+/* Chart cards in signal sections get accent top line */
+.signal-section .chart-card::before{opacity:1 !important;background:linear-gradient(90deg,var(--signal-accent),transparent) !important}
+
+/* Insight boxes in signal sections get accent border */
+.signal-section .insight-box{border-left-color:var(--signal-accent) !important}
+.signal-section .insight-box::before{background:var(--signal-accent) !important}
+
+/* Signal section accent wash */
+.signal-section::before{content:'';position:absolute;top:0;left:0;width:200px;height:100%;background:linear-gradient(90deg,color-mix(in srgb,var(--signal-accent) 4%,transparent),transparent);pointer-events:none}
+[data-theme="dark"] .signal-section::before{background:linear-gradient(90deg,color-mix(in srgb,var(--signal-accent) 8%,transparent),transparent)}
+
+/* Headline number — the one stat that matters */
+.headline-stat{text-align:center;padding:2rem 0 1.5rem;position:relative}
+.headline-stat-value{font-family:'Outfit','Segoe UI Variable',sans-serif;font-size:4rem;font-weight:900;line-height:1;letter-spacing:-.04em;background:linear-gradient(135deg,var(--signal-accent),color-mix(in srgb,var(--signal-accent) 60%,#fff));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.25rem}
+.headline-stat-label{font-size:.85rem;color:var(--text-2);font-weight:500}
+.headline-stat-tier{display:inline-flex;padding:.2rem .6rem;border-radius:100px;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+
+/* "So what?" callout — full-width insight banner */
+.so-what{margin:1.5rem 0;padding:1.2rem 1.5rem;border-radius:12px;border-left:4px solid var(--signal-accent,var(--brand));background:color-mix(in srgb,var(--signal-accent) 4%,var(--surface));position:relative;overflow:hidden}
+[data-theme="dark"] .so-what{background:color-mix(in srgb,var(--signal-accent) 6%,rgba(22,22,48,.8))}
+.so-what::before{content:'SO WHAT?';position:absolute;top:.5rem;right:1rem;font-size:.5rem;font-weight:800;letter-spacing:.1em;color:var(--signal-accent);opacity:.3}
+.so-what-text{font-size:.85rem;color:var(--text);line-height:1.6;font-weight:500}
+.so-what-text strong{color:var(--signal-accent);font-weight:700}
+
+/* Spotlight card — the #1 insight per section */
+.spotlight{margin:1.5rem 0;padding:1.5rem 2rem;border-radius:16px;border:2px solid color-mix(in srgb,var(--signal-accent) 25%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--signal-accent) 3%,var(--surface)),var(--surface));box-shadow:0 8px 32px color-mix(in srgb,var(--signal-accent) 8%,transparent);position:relative;overflow:hidden}
+[data-theme="dark"] .spotlight{background:linear-gradient(135deg,color-mix(in srgb,var(--signal-accent) 6%,rgba(22,22,48,.9)),rgba(22,22,48,.7));box-shadow:0 8px 32px color-mix(in srgb,var(--signal-accent) 15%,transparent)}
+.spotlight::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--signal-accent),color-mix(in srgb,var(--signal-accent) 30%,transparent))}
+.spotlight-icon{display:inline-flex;width:28px;height:28px;border-radius:50%;background:color-mix(in srgb,var(--signal-accent) 12%,transparent);align-items:center;justify-content:center;margin-bottom:.6rem;font-size:.8rem}
+.spotlight-title{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.35rem;line-height:1.3}
+.spotlight-body{font-size:.78rem;color:var(--text-2);line-height:1.6}
+.spotlight-body strong{color:var(--text);font-weight:600}
+
+/* Subsection panel alternation */
+.sub-panel{padding:1.5rem;border-radius:14px;background:color-mix(in srgb,var(--surface) 50%,var(--bg));border:1px solid var(--border);margin:1rem 0}
+[data-theme="dark"] .sub-panel{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.05)}
+.sub-panel-title{font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+.sub-panel-title::before{content:'';width:3px;height:16px;border-radius:2px;background:var(--signal-accent,var(--brand))}
+
+/* Flow arrows between subsections */
+.flow-arrow{text-align:center;padding:.5rem 0;color:var(--text-3);font-size:.6rem;position:relative}
+.flow-arrow::before{content:'';display:block;width:1px;height:20px;background:linear-gradient(180deg,transparent,var(--signal-accent,var(--border)),transparent);margin:0 auto .3rem}
+.flow-arrow::after{content:'\25BC';display:block;color:var(--signal-accent,var(--text-3));font-size:.5rem;opacity:.4}
+
+/* Signal section title with icon */
+.signal-section-header{display:flex;align-items:center;gap:.6rem}
+.signal-section-icon{width:32px;height:32px;border-radius:8px;background:color-mix(in srgb,var(--signal-accent) 12%,transparent);display:flex;align-items:center;justify-content:center}
+.signal-section-icon svg{width:16px;height:16px;stroke:var(--signal-accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* 4-column signal cards in overview */
+.signal-grid{grid-template-columns:repeat(4,1fr) !important}
+@media(max-width:1024px){.signal-grid{grid-template-columns:repeat(2,1fr) !important}}
+@media(max-width:640px){.signal-grid{grid-template-columns:1fr !important}}
+.signal-grid > :last-child{grid-column:auto;max-width:100%;margin:0}
+
+
+/* Slide frames — each subsection block gets its own card */
+.slide-frame{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;margin:2.5rem 0;position:relative;overflow:hidden}
+[data-theme="dark"] .slide-frame{background:rgba(22,22,48,.5);border-color:rgba(255,255,255,.06)}
+.slide-frame::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--signal-accent,var(--brand)),transparent);opacity:.4}
+.slide-label{display:inline-flex;align-items:center;gap:.4rem;padding:.2rem .6rem;border-radius:6px;font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--signal-accent,var(--text-3));background:color-mix(in srgb,var(--signal-accent,var(--brand)) 6%,transparent);border:1px solid color-mix(in srgb,var(--signal-accent,var(--brand)) 12%,transparent);margin-bottom:1rem}
+
+/* Subsection divider line */
+.sub-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:2.5rem 0}
+
+/* More breathing room in signal sections */
+.signal-section .section-inner{padding-top:3rem;padding-bottom:3rem}
+.signal-section .two-col,.signal-section .two-col-60{margin-bottom:1.5rem}
+
+/* Chart cards need more bottom margin */
+.signal-section .chart-card{margin-bottom:1rem}
+
+/* Stat callouts need gaps */
+.signal-section .stat-callout{margin-bottom:.75rem}
+
+/* Tier groups need spacing */
+.signal-section .tier-group{margin-top:1.5rem}
+
+/* Insight boxes more prominent spacing */
+.signal-section .insight-box{margin-top:1.25rem;margin-bottom:1.25rem}
+
+/* So-what callouts more breathing room */
+.so-what{margin:2.5rem 0}
+
+/* Spotlight cards more breathing room */
+.spotlight{margin:2.5rem 0}
+
+/* Headline stat more space below */
+.headline-stat{padding:2.5rem 0 2rem}
+
+/* Sub-panels within maturity */
+.sub-panel{padding:2rem;margin:1.5rem 0}
+
+/* Detail toggle */
+.detail-toggle-bar{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-top:2rem;padding:.6rem 1.2rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:.72rem;font-weight:600;color:var(--text-2);transition:all .3s}
+.detail-toggle-bar:hover{background:color-mix(in srgb,var(--brand) 4%,var(--surface));border-color:var(--brand);color:var(--brand)}
+.detail-toggle-bar .arr{display:inline-block;transition:transform .3s;font-size:.55rem}
+.detail-toggle-bar.open .arr{transform:rotate(180deg)}
+.detail-section{max-height:0;overflow:hidden;transition:max-height .6s cubic-bezier(.16,1,.3,1),opacity .4s;opacity:0}
+.detail-section.open{max-height:5000px;opacity:1;margin-top:1.5rem}
+
+
+.signal-section[style*="section-dark"] .signal-badge{background:var(--signal-accent)}
+[data-theme="dark"] .signal-section[style*="section-dark"]::before{background:linear-gradient(90deg,color-mix(in srgb,var(--signal-accent) 12%,transparent),transparent)}
+
+.flip-card{perspective:1400px;cursor:pointer;display:flex;flex-direction:column}
+.flip-card-inner{display:grid;width:100%;flex:1;transition:transform .65s cubic-bezier(.16,1,.3,1);transform-style:preserve-3d}
+.flip-card-front,.flip-card-back{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;border:1px solid var(--border);background:var(--surface);padding:1.5rem;display:flex;flex-direction:column}
+.flip-card-back{transform:rotateY(180deg)}
+.flip-card.flipped .flip-card-inner{transform:rotateY(180deg)}
+.flip-card-front{transition:box-shadow .3s,transform .3s}
+.flip-card:hover:not(.flipped) .flip-card-front{box-shadow:0 8px 32px rgba(0,0,0,.07);transform:translateY(-2px)}
+[data-theme="dark"] .flip-card:hover:not(.flipped) .flip-card-front{box-shadow:0 8px 32px rgba(0,0,0,.25)}
+.flip-card-hint{margin-top:auto;padding-top:.85rem;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:.3rem;opacity:.4;transition:opacity .2s}
+.flip-card:hover .flip-card-hint{opacity:.9}
+
+/* Force signal section borders */
+#reach.signal-section{border-left:6px solid #0EA5E9 !important;box-shadow:inset 6px 0 20px -6px rgba(14,165,233,.2) !important}
+#habit.signal-section{border-left:6px solid #F59E0B !important;box-shadow:inset 6px 0 20px -6px rgba(245,158,11,.2) !important}
+#skill.signal-section{border-left:6px solid #7B2FF2 !important;box-shadow:inset 6px 0 20px -6px rgba(123,47,242,.2) !important}
+#value.signal-section{border-left:6px solid #10B981 !important;box-shadow:inset 6px 0 20px -6px rgba(16,185,129,.2) !important}
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+<button class="export-btn" onclick="exportToPDF()" id="exportBtn">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+  Export PDF
+</button>
+
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.4 8.2L21 9.2L16 13.8L17.2 20.4L12 17.4L6.8 20.4L8 13.8L3 9.2L9.6 8.2Z" fill="url(#cpGrad)"/><defs><linearGradient id="cpGrad" x1="3" y1="2" x2="21" y2="20"><stop offset="0%" stop-color="#7B2FF2"/><stop offset="33%" stop-color="#2264E5"/><stop offset="66%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="#10B981"/></linearGradient></defs></svg>
+      Frontier Firm Assessment
+    </div>
+    <div class="nav-links">
+      <a href="#overview" class="nav-link active" data-section="overview">Overview</a>
+      <a href="#framework" class="nav-link" data-section="framework">Framework</a>
+      <a href="#summary" class="nav-link" data-section="summary">Summary</a>
+      <a href="#reach" class="nav-link" data-section="reach">Reach</a>
+      <a href="#habit" class="nav-link" data-section="habit">Habit</a>
+      <a href="#skill" class="nav-link" data-section="skill">Skill</a>
+      <a href="#value" class="nav-link" data-section="value">Value</a>
+      <a href="#maturity" class="nav-link" data-section="maturity">Maturity</a>
+      <a href="#actions" class="nav-link" data-section="actions">Actions</a>
+    </div>
+    
+  </div>
+</nav>
+
+<!-- 1. HERO -->
+<section class="hero section" id="overview">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><span class="hero-dot"></span>Frontier Firm Assessment</div>
+    <h1>{{CUSTOMER_NAME}}'s AI Journey:<br><span class="accent">Scale Achieved, Depth Next</span></h1>
+    <p class="hero-sub">A data-driven assessment of AI maturity across {{TOTAL_ACTIVE_USERS}}+ users, 16 metrics, and 4 signals of the Microsoft Frontier Firm Framework.</p>
+    <div class="hero-kpis">
+      <div class="hero-kpi" style="--kpi-color:#7B2FF2"><div class="hero-kpi-val"><span class="counter" data-target="{{TOTAL_ACTIVE_USERS}}">0</span></div><div class="hero-kpi-label">Active Users<br>Across All Tiers</div></div>
+      <div class="hero-kpi" style="--kpi-color:#2264E5"><div class="hero-kpi-val"><span class="counter" data-target="{{LICENSED_USERS}}">0</span></div><div class="hero-kpi-label">Licensed M365<br>Copilot Users</div></div>
+      <div class="hero-kpi" style="--kpi-color:#0EA5E9"><div class="hero-kpi-val"><span class="counter" data-target="{{AGENT_USERS}}">0</span></div><div class="hero-kpi-label">Agent Users<br>{{AGENT_ADOPTION}}% Adoption</div></div>
+      <div class="hero-kpi" style="--kpi-color:#10B981"><div class="hero-kpi-val"><span class="counter" data-target="{{M365_RETENTION_INT}}" data-suffix="%">0</span></div><div class="hero-kpi-label">Licensed MoM<br>Retention Rate</div></div>
+    </div>
+  </div>
+  <div class="hero-scroll"><span>Scroll to explore</span><div class="scroll-arrow"></div></div>
+</section>
+
+
+<section class="section" id="framework" style="background:var(--bg)">
+  <div class="section-inner">
+    <div class="section-label reveal">Frontier Firm Framework</div>
+    <h2 class="section-title reveal reveal-d1">What is a Frontier Firm?</h2>
+    <p class="section-subtitle reveal reveal-d2">A Frontier Firm is an organisation where humans and AI agents work together as teams on live workflows — not just individuals using AI as a personal tool. Microsoft defines three phases of this transformation.</p>
+
+    <p style="font-size:.72rem;color:var(--text-3);margin:.75rem 0 1.5rem;font-style:italic" class="reveal reveal-d3">Click each phase card to explore what it looks like in practice.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:.5rem" class="reveal reveal-d3">
+<!-- Phase 1 flip card -->
+      <div class="flip-card" role="button" aria-label="Phase 1: Foundation — click to explore">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="border-top:3px solid var(--brand)">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(34,100,229,.1);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;color:var(--brand);font-weight:800;font-size:1rem;margin-bottom:.75rem">1</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.3rem">Phase 1 · Foundation</div>
+            <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human with Assistant</div>
+            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">Copilot augments individual work. Employees use AI to draft, summarise and research — but it's a personal tool, not yet part of shared team workflows.</p>
+            <div class="flip-card-hint" style="color:var(--brand)">Explore Phase 1 <span>→</span></div>
+          </div>
+          <div class="flip-card-back" style="border-top:3px solid var(--brand);background:rgba(34,100,229,.03)">
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.75rem">Phase 1 · Foundation</div>
+            <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
+            <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Copilot is deployed but usage varies widely — heavy users sit alongside those who rarely open it</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>AI helps with individual tasks — drafting emails, summarising meetings, one-off searches</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>No consistent team-level routines or delegated workflows yet</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Agents exist but are mostly personal or unused beyond their creator</div>
+            </div>
+            <div class="flip-card-hint" style="color:var(--brand)">← Flip back</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 2 flip card -->
+      <div class="flip-card" role="button" aria-label="Phase 2: Expansion — click to explore">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="border-top:3px solid var(--copilot-purple)">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(123,47,242,.1);border:2px solid var(--copilot-purple);display:flex;align-items:center;justify-content:center;color:var(--copilot-purple);font-weight:800;font-size:1rem;margin-bottom:.75rem">2</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.3rem">Phase 2 · Expansion</div>
+            <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human-Agent Teams</div>
+            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">Teams delegate tasks to AI agents embedded in real workflows. Human-agent collaboration becomes a repeating pattern — not a one-off experiment.</p>
+            <div class="flip-card-hint" style="color:var(--copilot-purple)">Explore Phase 2 <span>→</span></div>
+          </div>
+          <div class="flip-card-back" style="border-top:3px solid var(--copilot-purple);background:rgba(123,47,242,.03)">
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.75rem">Phase 2 · Expansion</div>
+            <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
+            <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Specific teams have agents embedded in daily workflows — not just experimenting</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Humans delegate defined tasks — research, triage, note-taking — to agents on a routine basis</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Some agents are shared across teams with high multi-session, high-return usage</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Habits are forming but not yet consistent across the full workforce</div>
+            </div>
+            <div class="flip-card-hint" style="color:var(--copilot-purple)">← Flip back</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 3 flip card -->
+      <div class="flip-card" role="button" aria-label="Phase 3: Frontier — click to explore">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="border-top:3px solid var(--copilot-green)">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(16,185,129,.1);border:2px solid var(--copilot-green);display:flex;align-items:center;justify-content:center;color:var(--copilot-green);font-weight:800;font-size:1rem;margin-bottom:.75rem">3</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.3rem">Phase 3 · Frontier</div>
+            <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human-Led, Agent-Operated</div>
+            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">AI agents run enterprise workflows end-to-end. Humans set direction and govern outcomes — agents execute. AI is embedded in how the organisation operates, not just how individuals work.</p>
+            <div class="flip-card-hint" style="color:var(--copilot-green)">Explore Phase 3 <span>→</span></div>
+          </div>
+          <div class="flip-card-back" style="border-top:3px solid var(--copilot-green);background:rgba(16,185,129,.03)">
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.75rem">Phase 3 · Frontier</div>
+            <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
+            <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Agents execute complete workflows — onboarding, incident response, reporting — with minimal human intervention per step</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>A governed agent catalogue spans all major business functions with active Keep/Review/Retire cycles</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>70%+ of licensed users are active; most interact with 3+ agents across multiple workflows</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Humans focus on strategy, exception-handling, and governance — not execution</div>
+            </div>
+            <div class="flip-card-hint" style="color:var(--copilot-green)">← Flip back</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="whatittakes" style="background:var(--bg)">
+  <div class="section-inner">
+    <div class="section-label reveal">The Signals</div>
+    <h2 class="section-title reveal reveal-d1">What it takes to move an organisation to the Frontier</h2>
+    <p class="section-subtitle reveal reveal-d2">Frontier Firm progress isn’t measured in licenses or logins. It’s measured in behaviour — across every person, team, and function. Three observable signals tell the story.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2.5rem 0 0" class="reveal reveal-d3">
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid #0EA5E9;border-top:3px solid #0EA5E9;border-radius:0 0 12px 12px;padding:1.5rem;position:relative;overflow:hidden"><div style="position:absolute;top:0;left:0;width:80px;height:100%;background:linear-gradient(90deg,rgba(14,165,233,.06),transparent);pointer-events:none"></div>
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#0EA5E9;margin-bottom:.5rem">Spread it across the org</div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text);font-family:'Outfit',sans-serif;margin-bottom:.75rem">Reach</div>
+        <p style="font-size:.76rem;color:var(--text-2);line-height:1.65;margin:0">A Frontier Firm is not defined by a few power users — it’s defined by AI becoming a capability everyone relies on. This signal measures whether AI reaches across roles, teams, and functions.</p>
+      </div>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid #F59E0B;border-top:3px solid #F59E0B;border-radius:0 0 12px 12px;padding:1.5rem;position:relative;overflow:hidden"><div style="position:absolute;top:0;left:0;width:80px;height:100%;background:linear-gradient(90deg,rgba(245,158,11,.06),transparent);pointer-events:none"></div>
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#F59E0B;margin-bottom:.5rem">Turn use into routine</div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text);font-family:'Outfit',sans-serif;margin-bottom:.75rem">Habit</div>
+        <p style="font-size:.76rem;color:var(--text-2);line-height:1.65;margin:0">Occasional use doesn’t transform an organisation. Frontier Firms build AI into the daily rhythm of work. This signal measures whether people are converting from experimenters into habitual users.</p>
+      </div>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid #7B2FF2;border-top:3px solid #7B2FF2;border-radius:0 0 12px 12px;padding:1.5rem;position:relative;overflow:hidden"><div style="position:absolute;top:0;left:0;width:80px;height:100%;background:linear-gradient(90deg,rgba(123,47,242,.06),transparent);pointer-events:none"></div>
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#7B2FF2;margin-bottom:.5rem">Push past the basics</div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text);font-family:'Outfit',sans-serif;margin-bottom:.75rem">Skill</div>
+        <p style="font-size:.76rem;color:var(--text-2);line-height:1.65;margin:0">Early AI use is narrow and assistive. Advancing organisations move into sophisticated territory — directing agents, building multi-step workflows, using AI as a collaborator, not just a shortcut.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+<div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_0}}</div><div class="pull-quote-source">Frontier Firm Assessment</div></div>
+
+
+<section class="section" id="summary" style="background:var(--bg)">
+  <div class="section-inner">
+    <div class="section-label reveal">Executive Summary</div>
+    <h2 class="section-title reveal reveal-d1">The headlines</h2>
+    <p class="section-subtitle reveal reveal-d2">{{CUSTOMER_NAME}} is in <strong style="color:#A78BFA">{{PATTERN_LABEL}}</strong>. Here’s where they stand across the three signals.</p>
+    <div class="theme-grid" style="margin-top:1.5rem">
+      <div class="theme-card reveal reveal-d1" style="--accent:#0EA5E9">
+        <div class="theme-card-label" style="color:#0EA5E9">Reach: Strong</div>
+        <div class="theme-card-verdict">{{CUSTOMER_NAME}}: {{TOTAL_ACTIVE_USERS}} users deployed, {{M365_RETENTION}}% come back every month</div>
+        <h3 style="font-size:.82rem;font-weight:500;color:var(--text-2);margin-bottom:0">The rollout has landed</h3>
+        <div class="theme-card-body"><div style="flex:1;font-size:.75rem;color:var(--text-2);line-height:1.5">{{EXEC_SUMMARY_GOOD}}</div></div>
+        <div class="theme-card-sentiment sentiment-strong">&#10003; Strong foundation</div>
+      </div>
+      <div class="theme-card reveal reveal-d2" style="--accent:#F59E0B">
+        <div class="theme-card-label" style="color:#F59E0B">Habit: The bottleneck</div>
+        <div class="theme-card-verdict">Only {{M365_FREQUENCY}}% use it daily, most stick to {{M365_BREADTH}} apps</div>
+        <h3 style="font-size:.82rem;font-weight:500;color:var(--text-2);margin-bottom:0">Usage is wide but shallow</h3>
+        <div class="theme-card-body"><div style="flex:1;font-size:.75rem;color:var(--text-2);line-height:1.5">{{EXEC_SUMMARY_GAP}}</div></div>
+        <div class="theme-card-sentiment sentiment-caution">&#9888; Depth opportunity</div>
+      </div>
+      <div class="theme-card reveal reveal-d3" style="--accent:#10B981">
+        <div class="theme-card-label" style="color:#10B981">Skill + Value: The lever</div>
+        <div class="theme-card-verdict">{{TIME_SAVED_UNREALISED}} hours/year on the table + {{BAND_6_10_FMT}} users one nudge away</div>
+        <h3 style="font-size:.82rem;font-weight:500;color:var(--text-2);margin-bottom:0">Clear paths to double the impact</h3>
+        <div class="theme-card-body"><div style="flex:1;font-size:.75rem;color:var(--text-2);line-height:1.5">{{EXEC_SUMMARY_OPP}}</div></div>
+        <div class="theme-card-sentiment sentiment-strong">&#10003; Actionable levers</div>
+      </div>
+    </div>
+    <div class="reveal reveal-d4" style="text-align:center;margin-top:1.5rem;padding:.6rem 0">
+      <div style="display:inline-flex;align-items:center;gap:.6rem;font-size:.7rem;color:var(--text-3);font-weight:500">
+        <span style="color:#0EA5E9;font-weight:700">Deployed</span>
+        <span style="opacity:.3">→</span>
+        <span style="color:#F59E0B;font-weight:700">but shallow</span>
+        <span style="opacity:.3">→</span>
+        <span style="color:#10B981;font-weight:700">so here's the lever</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<section class="section signal-section" id="reach" style="background:var(--bg);--signal-accent:#0EA5E9">
+  <div class="section-inner">
+    <div class="section-label reveal">Reach</div><div class="signal-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Reach</div>
+    <h2 class="section-title reveal reveal-d1">{{TITLE_REACH}}</h2>
+    <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_REACH}}</p>
+    <div class="headline-stat reveal reveal-d2">
+      <div class="headline-stat-value">{{M365_ENABLEMENT}}%</div>
+      <div class="headline-stat-label">of {{TOTAL_LICENSED_SEATS}} licensed seats are active across {{ORG_COUNT}} organisations</div>
+      <span class="headline-stat-tier {{REACH_TIER_CLASS}}" style="background:rgba(14,165,233,.1);color:#0EA5E9;border:1px solid rgba(14,165,233,.15)">{{REACH_TIER}}</span>
+    </div>
+    <div class="tier-nav reveal reveal-d2">
+      <button class="tier-nav-btn active" data-tier="all">Overall</button>
+      <button class="tier-nav-btn" data-tier="m365">M365 Copilot</button>
+      <button class="tier-nav-btn" data-tier="agents">Agents</button>
+    </div>
+    <div class="slide-frame reveal" style="--signal-accent:#0EA5E9"><div class="slide-label">User Population</div><div class="tier-group" data-tier-content="all">
+    <div class="two-col-60 two-col reveal reveal-d3">
+      <div class="chart-card">
+        <div class="chart-card-title">User Population by Tier</div>
+        <div class="chart-card-sub">Total unique users across all access tiers</div>
+        <div style="height:280px"><canvas id="chartTiers"></canvas></div>
+        <div class="insight-box insight-box--success" style="--accent:var(--brand);margin-top:1rem"><div class="insight-box-eyebrow">Key Insight</div>{{INSIGHT_REACH_TIER}}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1rem">
+        <div class="stat-callout" style="--accent:#2264E5"><div class="stat-callout-val"><span class="counter" data-target="{{LICENSED_USERS}}">0</span></div><div class="stat-callout-label">Licensed M365 Copilot users -- highest engagement profile <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(34,100,229,.1);color:#2264E5;border:1px solid rgba(34,100,229,.15);margin-left:.4rem;vertical-align:middle">M365 Copilot</span></div></div>
+        <div class="stat-callout" style="--accent:#7B2FF2"><div class="stat-callout-val"><span class="counter" data-target="{{CHAT_USERS}}">0</span></div><div class="stat-callout-label">Unlicensed Chat users -- organic demand signal <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(14,165,233,.1);color:#0EA5E9;border:1px solid rgba(14,165,233,.15);margin-left:.4rem;vertical-align:middle">Copilot Chat</span></div></div>
+        <div class="stat-callout" style="--accent:#0EA5E9"><div class="stat-callout-val"><span class="counter" data-target="{{AGENT_USERS}}">0</span></div><div class="stat-callout-label">Agent users -- specialist cohort, {{AGENT_ADOPTION}}% adoption <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(123,47,242,.1);color:#7B2FF2;border:1px solid rgba(123,47,242,.15);margin-left:.4rem;vertical-align:middle">Agents</span></div></div>
+        <div class="insight-box" style="--accent:#0EA5E9"><div class="insight-box-eyebrow">Context</div><strong>{{TOTAL_LICENSED_SEATS}} total licensed seats</strong> with {{M365_ENABLEMENT}}% activation. The {{INACTIVE_LICENSES}} inactive licenses represent the fastest path to expanded engagement.</div>
+      </div>
+    </div>
+    
+    <div class="so-what reveal" style="--signal-accent:#0EA5E9">
+      <div class="so-what-text">{{INSIGHT_REACH}}</div>
+    </div>
+
+    <!-- Monthly active users trend -->
+    <div class="chart-card reveal" style="margin-top:1.5rem"><div class="chart-card-title">Monthly Active Users — Growth Trend</div><div class="chart-card-sub">Total unique active users per month across the analysis period</div><div class="tier-toggle" data-chart="monthlyUsers"><button class="tier-nav-btn tier-chart-btn active" data-tier="all">All Users</button><button class="tier-nav-btn tier-chart-btn" data-tier="m365">M365 Copilot</button><button class="tier-nav-btn tier-chart-btn" data-tier="chat">Copilot Chat</button><button class="tier-nav-btn tier-chart-btn" data-tier="agents">Agents</button></div><div style="height:260px"><canvas id="chartMonthlyUsers"></canvas></div></div>
+    <div class="insight-callout reveal" style="margin-top:1rem">{{INSIGHT_MONTHLY_GROWTH}}</div>
+
+    </div><!-- /tier-group overall --></div><!-- /slide-frame -->
+    <div class="tier-group" data-tier-content="m365">
+    <div class="tier-header" data-tier="m365"><span class="tier-header-badge m365">M365 Copilot</span><span class="tier-header-label">Licensed Copilot Engagement</span></div>
+    <div class="two-col reveal reveal-d4" style="margin-top:1rem">
+      <div class="chart-card"><div class="chart-card-title">Sessions per User -- Engagement Depth <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(34,100,229,.1);color:#2264E5;border:1px solid rgba(34,100,229,.15);margin-left:.4rem;vertical-align:middle">M365 Copilot</span> <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(14,165,233,.1);color:#0EA5E9;border:1px solid rgba(14,165,233,.15);margin-left:.4rem;vertical-align:middle">Copilot Chat</span> <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(123,47,242,.1);color:#7B2FF2;border:1px solid rgba(123,47,242,.15);margin-left:.4rem;vertical-align:middle">Agents</span></div><div class="chart-card-sub">Higher = more habitual usage per individual</div><div style="height:220px"><canvas id="chartEngagement"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Weekly Intensity by Tier <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(34,100,229,.1);color:#2264E5;border:1px solid rgba(34,100,229,.15);margin-left:.4rem;vertical-align:middle">M365 Copilot</span> <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(14,165,233,.1);color:#0EA5E9;border:1px solid rgba(14,165,233,.15);margin-left:.4rem;vertical-align:middle">Copilot Chat</span> <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(123,47,242,.1);color:#7B2FF2;border:1px solid rgba(123,47,242,.15);margin-left:.4rem;vertical-align:middle">Agents</span></div><div class="chart-card-sub">Avg sessions per user per week</div><div style="height:220px"><canvas id="chartWeekly"></canvas></div></div>
+    </div>
+    <div class="insight-callout reveal" style="margin-top:1rem">{{INSIGHT_ENGAGEMENT_DEPTH}}</div>
+    <div style="margin-top:2.5rem" class="reveal reveal-d5">
+      <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">{{ORG_INTENSITY_HEADLINE}}</h3>
+      <p style="font-size:.88rem;color:var(--text-2);margin-bottom:1.5rem">{{ORG_INTENSITY_BODY}}</p>
+    </div>
+    </div><!-- /tier-group m365 -->
+    <div class="tier-group" data-tier-content="agents">
+    <div class="tier-header" data-tier="agents"><span class="tier-header-badge agents">Agents</span><span class="tier-header-label">Agent Adoption Across Organisations</span></div>
+    <div style="margin-top:1rem" class="reveal reveal-d5">
+      <h3 style="font-size:1rem;font-weight:700;margin-top:1rem;margin-bottom:.5rem">{{ORG_SCATTER_HEADLINE}}</h3>
+      <p style="font-size:.78rem;color:var(--text-2);margin-bottom:1rem">Each bubble represents an organisation. X-axis = M365 Copilot users, Y-axis = % using agents. Size = total sessions.</p>
+      <div style="height:320px"><canvas id="chartOrgScatter"></canvas></div>
+      <div style="display:flex;gap:1.25rem;justify-content:center;margin-top:.6rem;flex-wrap:wrap">
+        <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10B981"></span> 12%+ agents</span>
+        <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0EA5E9"></span> 8-12% agents</span>
+        <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7B2FF2"></span> 5-8% agents</span>
+        <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#94A3B8"></span> &lt;5% agents</span>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-top:1.25rem">
+        <span style="color:#10B981;font-weight:600;font-size:.8rem">Intensity signal:</span> <span style="font-size:.82rem;color:var(--text-2)">{{ORG_INTENSITY_COMPARISON}}</span>
+      </div>
+      <div class="insight-box insight-box--opportunity" style="--accent:var(--copilot-teal);margin-top:1rem"><div class="insight-box-eyebrow">Organisation Insight</div>{{ORG_AGENT_INSIGHT}}</div>
+    </div>
+    </div><!-- /tier-group agents -->
+  </div>
+</section>
+
+<div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_1}}</div><div class="pull-quote-source">Next: Habit</div></div>
+
+<section class="section signal-section" id="habit" style="--signal-accent:#F59E0B">
+  <div class="section-inner">
+    <div class="section-label reveal">Habit</div><div class="signal-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Habit</div>
+    <h2 class="section-title reveal reveal-d1">{{TITLE_HABIT}}</h2>
+    <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_HABIT}}</p>
+    <div class="headline-stat reveal reveal-d2">
+      <div class="headline-stat-value">{{M365_RETENTION}}%</div>
+      <div class="headline-stat-label">month-over-month retention — but only {{M365_FREQUENCY}}% are habitual (11+ active days)</div>
+      <span class="headline-stat-tier {{HABIT_TIER_CLASS}}" style="background:rgba(245,158,11,.1);color:#F59E0B;border:1px solid rgba(245,158,11,.15)">{{HABIT_TIER}}</span>
+    </div>
+
+    <!-- Retention first — the headline signal -->
+    <div class="slide-frame reveal" style="--signal-accent:#F59E0B;margin-top:1.5rem">
+      <div class="slide-label">Retention Strength</div>
+      <div class="retention-grid reveal reveal-d1" style="background:var(--section-dark);border-radius:16px;padding:2rem;color:#fff;border:1px solid rgba(245,158,11,.15)">
+        <div>
+          <div class="retention-bar-container"><div class="retention-bar-label"><span>Licensed M365 Copilot</span><span>{{M365_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{M365_RETENTION}}" style="width:0;background:linear-gradient(90deg,#2264E5,#4A8AFF)"></div><div class="retention-threshold" style="left:50%"><span class="retention-threshold-label">50%</span></div><div class="retention-threshold" style="left:70%"><span class="retention-threshold-label">70%</span></div><div class="retention-threshold" style="left:85%"><span class="retention-threshold-label">85%</span></div></div></div>
+          <div class="retention-bar-container"><div class="retention-bar-label"><span>Unlicensed Chat</span><span>{{CHAT_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{CHAT_RETENTION}}" style="width:0;background:linear-gradient(90deg,#7B2FF2,#9B5FFF)"></div></div></div>
+          <div class="retention-bar-container"><div class="retention-bar-label"><span>Agent Users</span><span>{{AGENT_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{AGENT_RETENTION}}" style="width:0;background:linear-gradient(90deg,#0EA5E9,#38BDF8)"></div></div></div>
+          <div style="padding:.75rem 1rem;background:rgba(245,158,11,.06);border-left:3px solid #F59E0B;border-radius:0 8px 8px 0;margin-top:1rem;font-size:.75rem;color:rgba(255,255,255,.6);line-height:1.5">{{RETENTION_CORRECTION_NOTE}}</div>
+        </div>
+        <div style="text-align:center">
+          <div style="height:240px"><canvas id="chartRetention"></canvas></div>
+          <p style="font-size:.78rem;color:rgba(255,255,255,.5);margin-top:.4rem;line-height:1.4"><strong style="color:#fff">{{RETAINED_USERS_FMT}}</strong> of {{RETENTION_COHORT_FMT}} users from {{RETENTION_MONTH_FROM}} returned in {{RETENTION_MONTH_TO}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Monthly cohort flow -->
+    <div class="slide-frame reveal" style="--signal-accent:#F59E0B;margin-top:1.5rem">
+      <div class="slide-label">Monthly Cohort Flow</div>
+      <div class="two-col reveal reveal-d1">
+        <div class="chart-card" style="flex:1.5"><div class="chart-card-title">Month-over-Month User Flow</div><div class="chart-card-sub">Retained (came back) + New (first time) + Churned (didn't return)</div><div class="tier-toggle" data-chart="cohortFlow"><button class="tier-nav-btn tier-chart-btn active" data-tier="all">All Users</button><button class="tier-nav-btn tier-chart-btn" data-tier="m365">M365 Copilot</button><button class="tier-nav-btn tier-chart-btn" data-tier="chat">Copilot Chat</button><button class="tier-nav-btn tier-chart-btn" data-tier="agents">Agents</button></div><div style="height:280px"><canvas id="chartCohortFlow"></canvas></div></div>
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div class="stat-callout" style="--accent:#2264E5"><div class="stat-callout-val">{{M365_RETENTION}}%</div><div class="stat-callout-label">licensed M365 Copilot users retained month-over-month</div></div>
+          <div class="stat-callout" style="--accent:#0EA5E9"><div class="stat-callout-val">{{CHAT_RETENTION}}%</div><div class="stat-callout-label">unlicensed Chat users retained — {{COHORT_CHURN_DELTA}} lower than licensed</div></div>
+          <div class="stat-callout" style="--accent:#7B2FF2"><div class="stat-callout-val">{{AGENT_RETENTION}}%</div><div class="stat-callout-label">agent users retained — highest churn signals experimental usage</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="so-what reveal" style="--signal-accent:#F59E0B;margin-top:1.5rem">
+      <div class="so-what-text">{{INSIGHT_HABIT}}</div>
+    </div>
+
+    <!-- Habit formation comparison -->
+    <div class="slide-frame reveal" style="--signal-accent:#F59E0B;margin-top:1.5rem">
+      <div class="slide-label">Habit Depth</div>
+      <div class="two-col reveal reveal-d1">
+        <div class="chart-card" style="flex:1.5;margin-bottom:0">
+          <div class="chart-card-title">Active Day Distribution — Monthly Trend</div>
+          <div class="chart-card-sub">How the frequency mix evolves over time. "Habitual" (11+ days) is the metric that matters.</div>
+          <div class="tier-toggle" data-chart="habit"><button class="tier-nav-btn tier-chart-btn active" data-tier="m365">M365 Copilot</button><button class="tier-nav-btn tier-chart-btn" data-tier="chat">Copilot Chat</button><button class="tier-nav-btn tier-chart-btn" data-tier="agents">Agents</button></div>
+          <div style="height:280px"><canvas id="chartHabit"></canvas></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div class="stat-callout" style="--accent:#2264E5"><div class="stat-callout-val">{{BAND_11_15_PCT}}%</div><div class="stat-callout-label">licensed M365 Copilot users are habitual (11+ days/month)</div></div>
+          <div class="stat-callout" style="--accent:#7B2FF2"><div class="stat-callout-val">{{AGENT_HABITUAL_PCT}}%</div><div class="stat-callout-label">agent users are habitual — almost all usage is experimental</div></div>
+          <div class="stat-callout" style="--accent:#10B981"><div class="stat-callout-val">{{BAND_6_10_FMT}}</div><div class="stat-callout-label">users in the 6–10 day bracket — one nudge from habitual</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spotlight reveal" style="--signal-accent:#F59E0B;margin-top:1.5rem">
+      <div class="spotlight-icon">✨</div>
+      <div class="spotlight-title">The conversion opportunity hiding in plain sight</div>
+      <div class="spotlight-body">{{SPOTLIGHT_HABIT}}</div>
+    </div>
+
+    <div class="insight-box reveal" style="--accent:var(--amber);margin-top:1.5rem"><div class="insight-box-eyebrow" style="color:var(--amber)">Geographic Pattern</div>{{GEO_PATTERN_INSIGHT}}</div>
+  </div>
+</section>
+
+<div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_2}}</div><div class="pull-quote-source">Next: Skill</div></div>
+
+<section class="section signal-section" id="skill" style="background:var(--bg);--signal-accent:#7B2FF2">
+  <div class="section-inner">
+    <div class="section-label reveal">Skill</div><div class="signal-badge"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Skill</div>
+    <h2 class="section-title reveal reveal-d1">{{TITLE_SKILL}}</h2>
+    <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_SKILL}}</p>
+    <div class="headline-stat reveal reveal-d2">
+      <div class="headline-stat-value">{{M365_BREADTH}}</div>
+      <div class="headline-stat-label">apps per user out of 27 available — with only {{COMPLEX_SESSIONS}}% of sessions involving complex multi-turn work</div>
+      <span class="headline-stat-tier {{SKILL_TIER_CLASS}}" style="background:rgba(123,47,242,.1);color:#7B2FF2;border:1px solid rgba(123,47,242,.15)">{{SKILL_TIER}}</span>
+    </div>
+    <div class="tier-nav reveal reveal-d2">
+      <button class="tier-nav-btn active" data-tier="all">Overall</button>
+      <button class="tier-nav-btn" data-tier="m365">M365 Copilot</button>
+      <button class="tier-nav-btn" data-tier="agents">Agents</button>
+    </div>
+    <div class="tier-group" data-tier-content="all">
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:2rem" class="reveal reveal-d1">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center">
+        <div style="font-size:2rem;font-weight:900;color:var(--brand)">{{M365_BREADTH}}</div>
+        <div style="font-size:.75rem;color:var(--text-2)">apps/user of <strong>27</strong> available</div>
+        <span style="display:inline-block;padding:.15rem .5rem;border-radius:100px;font-size:.6rem;font-weight:600;background:rgba(34,100,229,.1);color:var(--brand);border:1px solid rgba(34,100,229,.2);margin-top:.4rem">M365 Copilot</span>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center">
+        <div style="font-size:2rem;font-weight:900;color:var(--purple)">{{COMPLEX_SESSIONS}}%</div>
+        <div style="font-size:.75rem;color:var(--text-2)">complex sessions (2+ prompts)</div>
+        <span style="display:inline-block;padding:.15rem .5rem;border-radius:100px;font-size:.6rem;font-weight:600;background:rgba(123,47,242,.1);color:var(--purple);border:1px solid rgba(123,47,242,.2);margin-top:.4rem">Multi-turn depth</span>
+      </div>
+    </div>
+    
+    <div class="so-what reveal" style="--signal-accent:#7B2FF2">
+      <div class="so-what-text">{{INSIGHT_SKILL}}</div>
+    </div></div><!-- /tier-group overall -->
+    <div class="tier-group" data-tier-content="m365">
+    <div class="tier-header" data-tier="m365"><span class="tier-header-badge m365">M365 Copilot</span><span class="tier-header-label">Licensed Copilot Proficiency</span></div>
+    <div style="margin-top:1rem" class="reveal reveal-d2">
+      <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">M365 Copilot App Surface Distribution <span style="display:inline-block;padding:.15rem .5rem;border-radius:100px;font-size:.6rem;font-weight:600;background:rgba(34,100,229,.1);color:var(--brand);border:1px solid rgba(34,100,229,.2)">M365 Copilot</span></h3>
+      <p style="font-size:.88rem;color:var(--text-2);margin-bottom:1.5rem">With only {{M365_BREADTH}} apps/user average, expanding into Teams meetings and Outlook email workflows is the fastest path to depth.</p>
+      <div style="display:flex;flex-direction:column;gap:.5rem;max-width:700px">
+        {{APP_SURFACE_BARS}}
+      </div>
+      <div class="insight-box insight-box--warning" style="--accent:#F59E0B;margin-top:1.25rem"><div class="insight-box-eyebrow">Growth Signal</div>{{SKILL_GROWTH_SIGNAL}}</div>
+      <p style="font-size:.72rem;color:var(--text-3);margin-top:1rem">{{ORG_FUNCTION_SUMMARY}}</p>
+    </div>
+    </div><!-- /tier-group m365 -->
+    <div class="detail-toggle-bar reveal" style="margin-top:1.5rem" onclick="this.classList.toggle('open');document.getElementById('agentDeepDive').classList.toggle('open')"><span>View detailed agent analysis</span><span class="arr">&#9660;</span></div><div class="detail-section" id="agentDeepDive"><div class="tier-group" data-tier-content="agents">
+    <div class="tier-header" data-tier="agents"><span class="tier-header-badge agents">Agents</span><span class="tier-header-label">Agent Ecosystem & Proficiency</span></div>
+    <div class="agent-grid">
+      <div class="agent-panel reveal reveal-d2">
+        <h3>The Discovery Gap <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(123,47,242,.1);color:#7B2FF2;border:1px solid rgba(123,47,242,.15);margin-left:.4rem;vertical-align:middle">Agents</span></h3>
+        <div class="circle-compare"><div class="compare-circle compare-big"><span class="num"><span class="counter" data-target="{{TOTAL_AGENTS}}">0</span></span><span class="lbl">Total Agents</span></div><span class="compare-vs">vs</span><div class="compare-circle compare-small"><span class="num"><span class="counter" data-target="{{MULTI_USER_AGENTS}}">0</span></span><span class="lbl">Multi-User<br>Agents</span></div></div>
+        <p style="text-align:center;font-size:.82rem;color:var(--text-3)">Only <strong style="color:var(--brand);font-size:1.05rem">{{AGENT_MULTI_USER_PCT}}%</strong> of agents have 2+ users</p>
+        <div class="insight-box insight-box--success" style="--accent:var(--purple);margin-top:1rem"><div class="insight-box-eyebrow">Quality Signal</div>{{AGENT_QUALITY_INSIGHT}}</div>
+      </div>
+      <div class="agent-panel reveal reveal-d3">
+        <h3>Agent Portfolio Health <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(123,47,242,.1);color:#7B2FF2;border:1px solid rgba(123,47,242,.15);margin-left:.4rem;vertical-align:middle">Agents</span></h3>
+        <div style="position:relative;height:240px;margin-bottom:1.25rem">
+          <canvas id="chartAgentHealth"></canvas>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none">
+            <div style="font-size:1.6rem;font-weight:800;color:var(--text)">{{TOTAL_AGENTS_FMT}}</div>
+            <div style="font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3)">Total Agents</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem">
+          <div style="background:rgba(34,100,229,.06);border:1px solid rgba(34,100,229,.18);border-radius:8px;padding:.6rem;text-align:center">
+            <div style="font-size:1.1rem;font-weight:800;color:#2264E5">{{AGENTS_KEEP_FMT}}</div>
+            <div style="font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Keep</div>
+          </div>
+          <div style="background:rgba(123,47,242,.06);border:1px solid rgba(123,47,242,.18);border-radius:8px;padding:.6rem;text-align:center">
+            <div style="font-size:1.1rem;font-weight:800;color:#7B2FF2">{{AGENTS_REVIEW_FMT}}</div>
+            <div style="font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Review</div>
+          </div>
+          <div style="background:rgba(148,163,184,.06);border:1px solid rgba(148,163,184,.18);border-radius:8px;padding:.6rem;text-align:center">
+            <div style="font-size:1.1rem;font-weight:800;color:#94A3B8">{{AGENTS_DORMANT_FMT}}</div>
+            <div style="font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Dormant</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 2. The Good Agents — full performance table -->
+    <div style="margin-top:2rem" class="reveal reveal-d4">
+      <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">Top Agents by Impact <span style="display:inline-block;padding:.15rem .5rem;border-radius:100px;font-size:.6rem;font-weight:600;background:rgba(123,47,242,.1);color:var(--purple);border:1px solid rgba(123,47,242,.2)">Agents</span></h3>
+      <p style="font-size:.85rem;color:var(--text-2);margin-bottom:1.25rem">The agents that matter most — ranked by total sessions with type, reach and stickiness.</p>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:.78rem">
+          <thead><tr style="border-bottom:2px solid var(--border)"><th style="text-align:left;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Agent</th><th style="text-align:left;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Type</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Users</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Sessions</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Sess/User</th></tr></thead>
+          <tbody>{{AGENT_TABLE_ROWS}}</tbody>
+        </table>
+      </div>
+      <div class="insight-box" style="--accent:var(--purple);margin-top:1.25rem">
+        <div class="insight-box-eyebrow" style="color:var(--purple)">Agent Proficiency</div>
+        {{AGENT_PROFICIENCY_INSIGHT}}
+      </div>
+    </div>
+    <!-- 3. The Governance Problem — donut already above, governance callout here -->
+    <div style="margin-top:2.5rem" class="reveal reveal-d5">
+      <h3 style="font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:1rem">Agent Governance</h3>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.25rem">
+        <div style="background:rgba(34,100,229,.06);border:1px solid rgba(34,100,229,.15);border-bottom:3px solid #2264E5;border-radius:8px;padding:1rem;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#2264E5;font-variant-numeric:tabular-nums">{{AGENTS_KEEP_FMT}}</div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-top:.2rem">Keep</div></div>
+        <div style="background:rgba(123,47,242,.06);border:1px solid rgba(123,47,242,.15);border-bottom:3px solid #7B2FF2;border-radius:8px;padding:1rem;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#7B2FF2;font-variant-numeric:tabular-nums">{{AGENTS_REVIEW_FMT}}</div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-top:.2rem">Under Review</div></div>
+        <div style="background:rgba(148,163,184,.06);border:1px solid rgba(148,163,184,.15);border-bottom:3px solid #94A3B8;border-radius:8px;padding:1rem;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#94A3B8;font-variant-numeric:tabular-nums">{{AGENTS_DORMANT_FMT}}</div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-top:.2rem">Dormant</div></div>
+        <div style="background:rgba(100,116,139,.06);border:1px solid rgba(100,116,139,.15);border-bottom:3px solid #94A3B8;border-radius:8px;padding:1rem;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:var(--text-3);font-variant-numeric:tabular-nums">{{AGENTS_3P}}</div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-top:.2rem">3rd Party*</div></div>
+      </div>
+      <!-- 4. The Builders -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;border-top:3px solid var(--copilot-teal)">
+          <div style="font-size:1.6rem;font-weight:800;color:var(--copilot-teal)">{{AGENT_CREATORS}}</div>
+          <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-top:.15rem">Copilot Studio Builders</div>
+          <div style="font-size:.82rem;color:var(--text-2);line-height:1.5;margin-top:.5rem">{{AGENT_CREATORS_PCT}}% of licensed users have built or modified an agent — but few reach multi-user adoption.</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;border-top:3px solid var(--purple)">
+          <div style="font-size:1.6rem;font-weight:800;color:var(--purple)">{{MULTI_USER_AGENTS}}</div>
+          <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-top:.15rem">Multi-User Agents</div>
+          <div style="font-size:.82rem;color:var(--text-2);line-height:1.5;margin-top:.5rem">Only {{AGENT_MULTI_USER_PCT}}% of agents have 2+ users. The gap between building and sharing is the real bottleneck.</div>
+        </div>
+      </div>
+      <!-- 5. So What -->
+      <div style="padding:1rem 1.25rem;background:rgba(123,47,242,.04);border-left:4px solid var(--purple);border-radius:0 8px 8px 0;font-size:.85rem;line-height:1.6;color:var(--text-2)">
+        <div style="font-size:1.2rem;color:var(--purple);margin-bottom:.25rem;font-family:'Outfit',sans-serif;line-height:1">&ldquo;&rdquo;</div>
+        <strong style="color:var(--text)">{{CUSTOMER_NAME}} doesn't have an agent creation problem — it has an agent curation problem.</strong> Retire the dormant {{AGENTS_DORMANT_PCT}}%, spotlight the {{AGENTS_KEEP_PCT}}% that work, and create a governed catalogue for the best multi-user agents.
+      </div>
+      <p style="font-size:.68rem;color:var(--text-3);margin-top:.5rem;font-style:italic">* 3rd-party agent usage doesn't track in Purview audit logs. {{AGENTS_3P}} agents classified as ThirdParty are excluded from governance metrics.</p>
+    </div>
+    </div><!-- /tier-group agents --></div>
+  <div class="sub-divider"></div><div class="slide-frame reveal" style="--signal-accent:#7B2FF2"><div class="slide-label">Agent Ecosystem</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1rem"><div style="text-align:center;padding:1rem;background:color-mix(in srgb,#7B2FF2 4%,var(--surface));border:1px solid color-mix(in srgb,#7B2FF2 10%,var(--border));border-radius:12px"><div style="font-size:1.8rem;font-weight:800;color:#7B2FF2">{{TOTAL_AGENTS_FMT}}</div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-top:.2rem">Total Agents</div></div><div style="text-align:center;padding:1rem;background:color-mix(in srgb,#7B2FF2 4%,var(--surface));border:1px solid color-mix(in srgb,#7B2FF2 10%,var(--border));border-radius:12px"><div style="font-size:1.8rem;font-weight:800;color:#7B2FF2">{{MULTI_USER_AGENTS}}</div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-top:.2rem">Multi-User</div></div><div style="text-align:center;padding:1rem;background:color-mix(in srgb,#10B981 4%,var(--surface));border:1px solid color-mix(in srgb,#10B981 10%,var(--border));border-radius:12px"><div style="font-size:1.8rem;font-weight:800;color:#10B981">{{AGENT_CREATORS}}</div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-top:.2rem">Agent Creators ({{AGENT_CREATORS_PCT}}%)</div></div></div><div class="spotlight" style="--signal-accent:#7B2FF2;margin:1rem 0 0"><div class="spotlight-icon">✨</div><div class="spotlight-title">The agent paradox</div><div class="spotlight-body">{{SPOTLIGHT_AGENTS}}</div></div></div></div>
+</section>
+
+<div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_3}}</div><div class="pull-quote-source">Next: Value</div></div>
+
+<section class="section signal-section" id="value" style="background:var(--section-dark);color:#fff;--signal-accent:#10B981">
+  <div class="section-inner">
+    <div class="section-label reveal" style="color:rgba(255,255,255,.4)">Value</div><div class="signal-badge"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Value</div>
+    <h2 class="section-title reveal reveal-d1" style="color:#fff">{{TITLE_VALUE}}</h2>
+    <p class="section-subtitle reveal reveal-d2" style="color:rgba(255,255,255,.5)">{{SUBTITLE_VALUE}}</p>
+    <div class="headline-stat reveal reveal-d2">
+      <div class="headline-stat-value" style="background:linear-gradient(135deg,#10B981,#0EA5E9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">{{TIME_SAVED_REALISED}}</div>
+      <div class="headline-stat-label" style="color:rgba(255,255,255,.6)">hours saved per year by active users — with {{TIME_SAVED_UNREALISED}} more unrealised from {{INACTIVE_LICENSES}} idle licenses</div>
+      <span class="headline-stat-tier {{VALUE_TIER_CLASS}}" style="background:rgba(16,185,129,.1);color:#10B981;border:1px solid rgba(16,185,129,.15)">{{VALUE_TIER}}</span>
+    </div>
+    <!-- 1. License Priority Matrix -->
+    <div class="slide-frame reveal reveal-d3" style="--signal-accent:#10B981;margin-top:2rem">
+      <div class="slide-label">License Priority</div>
+      <h3 style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:.5rem">Where to license next</h3>
+      <p style="font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:1.25rem">Organisations ranked by unlicensed demand intensity and licensing gap. Higher = stronger case for licensing.</p>
+      {{LICENSE_PRIORITY_TABLE}}
+      <div class="insight-callout reveal" style="margin-top:1rem;color:rgba(255,255,255,.85)">{{INSIGHT_LICENSE_PRIORITY}}</div>
+    </div>
+
+    <!-- 2. Unused Licenses -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem" class="reveal reveal-d4">
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:2rem;text-align:center">
+        <div style="position:relative;height:280px;max-width:280px;margin:0 auto">
+          <canvas id="chartLicense"></canvas>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none">
+            <div style="font-size:2rem;font-weight:900;color:#fff">{{TOTAL_LICENSED_SEATS_FMT}}</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4)">Total Seats</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:1rem">
+          <div style="text-align:center;padding:.6rem;background:rgba(34,100,229,.08);border:1px solid rgba(34,100,229,.15);border-radius:8px"><div style="font-size:1.1rem;font-weight:800;color:#4A8AFF">{{LICENSED_USERS_FMT}}</div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:rgba(255,255,255,.4);margin-top:.1rem">Active</div></div>
+          <div style="text-align:center;padding:.6rem;background:rgba(148,163,184,.06);border:1px solid rgba(148,163,184,.15);border-radius:8px"><div style="font-size:1.1rem;font-weight:800;color:rgba(255,255,255,.5)">{{INACTIVE_LICENSES_FMT}}</div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:rgba(255,255,255,.4);margin-top:.1rem">Idle</div></div>
+          <div style="text-align:center;padding:.6rem;background:rgba(34,100,229,.06);border:1px solid rgba(34,100,229,.1);border-radius:8px"><div style="font-size:1.1rem;font-weight:800;color:#2264E5">{{M365_ENABLEMENT}}%</div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:rgba(255,255,255,.4);margin-top:.1rem">Activation</div></div>
+        </div>
+      </div>
+      <!-- 3. Time Savings Comparison -->
+      <div>
+        <h3 style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:1rem">The licensing multiplier</h3>
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:1.25rem;margin-bottom:1rem">
+          <div style="display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-size:.82rem"><span>Licensed user <span style="display:inline-block;padding:.1rem .4rem;border-radius:100px;font-size:.55rem;font-weight:600;background:rgba(34,100,229,.1);color:#2264E5;border:1px solid rgba(34,100,229,.15);margin-left:.3rem;vertical-align:middle">M365</span></span><span style="font-weight:800;color:#fff">{{LICENSED_AVG_PROMPTS}} prompts &rarr; {{VALUE_LICENSED_HRS}} hrs/yr</span></div>
+          <div style="display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-size:.82rem"><span>Unlicensed user <span style="display:inline-block;padding:.1rem .4rem;border-radius:100px;font-size:.55rem;font-weight:600;background:rgba(14,165,233,.1);color:#0EA5E9;border:1px solid rgba(14,165,233,.15);margin-left:.3rem;vertical-align:middle">Chat</span></span><span style="font-weight:800;color:#fff">{{UNLICENSED_AVG_PROMPTS}} prompts &rarr; {{VALUE_UNLICENSED_HRS}} hrs/yr</span></div>
+          <div style="display:flex;justify-content:space-between;padding:.6rem 0;color:rgba(255,255,255,.7);font-size:.82rem"><span>Licensing uplift</span><span style="font-weight:800;color:#10B981;font-size:1rem">{{VALUE_MULTIPLIER}}x more depth</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div style="padding:1.25rem;background:rgba(16,185,129,.06);border:2px solid rgba(16,185,129,.2);border-radius:16px;text-align:center"><div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:.3rem">Realised Savings</div><div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:900;background:linear-gradient(90deg,#10B981,#0EA5E9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1">{{TIME_SAVED_REALISED}}</div><div style="font-size:.6rem;color:rgba(255,255,255,.5);margin-top:.35rem">hrs/yr from {{LICENSED_USERS_FMT}} licensed users</div></div>
+          <div style="padding:1.25rem;background:rgba(14,165,233,.06);border:2px solid rgba(14,165,233,.2);border-radius:16px;text-align:center"><div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:.3rem">If All Chat Users Licensed</div><div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:900;background:linear-gradient(90deg,#0EA5E9,#7B2FF2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1">+{{VALUE_CHAT_UPLIFT_K}}K</div><div style="font-size:.6rem;color:rgba(255,255,255,.5);margin-top:.35rem">additional hrs/yr from {{CHAT_USERS_FMT}} users</div></div>
+        </div>
+        <div style="margin-top:1rem;padding:1rem 1.25rem;background:rgba(16,185,129,.06);border-left:4px solid #10B981;border-radius:0 8px 8px 0;font-size:.82rem;color:rgba(255,255,255,.75);line-height:1.6">
+          <strong style="color:#fff">{{CHAT_USERS_FMT}} unlicensed Chat users</strong> currently save ~{{VALUE_CHAT_CURRENT_K}}K hrs/yr. Licensing them would unlock an additional <strong style="color:#10B981">~{{VALUE_CHAT_UPLIFT_K}}K hrs/yr</strong> through the {{VALUE_MULTIPLIER}}x engagement multiplier.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_4}}</div><div class="pull-quote-source">Next: Maturity Assessment</div></div>
+
+
+<section class="section" id="maturity" style="background:var(--bg)">
+  <div class="section-inner">
+    <div class="section-label reveal">Maturity Assessment</div>
+    <h2 class="section-title reveal reveal-d1">{{TITLE_MATURITY}}</h2>
+    <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_MATURITY}}</p>
+
+    <p style="font-size:.72rem;color:var(--text-3);margin:.75rem 0 1rem;font-style:italic" class="reveal reveal-d3"><p style="font-size:.72rem;color:var(--text-3);margin:.75rem 0 1rem;font-style:italic" class="reveal reveal-d3">Click each pattern to see what it looks like in practice.</p><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:.5rem" class="reveal reveal-d3">{{PHASE_1_WRAPPER_OPEN}}<!-- Phase 1 flip card -->
+      <div class="flip-card" role="button" aria-label="Phase 1: Foundation — click to explore">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="border-top:3px solid var(--brand)">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(34,100,229,.1);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;color:var(--brand);font-weight:800;font-size:1rem;margin-bottom:.75rem">1</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.3rem">Phase 1 · Foundation</div>
+            <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human with Assistant</div>
+            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">Copilot augments individual work. Employees use AI to draft, summarise and research — but it's a personal tool, not yet part of shared team workflows.</p>
+            <div class="flip-card-hint" style="color:var(--brand)">Explore Phase 1 <span>→</span></div>
+          </div>
+          <div class="flip-card-back" style="border-top:3px solid var(--brand);background:rgba(34,100,229,.03)">
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.75rem">Phase 1 · Foundation</div>
+            <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
+            <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Copilot is deployed but usage varies widely — heavy users sit alongside those who rarely open it</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>AI helps with individual tasks — drafting emails, summarising meetings, one-off searches</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>No consistent team-level routines or delegated workflows yet</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Agents exist but are mostly personal or unused beyond their creator</div>
+            </div>
+            <div class="flip-card-hint" style="color:var(--brand)">← Flip back</div>
+          </div>
+        </div>
+      </div>
+
+      </div>{{PHASE_2_WRAPPER_OPEN}}<!-- Phase 2 flip card -->
+      <div class="flip-card" role="button" aria-label="Phase 2: Expansion — click to explore">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="border-top:3px solid var(--copilot-purple){{PHASE_2_HIGHLIGHT}}">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(123,47,242,.1);border:2px solid var(--copilot-purple);display:flex;align-items:center;justify-content:center;color:var(--copilot-purple);font-weight:800;font-size:1rem;margin-bottom:.75rem">2</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.3rem">Phase 2 · Expansion</div>
+            <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human-Agent Teams</div>
+            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">Teams delegate tasks to AI agents embedded in real workflows. Human-agent collaboration becomes a repeating pattern — not a one-off experiment.</p>
+            <div class="flip-card-hint" style="color:var(--copilot-purple)">Explore Phase 2 <span>→</span></div>
+          </div>
+          <div class="flip-card-back" style="border-top:3px solid var(--copilot-purple);background:rgba(123,47,242,.03)">
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.75rem">Phase 2 · Expansion</div>
+            <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
+            <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Specific teams have agents embedded in daily workflows — not just experimenting</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Humans delegate defined tasks — research, triage, note-taking — to agents on a routine basis</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Some agents are shared across teams with high multi-session, high-return usage</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Habits are forming but not yet consistent across the full workforce</div>
+            </div>
+            <div class="flip-card-hint" style="color:var(--copilot-purple)">← Flip back</div>
+          </div>
+        </div>
+      </div>
+
+      </div>{{PHASE_3_WRAPPER_OPEN}}<!-- Phase 3 flip card -->
+      <div class="flip-card" role="button" aria-label="Phase 3: Frontier — click to explore">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="border-top:3px solid var(--copilot-green)">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(16,185,129,.1);border:2px solid var(--copilot-green);display:flex;align-items:center;justify-content:center;color:var(--copilot-green);font-weight:800;font-size:1rem;margin-bottom:.75rem">3</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.3rem">Phase 3 · Frontier</div>
+            <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human-Led, Agent-Operated</div>
+            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">AI agents run enterprise workflows end-to-end. Humans set direction and govern outcomes — agents execute. AI is embedded in how the organisation operates, not just how individuals work.</p>
+            <div class="flip-card-hint" style="color:var(--copilot-green)">Explore Phase 3 <span>→</span></div>
+          </div>
+          <div class="flip-card-back" style="border-top:3px solid var(--copilot-green);background:rgba(16,185,129,.03)">
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.75rem">Phase 3 · Frontier</div>
+            <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
+            <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Agents execute complete workflows — onboarding, incident response, reporting — with minimal human intervention per step</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>A governed agent catalogue spans all major business functions with active Keep/Review/Retire cycles</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>70%+ of licensed users are active; most interact with 3+ agents across multiple workflows</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Humans focus on strategy, exception-handling, and governance — not execution</div>
+            </div>
+            <div class="flip-card-hint" style="color:var(--copilot-green)">← Flip back</div>
+          </div>
+        </div>
+      </div></div></div>
+
+    <div class="sub-panel reveal reveal-d4" style="margin-top:2rem">
+      <div class="sub-panel-title" style="--signal-accent:#7B2FF2">Signal Assessment</div>
+      <div style="display:grid;grid-template-columns:100px 1fr auto;gap:.6rem .75rem;align-items:center">
+        <div style="font-size:.75rem;font-weight:600;color:#0EA5E9">Reach</div>
+        <div style="height:10px;border-radius:5px;background:var(--border);overflow:hidden"><div class="signal-gauge-fill" data-width="{{REACH_GAUGE}}" style="width:0;height:100%;border-radius:5px;background:linear-gradient(90deg,#0EA5E9,#38BDF8)"></div></div>
+        <span class="signal-tier {{REACH_TIER_CLASS}}" style="font-size:.55rem">{{REACH_TIER}}</span>
+        <div style="font-size:.75rem;font-weight:600;color:#F59E0B">Habit</div>
+        <div style="height:10px;border-radius:5px;background:var(--border);overflow:hidden"><div class="signal-gauge-fill" data-width="{{HABIT_GAUGE}}" style="width:0;height:100%;border-radius:5px;background:linear-gradient(90deg,#F59E0B,#FBBF24)"></div></div>
+        <span class="signal-tier {{HABIT_TIER_CLASS}}" style="font-size:.55rem">{{HABIT_TIER}}</span>
+        <div style="font-size:.75rem;font-weight:600;color:#7B2FF2">Skill</div>
+        <div style="height:10px;border-radius:5px;background:var(--border);overflow:hidden"><div class="signal-gauge-fill" data-width="{{SKILL_GAUGE}}" style="width:0;height:100%;border-radius:5px;background:linear-gradient(90deg,#7B2FF2,#9B5FFF)"></div></div>
+        <span class="signal-tier {{SKILL_TIER_CLASS}}" style="font-size:.55rem">{{SKILL_TIER}}</span>
+        <div style="font-size:.75rem;font-weight:600;color:#10B981">Value</div>
+        <div style="height:10px;border-radius:5px;background:var(--border);overflow:hidden"><div class="signal-gauge-fill" data-width="{{VALUE_GAUGE}}" style="width:0;height:100%;border-radius:5px;background:linear-gradient(90deg,#10B981,#34D399)"></div></div>
+        <span class="signal-tier {{VALUE_TIER_CLASS}}" style="font-size:.55rem">{{VALUE_TIER}}</span>
+      </div>
+    </div>
+
+    <div class="spotlight reveal reveal-d5" style="--signal-accent:#7B2FF2;margin-top:1.5rem">
+      <div class="spotlight-icon">✨</div>
+      <div class="spotlight-title">The path from Pattern {{PATTERN_NUMBER}} to Pattern {{PATTERN_NEXT}}</div>
+      <div class="spotlight-body">{{SPOTLIGHT_MATURITY}}</div>
+    </div>
+
+    <div class="detail-toggle-bar reveal" onclick="this.classList.toggle('open');document.getElementById('maturityDetail').classList.toggle('open')">
+      <span>View full 16-metric scorecard</span>
+      <span class="arr">&#9660;</span>
+    </div>
+    <div class="detail-section" id="maturityDetail">
+      <h3 style="font-size:.85rem;font-weight:700;color:#0EA5E9;text-transform:uppercase;letter-spacing:.06em;margin-top:1.5rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem"><span style="width:3px;height:16px;border-radius:2px;background:#0EA5E9;display:inline-block"></span> Reach Metrics</h3>
+      <div class="metrics-grid">
+        <div class="metric-card" data-metric-id="M365_ENABLEMENT" style="--tier-color:{{ENABLEMENT_TIER_COLOR}}"><div class="metric-card-header"><span class="metric-card-id">M365 Enablement</span><span class="metric-tier-badge {{ENABLEMENT_TIER_CLASS}}">{{ENABLEMENT_TIER_NAME}}</span></div><div class="metric-card-name">License Activation</div><div class="metric-card-value">{{M365_ENABLEMENT}}%</div><div class="metric-card-unit">% seats active</div></div>
+        <div class="metric-card" data-metric-id="LICENSE_COVERAGE" style="--tier-color:{{LIC_COVERAGE_TIER_COLOR}}"><div class="metric-card-header"><span class="metric-card-id">License Coverage</span><span class="metric-tier-badge {{LIC_COVERAGE_TIER_CLASS}}">{{LIC_COVERAGE_TIER_NAME}}</span></div><div class="metric-card-name">Users with License</div><div class="metric-card-value">{{LICENSE_COVERAGE_PCT}}%</div><div class="metric-card-unit">% of total users licensed</div></div>
+        <div class="metric-card" data-metric-id="M365_ADOPTION" style="--tier-color:{{ADOPTION_TIER_COLOR}}"><div class="metric-card-header"><span class="metric-card-id">M365 Adoption</span><span class="metric-tier-badge {{ADOPTION_TIER_CLASS}}">{{ADOPTION_TIER_NAME}}</span></div><div class="metric-card-name">Regular User Rate</div><div class="metric-card-value">{{M365_ADOPTION}}%</div><div class="metric-card-unit">% active with 6+ days</div></div>
+        <div class="metric-card" data-metric-id="CHAT_ADOPTION" style="--tier-color:var(--text-3);opacity:.7"><div class="metric-card-header"><span class="metric-card-id">Chat Adoption</span><span class="metric-tier-badge" style="background:rgba(148,163,184,.15);color:var(--text-3)">Contextual</span></div><div class="metric-card-name">Unlicensed Chat Users</div><div class="metric-card-value">{{CHAT_USERS_FMT}}</div><div class="metric-card-unit">user count</div></div>
+        <div class="metric-card" data-metric-id="AGENT_ADOPTION" style="--tier-color:{{AGENT_ADOPT_TIER_COLOR}}"><div class="metric-card-header"><span class="metric-card-id">Agent Adoption</span><span class="metric-tier-badge {{AGENT_ADOPT_TIER_CLASS}}">{{AGENT_ADOPT_TIER_NAME}}</span></div><div class="metric-card-name">Agent Adoption Rate</div><div class="metric-card-value">{{AGENT_ADOPTION}}%</div><div class="metric-card-unit">% of total users</div></div>
+        <div class="metric-card" data-metric-id="AGENT_ENABLEMENT" style="--tier-color:{{AGENT_ENABLE_TIER_COLOR}}"><div class="metric-card-header"><span class="metric-card-id">Agent Enablement</span><span class="metric-tier-badge {{AGENT_ENABLE_TIER_CLASS}}">{{AGENT_ENABLE_TIER_NAME}}</span></div><div class="metric-card-name">Portfolio Quality</div><div class="metric-card-value">{{AGENT_ENABLEMENT}}%</div><div class="metric-card-unit">% high-impact agents</div></div>
+        <div class="metric-card" data-metric-id="CROSS_ORG_BREADTH" style="--tier-color:{{ORG_BREADTH_TIER_COLOR}}"><div class="metric-card-header"><span class="metric-card-id">Cross-Org Breadth</span><span class="metric-tier-badge {{ORG_BREADTH_TIER_CLASS}}">{{ORG_BREADTH_TIER_NAME}}</span></div><div class="metric-card-name">Org Penetration</div><div class="metric-card-value">{{ORG_COUNT}} orgs</div><div class="metric-card-unit">organisations active</div></div>
+      </div>
+      <h3 style="font-size:.85rem;font-weight:700;color:#F59E0B;text-transform:uppercase;letter-spacing:.06em;margin-top:2rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem"><span style="width:3px;height:16px;border-radius:2px;background:#F59E0B;display:inline-block"></span> Habit Metrics</h3>
+      <div class="metrics-grid">
+        <div class="metric-card" data-metric-id="M365_FREQUENCY" style="--tier-color:{{FREQUENCY_TIER_COLOR}}"><div class="metric-card-header"><span class="metric-card-id">M365 Frequency</span><span class="metric-tier-badge {{FREQUENCY_TIER_CLASS}}">{{FREQUENCY_TIER_NAME}}</span></div><div class="metric-card-name">Licensed Habitual Rate</div><div class="metric-card-value">{{M365_FREQUENCY}}%</div><div class="metric-card-unit">% habitual (11+ days)</div></div>
+        <div class="metric-card" data-metric-id="CHAT_HABIT" style="--tier-color:var(--tier-2)"><div class="metric-card-header"><span class="metric-card-id">Chat Habit</span><span class="metric-tier-badge tier-2">Foundation</span></div><div class="metric-card-name">Chat Habitual Rate</div><div class="metric-card-value">{{CHAT_HABIT}}%</div><div class="metric-card-unit">% habitual (11+ days)</div></div>
+        <div class="metric-card" data-metric-id="AGENT_HABITUAL" style="--tier-color:{{AGENT_HABIT_TIER_COLOR}}"><div class="metric-card-header"><span class="metric-card-id">Agent Habitual</span><span class="metric-tier-badge {{AGENT_HABIT_TIER_CLASS}}">{{AGENT_HABIT_TIER_NAME}}</span></div><div class="metric-card-name">Agent Habitual Rate</div><div class="metric-card-value">{{AGENT_HABITUAL_PCT}}%</div><div class="metric-card-unit">% habitual (11+ days)</div></div>
+        <div class="metric-card" data-metric-id="AGENT_FREQUENCY" style="--tier-color:var(--tier-1)"><div class="metric-card-header"><span class="metric-card-id">Agent Frequency</span><span class="metric-tier-badge tier-1">Foundation</span></div><div class="metric-card-name">Agent Weekly Sessions</div><div class="metric-card-value">{{AGENT_FREQUENCY}}</div><div class="metric-card-unit">sessions/user/week</div></div>
+        <div class="metric-card" data-metric-id="M365_RETENTION_3MO" style="--tier-color:{{RETENTION_3MO_TIER_COLOR}}"><div class="metric-card-header"><span class="metric-card-id">M365 Retention</span><span class="metric-tier-badge {{RETENTION_3MO_TIER_CLASS}}">{{RETENTION_3MO_TIER_NAME}}</span></div><div class="metric-card-name">3-Month Avg Retention</div><div class="metric-card-value">{{M365_RETENTION_3MO}}%</div><div class="metric-card-unit">avg over last 3 month pairs</div></div>
+      </div>
+      <h3 style="font-size:.85rem;font-weight:700;color:#7B2FF2;text-transform:uppercase;letter-spacing:.06em;margin-top:2rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem"><span style="width:3px;height:16px;border-radius:2px;background:#7B2FF2;display:inline-block"></span> Skill Metrics</h3>
+      <div class="metrics-grid">
+        <div class="metric-card" data-metric-id="M365_BREADTH" style="--tier-color:{{BREADTH_TIER_COLOR}}"><div class="metric-card-header"><span class="metric-card-id">M365 Breadth</span><span class="metric-tier-badge {{BREADTH_TIER_CLASS}}">{{BREADTH_TIER_NAME}}</span></div><div class="metric-card-name">Avg Apps per User</div><div class="metric-card-value">{{M365_BREADTH}}</div><div class="metric-card-unit">apps/user</div></div>
+        <div class="metric-card" data-metric-id="AGENT_BREADTH" style="--tier-color:var(--tier-1)"><div class="metric-card-header"><span class="metric-card-id">Agent Breadth</span><span class="metric-tier-badge tier-1">Foundation</span></div><div class="metric-card-name">Agents per User</div><div class="metric-card-value">{{AGENT_BREADTH}}</div><div class="metric-card-unit">agents/user</div></div>
+        <div class="metric-card" data-metric-id="COMPLEX_SESSIONS" style="--tier-color:{{COMPLEX_TIER_COLOR}}"><div class="metric-card-header"><span class="metric-card-id">Complex Sessions</span><span class="metric-tier-badge {{COMPLEX_TIER_CLASS}}">{{COMPLEX_TIER_NAME}}</span></div><div class="metric-card-name">Multi-Turn Sessions</div><div class="metric-card-value">{{COMPLEX_SESSIONS}}%</div><div class="metric-card-unit">% complex</div></div>
+        <div class="metric-card" data-metric-id="AGENT_HEALTH" style="--tier-color:{{AGENT_HLTH_TIER_COLOR}}"><div class="metric-card-header"><span class="metric-card-id">Agent Health</span><span class="metric-tier-badge {{AGENT_HLTH_TIER_CLASS}}">{{AGENT_HLTH_TIER_NAME}}</span></div><div class="metric-card-name">Agent Return Rate</div><div class="metric-card-value">{{AGENT_HEALTH}}%</div><div class="metric-card-unit">return rate</div></div>
+        <div class="metric-card" style="--tier-color:var(--tier-3)"><div class="metric-card-header"><span class="metric-card-id">Agent Creators</span><span class="metric-tier-badge tier-3">Expansion</span></div><div class="metric-card-name">Users Building Agents</div><div class="metric-card-value">~{{AGENT_CREATORS_PCT}}%</div><div class="metric-card-unit">% creating agents</div></div>
+      </div>
+      <h3 style="font-size:.85rem;font-weight:700;color:#10B981;text-transform:uppercase;letter-spacing:.06em;margin-top:2rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem"><span style="width:3px;height:16px;border-radius:2px;background:#10B981;display:inline-block"></span> Value Metrics</h3>
+      <div class="metrics-grid">
+        <div class="metric-card" data-metric-id="LICENSE_PRIORITISATION" style="--tier-color:var(--tier-3)"><div class="metric-card-header"><span class="metric-card-id">License Priority</span><span class="metric-tier-badge tier-3">Expansion</span></div><div class="metric-card-name">Engagement Premium</div><div class="metric-card-value">{{LICENSE_PRIORITY}}x</div><div class="metric-card-unit">licensed vs unlicensed</div></div>
+        <div class="metric-card" style="--tier-color:var(--text-3);opacity:.7"><div class="metric-card-header"><span class="metric-card-id">Time Saved</span><span class="metric-tier-badge" style="background:rgba(148,163,184,.15);color:var(--text-3)">Derived</span></div><div class="metric-card-name">Realised Annual Savings</div><div class="metric-card-value">{{TIME_SAVED_REALISED}} hrs</div><div class="metric-card-unit">at 6 min/action</div></div>
+        <div class="metric-card" style="--tier-color:var(--text-3);opacity:.7"><div class="metric-card-header"><span class="metric-card-id">Unrealised</span><span class="metric-tier-badge" style="background:rgba(148,163,184,.15);color:var(--text-3)">Derived</span></div><div class="metric-card-name">Potential Additional</div><div class="metric-card-value">{{TIME_SAVED_UNREALISED}} hrs</div><div class="metric-card-unit">from idle licenses</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_5}}</div><div class="pull-quote-source">Next: Actions</div></div>
+
+
+<section class="section" id="actions" style="background:var(--bg)">
+  <div class="section-inner">
+    <div class="section-label reveal">Recommendations</div>
+    <h2 class="section-title reveal reveal-d1">{{ACTIONS_TITLE}}</h2>
+    <p class="section-subtitle reveal reveal-d2">{{ACTIONS_SUBTITLE}}</p>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:2rem" class="reveal reveal-d3">
+      <div class="rec-card"><div class="rec-header"><span class="rec-num" style="background:#F59E0B">1</span><span class="rec-priority priority-high">High Priority</span></div><h3>{{REC_1_TITLE}} <span style="display:inline-block;padding:.1rem .4rem;border-radius:100px;font-size:.5rem;font-weight:600;background:rgba(245,158,11,.1);color:#F59E0B;border:1px solid rgba(245,158,11,.2);vertical-align:middle">Habit</span></h3><p>{{REC_1_DESC}}</p><div class="rec-kpi">{{REC_1_KPI}}</div></div>
+      <div class="rec-card"><div class="rec-header"><span class="rec-num" style="background:#7B2FF2">2</span><span class="rec-priority priority-high">High Priority</span></div><h3>{{REC_2_TITLE}} <span style="display:inline-block;padding:.1rem .4rem;border-radius:100px;font-size:.5rem;font-weight:600;background:rgba(123,47,242,.1);color:#7B2FF2;border:1px solid rgba(123,47,242,.2);vertical-align:middle">Skill</span></h3><p>{{REC_2_DESC}}</p><div class="rec-kpi">{{REC_2_KPI}}</div></div>
+      <div class="rec-card"><div class="rec-header"><span class="rec-num" style="background:#0EA5E9">3</span><span class="rec-priority priority-med">Medium Priority</span></div><h3>{{REC_3_TITLE}} <span style="display:inline-block;padding:.1rem .4rem;border-radius:100px;font-size:.5rem;font-weight:600;background:rgba(14,165,233,.1);color:#0EA5E9;border:1px solid rgba(14,165,233,.2);vertical-align:middle">Reach</span></h3><p>{{REC_3_DESC}}</p><div class="rec-kpi">{{REC_3_KPI}}</div></div>
+      <div class="rec-card"><div class="rec-header"><span class="rec-num" style="background:#10B981">4</span><span class="rec-priority priority-med">Medium Priority</span></div><h3>{{REC_4_TITLE}} <span style="display:inline-block;padding:.1rem .4rem;border-radius:100px;font-size:.5rem;font-weight:600;background:rgba(16,185,129,.1);color:#10B981;border:1px solid rgba(16,185,129,.2);vertical-align:middle">Value</span></h3><p>{{REC_4_DESC}}</p><div class="rec-kpi">{{REC_4_KPI}}</div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <p><strong style="color:rgba(255,255,255,.6)">{{CUSTOMER_NAME}} Frontier Firm Assessment</strong></p>
+    <p>Generated from live analytics data. All 18 metrics trace to named DAX measures. {{RETENTION_NOTE}}. Analysis period: {{ANALYSIS_PERIOD}}.</p>
+    <p style="margin-top:.5rem">Built with the Frontier Firm Pipeline | Powered by Microsoft 365 Copilot Analytics</p>
+  </div>
+</footer>
+
+<script>
+/* Theme Toggle */
+// Theme toggle removed - dark mode only
+
+/* Framework Dimension Click-to-Expand */
+document.querySelectorAll('.fw-dim-card').forEach(card => {
+  card.addEventListener('click', function() {
+    const detail = this.querySelector('.fw-dim-detail');
+    const isOpen = detail.style.display !== 'none';
+    // Close all others
+    document.querySelectorAll('.fw-dim-detail').forEach(d => d.style.display = 'none');
+    document.querySelectorAll('.fw-dim-card').forEach(c => c.style.boxShadow = 'none');
+    if (!isOpen) {
+      detail.style.display = 'block';
+      this.style.boxShadow = '0 4px 20px rgba(0,0,0,.08)';
+    }
+  });
+});
+
+/* Scroll Nav */
+const nav=document.getElementById('mainNav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('visible',window.scrollY>400)});
+
+/* Active Nav Link */
+const secs=document.querySelectorAll('.section[id]'),nls=document.querySelectorAll('.nav-link');
+new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){nls.forEach(l=>l.classList.remove('active'));const l=document.querySelector(`.nav-link[data-section="${e.target.id}"]`);if(l)l.classList.add('active')}})},{threshold:.3}).observe&&secs.forEach(s=>new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){nls.forEach(l=>l.classList.remove('active'));const l=document.querySelector(`.nav-link[data-section="${e.target.id}"]`);if(l)l.classList.add('active')}})},{threshold:.25}).observe(s));
+
+/* Scroll Reveal */
+const ro=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target)}})},{threshold:.1,rootMargin:'0px 0px -60px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+/* Animated Counters */
+function animC(el){const t=parseFloat(el.dataset.target),d=parseInt(el.dataset.decimals||'0'),s=el.dataset.suffix||'',p=el.dataset.prefix||'',dur=1800,st=performance.now();function step(n){const pr=Math.min((n-st)/dur,1),ease=1-Math.pow(1-pr,3),v=t*ease;el.textContent=d>0?p+v.toFixed(d)+s:p+Math.round(v).toLocaleString()+s;if(pr<1)requestAnimationFrame(step)}requestAnimationFrame(step)}
+const co=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){animC(e.target);co.unobserve(e.target)}})},{threshold:.3});
+document.querySelectorAll('.counter').forEach(el=>co.observe(el));
+
+/* Animated data-count elements */
+document.querySelectorAll('[data-count]').forEach(el=>{if(el.classList.contains('counter'))return;const o=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const t=parseFloat(e.target.dataset.count),d=parseInt(e.target.dataset.decimals||'0'),dur=1600,st=performance.now();function s(n){const p=Math.min((n-st)/dur,1),ease=1-Math.pow(1-p,3);e.target.textContent=d>0?(t*ease).toFixed(d):Math.round(t*ease).toLocaleString();if(p<1)requestAnimationFrame(s)}requestAnimationFrame(s);o.unobserve(e.target)}})},{threshold:.3});o.observe(el)});
+
+/* Animated Gauges (including hero score ring) */
+document.querySelectorAll('.gauge-fill, .hero-score-fill').forEach(g=>{const o=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.style.strokeDashoffset=e.target.dataset.targetOffset;o.unobserve(e.target)}})},{threshold:.3});o.observe(g)});
+
+/* ── Mini Threshold Bars on Metric Cards ──────────────────── */
+const MINI_THRESHOLDS = {{MINI_THRESHOLDS_JS}};
+document.querySelectorAll('.metric-card[data-metric-id]').forEach(card=>{
+  const id=card.dataset.metricId;
+  const m=MINI_THRESHOLDS[id];
+  if(!m)return;
+  const maxVal=m.max||(m.val<=1?1:m.bands[m.bands.length-1]*1.5);
+  const pct=Math.min((m.val/maxVal)*100,100);
+  // Determine tier color
+  let tierIdx=0;
+  for(let i=0;i<m.bands.length;i++){if(m.val>=m.bands[i])tierIdx=i+1}
+  const fillColor=m.colors[tierIdx]||m.colors[3];
+  const gradient=`linear-gradient(90deg,${m.colors[0]}22 ${(m.bands[0]/maxVal)*100}%,${m.colors[1]}44 ${(m.bands[1]/maxVal)*100}%,${m.colors[2]}66 ${(m.bands[2]/maxVal)*100}%,${m.colors[3]}88 100%)`;
+  const bar=document.createElement('div');
+  bar.className='mini-threshold';
+  bar.innerHTML=`<div class="mini-threshold-fill" style="width:0;background:${gradient}"></div><div class="mini-threshold-marker" style="left:0" data-pct="${pct}"></div>`;
+  const labelsDiv=document.createElement('div');
+  labelsDiv.className='mini-threshold-labels';
+  labelsDiv.innerHTML='<span>Foundation</span><span>Frontier</span>';
+  // Insert before any existing detail div
+  const unitEl=card.querySelector('.metric-card-unit');
+  if(unitEl){unitEl.after(bar,labelsDiv)}
+  // Animate on scroll
+  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){bar.querySelector('.mini-threshold-fill').style.width=pct+'%';bar.querySelector('.mini-threshold-marker').style.left=pct+'%';obs.unobserve(e.target)}})},{threshold:.2});
+  obs.observe(bar);
+});
+
+/* Animated Bars */
+function animBars(sel){document.querySelectorAll(sel).forEach(el=>{const o=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const w=e.target.dataset.width;if(w)e.target.style.width=w.includes('%')?w:w+'%';o.unobserve(e.target)}})},{threshold:.1});o.observe(el)})}
+animBars('.funnel-bar');animBars('.top-agent-fill');animBars('.retention-fill');animBars('.habit-bar-fill');
+animBars('.signal-gauge-fill');
+
+
+/* Journey Progress */
+document.querySelectorAll('.journey-progress').forEach(el=>{const o=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.style.width=e.target.dataset.width;o.unobserve(e.target)}})},{threshold:.1});o.observe(el)});
+
+/* Expandable Insights */
+window.toggleInsight=function(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('open')};
+
+/* ── Scroll Progress Bar ─────────────────────────────────── */
+window.addEventListener('scroll',()=>{const st=document.documentElement.scrollTop;const sh=document.documentElement.scrollHeight-window.innerHeight;const p=sh>0?(st/sh)*100:0;document.getElementById('scrollProgress').style.width=p+'%'});
+
+/* ── Tier Nav Scroll Behavior ────────────────────────────── */
+document.querySelectorAll('.tier-nav-btn:not(.tier-chart-btn)').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    const section=this.closest('.section');
+    section.querySelectorAll('.tier-nav-btn:not(.tier-chart-btn)').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+    const tier=this.dataset.tier;
+    const target=section.querySelector('.tier-group[data-tier-content="'+tier+'"]');
+    if(target){const navH=document.querySelector('.nav').offsetHeight||60;const y=target.getBoundingClientRect().top+window.pageYOffset-navH-16;window.scrollTo({top:y,behavior:'smooth'})}
+  });
+});
+
+/* ── Chart.js Setup ──────────────────────────────────────── */
+Chart.register(ChartDataLabels);
+Chart.defaults.font.family="'Inter',sans-serif";
+Chart.defaults.plugins.legend.labels.usePointStyle=true;
+Chart.defaults.plugins.legend.labels.pointStyleWidth=10;
+Chart.defaults.plugins.legend.labels.font={size:11,weight:500};
+/* Dark-mode-aware chart colors */
+const isDark=()=>document.documentElement.dataset.theme==='dark';
+const cTick=isDark()?'rgba(203,213,225,.7)':'#555';
+const cTickSub=isDark()?'rgba(148,163,184,.6)':'#888';
+const cGrid=isDark()?'rgba(255,255,255,.06)':'rgba(0,0,0,.05)';
+const cLabel=isDark()?'#F1F5F9':'#444';
+const cLegend=isDark()?'rgba(203,213,225,.8)':'#555';
+Chart.defaults.color=cTick;
+Chart.defaults.plugins.legend.labels.color=cLegend;
+
+/* Chart: User Tiers */
+new Chart(document.getElementById('chartTiers'),{type:'bar',data:{labels:['Licensed M365 Copilot','Unlicensed Chat','Agent Users'],datasets:[{data:[{{LICENSED_USERS}},{{CHAT_USERS}},{{AGENT_USERS}}],backgroundColor:['#2264E5','#7B2FF2','#0EA5E9'],borderRadius:4,barThickness:48}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:cLabel,font:{weight:700,size:13},formatter:v=>v.toLocaleString()}},scales:{x:{grid:{color:cGrid},ticks:{color:cTickSub,font:{size:11}}},y:{grid:{display:false},ticks:{color:cTick,font:{size:12,weight:600}}}}}});
+
+/* Chart: Engagement Depth */
+new Chart(document.getElementById('chartEngagement'),{type:'bar',data:{labels:['Licensed M365','Unlicensed Chat','Agents'],datasets:[{label:'Avg Sessions per User',data:[{{LICENSED_AVG_PROMPTS}},{{UNLICENSED_AVG_PROMPTS}},{{AGENT_INTENSITY}}],backgroundColor:['rgba(34,100,229,.75)','rgba(123,47,242,.75)','rgba(14,165,233,.75)'],borderRadius:4,barThickness:36}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:cTick,font:{weight:700,size:12},formatter:v=>v.toFixed(1)}},scales:{y:{beginAtZero:true,grid:{color:cGrid},ticks:{color:cTickSub}},x:{grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}}}}});
+
+/* Chart: Weekly Intensity */
+new Chart(document.getElementById('chartWeekly'),{type:'bar',data:{labels:['M365 Sessions/Wk','Chat Sessions/Wk','Agent Sessions/Wk'],datasets:[{data:[{{WEEKLY_M365}},{{WEEKLY_CHAT}},{{WEEKLY_AGENTS}}],backgroundColor:['rgba(34,100,229,.6)','rgba(123,47,242,.6)','rgba(14,165,233,.6)'],borderRadius:4,barThickness:36}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:cTick,font:{weight:700,size:12},formatter:v=>v.toFixed(2)}},scales:{y:{beginAtZero:true,grid:{color:cGrid},ticks:{color:cTickSub}},x:{grid:{display:false},ticks:{color:cTick,font:{size:10,weight:500}}}}}});
+
+/* Chart: Monthly Active Users Trend */
+let chartMonthlyUsersInst;
+if(document.getElementById('chartMonthlyUsers')){
+chartMonthlyUsersInst=new Chart(document.getElementById('chartMonthlyUsers'),{type:'line',data:{labels:{{MONTHLY_LABELS_JSON}},datasets:[{label:'Monthly Active Users',data:{{MONTHLY_USERS_JSON}},borderColor:'#F59E0B',backgroundColor:'rgba(245,158,11,.08)',fill:true,tension:.3,pointRadius:5,pointBackgroundColor:'#F59E0B',pointBorderColor:'#fff',pointBorderWidth:2,borderWidth:2.5},{label:'Avg Prompts/User',data:{{MONTHLY_PROMPTS_PER_USER_JSON}},borderColor:'#7B2FF2',backgroundColor:'transparent',fill:false,tension:.3,pointRadius:4,pointBackgroundColor:'#7B2FF2',pointBorderColor:'#fff',pointBorderWidth:2,borderWidth:2,borderDash:[5,3],yAxisID:'y1'}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{usePointStyle:true,pointStyle:'circle',padding:16,font:{size:10,weight:500},color:cLegend}},datalabels:{display:false}},scales:{y:{beginAtZero:false,grid:{color:cGrid},ticks:{color:cTickSub,callback:v=>v>=1000?(v/1000).toFixed(v%1000?1:0)+'K':v},title:{display:true,text:'Active Users',color:cTick,font:{size:10}}},y1:{position:'right',beginAtZero:true,grid:{display:false},ticks:{color:'#7B2FF2',font:{size:9}},title:{display:true,text:'Prompts/User',color:'#7B2FF2',font:{size:10}}},x:{grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}}}}});
+}
+
+/* Chart: Habit Formation — Monthly Trend per Tier */
+const _perTierAD={{PER_TIER_ACTIVE_DAY_JSON}};
+const _habitDefaultTier='m365';
+function getHabitDatasets(tierKey){
+  const d=_perTierAD?_perTierAD[tierKey]:null;
+  if(!d)return{labels:[],datasets:[]};
+  const lbls=tierKey==='agents'&&_perTierAD.agentLabels?_perTierAD.agentLabels:_perTierAD.labels;
+  return{labels:lbls,datasets:[
+    {label:'1-5 Days',data:d.map(r=>r.b1_5),backgroundColor:'rgba(123,47,242,.55)',borderRadius:{topLeft:0,topRight:0,bottomLeft:4,bottomRight:4}},
+    {label:'6-10 Days',data:d.map(r=>r.b6_10),backgroundColor:'rgba(34,100,229,.6)',borderRadius:0},
+    {label:'11-19 Days',data:d.map(r=>r.b11_19),backgroundColor:'rgba(14,165,233,.7)',borderRadius:0},
+    {label:'20+ Days',data:d.map(r=>r.b20),backgroundColor:'rgba(16,185,129,.8)',borderRadius:{topLeft:4,topRight:4,bottomLeft:0,bottomRight:0}}
+  ]};
+}
+const _habitInit=getHabitDatasets(_habitDefaultTier);
+let chartHabitInst=new Chart(document.getElementById('chartHabit'),{type:'bar',data:{labels:_habitInit.labels,datasets:_habitInit.datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,pointStyle:'circle',padding:16,font:{size:10,weight:500}}},datalabels:{display:ctx=>ctx.dataset.data[ctx.dataIndex]>=4,color:'#fff',font:{weight:700,size:11},formatter:v=>v+'%'}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}},y:{stacked:true,max:100,grid:{color:cGrid},ticks:{color:cTickSub,callback:v=>v+'%'}}}}});
+
+/* Chart: Agent Health */
+new Chart(document.getElementById('chartAgentHealth'),{type:'doughnut',data:{labels:['High-Impact (Keep)','Under Review','Dormant (Retire)'],datasets:[{data:[{{AGENTS_KEEP}},{{AGENTS_REVIEW}},{{AGENTS_RETIRE}}],backgroundColor:['#2264E5','#7B2FF2','rgba(148,163,184,.25)'],borderWidth:2,borderColor:'var(--surface)',hoverBorderColor:'#fff',hoverOffset:6,hoverBackgroundColor:['#4A8AFF','#9B5FFF','rgba(148,163,184,.45)']}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(15,23,42,.92)',titleFont:{size:12,weight:600},bodyFont:{size:11},cornerRadius:8,padding:10},datalabels:{color:(ctx)=>ctx.dataIndex===2?'var(--text-3)':'#fff',font:{weight:700,size:12},formatter:(v,ctx)=>{const t=ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b);return Math.round(v/t*100)+'%'}}}}});
+
+/* Chart: Agent Sessions per User (Deep Dive) */
+if(document.getElementById('chartAgentSessions')){
+new Chart(document.getElementById('chartAgentSessions'),{type:'bar',data:{labels:JSON.parse('{{TOP_AGENT_NAMES_JSON}}'),datasets:[{label:'Sessions/User',data:{{TOP_AGENT_SESSIONS}},backgroundColor:['#10B981','#10B981','#10B981','#10B981','#0EA5E9','#F59E0B','#F59E0B','#F59E0B'],borderWidth:0,borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,layout:{padding:{left:10}},plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:cLabel,font:{weight:700,size:11},formatter:v=>v.toFixed(1)}},scales:{x:{grid:{display:false},ticks:{color:cTickSub,font:{size:10}}},y:{grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600},padding:8}}}}});
+}
+
+/* Chart: Retention */
+new Chart(document.getElementById('chartRetention'),{type:'doughnut',data:{labels:['Retained ({{RETENTION_MONTH_FROM}} -> {{RETENTION_MONTH_TO}})','Churned'],datasets:[{data:[{{RETAINED_USERS}},{{CHURNED_USERS}}],backgroundColor:['#2264E5','rgba(255,255,255,.08)'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false},datalabels:{display:ctx=>ctx.dataIndex===0,color:'#fff',font:{weight:800,size:22},formatter:()=>'{{M365_RETENTION}}%'}}}});
+
+/* Chart: Cohort Flow */
+let chartCohortFlowInst;
+if(document.getElementById('chartCohortFlow')){
+chartCohortFlowInst=new Chart(document.getElementById('chartCohortFlow'),{type:'bar',data:{labels:{{COHORT_LABELS_JSON}},datasets:[{label:'Retained',data:{{COHORT_RETAINED_JSON}},backgroundColor:'rgba(34,100,229,.7)',borderRadius:4},{label:'New Users',data:{{COHORT_NEW_JSON}},backgroundColor:'rgba(14,165,233,.6)',borderRadius:4},{label:'Churned',data:{{COHORT_CHURNED_JSON}},backgroundColor:'rgba(239,68,68,.35)',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,pointStyle:'circle',padding:16,font:{size:10,weight:500},color:cLegend}},datalabels:{display:ctx=>ctx.dataset.data[ctx.dataIndex]>2000,color:'#fff',font:{weight:700,size:10},formatter:v=>Math.round(v/1000)+'K'}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}},y:{stacked:true,grid:{color:cGrid},ticks:{color:cTickSub,callback:v=>Math.round(v/1000)+'K'}}}}});
+}
+
+/* Chart: License ROI */
+new Chart(document.getElementById('chartLicense'),{type:'doughnut',data:{labels:['Active','Inactive'],datasets:[{data:[{{LICENSED_USERS}},{{INACTIVE_LICENSES}}],backgroundColor:['#2264E5','rgba(148,163,184,.2)'],borderWidth:3,borderColor:'rgba(10,10,26,.9)',hoverBackgroundColor:['#4A8AFF','rgba(148,163,184,.35)'],hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},datalabels:{display:false}}}});
+
+/* ── Tier Toggle Chart Switching ───────────────────────── */
+const _perTierMU={{PER_TIER_MONTHLY_USERS_JSON}};
+const _perTierRet={{PER_TIER_RETENTION_JSON}};
+const _allMonthlyUsers={{MONTHLY_USERS_JSON}};
+const _allCohort={retained:{{COHORT_RETAINED_JSON}},new_users:{{COHORT_NEW_JSON}},churned:{{COHORT_CHURNED_JSON}}};
+const _tierColors={m365:'#2264E5',chat:'#0EA5E9',agents:'#7B2FF2',all:'#F59E0B'};
+
+document.querySelectorAll('.tier-toggle').forEach(container=>{
+  container.querySelectorAll('.tier-chart-btn').forEach(btn=>{
+    btn.addEventListener('click',function(){
+      container.querySelectorAll('.tier-chart-btn').forEach(b=>b.classList.remove('active'));
+      this.classList.add('active');
+      const tier=this.dataset.tier;
+      const chartTarget=container.dataset.chart;
+
+      if(chartTarget==='monthlyUsers'&&chartMonthlyUsersInst){
+        const c=chartMonthlyUsersInst;
+        if(tier==='all'){
+          c.data.datasets[0].data=_allMonthlyUsers;
+          c.data.datasets[0].borderColor='#F59E0B';c.data.datasets[0].backgroundColor='rgba(245,158,11,.08)';
+          c.data.datasets[0].pointBackgroundColor='#F59E0B';c.data.datasets[0].label='Monthly Active Users';
+          if(c.data.datasets[1])c.data.datasets[1].hidden=false;
+        }else if(_perTierMU){
+          c.data.labels=_perTierMU.labels;
+          c.data.datasets[0].data=_perTierMU[tier]||[];
+          c.data.datasets[0].borderColor=_tierColors[tier];c.data.datasets[0].backgroundColor=_tierColors[tier]+'14';
+          c.data.datasets[0].pointBackgroundColor=_tierColors[tier];
+          c.data.datasets[0].label={m365:'M365 Copilot',chat:'Copilot Chat',agents:'Agent Users'}[tier]||tier;
+          if(c.data.datasets[1])c.data.datasets[1].hidden=true;
+        }
+        c.update();
+      }
+
+      if(chartTarget==='cohortFlow'&&chartCohortFlowInst){
+        const c=chartCohortFlowInst;
+        if(tier==='all'){
+          c.data.datasets[0].data=_allCohort.retained;
+          c.data.datasets[1].data=_allCohort.new_users;
+          c.data.datasets[2].data=_allCohort.churned;
+          c.data.labels={{COHORT_LABELS_JSON}};
+        }else if(_perTierRet){
+          const td=_perTierRet[tier];
+          if(td){
+            c.data.labels=_perTierRet.labels;
+            c.data.datasets[0].data=td.retained;
+            c.data.datasets[1].data=td.new_users;
+            c.data.datasets[2].data=td.churned;
+          }
+        }
+        c.update();
+      }
+
+      if(chartTarget==='habit'&&chartHabitInst){
+        const hd=getHabitDatasets(tier);
+        chartHabitInst.data.labels=hd.labels;
+        chartHabitInst.data.datasets=hd.datasets;
+        chartHabitInst.update();
+      }
+    });
+  });
+});
+
+/* ── Metric Detail Data (PBI References) ───────────────── */
+const METRIC_DETAIL = {{METRIC_DETAIL_JS}};
+/* ── Metric Click-Through Handler ────────────────────────── */
+const TIER_COLORS = ['#2264E5','#2264E5','#7B2FF2','#10B981']; // Foundation, Foundation, Expansion, Frontier
+const TIER_NAMES = ['Foundation','Foundation','Expansion','Frontier'];
+const VISUAL_TYPE_LABELS = {cardVisual:'KPI Card',pivotTable:'Table',clusteredColumnChart:'Bar Chart',donutChart:'Donut Chart',treemap:'Treemap',scatterChart:'Scatter Plot',columnChart:'Column Chart',areaChart:'Area Chart'};
+
+function buildThresholdBar(value, bands, bandLabels) {
+  const isPercent = value <= 1 && bands[bands.length-1] <= 1;
+  const maxVal = isPercent ? 1 : bands[bands.length-1] * 1.5;
+  const segments = [];
+  const points = [0, ...bands, maxVal];
+  for (let i = 0; i < points.length - 1; i++) {
+    const width = ((points[i+1] - points[i]) / maxVal) * 100;
+    segments.push(`<div class="md-threshold-segment" style="width:${width}%;background:${TIER_COLORS[i] || TIER_COLORS[3]};opacity:.7"><span style="font-size:.45rem">${TIER_NAMES[i] || 'Frontier'}</span></div>`);
+  }
+  const markerPos = Math.min((value / maxVal) * 100, 98);
+  return `<div class="md-threshold-track">${segments.join('')}<div class="md-threshold-marker" style="left:${markerPos}%" title="Current: ${isPercent ? (value*100).toFixed(1)+'%' : value.toLocaleString()}"></div></div>
+  <div style="display:flex;justify-content:space-between;font-size:.5rem;color:var(--text-3);margin-top:.15rem">${bandLabels.map(l=>'<span>'+l+'</span>').join('')}</div>`;
+}
+
+function buildDetailHTML(id, m) {
+  const daxFieldsHTML = Object.entries(m.dax_fields||{}).map(([k,v])=>`<code>${k}</code>: <strong>${v}</strong>`).join(' &middot; ');
+  const visualsHTML = (m.visuals||[]).map(v=>{
+    const measuresHTML = v.measures.map(m=>`<code>${m}</code>`).join(' ');
+    return `<div class="md-pbi-ref">
+      <div class="md-pbi-page">${v.page}</div>
+      <span class="md-pbi-type">${VISUAL_TYPE_LABELS[v.type]||v.type}</span>
+      <div class="md-pbi-measures">${measuresHTML}</div>
+      <div class="md-pbi-instruction">${v.instruction}</div>
+    </div>`;
+  }).join('');
+  return `<div class="metric-detail">
+    <button class="md-close-btn" onclick="event.stopPropagation();this.closest('.metric-card').classList.remove('expanded')">Close</button>
+    <div class="md-grid">
+      <div>
+        <div class="md-block"><div class="md-label">Framework Definition</div><div class="md-val">${m.definition}</div></div>
+        <div class="md-block"><div class="md-label">Scored Field</div><div class="md-val"><code>${m.scored_field}</code></div></div>
+        <div class="md-block"><div class="md-label">Scoring Thresholds</div>${m.bands ? buildThresholdBar(m.scored_value, m.bands, m.band_labels) : '<div style="font-size:.72rem;color:var(--text-3);font-style:italic;padding:.4rem 0">Not scored — contextual metric only. No accurate adoption % can be calculated (Purview captures activity only, no denominator for unlicensed users).</div>'}</div>
+        ${m.note ? `<div class="md-block"><div class="md-label">Score Note</div><div class="md-val">${m.note}</div></div>` : ''}
+        ${m.gap_notes ? `<div class="md-block"><div class="md-label">Methodology</div><div class="md-val" style="font-size:.7rem">${m.gap_notes}</div></div>` : ''}
+        <div class="md-block"><div class="md-label">DAX Values</div><div class="md-val" style="font-size:.7rem">${daxFieldsHTML}</div></div>
+      </div>
+      <div>
+        <div class="md-block"><div class="md-label">Power BI Visual References${m.visuals.length ? ' ('+m.visuals.length+')' : ''}</div>
+        ${visualsHTML || '<div class="md-val" style="font-size:.7rem;font-style:italic">No direct PBI visual -- computed via custom DAX query</div>'}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+document.querySelectorAll('.metric-card[data-metric-id]').forEach(card => {
+  card.addEventListener('click', function(e) {
+    if (e.target.closest('.md-close-btn')) return;
+    const id = this.dataset.metricId;
+    const m = METRIC_DETAIL[id];
+    if (!m) return;
+    if (this.classList.contains('expanded')) {
+      this.classList.remove('expanded');
+      const detail = this.querySelector('.metric-detail');
+      if (detail) detail.remove();
+      return;
+    }
+    // Close any other expanded card
+    document.querySelectorAll('.metric-card.expanded').forEach(c => {
+      c.classList.remove('expanded');
+      const d = c.querySelector('.metric-detail');
+      if (d) d.remove();
+    });
+    // Build and inject detail
+    if (!this.querySelector('.metric-detail')) {
+      this.insertAdjacentHTML('beforeend', buildDetailHTML(id, m));
+    }
+    this.classList.add('expanded');
+  });
+});
+
+/* ── Dimension Radar Charts (18 Metrics Section) ─────────── */
+const rOpt=(color)=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:false}},scales:{r:{min:0,max:4,ticks:{stepSize:1,color:'var(--text-3)',backdropColor:'transparent',font:{size:10}},grid:{color:'rgba(148,163,184,.15)'},pointLabels:{color:'var(--text-2)',font:{size:11,weight:600}},angleLines:{color:'rgba(148,163,184,.1)'}}}});
+if(document.getElementById('radarImpact')){
+new Chart(document.getElementById('radarImpact'),{type:'radar',data:{labels:['Enablement','Adoption','Agent Adopt','Enablement Q','Org Breadth','License Pri'],datasets:[{data:{{RADAR_REACH}},borderColor:'#0EA5E9',backgroundColor:'rgba(14,165,233,.12)',borderWidth:2,pointRadius:3,pointBackgroundColor:'#0EA5E9',pointBorderColor:'#fff',pointBorderWidth:1}]},options:rOpt('#0EA5E9')});
+}
+if(document.getElementById('radarHabit')){
+new Chart(document.getElementById('radarHabit'),{type:'radar',data:{labels:['M365 Intensity','M365 Frequency','M365 Retention','Chat Intensity','Chat Habit','Agent Intensity','Agent Freq'],datasets:[{data:{{RADAR_HABIT}},borderColor:'#F59E0B',backgroundColor:'rgba(245,158,11,.12)',borderWidth:2,pointRadius:3,pointBackgroundColor:'#F59E0B',pointBorderColor:'#fff',pointBorderWidth:1}]},options:rOpt('#F59E0B')});
+}
+if(document.getElementById('radarSkill')){
+new Chart(document.getElementById('radarSkill'),{type:'radar',data:{labels:['M365 Breadth','Agent Breadth','Agent Health','Complex Sess'],datasets:[{data:{{RADAR_SKILL}},borderColor:'#7B2FF2',backgroundColor:'rgba(123,47,242,.12)',borderWidth:2,pointRadius:3,pointBackgroundColor:'#7B2FF2',pointBorderColor:'#fff',pointBorderWidth:1}]},options:rOpt('#7B2FF2')});
+}
+
+/* Chart: Org Scatter - M365 vs Agents */
+if(document.getElementById('chartOrgScatter')){
+const _scatterData=JSON.parse('{{ORG_SCATTER_DATA}}');
+_scatterData.forEach(ds=>{const y=ds.data[0]?ds.data[0].y:0;
+  if(y>=12){ds.backgroundColor='rgba(16,185,129,0.55)';ds.borderColor='#10B981';}
+  else if(y>=8){ds.backgroundColor='rgba(14,165,233,0.55)';ds.borderColor='#0EA5E9';}
+  else if(y>=5){ds.backgroundColor='rgba(123,47,242,0.45)';ds.borderColor='#7B2FF2';}
+  else{ds.backgroundColor='rgba(148,163,184,0.35)';ds.borderColor='#94A3B8';}});
+new Chart(document.getElementById('chartOrgScatter'),{type:'bubble',data:{datasets:_scatterData},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,color:cLabel,font:{size:9,weight:600},anchor:'end',align:'top',formatter:(v,ctx)=>ctx.dataset.label},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.raw.x+' M365 users, '+ctx.raw.y+'% agents'}}},scales:{x:{title:{display:true,text:'M365 Copilot Licensed Users',color:cTick,font:{size:11,weight:600}},grid:{color:cGrid},ticks:{color:cTickSub,font:{size:9}}},y:{title:{display:true,text:'% Using Agents',color:cTick,font:{size:11,weight:600}},grid:{color:cGrid},ticks:{color:cTickSub,font:{size:9},callback:v=>v+'%'}}}}});
+}
+</script>
+
+<script>
+function exportToPDF() {
+  var html = document.documentElement;
+  var wasDark = html.dataset.theme === 'dark';
+  html.dataset.theme = 'light';
+  document.body.classList.add('print-ready');
+  document.querySelectorAll('.reveal').forEach(function(r) {
+    r.style.opacity = '1'; r.style.transform = 'none';
+  });
+  document.querySelectorAll('.tier-group[data-tier-content="all"]').forEach(function(g) { g.style.display = 'block'; });
+  document.querySelectorAll('.tier-group:not([data-tier-content="all"])').forEach(function(g) { g.style.display = 'none'; });
+  // insight bodies stay collapsed for compact print
+  document.querySelectorAll('.counter').forEach(function(el) {
+    var t = parseFloat(el.dataset.target);
+    var d = parseInt(el.dataset.decimals || '0');
+    var s = el.dataset.suffix || '';
+    var p = el.dataset.prefix || '';
+    el.textContent = d > 0 ? p + t.toFixed(d) + s : p + Math.round(t).toLocaleString() + s;
+  });
+  document.querySelectorAll('.funnel-bar,.top-agent-fill,.retention-fill,.habit-bar-fill').forEach(function(el) { var w=el.dataset.width; if(w) el.style.width=w.indexOf('%')>=0?w:w+'%'; });
+  setTimeout(function() {
+    window.print();
+    setTimeout(function() {
+      if (wasDark) html.dataset.theme = 'dark';
+      document.body.classList.remove('print-ready');
+      document.querySelectorAll('.tier-group').forEach(function(g){g.style.display='';});
+    }, 500);
+  }, 400);
+}
+
+document.querySelectorAll('.flip-card').forEach(card=>{card.addEventListener('click',()=>card.classList.toggle('flipped'))});
+</script>
+
+</body>
+</html>

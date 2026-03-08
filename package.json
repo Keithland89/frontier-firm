@@ -1,0 +1,31 @@
+{
+  "name": "frontier-firm",
+  "version": "1.0.0",
+  "description": "Frontier Firm Assessment — AI adoption maturity report generator",
+  "main": "src/generate-report.js",
+  "scripts": {
+    "report": "node src/run-pipeline.js",
+    "report:sample": "node src/run-pipeline.js --data data/sample_contoso.json --output output/ --no-ai",
+    "extract": "node src/extract-from-pbix.js",
+    "validate-data": "node src/validate-data.js",
+    "generate": "node src/generate-report.js",
+    "validate": "node src/validate-report.js",
+    "visual-check": "node src/visual-check.js",
+    "audit": "node src/deep-audit.js",
+    "export-pdf": "node src/export-pdf.js"
+  },
+  "keywords": [
+    "frontier-firm",
+    "ai-adoption",
+    "maturity-model",
+    "copilot",
+    "power-bi"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "playwright": "^1.58.2"
+  }
+}

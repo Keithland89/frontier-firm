@@ -1,0 +1,206 @@
+{
+  "$schema": "Frontier Firm Report Schema v2",
+  "description": "Defines all metrics, thresholds, signal groupings, and insight block definitions for the Frontier Firm report generator.",
+
+  "signals": {
+    "reach": {
+      "label": "Reach",
+      "question": "How well is it represented?",
+      "color": "#0EA5E9",
+      "metrics": ["m365_enablement", "license_coverage", "m365_adoption", "chat_adoption", "agent_adoption", "agent_enablement", "cross_org_breadth"]
+    },
+    "habit": {
+      "label": "Habit",
+      "question": "Is it sticking?",
+      "color": "#F59E0B",
+      "metrics": ["m365_frequency", "chat_habit", "agent_habitual", "agent_frequency", "m365_retention_3mo_avg"]
+    },
+    "skill": {
+      "label": "Skill",
+      "question": "Is it going deep?",
+      "color": "#7B2FF2",
+      "metrics": ["m365_breadth", "agent_breadth", "complex_sessions", "agent_health", "agent_creators_pct"]
+    },
+    "value": {
+      "label": "Value",
+      "question": "Is it worth it?",
+      "color": "#10B981",
+      "metrics": ["license_priority"],
+      "exclude_from_pattern": true
+    }
+  },
+
+  "metrics": {
+    "m365_enablement": {
+      "name": "License Activation",
+      "unit": "% seats active",
+      "bands": [0.40, 0.70, 0.90],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "reach"
+    },
+    "license_coverage": {
+      "name": "License Coverage",
+      "unit": "% of users licensed",
+      "bands": [0.10, 0.25, 0.50],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "reach"
+    },
+    "m365_adoption": {
+      "name": "Regular User Rate",
+      "unit": "% active with 6+ days",
+      "bands": [0.15, 0.30, 0.50],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "reach"
+    },
+    "chat_adoption": {
+      "name": "Unlicensed Chat Users",
+      "unit": "user count",
+      "scored": false,
+      "signal": "reach"
+    },
+    "agent_adoption": {
+      "name": "Agent Adoption Rate",
+      "unit": "% of total users",
+      "bands": [0.05, 0.10, 0.20],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "reach"
+    },
+    "agent_enablement": {
+      "name": "Portfolio Quality",
+      "unit": "% high-impact agents",
+      "bands": [0.05, 0.10, 0.25],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "reach"
+    },
+    "cross_org_breadth": {
+      "name": "Org Penetration",
+      "unit": "organisations active",
+      "bands": [2, 5, 12],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "reach"
+    },
+    "m365_frequency": {
+      "name": "Licensed Habitual Rate",
+      "unit": "% habitual (11+ days)",
+      "bands": [0.10, 0.20, 0.40],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "habit"
+    },
+    "chat_habit": {
+      "name": "Chat Habitual Rate",
+      "unit": "% habitual (11+ days)",
+      "bands": [0.05, 0.15, 0.30],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "habit"
+    },
+    "agent_habitual": {
+      "name": "Agent Habitual Rate",
+      "unit": "habitual (11+ days)",
+      "bands": [2, 8, 20],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "habit"
+    },
+    "agent_frequency": {
+      "name": "Agent Weekly Sessions",
+      "unit": "sessions/user/week",
+      "bands": [2, 5, 15],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "habit"
+    },
+    "m365_retention": {
+      "name": "MoM User Retention (latest)",
+      "unit": "% month-over-month retention",
+      "bands": [0.50, 0.70, 0.85],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "habit",
+      "scored": false
+    },
+    "m365_retention_3mo_avg": {
+      "name": "3-Month Avg Retention",
+      "unit": "% avg retention (3 months)",
+      "bands": [0.60, 0.75, 0.90],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "habit"
+    },
+    "m365_breadth": {
+      "name": "Avg Apps per User",
+      "unit": "apps/user",
+      "bands": [2, 4, 7],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "skill"
+    },
+    "agent_breadth": {
+      "name": "Agents per User",
+      "unit": "agents/user",
+      "bands": [1.2, 2, 4],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "skill"
+    },
+    "complex_sessions": {
+      "name": "Multi-Turn Sessions",
+      "unit": "% complex",
+      "bands": [0.25, 0.45, 0.65],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "skill"
+    },
+    "agent_health": {
+      "name": "Agent Return Rate",
+      "unit": "% return rate",
+      "bands": [0.40, 0.60, 0.85],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "skill"
+    },
+    "agent_creators_pct": {
+      "name": "Users Building Agents",
+      "unit": "creating agents",
+      "bands": [2, 5, 10],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "skill"
+    },
+    "license_priority": {
+      "name": "Engagement Premium",
+      "unit": "licensed vs unlicensed ratio",
+      "bands": [1.0, 1.5, 2.5],
+      "band_labels": ["Foundation", "Foundation", "Expansion", "Frontier"],
+      "signal": "value"
+    }
+  },
+
+  "pattern_rules": {
+    "p1_foundation": "3+ signals at Foundation",
+    "p2_expansion": "1-2 signals at Expansion+, rest Foundation",
+    "p3_frontier": "3+ signals at Expansion/Frontier, with 1+ at Frontier"
+  },
+
+  "insight_blocks": [
+    "EXEC_SUMMARY_GOOD",
+    "EXEC_SUMMARY_GAP",
+    "EXEC_SUMMARY_OPP",
+    "INSIGHT_REACH",
+    "INSIGHT_HABIT",
+    "INSIGHT_SKILL",
+    "SPOTLIGHT_HABIT",
+    "SPOTLIGHT_MATURITY",
+    "PULLQUOTE_0",
+    "PULLQUOTE_1",
+    "PULLQUOTE_2",
+    "PULLQUOTE_3",
+    "PULLQUOTE_4",
+    "PULLQUOTE_5",
+    "REC_1_TITLE",
+    "REC_1_DESC",
+    "REC_2_TITLE",
+    "REC_2_DESC",
+    "REC_3_TITLE",
+    "REC_3_DESC",
+    "REC_4_TITLE",
+    "REC_4_DESC"
+  ],
+
+  "derived_metrics": {
+    "time_saved_realised": "licensed_users * licensed_avg_prompts * 6 / 60 * 12",
+    "time_saved_unrealised": "inactive_licenses * licensed_avg_prompts * 6 / 60 * 12",
+    "activation_rate": "licensed_users / total_licensed_seats * 100",
+    "regular_user_rate": "(band_6_10 + band_11_15 + band_16_plus) / (band_1_5 + band_6_10 + band_11_15 + band_16_plus) * 100"
+  }
+}
