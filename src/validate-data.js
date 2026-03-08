@@ -61,10 +61,88 @@ function checkType(value, def, field) {
   return null;
 }
 
+// ============================================================
+// SEMANTIC SANITY CHECKS — catch nonsensical data relationships
+// ============================================================
+const warnings = [];
+
+function num(field) {
+  const v = data[field];
+  return typeof v === 'number' ? v : null;
+}
+
+// 1. User count hierarchy: licensed <= total, chat <= total
+if (num('licensed_users') !== null && num('total_active_users') !== null) {
+  if (data.licensed_users > data.total_active_users) {
+    errors.push('licensed_users (' + data.licensed_users + ') > total_active_users (' + data.total_active_users + ') — impossible');
+  }
+}
+if (num('chat_users') !== null && num('total_active_users') !== null) {
+  if (data.chat_users > data.total_active_users) {
+    errors.push('chat_users (' + data.chat_users + ') > total_active_users (' + data.total_active_users + ') — impossible');
+  }
+}
+
+// 2. Enablement can't exceed 100%
+if (num('m365_enablement') !== null && data.m365_enablement > 100) {
+  errors.push('m365_enablement is ' + data.m365_enablement + '% — cannot exceed 100%. Check total_licensed_seats (' + data.total_licensed_seats + ')');
+}
+
+// 3. Percentages that MUST be large (>1%) — catch unconverted 0-1 decimal rates
+const mustBeLargePct = [
+  'm365_enablement', 'm365_adoption', 'm365_retention', 'chat_retention', 'agent_retention',
+  'agent_health', 'license_coverage',
+  'band_1_5_pct', 'band_6_10_pct',
+  'chat_band_1_5_pct', 'chat_band_6_10_pct',
+  'agent_band_1_5_pct', 'agent_band_6_10_pct'
+];
+for (const f of mustBeLargePct) {
+  const v = num(f);
+  if (v !== null && v > 0 && v < 1) {
+    errors.push(f + ' = ' + v + ' — looks like a 0-1 decimal, should be 0-100 percentage');
+  }
+}
+
+// 4. Floats should be rounded (no 15-digit decimals in the data file)
+for (const f of schema.required) {
+  const v = data[f];
+  if (typeof v === 'number') {
+    const str = String(v);
+    if (str.includes('.') && str.split('.')[1].length > 2) {
+      warnings.push(f + ' = ' + v + ' — should be rounded to 1-2 decimal places');
+    }
+  }
+}
+
+// 5. Band percentages should sum to ~100
+if (num('band_1_5_pct') !== null && num('band_6_10_pct') !== null &&
+    num('band_11_15_pct') !== null && num('band_16_plus_pct') !== null) {
+  const bandSum = data.band_1_5_pct + data.band_6_10_pct + data.band_11_15_pct + data.band_16_plus_pct;
+  if (bandSum < 95 || bandSum > 105) {
+    warnings.push('Active day band percentages sum to ' + bandSum.toFixed(1) + '% — expected ~100%');
+  }
+}
+
+// 6. License priority sanity (ratio of licensed to unlicensed prompts)
+if (num('license_priority') !== null && data.license_priority > 100) {
+  warnings.push('license_priority = ' + data.license_priority + ' — unusually high ratio');
+}
+
+// 7. Total licensed seats should be reasonable vs licensed users
+if (num('total_licensed_seats') !== null && num('licensed_users') !== null) {
+  if (data.total_licensed_seats < data.licensed_users * 0.5) {
+    errors.push('total_licensed_seats (' + data.total_licensed_seats + ') < licensed_users (' + data.licensed_users + ') * 0.5 — seats should be >= active licensed');
+  }
+}
+
 // Report
 console.log('\n=== Data Validation: ' + path.basename(dataPath) + ' ===');
 console.log(validCount + '/' + schema.required.length + ' required fields valid');
 if (notAvailable.length > 0) console.log(notAvailable.length + ' fields marked "not_available": ' + notAvailable.join(', '));
+if (warnings.length > 0) {
+  console.log('\nWARNINGS (' + warnings.length + '):');
+  warnings.forEach(w => console.log('  [WARN] ' + w));
+}
 if (errors.length > 0) {
   console.log('\n' + errors.length + ' ERRORS:');
   errors.forEach(e => console.log('  ' + e));

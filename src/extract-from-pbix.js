@@ -353,7 +353,10 @@ async function main() {
   // ============================================================
   console.log('\n=== Agent Ecosystem ===');
   set('total_agents', await getScalarMeasure('[Active Agents]', 'total_agents'));
-  set('multi_user_agents', await getScalarMeasure('[Agents with Credits]', 'multi_user_agents'));
+  // Multi-user agents: try High Impact Agents first, then Agents with Credits as fallback
+  let multiUserVal = await getScalarMeasure('[High Impact Agents]', 'multi_user_agents');
+  if (multiUserVal === null) multiUserVal = await getScalarMeasure('[Agents with Credits]', 'multi_user_agents_fb');
+  set('multi_user_agents', multiUserVal);
   set('agents_keep', await getScalarMeasure('[Agents to Keep]', 'agents_keep'));
   set('agents_review', await getScalarMeasure('[Agents to Review]', 'agents_review'));
   set('agents_retire', await getScalarMeasure('[Dormant Agents]', 'agents_retire'));
@@ -586,6 +589,16 @@ async function main() {
     console.log('  Found ' + Object.keys(appMap).length + ' app surfaces');
   } catch (e) {
     console.log('  App interactions error: ' + e.message.substring(0, 150));
+  }
+
+  // ============================================================
+  // ROUND ALL FLOATS — no 15-digit decimals in the output
+  // ============================================================
+  for (const key of Object.keys(data)) {
+    if (key.startsWith('_') || key === 'customer_name' || key === 'analysis_period') continue;
+    if (typeof data[key] === 'number' && !Number.isInteger(data[key])) {
+      data[key] = Math.round(data[key] * 10) / 10;
+    }
   }
 
   // ============================================================

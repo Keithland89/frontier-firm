@@ -536,6 +536,10 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       subErrors.push(fieldName + ': value is ' + value + ' (NaN/Infinity)');
       return html;
     }
+    // Round floats to 1 decimal — no 15-digit decimals in the report
+    if (typeof value === 'number' && !Number.isInteger(value)) {
+      return html.replace(placeholder, String(Math.round(value * 10) / 10));
+    }
     return html.replace(placeholder, String(value));
   }
 
@@ -679,8 +683,11 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{BAND_6_10_FMT\}\}/g, fmtN(data.band_6_10));
   html = html.replace(/\{\{BAND_11_15_FMT\}\}/g, fmtN(data.band_11_15));
   html = html.replace(/\{\{BAND_16_PLUS_FMT\}\}/g, fmtN(data.band_16_plus));
-  html = html.replace(/\{\{RETAINED_USERS_FMT\}\}/g, fmtN(data.retained_users));
-  html = html.replace(/\{\{RETENTION_COHORT_FMT\}\}/g, fmtN(data.retention_cohort || data.retained_users + data.churned_users));
+  const retainedVal = typeof data.retained_users === 'number' ? data.retained_users : null;
+  const churnedVal = typeof data.churned_users === 'number' ? data.churned_users : null;
+  html = safeSub(html, /\{\{RETAINED_USERS_FMT\}\}/g, retainedVal !== null ? fmtN(retainedVal) : 'not_available', 'retained_users_fmt');
+  html = safeSub(html, /\{\{RETENTION_COHORT_FMT\}\}/g,
+    retainedVal !== null && churnedVal !== null ? fmtN(retainedVal + churnedVal) : 'not_available', 'retention_cohort_fmt');
   html = html.replace(/\{\{TOTAL_AGENTS_FMT\}\}/g, fmtN(data.total_agents || 0));
   html = html.replace(/\{\{HABITUAL_USERS_FMT\}\}/g, fmtN(data.band_11_15 + data.band_16_plus));
   html = html.replace(/\{\{RETENTION_TIER_LABEL\}\}/g, data.m365_retention >= 85 ? 'Frontier-tier' : data.m365_retention >= 70 ? 'Expansion-tier' : 'Foundation-tier');
