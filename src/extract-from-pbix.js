@@ -412,32 +412,23 @@ async function main() {
   // ============================================================
   console.log('\n=== Org Scatter Data ===');
   try {
-    // Try SELECTCOLUMNS first (works if table has pre-aggregated rows)
+    // Try multiple column name patterns — PBIX versions vary
     let orgResult;
-    try {
-      orgResult = await runDax(`
-        EVALUATE
-        SELECTCOLUMNS(
-          'Chat + Agent Org Data',
-          "Organization", 'Chat + Agent Org Data'[Organization],
-          "ActiveUsers", 'Chat + Agent Org Data'[Active Users],
-          "ActionsPerUser", 'Chat + Agent Org Data'[Actions per User],
-          "TotalActions", 'Chat + Agent Org Data'[Total Actions]
-        )
-        ORDER BY [ActiveUsers] DESC
-      `);
-    } catch (selErr) {
-      console.log('  SELECTCOLUMNS failed, trying SUMMARIZECOLUMNS: ' + selErr.message.substring(0, 80));
-      orgResult = await runDax(`
-        EVALUATE
-        SUMMARIZECOLUMNS(
-          'Chat + Agent Org Data'[Organization],
-          "ActiveUsers", SUM('Chat + Agent Org Data'[Active Users]),
-          "ActionsPerUser", AVERAGE('Chat + Agent Org Data'[Actions per User]),
-          "TotalActions", SUM('Chat + Agent Org Data'[Total Actions])
-        )
-        ORDER BY [ActiveUsers] DESC
-      `);
+    const orgQueries = [
+      // Pattern 1: Pre-aggregated columns
+      `EVALUATE SELECTCOLUMNS('Chat + Agent Org Data', "Organization", 'Chat + Agent Org Data'[Organization], "ActiveUsers", 'Chat + Agent Org Data'[Active Users], "ActionsPerUser", 'Chat + Agent Org Data'[Actions per User], "TotalActions", 'Chat + Agent Org Data'[Total Actions]) ORDER BY [ActiveUsers] DESC`,
+      // Pattern 2: SUMMARIZE with measures
+      `EVALUATE SUMMARIZECOLUMNS('Chat + Agent Org Data'[Organization], "ActiveUsers", DISTINCTCOUNT('Chat + Agent Org Data'[UserEmail]), "TotalActions", SUM('Chat + Agent Org Data'[TotalActions])) ORDER BY [ActiveUsers] DESC`,
+      // Pattern 3: Count rows per org
+      `EVALUATE SUMMARIZECOLUMNS('Chat + Agent Org Data'[Organization], "ActiveUsers", COUNTROWS('Chat + Agent Org Data')) ORDER BY [ActiveUsers] DESC`,
+    ];
+    for (const q of orgQueries) {
+      try {
+        orgResult = await runDax(q);
+        if (orgResult._rows && orgResult._rows.length > 0) break;
+      } catch (e) {
+        console.log('  Org query attempt failed: ' + e.message.substring(0, 60));
+      }
     }
     const orgs = (orgResult._rows || []).filter(r => r.Organization && r.Organization !== '');
     data.org_scatter_data = orgs.slice(0, 15).map(r => ({
@@ -461,13 +452,13 @@ async function main() {
 
   try {
     // Calendar table has [Year-Month] (e.g. "2025-09") and [Date] columns
+    // Use Licensed + Unlicensed measures as they work as time series
     const monthlyResult = await runDax(`
       EVALUATE
       SUMMARIZECOLUMNS(
         'Calendar'[Year-Month],
-        "Users", [Total Active Chat Users Last Month],
-        "Prompts", [PromptsSubmitted],
-        "Sessions", [Total Sessions (All)]
+        "Licensed", [NoOfActiveChatUsers (Licensed)],
+        "Unlicensed", [NoOfActiveChatUsers (Unlicensed)]
       )
       ORDER BY 'Calendar'[Year-Month] ASC
     `);
@@ -475,20 +466,22 @@ async function main() {
     const monthlyData = {};
     const monthAbbr = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
     rows.forEach(r => {
-      const ym = r['Year-Month'] || r['Calendar[Year-Month]'] || '';
+      // CSV header may be "Year-Month" or "Calendar[Year-Month]" — try all keys
+      const ym = r['Year-Month'] || r['Calendar[Year-Month]'] || Object.values(r).find(v => typeof v === 'string' && /^\d{4}-\d{2}$/.test(v)) || '';
       const parts = ym.split('-');
       if (parts.length < 2) return;
       const year = parts[0];
       const monthIdx = parseInt(parts[1], 10) - 1;
       if (monthIdx < 0 || monthIdx > 11) return;
       const key = monthAbbr[monthIdx] + '_' + year;
-      const users = Number(r.Users) || 0;
-      const prompts = Number(r.Prompts) || 0;
-      const sessions = Number(r.Sessions) || 0;
+      const licensed = Number(r.Licensed) || 0;
+      const unlicensed = Number(r.Unlicensed) || 0;
+      const users = licensed + unlicensed;
+      const prompts = 0;
       monthlyData[key] = {
         users,
         prompts,
-        sessions,
+        sessions: 0,
         avg_prompts_per_user: users > 0 ? Math.round(prompts / users * 10) / 10 : 0
       };
     });
@@ -525,7 +518,7 @@ async function main() {
     const rows = tierResult._rows || [];
     const monthFull = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     data._supplementary_metrics.per_tier_monthly_users = rows.map(r => {
-      const ym = r['Year-Month'] || r['Calendar[Year-Month]'] || '';
+      const ym = r['Year-Month'] || r['Calendar[Year-Month]'] || Object.values(r).find(v => typeof v === 'string' && /^\d{4}-\d{2}$/.test(v)) || '';
       const parts = ym.split('-');
       const year = parts[0] || '';
       const monthIdx = parseInt(parts[1], 10) - 1;
