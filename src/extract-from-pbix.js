@@ -88,12 +88,15 @@ async function callTool(name, toolArgs) {
 function parseCSV(csvText) {
   const lines = csvText.trim().split(/\r?\n/);
   if (lines.length < 2) return [];
-  const headers = lines[0].replace(/^\[/, '').replace(/\]$/, '').split(/\],\s*\[|\]\[/)
-    .map(h => h.replace(/[\[\]]/g, '').trim());
-  // Strip table prefixes from headers (e.g. "Chat + Agent Org Data[Organization]" → "Organization")
-  const cleanHeaders = headers.map(h => {
-    const bracket = h.lastIndexOf('[');
-    return bracket >= 0 ? h.substring(bracket + 1).replace(/\]$/, '') : h;
+  // Split header on commas, then strip table prefixes and brackets from each
+  const rawHeaders = lines[0].split(',');
+  const cleanHeaders = rawHeaders.map(h => {
+    h = h.trim();
+    // Strip table prefix: "Chat + Agent Org Data[Organization]" → "Organization"
+    // Also handle "[Users]" → "Users"
+    const bracketMatch = h.match(/\[([^\]]+)\]$/);
+    if (bracketMatch) return bracketMatch[1];
+    return h.replace(/[\[\]]/g, '').trim();
   });
   return lines.slice(1).map(line => {
     const values = [];
@@ -229,10 +232,10 @@ async function main() {
 
   set('licensed_users', await getScalarMeasure('[NoOfActiveChatUsers (Licensed)]', 'licensed_users'));
   set('chat_users', await getScalarMeasure('[NoOfActiveChatUsers (Unlicensed)]', 'chat_users'));
-  set('agent_users', await getScalarMeasure('[UsersInteractingWithAgents]', 'agent_users'));
+  set('agent_users', await getScalarMeasure('[UsersInteractingWithAgents, Last Month]', 'agent_users'));
 
   // No direct "Copilot Enabled Users" measure — try Unique Users as proxy, else not_available
-  let totalSeats = await getScalarMeasure('[Unique Users]', 'total_licensed_seats');
+  let totalSeats = await getScalarMeasure("COUNTROWS('Copilot Licensed')", 'total_licensed_seats');
   set('total_licensed_seats', totalSeats);
 
   // Derived
@@ -370,7 +373,7 @@ async function main() {
   try {
     const agentResult = await runDax(`
       EVALUATE
-      TOPN(10,
+      TOPN(15,
         SUMMARIZECOLUMNS(
           'Chat + Agent Interactions (Audit Logs)'[AgentName],
           "Sessions", COUNTROWS('Chat + Agent Interactions (Audit Logs)')
@@ -415,16 +418,15 @@ async function main() {
     // Try multiple column name patterns — PBIX versions vary
     let orgResult;
     const orgQueries = [
-      // Pattern 1: Pre-aggregated columns
-      `EVALUATE SELECTCOLUMNS('Chat + Agent Org Data', "Organization", 'Chat + Agent Org Data'[Organization], "ActiveUsers", 'Chat + Agent Org Data'[Active Users], "ActionsPerUser", 'Chat + Agent Org Data'[Actions per User], "TotalActions", 'Chat + Agent Org Data'[Total Actions]) ORDER BY [ActiveUsers] DESC`,
-      // Pattern 2: SUMMARIZE with measures
-      `EVALUATE SUMMARIZECOLUMNS('Chat + Agent Org Data'[Organization], "ActiveUsers", DISTINCTCOUNT('Chat + Agent Org Data'[UserEmail]), "TotalActions", SUM('Chat + Agent Org Data'[TotalActions])) ORDER BY [ActiveUsers] DESC`,
-      // Pattern 3: Count rows per org
-      `EVALUATE SUMMARIZECOLUMNS('Chat + Agent Org Data'[Organization], "ActiveUsers", COUNTROWS('Chat + Agent Org Data')) ORDER BY [ActiveUsers] DESC`,
+      // Pattern 1: Use measures that filter to last month per org
+      `EVALUATE TOPN(15, SUMMARIZECOLUMNS('Chat + Agent Org Data'[Organization], "ActiveUsers", [Total Active Chat Users Last Month], "Agents", [UsersInteractingWithAgents, Last Month]), [ActiveUsers], DESC)`,
+      // Pattern 2: Simple COUNTROWS fallback
+      `EVALUATE TOPN(15, SUMMARIZECOLUMNS('Chat + Agent Org Data'[Organization], "ActiveUsers", COUNTROWS('Chat + Agent Org Data')), [ActiveUsers], DESC)`,
     ];
     for (const q of orgQueries) {
       try {
         orgResult = await runDax(q);
+        console.log('  Org query rows: ' + (orgResult._rows ? orgResult._rows.length : 'none') + ', csv: ' + (orgResult._csv ? orgResult._csv.substring(0, 80) : 'none'));
         if (orgResult._rows && orgResult._rows.length > 0) break;
       } catch (e) {
         console.log('  Org query attempt failed: ' + e.message.substring(0, 60));
@@ -434,8 +436,8 @@ async function main() {
     data.org_scatter_data = orgs.slice(0, 15).map(r => ({
       label: r.Organization,
       x: Number(r.ActiveUsers) || 0,
-      y: Math.round((Number(r.ActionsPerUser) || 0) * 10) / 10,
-      r: Number(r.TotalActions) || 0
+      y: Math.round((Number(r.Agents) || 0) / Math.max(Number(r.ActiveUsers), 1) * 100 * 10) / 10,  // Agent adoption %
+      r: Number(r.ActiveUsers) || 0  // bubble size = user count
     }));
     data.org_count = data.org_count || orgs.length;
     console.log('  Found ' + orgs.length + ' orgs, using top 15');
@@ -532,6 +534,24 @@ async function main() {
     console.log('  Found ' + rows.length + ' months of tier data');
   } catch (e) {
     console.log('  Per-tier error: ' + e.message.substring(0, 150));
+  }
+
+  // Backfill core user counts from per-tier monthly data (most recent complete month)
+  if (data._supplementary_metrics.per_tier_monthly_users && data._supplementary_metrics.per_tier_monthly_users.length >= 2) {
+    // Use second-to-last month (last may be partial)
+    const recentMonths = data._supplementary_metrics.per_tier_monthly_users;
+    const fullMonth = recentMonths.length >= 2 ? recentMonths[recentMonths.length - 2] : recentMonths[recentMonths.length - 1];
+    console.log('  Backfilling user counts from ' + fullMonth.month);
+    data.licensed_users = fullMonth.licensed;
+    data.chat_users = fullMonth.unlicensed;
+    data.total_active_users = fullMonth.licensed + fullMonth.unlicensed;
+    // Recalculate derived values
+    if (data.total_active_users > 0 && typeof data.total_licensed_seats === 'number') {
+      data.license_coverage = Math.round(data.licensed_users / data.total_active_users * 1000) / 10;
+    }
+    if (typeof data.total_licensed_seats === 'number' && data.total_licensed_seats > 0) {
+      data.m365_enablement = Math.round(data.licensed_users / data.total_licensed_seats * 1000) / 10;
+    }
   }
 
   // ============================================================
