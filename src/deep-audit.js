@@ -151,6 +151,10 @@ if (data.m365_frequency) addVal(Math.max(Math.round(data.m365_frequency * 2), 25
 if (data.agent_adoption) addVal(Math.round(data.agent_adoption * 2));
 if (data.m365_breadth) addVal(Math.max((data.m365_breadth || 3) + 2, 7));
 if (data.chat_users) addVal(Math.min(Math.round(data.chat_users * 0.13), 5000));
+// Org scatter derived values (agent adoption %, etc.)
+if (Array.isArray(data.org_scatter_data)) {
+  data.org_scatter_data.forEach(function(org) { addVal(org.x); addVal(org.y); addVal(org.r); });
+}
 
 // Structural/framework numbers that always appear (phase numbers, day ranges, thresholds, etc.)
 const frameworkNumbers = new Set([

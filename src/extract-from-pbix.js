@@ -140,6 +140,16 @@ async function getScalarMeasure(measureExpr, label) {
   }
 }
 
+// Try multiple measure names in order, returning the first non-null result.
+// Handles PBIX version differences (newer 2302 vs older MOJ/NR templates).
+async function getScalarWithFallbacks(measures, label) {
+  for (const m of measures) {
+    const v = await getScalarMeasure(m, label);
+    if (v !== null) return v;
+  }
+  return null;
+}
+
 // ============================================================
 // MAIN EXTRACTION
 // ============================================================
@@ -274,19 +284,21 @@ async function main() {
   // ============================================================
   console.log('\n=== Scored Metrics ===');
   // Reach metrics
-  set('m365_adoption', toPct(await getScalarMeasure('[Engagement Rate]', 'm365_adoption')));
-  set('agent_adoption', toPct(await getScalarMeasure('[Agent Adoption Rate]', 'agent_adoption')));
-  set('agent_enablement', await getScalarMeasure('[Agent Org Spread]', 'agent_enablement'));
+  set('m365_adoption', toPct(await getScalarWithFallbacks(['[Engagement Rate]'], 'm365_adoption')));
+  set('agent_adoption', toPct(await getScalarWithFallbacks(['[Agent Adoption Rate]', '[% Copilot Users Using Agents (Licensed)]'], 'agent_adoption')));
+  set('agent_enablement', await getScalarWithFallbacks(['[Agent Org Spread]'], 'agent_enablement'));
 
   // Habit metrics (16+ day rates — these are the "habitual" thresholds)
-  set('m365_frequency', toPct(await getScalarMeasure('[Licensed Users 16+ Active Day Rate Last Month]', 'm365_frequency')));
-  set('chat_habit', toPct(await getScalarMeasure('[16+ Active Day Rate, Last Month (Chat)]', 'chat_habit')));
-  set('agent_frequency', toPct(await getScalarMeasure('[16+ Active Day Rate, Last Month (Agent)]', 'agent_frequency')));
+  // Older PBIX uses 20+ bands instead of 16+
+  set('m365_frequency', toPct(await getScalarWithFallbacks(['[Licensed Users 16+ Active Day Rate Last Month]', '[Licensed Users 20+ Active Day Rate Last Month]'], 'm365_frequency')));
+  set('chat_habit', toPct(await getScalarWithFallbacks(['[16+ Active Day Rate, Last Month (Chat)]', '[>20 Active Day Rate, Last Month (Chat)]'], 'chat_habit')));
+  set('agent_frequency', toPct(await getScalarWithFallbacks(['[16+ Active Day Rate, Last Month (Agent)]', '[>20 Active Day Rate, Last Month (Agent)]'], 'agent_frequency')));
 
   // Retention — use Return Rate as proxy (no dedicated retention measures in this PBIX)
-  set('m365_retention', toPct(await getScalarMeasure('[Agent Return Rate]', 'm365_retention')));
-  set('chat_retention', toPct(await getScalarMeasure('[Satisfaction Rate]', 'chat_retention')));
-  set('agent_retention', toPct(await getScalarMeasure('[Agent Return Rate]', 'agent_retention')));
+  // Older PBIX uses "Avg Agent Return Rate %" instead of "Agent Return Rate"
+  set('m365_retention', toPct(await getScalarWithFallbacks(['[Agent Return Rate]', '[Avg Agent Return Rate %]'], 'm365_retention')));
+  set('chat_retention', toPct(await getScalarWithFallbacks(['[Satisfaction Rate]'], 'chat_retention')));
+  set('agent_retention', toPct(await getScalarWithFallbacks(['[Agent Return Rate]', '[Avg Agent Return Rate %]'], 'agent_retention')));
 
   // Intensity (these are absolute counts, not rates)
   set('chat_intensity', await getScalarMeasure('[Average Chat Sessions Per Active User (Unlicensed)]', 'chat_intensity'));
@@ -304,10 +316,10 @@ async function main() {
   set('agent_breadth', await getScalarMeasure('[Average Agent Active Days Per User]', 'agent_breadth'));
 
   // Complex sessions / quality
-  set('complex_sessions', await getScalarMeasure('[Avg Turns Per Conversation]', 'complex_sessions'));
-  set('agent_health', toPct(await getScalarMeasure('[Agent Return Rate]', 'agent_health')));
-  set('agent_creators_pct', toPct(await getScalarMeasure('[Credit Utilization Rate]', 'agent_creators_pct')));
-  set('agent_habitual', toPct(await getScalarMeasure('[16+ Active Day Rate, Last Month (Agent)]', 'agent_habitual')));
+  set('complex_sessions', await getScalarWithFallbacks(['[Avg Turns Per Conversation]'], 'complex_sessions'));
+  set('agent_health', toPct(await getScalarWithFallbacks(['[Agent Return Rate]', '[Avg Agent Return Rate %]'], 'agent_health')));
+  set('agent_creators_pct', toPct(await getScalarWithFallbacks(['[Credit Utilization Rate]'], 'agent_creators_pct')));
+  set('agent_habitual', toPct(await getScalarWithFallbacks(['[16+ Active Day Rate, Last Month (Agent)]', '[>20 Active Day Rate, Last Month (Agent)]'], 'agent_habitual')));
 
   // License coverage (derived)
   if (typeof data.licensed_users === 'number' && typeof data.total_active_users === 'number' && data.total_active_users > 0) {
@@ -319,10 +331,11 @@ async function main() {
   // ============================================================
   console.log('\n=== Active Day Bands ===');
   // Overall (all users) — use Chat counts as proxy for overall
+  // Older PBIX uses 11-19 and >20 bands instead of 11-15 and 16+
   const b15 = await getScalarMeasure('[1-5 Active Days, Last Month (Chat)]', 'band_1_5');
   const b610 = await getScalarMeasure('[6-10 Active Days, Last Month (ChatO)]', 'band_6_10');
-  const b1115 = await getScalarMeasure('[11-15 Active Days, Last Month (Chat)]', 'band_11_15');
-  const b16p = await getScalarMeasure('[16+ Active Days, Last Month (Chat)]', 'band_16_plus');
+  const b1115 = await getScalarWithFallbacks(['[11-15 Active Days, Last Month (Chat)]', '[11-19 Active Days, Last Month (Chat)]'], 'band_11_15');
+  const b16p = await getScalarWithFallbacks(['[16+ Active Days, Last Month (Chat)]', '[>20 Active Days, Last Month (Chat)]'], 'band_16_plus');
   set('band_1_5', b15);
   set('band_6_10', b610);
   set('band_11_15', b1115);
@@ -339,30 +352,30 @@ async function main() {
   }
 
   // Per-tier band rates — PBIX "Rate" measures return decimals (0.82 = 82%)
+  // Older PBIX uses 11-19 / >20 bands instead of 11-15 / 16+
   set('chat_band_1_5_pct', toPct(await getScalarMeasure('[1-5 Active Day Rate, Last Month (Chat)]', 'chat_band_1_5_pct')));
   set('chat_band_6_10_pct', toPct(await getScalarMeasure('[6-10 Active Day Rate, Last Month (Chat)]', 'chat_band_6_10_pct')));
-  set('chat_band_11_15_pct', toPct(await getScalarMeasure('[11-15 Active Day Rate, Last Month (Chat)]', 'chat_band_11_15_pct')));
-  set('chat_band_16_plus_pct', toPct(await getScalarMeasure('[16+ Active Day Rate, Last Month (Chat)]', 'chat_band_16_plus_pct')));
+  set('chat_band_11_15_pct', toPct(await getScalarWithFallbacks(['[11-15 Active Day Rate, Last Month (Chat)]', '[11-19 Active Day Rate, Last Month (Chat)]'], 'chat_band_11_15_pct')));
+  set('chat_band_16_plus_pct', toPct(await getScalarWithFallbacks(['[16+ Active Day Rate, Last Month (Chat)]', '[>20 Active Day Rate, Last Month (Chat)]'], 'chat_band_16_plus_pct')));
   set('agent_band_1_5_pct', toPct(await getScalarMeasure('[1-5 Active Days Rate, Last Month (Agent)]', 'agent_band_1_5_pct')));
   set('agent_band_6_10_pct', toPct(await getScalarMeasure('[6-10 Active Day Rate, Last Month (Agent)]', 'agent_band_6_10_pct')));
-  set('agent_band_11_15_pct', toPct(await getScalarMeasure('[11-15 Active Day Rate, Last Month (Agent)]', 'agent_band_11_15_pct')));
-  set('agent_band_16_plus_pct', toPct(await getScalarMeasure('[16+ Active Day Rate, Last Month (Agent)]', 'agent_band_16_plus_pct')));
+  set('agent_band_11_15_pct', toPct(await getScalarWithFallbacks(['[11-15 Active Day Rate, Last Month (Agent)]', '[11-19 Active Day Rate, Last Month (Agent)]'], 'agent_band_11_15_pct')));
+  set('agent_band_16_plus_pct', toPct(await getScalarWithFallbacks(['[16+ Active Day Rate, Last Month (Agent)]', '[>20 Active Day Rate, Last Month (Agent)]'], 'agent_band_16_plus_pct')));
 
   // ============================================================
   // AGENT ECOSYSTEM
   // ============================================================
   console.log('\n=== Agent Ecosystem ===');
   set('total_agents', await getScalarMeasure('[Active Agents]', 'total_agents'));
-  // Multi-user agents: try High Impact Agents first, then Agents with Credits as fallback
-  let multiUserVal = await getScalarMeasure('[High Impact Agents]', 'multi_user_agents');
-  if (multiUserVal === null) multiUserVal = await getScalarMeasure('[Agents with Credits]', 'multi_user_agents_fb');
+  // Multi-user agents: try High Impact Agents, then Agents with Credits, then compute from agent table
+  let multiUserVal = await getScalarWithFallbacks(['[High Impact Agents]', '[Agents with Credits]'], 'multi_user_agents');
   set('multi_user_agents', multiUserVal);
   set('agents_keep', await getScalarMeasure('[Agents to Keep]', 'agents_keep'));
   set('agents_review', await getScalarMeasure('[Agents to Review]', 'agents_review'));
-  set('agents_retire', await getScalarMeasure('[Dormant Agents]', 'agents_retire'));
+  set('agents_retire', await getScalarWithFallbacks(['[Dormant Agents]', '[Inactive Agents]'], 'agents_retire'));
 
-  // Org count — try Agent Org Spread (returns a count/rate), fallback to org scatter data later
-  set('org_count', await getScalarMeasure('[Agent Org Spread]', 'org_count'));
+  // Org count — try Agent Org Spread, fallback to org scatter data later
+  set('org_count', await getScalarWithFallbacks(['[Agent Org Spread]'], 'org_count'));
 
   // Retention users — no direct count measures available, derive from total if possible
   // These need to be set from supplementary retention cohort data or marked not_available
