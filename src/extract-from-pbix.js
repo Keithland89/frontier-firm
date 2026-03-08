@@ -605,6 +605,90 @@ async function main() {
   }
 
   // ============================================================
+  // COMPUTED FALLBACKS — derive missing fields from raw tables
+  // ============================================================
+  console.log('\n=== Computed Fallbacks ===');
+
+  // m365_adoption: derive from licensed/seats if not available
+  if (data.m365_adoption === 'not_available' && typeof data.licensed_users === 'number' && typeof data.total_licensed_seats === 'number' && data.total_licensed_seats > 0) {
+    data.m365_adoption = Math.round(data.licensed_users / data.total_licensed_seats * 1000) / 10;
+    console.log('  m365_adoption: derived = ' + data.m365_adoption + '%');
+  }
+
+  // Retention: compute from ActiveDaysSummary INTERSECT
+  if (data.retained_users === 'not_available' || data.churned_users === 'not_available') {
+    try {
+      const retResult = await runDax(`
+        EVALUATE
+        VAR LastMonth = MAXX('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart])
+        VAR PrevMonth = MAXX(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart] < LastMonth), 'ActiveDaysSummary'[MonthStart])
+        VAR UsersLast = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = LastMonth)
+        VAR UsersPrev = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = PrevMonth)
+        VAR Retained = COUNTROWS(INTERSECT(UsersLast, UsersPrev))
+        VAR Churned = COUNTROWS(UsersPrev) - Retained
+        RETURN ROW("Retained", Retained, "Churned", Churned, "RetentionPct", DIVIDE(Retained, COUNTROWS(UsersPrev), 0))
+      `);
+      if (retResult._rows && retResult._rows.length > 0) {
+        const row = retResult._rows[0];
+        data.retained_users = Number(row.Retained) || 0;
+        data.churned_users = Number(row.Churned) || 0;
+        console.log('  retained_users: ' + data.retained_users + ', churned_users: ' + data.churned_users);
+        // Also set m365_retention if missing
+        if (data.m365_retention === 'not_available') {
+          const pct = Number(row.RetentionPct);
+          data.m365_retention = isNaN(pct) ? 'not_available' : Math.round(pct * 1000) / 10;
+          console.log('  m365_retention: derived = ' + data.m365_retention + '%');
+        }
+      }
+    } catch (e) { console.log('  Retention computation failed: ' + e.message.substring(0, 80)); }
+  }
+
+  // Chat retention: compute per-tier from ActiveDaysSummary
+  if (data.chat_retention === 'not_available') {
+    try {
+      const chatRetResult = await runDax(`
+        EVALUATE
+        VAR LastMonth = MAXX('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart])
+        VAR PrevMonth = MAXX(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart] < LastMonth), 'ActiveDaysSummary'[MonthStart])
+        VAR UsersLast = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = LastMonth, 'ActiveDaysSummary'[LicenseStatus] = "Unlicensed")
+        VAR UsersPrev = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = PrevMonth, 'ActiveDaysSummary'[LicenseStatus] = "Unlicensed")
+        RETURN ROW("RetPct", DIVIDE(COUNTROWS(INTERSECT(UsersLast, UsersPrev)), COUNTROWS(UsersPrev), 0))
+      `);
+      if (chatRetResult._rows && chatRetResult._rows.length > 0) {
+        const pct = Number(chatRetResult._rows[0].RetPct);
+        data.chat_retention = isNaN(pct) ? 'not_available' : Math.round(pct * 1000) / 10;
+        console.log('  chat_retention: derived = ' + data.chat_retention + '%');
+      }
+    } catch (e) { console.log('  Chat retention failed: ' + e.message.substring(0, 80)); }
+  }
+
+  // Agent creators %
+  if (data.agent_creators_pct === 'not_available') {
+    try {
+      const creatorsResult = await runDax("EVALUATE ROW(\"v\", DISTINCTCOUNT('Agents 365'[Agent Creator]))");
+      if (creatorsResult._rows && creatorsResult._rows.length > 0) {
+        const creators = Number(creatorsResult._rows[0].v || creatorsResult._rows[0][Object.keys(creatorsResult._rows[0])[0]]) || 0;
+        if (typeof data.total_active_users === 'number' && data.total_active_users > 0) {
+          data.agent_creators_pct = Math.round(creators / data.total_active_users * 1000) / 10;
+          console.log('  agent_creators_pct: ' + creators + ' creators / ' + data.total_active_users + ' users = ' + data.agent_creators_pct + '%');
+        }
+      }
+    } catch (e) { console.log('  Agent creators failed: ' + e.message.substring(0, 80)); }
+  }
+
+  // Complex sessions: use avg PromptCount as proxy (>1 prompt = multi-turn)
+  if (data.complex_sessions === 'not_available') {
+    try {
+      const complexResult = await runDax("EVALUATE ROW(\"v\", DIVIDE(COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[PromptCount] > 1)), COUNTROWS('ActiveDaysSummary'), 0))");
+      if (complexResult._rows && complexResult._rows.length > 0) {
+        const pct = Number(complexResult._rows[0].v || complexResult._rows[0][Object.keys(complexResult._rows[0])[0]]) || 0;
+        data.complex_sessions = Math.round(pct * 1000) / 10;
+        console.log('  complex_sessions: ' + data.complex_sessions + '% of user-months have >1 prompt');
+      }
+    } catch (e) { console.log('  Complex sessions failed: ' + e.message.substring(0, 80)); }
+  }
+
+  // ============================================================
   // ROUND ALL FLOATS — no 15-digit decimals in the output
   // ============================================================
   for (const key of Object.keys(data)) {
