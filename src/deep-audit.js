@@ -137,11 +137,13 @@ if (data.total_agents && data.multi_user_agents) {
   addVal(100 - multiPct);
   addVal(data.total_agents - data.multi_user_agents);
 }
-if (data.agents_keep !== undefined && data.agents_review !== undefined && data.agents_retire !== undefined) {
-  const totalAgents = data.agents_keep + data.agents_review + data.agents_retire;
+if (typeof data.agents_keep === 'number' && typeof data.agents_review === 'number') {
+  const retire = typeof data.agents_retire === 'number' ? data.agents_retire : 0;
+  const totalAgents = data.agents_keep + data.agents_review + retire;
   if (totalAgents > 0) {
-    addVal(Math.round(data.agents_retire / totalAgents * 100));
+    addVal(Math.round(retire / totalAgents * 100));
     addVal(Math.round(data.agents_keep / totalAgents * 100));
+    addVal(Math.round(data.agents_review / totalAgents * 100));
   }
 }
 // Recommendation KPI derived values

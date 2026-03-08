@@ -54,10 +54,13 @@ console.log(`Loaded data for: ${data.customer_name}`);
 // ============================================================
 // DERIVED DATA FIELDS
 // ============================================================
+// Top-level numeric-safe accessor (for derived fields computed before populateTemplate)
+const _n = (field, fallback) => typeof data[field] === 'number' ? data[field] : (fallback !== undefined ? fallback : 0);
+
 // License coverage: % of total active users that have a license
 if (!data.license_coverage) {
-  data.license_coverage = data.total_active_users > 0
-    ? Math.round(data.licensed_users / data.total_active_users * 1000) / 10
+  data.license_coverage = _n('total_active_users') > 0
+    ? Math.round(_n('licensed_users') / Math.max(_n('total_active_users'), 1) * 1000) / 10
     : 0;
 }
 // Agent habitual rate: % of agent users with 11+ active days
@@ -147,9 +150,9 @@ const gauges = {
 // ============================================================
 // CALCULATE DERIVED METRICS
 // ============================================================
-const timeSavedRealised = Math.round(data.licensed_users * data.licensed_avg_prompts * 6 / 60 * 12 / 1000);
-const timeSavedUnrealised = Math.round(data.inactive_licenses * data.licensed_avg_prompts * 6 / 60 * 12 / 1000);
-const activationRate = (data.licensed_users / data.total_licensed_seats * 100).toFixed(1);
+const timeSavedRealised = Math.round(_n('licensed_users') * _n('licensed_avg_prompts') * 6 / 60 * 12 / 1000);
+const timeSavedUnrealised = Math.round(_n('inactive_licenses') * _n('licensed_avg_prompts') * 6 / 60 * 12 / 1000);
+const activationRate = (_n('licensed_users') / Math.max(_n('total_licensed_seats'), 1) * 100).toFixed(1);
 
 console.log(`Time saved: ~${timeSavedRealised}K hrs/yr realised, ~${timeSavedUnrealised}K hrs/yr unrealised`);
 
@@ -184,10 +187,10 @@ Signal scores:
 - Value: ${signalTiers.value} (${data.license_priority}x engagement premium, ~${timeSavedRealised}K hrs/yr saved)
 
 Key data points:
-- ${data.total_active_users.toLocaleString()} total active users, ${data.licensed_users.toLocaleString()} licensed
-- ${data.inactive_licenses.toLocaleString()} inactive licenses
-- ${data.chat_users.toLocaleString()} unlicensed Chat users (organic demand)
-- Active day distribution: ${data.band_1_5.toLocaleString()} (1-5 days), ${data.band_6_10.toLocaleString()} (6-10), ${data.band_11_15.toLocaleString()} (11-15), ${data.band_16_plus} (16+)
+- ${typeof data.total_active_users === 'number' ? data.total_active_users.toLocaleString() : 'N/A'} total active users, ${typeof data.licensed_users === 'number' ? data.licensed_users.toLocaleString() : 'N/A'} licensed
+- ${typeof data.inactive_licenses === 'number' ? data.inactive_licenses.toLocaleString() : 'N/A'} inactive licenses
+- ${typeof data.chat_users === 'number' ? data.chat_users.toLocaleString() : 'N/A'} unlicensed Chat users (organic demand)
+- Active day distribution: ${typeof data.band_1_5 === 'number' ? data.band_1_5.toLocaleString() : 'N/A'} (1-5 days), ${typeof data.band_6_10 === 'number' ? data.band_6_10.toLocaleString() : 'N/A'} (6-10), ${typeof data.band_11_15 === 'number' ? data.band_11_15.toLocaleString() : 'N/A'} (11-15), ${data.band_16_plus || 'N/A'} (16+)
 - ${data.total_agents || 'N/A'} total agents, ${data.multi_user_agents || 'N/A'} multi-user
 - Agent creators: ~${data.agent_creators_pct}% of users
 
@@ -270,6 +273,21 @@ Return ONLY the JSON object, no markdown code fences.`;
 // TEMPLATE FALLBACK INSIGHTS
 // ============================================================
 function generateTemplateInsights(data, signalTiers, pattern) {
+  // Guard: ensure numeric fields used in template text don't produce NaN
+  const safe = (v, fallback) => typeof v === 'number' && isFinite(v) ? v : fallback;
+  // Patch data with safe defaults for template text generation
+  const d = Object.assign({}, data);
+  d.m365_enablement = safe(d.m365_enablement, 0);
+  d.m365_adoption = safe(d.m365_adoption, 0);
+  d.m365_frequency = safe(d.m365_frequency, 0);
+  d.m365_retention = safe(d.m365_retention, 0);
+  d.m365_breadth = safe(d.m365_breadth, 0);
+  d.complex_sessions = safe(d.complex_sessions, 0);
+  d.inactive_licenses = safe(d.inactive_licenses, 0);
+  d.band_1_5_pct = safe(d.band_1_5_pct, 0);
+  d.band_6_10 = safe(d.band_6_10, 0);
+  d.total_licensed_seats = safe(d.total_licensed_seats, 1);
+  data = d;
   const fmt = n => typeof n === 'number' ? n.toLocaleString() : n;
 
   return {
@@ -292,19 +310,19 @@ function generateTemplateInsights(data, signalTiers, pattern) {
     REC_2_TITLE: `Expand beyond ${data.m365_breadth} apps + curate top agents`,
     REC_2_DESC: `Promote underused app surfaces through workflow training. Surface top multi-user agents via a curated catalogue. Retire dormant agents.`,
     REC_3_TITLE: `Activate ${fmt(data.inactive_licenses)} idle licenses`,
-    REC_3_DESC: `${((data.inactive_licenses / data.total_licensed_seats) * 100).toFixed(0)}% of licenses sit unused. Segment inactive users by function and deploy targeted activation campaigns.`,
-    TITLE_REACH: 'Reach: ' + Math.round(data.m365_enablement) + '% activated \u2014 but ' + data.inactive_licenses.toLocaleString() + ' sit idle',
+    REC_3_DESC: `${(safe(data.total_licensed_seats, 1) > 0 ? ((safe(data.inactive_licenses, 0) / safe(data.total_licensed_seats, 1)) * 100).toFixed(0) : '0')}% of licenses sit unused. Segment inactive users by function and deploy targeted activation campaigns.`,
+    TITLE_REACH: 'Reach: ' + Math.round(safe(data.m365_enablement, 0)) + '% activated \u2014 but ' + (typeof data.inactive_licenses === 'number' ? data.inactive_licenses.toLocaleString() : '0') + ' sit idle',
     TITLE_HABIT: data.m365_retention + '% come back \u2014 but only ' + data.m365_frequency + '% have built a daily habit',
     TITLE_SKILL: 'Stuck in ' + data.m365_breadth + ' apps \u2014 the breadth gap is the biggest blocker',
     TITLE_VALUE: '~' + timeSavedRealised + 'K hours saved \u2014 with ~' + timeSavedUnrealised + 'K more on the table',
     TITLE_MATURITY: 'Pattern ' + pattern.number + ': ' + pattern.name,
-    SUBTITLE_REACH: 'Copilot has landed across ' + data.org_count + ' organisations. The deployment is real \u2014 but ' + ((data.inactive_licenses / data.total_licensed_seats) * 100).toFixed(0) + '% of licenses are gathering dust.',
+    SUBTITLE_REACH: 'Copilot has landed across ' + data.org_count + ' organisations. The deployment is real \u2014 but ' + (safe(data.total_licensed_seats, 1) > 0 ? ((safe(data.inactive_licenses, 0) / safe(data.total_licensed_seats, 1)) * 100).toFixed(0) : '0') + '% of licenses are gathering dust.',
     SUBTITLE_HABIT: 'Retention is ' + (data.m365_retention > 85 ? 'world-class' : 'healthy') + '. The challenge is converting monthly visitors into daily users.',
     SUBTITLE_SKILL: 'Users stick to ' + data.m365_breadth + ' apps out of 27 available. The agent ecosystem is vast but fragmented.',
     SUBTITLE_VALUE: 'Every active user saves time. Every idle license is unrealised potential.',
     SUBTITLE_MATURITY: (pattern.name === 'Expansion' ? 'Deployed but not yet embedded.' : pattern.name === 'Foundation' ? 'Early stages of AI adoption.' : 'AI is deeply embedded.') + ' AI is scaling but habits and skills lag behind deployment.',
     INSIGHT_HABIT: '<strong>Retention is ' + (data.m365_retention > 85 ? 'world-class' : 'healthy') + ' at ' + data.m365_retention + '%</strong> \u2014 but habitual use (11+ days) is only ' + data.m365_frequency + '%. The gap between coming back and building routine is the conversion opportunity.',
-    SPOTLIGHT_AGENTS: '<strong>' + (data.total_agents ? Math.round(((data.total_agents - (data.multi_user_agents || 0)) / data.total_agents) * 100) : 83) + '% of agents have exactly one user</strong> \u2014 their creator. But the ' + fmt(data.multi_user_agents || 0) + ' that broke through are the real signal. Purpose-built agents achieve higher stickiness than generic first-party agents.',
+    SPOTLIGHT_AGENTS: '<strong>' + (typeof data.total_agents === 'number' && data.total_agents > 0 ? Math.round(((data.total_agents - (safe(data.multi_user_agents, 0))) / data.total_agents) * 100) : 83) + '% of agents have exactly one user</strong> \u2014 their creator. But the ' + fmt(safe(data.multi_user_agents, 0)) + ' that broke through are the real signal. Purpose-built agents achieve higher stickiness than generic first-party agents.',
         REC_4_TITLE: `Prioritise high-Chat markets for licensing`,
     REC_4_DESC: `${fmt(data.chat_users)} unlicensed Chat users represent proven organic demand. Target markets with the highest unlicensed-to-licensed ratios for M365 Copilot licensing.`,
     // Org-specific insights (generic fallbacks — override in data JSON or AI mode)
@@ -315,7 +333,7 @@ function generateTemplateInsights(data, signalTiers, pattern) {
     ORG_INTENSITY_BODY: 'The intensity gap between top and bottom-quartile organisations reveals replication opportunities. ' + data.org_count + ' active orgs, but engagement varies significantly.',
     ORG_SCATTER_HEADLINE: 'Organisation-level adoption reveals pockets of maturity',
     ORG_INTENSITY_COMPARISON: 'Top organisations show 2-3x the engagement of bottom quartile — study what\'s different and replicate.',
-    ORG_AGENT_INSIGHT: '<strong>Agent adoption varies significantly across organisations.</strong> Leading orgs show ' + (data.agent_adoption * 2) + '% adoption — double the tenant average (' + data.agent_adoption + '%). These are early candidates for deeper AI integration.',
+    ORG_AGENT_INSIGHT: '<strong>Agent adoption varies significantly across organisations.</strong> Leading orgs show ' + (safe(data.agent_adoption, 0) * 2) + '% adoption — double the tenant average (' + safe(data.agent_adoption, 0) + '%). These are early candidates for deeper AI integration.',
     GEO_PATTERN_INSIGHT: '<strong>Top organisations lead on both licensed intensity and agent adoption</strong>, while the bottom quartile averages below the engagement threshold. Targeted enablement for lagging organisations would lift the overall habit score.',
     AGENT_HABIT_SIGNAL: 'Agent users average <strong>' + (data.agent_frequency || 'low') + ' sessions/user/week</strong> — below the habitual threshold. The gap between interest and routine is the conversion opportunity. See the <a href="#proficiency" style="color:#7B2FF2;text-decoration:underline">Skill Set</a> section for agent portfolio depth analysis.',
     ORG_DEPTH_INSIGHT: '<strong>Leading organisations show strongest agent adoption and session depth</strong> — suggesting pockets where human-agent collaboration is genuinely embedded. By contrast, large orgs with high M365 Copilot volume but narrow agent breadth indicate Pattern 1 dominance.',
@@ -511,6 +529,10 @@ function buildMetricDetail(data, schema) {
 
 function populateTemplate(template, data, insights, signalTiers, pattern, gauges) {
   let html = template;
+
+  // Pre-process: for inline arithmetic safety, create numeric-safe versions of all fields
+  // This prevents NaN from Math operations on "not_available" strings
+  const n = (field, fallback) => typeof data[field] === 'number' ? data[field] : (fallback !== undefined ? fallback : 0);
   const fmt = n => typeof n === 'number' ? n.toLocaleString() : String(n);
 
   // ── safeSub: fail-safe placeholder replacement ──
@@ -580,7 +602,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = safeSub(html, /\{\{CHAT_HABIT\}\}/g, data.chat_habit, 'chat_habit');
   html = safeSub(html, /\{\{AGENT_FREQUENCY\}\}/g, data.agent_frequency, 'agent_frequency');
   html = safeSub(html, /\{\{M365_RETENTION\}\}/g, data.m365_retention, 'm365_retention');
-  html = safeSub(html, /\{\{M365_RETENTION_INT\}\}/g, Math.round(data.m365_retention), 'm365_retention_int');
+  html = safeSub(html, /\{\{M365_RETENTION_INT\}\}/g, typeof data.m365_retention === 'number' ? Math.round(data.m365_retention) : 'not_available', 'm365_retention_int');
   html = safeSub(html, /\{\{CHAT_RETENTION\}\}/g, data.chat_retention, 'chat_retention');
   html = safeSub(html, /\{\{AGENT_RETENTION\}\}/g, data.agent_retention, 'agent_retention');
 
@@ -602,7 +624,9 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = safeSub(html, /\{\{AGENT_CREATORS_PCT\}\}/g, data.agent_creators_pct, 'agent_creators_pct');
   html = safeSub(html, /\{\{LICENSE_COVERAGE_PCT\}\}/g, data.license_coverage, 'license_coverage');
   html = safeSub(html, /\{\{AGENT_HABITUAL_PCT\}\}/g, data.agent_habitual, 'agent_habitual');
-  html = html.replace(/\{\{COHORT_CHURN_DELTA\}\}/g, Math.round(data.m365_retention - data.chat_retention) + 'pp');
+  html = safeSub(html, /\{\{COHORT_CHURN_DELTA\}\}/g,
+    typeof data.m365_retention === 'number' && typeof data.chat_retention === 'number'
+      ? Math.round(data.m365_retention - data.chat_retention) + 'pp' : 'not_available', 'cohort_churn_delta');
   html = html.replace(/\{\{M365_RETENTION_3MO\}\}/g, String(data.m365_retention_3mo_avg || data.m365_retention));
 
   // Chart-level insight callouts
@@ -613,7 +637,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     ' Unlicensed Chat users drive most of the growth (' + fmt(data.chat_users) + '), while licensed users (' + fmt(data.licensed_users) + ') show steadier but narrower expansion.');
 
   html = html.replace(/\{\{INSIGHT_ENGAGEMENT_DEPTH\}\}/g,
-    'Licensed users average <strong>' + data.licensed_avg_prompts + ' prompts</strong> vs <strong>' + data.unlicensed_avg_prompts + ' for unlicensed</strong> — a ' + (data.licensed_avg_prompts / data.unlicensed_avg_prompts).toFixed(1) + 'x depth gap. Licensing doesn\u2019t just give access — it converts casual use into meaningful engagement.');
+    'Licensed users average <strong>' + n('licensed_avg_prompts') + ' prompts</strong> vs <strong>' + n('unlicensed_avg_prompts') + ' for unlicensed</strong> — a ' + (n('licensed_avg_prompts') / Math.max(n('unlicensed_avg_prompts'), 1)).toFixed(1) + 'x depth gap. Licensing doesn\u2019t just give access — it converts casual use into meaningful engagement.');
 
   // License priority table insight
   const topOrg = data._supplementary_metrics && data._supplementary_metrics.license_priority_orgs && data._supplementary_metrics.license_priority_orgs[0];
@@ -674,7 +698,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   const fmtN = n => typeof n === 'number' ? n.toLocaleString() : String(n);
   const toK = n => Math.round(n / 1000) + 'K';
   html = html.replace(/\{\{TOTAL_ACTIVE_USERS_ROUND\}\}/g, fmt(data.total_active_users));
-  html = html.replace(/\{\{TOTAL_ACTIVE_USERS_K\}\}/g, toK(data.total_active_users));
+  html = html.replace(/\{\{TOTAL_ACTIVE_USERS_K\}\}/g, toK(n('total_active_users')));
   html = html.replace(/\{\{LICENSED_USERS_FMT\}\}/g, fmtN(data.licensed_users));
   html = html.replace(/\{\{CHAT_USERS_FMT\}\}/g, fmtN(data.chat_users));
   html = html.replace(/\{\{INACTIVE_LICENSES_FMT\}\}/g, fmtN(data.inactive_licenses));
@@ -689,7 +713,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = safeSub(html, /\{\{RETENTION_COHORT_FMT\}\}/g,
     retainedVal !== null && churnedVal !== null ? fmtN(retainedVal + churnedVal) : 'not_available', 'retention_cohort_fmt');
   html = html.replace(/\{\{TOTAL_AGENTS_FMT\}\}/g, fmtN(data.total_agents || 0));
-  html = html.replace(/\{\{HABITUAL_USERS_FMT\}\}/g, fmtN(data.band_11_15 + data.band_16_plus));
+  html = html.replace(/\{\{HABITUAL_USERS_FMT\}\}/g, fmtN(n('band_11_15') + n('band_16_plus')));
   html = html.replace(/\{\{RETENTION_TIER_LABEL\}\}/g, data.m365_retention >= 85 ? 'Frontier-tier' : data.m365_retention >= 70 ? 'Expansion-tier' : 'Foundation-tier');
 
   // Pattern / Maturity placeholders
@@ -736,9 +760,9 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{AGENTS_REVIEW_FMT\}\}/g, fmtN(data.agents_review || 0));
   html = html.replace(/\{\{AGENTS_DORMANT_FMT\}\}/g, fmtN(data.agents_retire || 0));
   html = html.replace(/\{\{AGENTS_3P\}\}/g, String(data.agents_3p || 0));
-  const totalAgents = (data.agents_keep || 0) + (data.agents_review || 0) + (data.agents_retire || 0);
-  html = html.replace(/\{\{AGENTS_DORMANT_PCT\}\}/g, totalAgents ? Math.round((data.agents_retire || 0) / totalAgents * 100) : '0');
-  html = html.replace(/\{\{AGENTS_KEEP_PCT\}\}/g, totalAgents ? Math.round((data.agents_keep || 0) / totalAgents * 100) : '0');
+  const totalAgents = n('agents_keep') + n('agents_review') + n('agents_retire');
+  html = html.replace(/\{\{AGENTS_DORMANT_PCT\}\}/g, totalAgents > 0 ? Math.round(n('agents_retire') / totalAgents * 100) : '0');
+  html = html.replace(/\{\{AGENTS_KEEP_PCT\}\}/g, totalAgents > 0 ? Math.round(n('agents_keep') / totalAgents * 100) : '0');
 
   // Retention threshold for display
   html = html.replace(/\{\{RETENTION_THRESHOLD\}\}/g, data.m365_retention >= 85 ? '85' : data.m365_retention >= 70 ? '70' : '50');
@@ -747,7 +771,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{TOTAL_AGENTS\}\}/g, String(data.total_agents || 0));
 
   // Agent discovery stats
-  const multiUserRaw = data.total_agents ? ((data.multi_user_agents || 0) / data.total_agents * 100) : 0;
+  const multiUserRaw = n('total_agents') > 0 ? (n('multi_user_agents') / n('total_agents') * 100) : 0;
   const multiUserPct = multiUserRaw < 1 && multiUserRaw > 0 ? '<1' : Math.round(multiUserRaw);
   html = html.replace(/\{\{AGENT_MULTI_USER_PCT\}\}/g, String(multiUserPct));
   html = html.replace(/\{\{AGENTS_SINGLE_USER_PCT\}\}/g, multiUserPct === '<1' ? '>99' : String(100 - multiUserPct));
@@ -811,11 +835,11 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{ORG_SCATTER_DATA\}\}/g, safeJSON(scatterDatasets, 'org_scatter_data'));
 
   // Value section — time savings comparison
-  const licensedHrsPerUserYr = Math.round(data.licensed_avg_prompts * 6 / 60 * 12);
-  const unlicensedHrsPerUserYr = Math.round(data.unlicensed_avg_prompts * 6 / 60 * 12);
-  const engagementMultiplier = (data.licensed_avg_prompts / data.unlicensed_avg_prompts).toFixed(1);
-  const chatCurrentSavingsK = Math.round(data.unlicensed_avg_prompts * data.chat_users * 6 / 60 * 12 / 1000);
-  const chatUpliftK = Math.round((data.licensed_avg_prompts - data.unlicensed_avg_prompts) * data.chat_users * 6 / 60 * 12 / 1000);
+  const licensedHrsPerUserYr = Math.round(n('licensed_avg_prompts') * 6 / 60 * 12);
+  const unlicensedHrsPerUserYr = Math.round(n('unlicensed_avg_prompts') * 6 / 60 * 12);
+  const engagementMultiplier = (n('licensed_avg_prompts') / Math.max(n('unlicensed_avg_prompts'), 1)).toFixed(1);
+  const chatCurrentSavingsK = Math.round(n('unlicensed_avg_prompts') * n('chat_users') * 6 / 60 * 12 / 1000);
+  const chatUpliftK = Math.round((n('licensed_avg_prompts') - n('unlicensed_avg_prompts')) * n('chat_users') * 6 / 60 * 12 / 1000);
   html = html.replace(/\{\{VALUE_LICENSED_HRS\}\}/g, String(licensedHrsPerUserYr));
   html = html.replace(/\{\{VALUE_UNLICENSED_HRS\}\}/g, String(unlicensedHrsPerUserYr));
   html = html.replace(/\{\{VALUE_MULTIPLIER\}\}/g, engagementMultiplier);
@@ -898,11 +922,11 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
 
   // Recommendation KPIs — data-driven
   html = html.replace(/\{\{REC_1_KPI\}\}/g,
-    'Target: ' + data.m365_frequency + '% habitual \u2192 ' + Math.max(Math.round(data.m365_frequency * 2), 25) + '%+ in 3 months');
+    'Target: ' + n('m365_frequency') + '% habitual \u2192 ' + Math.max(Math.round(n('m365_frequency') * 2), 25) + '%+ in 3 months');
   html = html.replace(/\{\{REC_2_KPI\}\}/g,
-    'Target: ' + (data.m365_breadth || 'N/A') + ' \u2192 ' + Math.max((data.m365_breadth || 3) + 2, 7) + '+ apps/user | BizChat concentration ' + (data._supplementary_metrics && data._supplementary_metrics.bizchat_concentration_pct || 63) + '% \u2192 <50%');
+    'Target: ' + (n('m365_breadth') || 'N/A') + ' \u2192 ' + Math.max((n('m365_breadth', 3)) + 2, 7) + '+ apps/user | BizChat concentration ' + (data._supplementary_metrics && data._supplementary_metrics.bizchat_concentration_pct || 63) + '% \u2192 <50%');
   html = html.replace(/\{\{REC_3_KPI\}\}/g,
-    'Target: License top ' + fmtN(Math.min(Math.round(data.chat_users * 0.13), 5000)) + ' unlicensed Chat users by org priority');
+    'Target: License top ' + fmtN(Math.min(Math.round(n('chat_users') * 0.13), 5000)) + ' unlicensed Chat users by org priority');
   html = html.replace(/\{\{REC_4_KPI\}\}/g,
     'Target: Retire ' + fmtN(data.agents_retire || 0) + ' dormant agents. Publish governed catalogue within 60 days');
 
@@ -1150,9 +1174,9 @@ function validateReport(html, data, customerName) {
 
   // 3. Key numbers cross-check — verify data values appear in output
   const crossChecks = [
-    { name: 'total_active_users', value: data.total_active_users, formatted: data.total_active_users.toLocaleString() },
-    { name: 'licensed_users', value: data.licensed_users, formatted: data.licensed_users.toLocaleString() },
-    { name: 'inactive_licenses', value: data.inactive_licenses, formatted: data.inactive_licenses.toLocaleString() },
+    { name: 'total_active_users', value: data.total_active_users, formatted: typeof data.total_active_users === 'number' ? data.total_active_users.toLocaleString() : '' },
+    { name: 'licensed_users', value: data.licensed_users, formatted: typeof data.licensed_users === 'number' ? data.licensed_users.toLocaleString() : '' },
+    { name: 'inactive_licenses', value: data.inactive_licenses, formatted: typeof data.inactive_licenses === 'number' ? data.inactive_licenses.toLocaleString() : '' },
     { name: 'm365_retention', value: data.m365_retention, formatted: String(data.m365_retention) },
     { name: 'm365_enablement', value: data.m365_enablement, formatted: String(data.m365_enablement) },
     { name: 'licensed_avg_prompts', value: data.licensed_avg_prompts, formatted: String(data.licensed_avg_prompts) },

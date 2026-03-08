@@ -1595,7 +1595,7 @@ const ro=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.tar
 document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
 
 /* Animated Counters */
-function animC(el){const t=parseFloat(el.dataset.target),d=parseInt(el.dataset.decimals||'0'),s=el.dataset.suffix||'',p=el.dataset.prefix||'',dur=1800,st=performance.now();function step(n){const pr=Math.min((n-st)/dur,1),ease=1-Math.pow(1-pr,3),v=t*ease;el.textContent=d>0?p+v.toFixed(d)+s:p+Math.round(v).toLocaleString()+s;if(pr<1)requestAnimationFrame(step)}requestAnimationFrame(step)}
+function animC(el){const t=parseFloat(el.dataset.target);if(isNaN(t)){el.textContent='\u2014';return}const d=parseInt(el.dataset.decimals||'0'),s=el.dataset.suffix||'',p=el.dataset.prefix||'',dur=1800,st=performance.now();function step(n){const pr=Math.min((n-st)/dur,1),ease=1-Math.pow(1-pr,3),v=t*ease;el.textContent=d>0?p+v.toFixed(d)+s:p+Math.round(v).toLocaleString()+s;if(pr<1)requestAnimationFrame(step)}requestAnimationFrame(step)}
 const co=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){animC(e.target);co.unobserve(e.target)}})},{threshold:.3});
 document.querySelectorAll('.counter').forEach(el=>co.observe(el));
 
