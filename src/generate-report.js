@@ -517,7 +517,16 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   const subErrors = [];
   function safeSub(html, placeholder, value, fieldName) {
     if (value === 'not_available') {
-      return html.replace(placeholder, '<span class="not-available">\u2014</span>');
+      // Context-aware: use '0' if placeholder appears inside a JS data array, HTML span otherwise
+      return html.replace(placeholder, function(match, offset) {
+        // Check surrounding chars: if inside [...] or after 'data:', use 0
+        var before = html.substring(Math.max(0, offset - 20), offset);
+        if (before.includes('data:[') || before.includes(':[') || before.includes(',')) {
+          var after = html.substring(offset + match.length, offset + match.length + 5);
+          if (after.match(/^[,\]]/)) return '0';
+        }
+        return '<span class="not-available">\u2014</span>';
+      });
     }
     if (value === undefined || value === null) {
       subErrors.push(fieldName + ': value is ' + value);

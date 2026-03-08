@@ -62,9 +62,9 @@ const expectedCharts = [
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
   const fileUrl = 'file:///' + absReportPath.replace(/\\/g, '/');
   await page.goto(fileUrl, { waitUntil: 'networkidle' });
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(2000);
 
-  // Force-reveal all .reveal elements
+  // Force-reveal all .reveal elements and trigger counter animations
   await page.evaluate(() => {
     document.querySelectorAll('.reveal').forEach(el => {
       el.classList.add('revealed');
@@ -73,7 +73,18 @@ const expectedCharts = [
       el.style.transition = 'none';
     });
   });
-  await page.waitForTimeout(1000);
+
+  // Scroll through the entire page to trigger lazy chart rendering
+  const pageHeight = await page.evaluate(() => document.body.scrollHeight);
+  for (let y = 0; y < pageHeight; y += 800) {
+    await page.evaluate((scrollY) => window.scrollTo(0, scrollY), y);
+    await page.waitForTimeout(200);
+  }
+  // Scroll back to top
+  await page.evaluate(() => window.scrollTo(0, 0));
+
+  // Wait for Chart.js to finish rendering all canvases
+  await page.waitForTimeout(3000);
 
   const errors = [];
   const warnings = [];
