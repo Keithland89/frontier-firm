@@ -421,13 +421,14 @@
 
   "agent_table": {
     "type": "tabular",
-    "dax": "EVALUATE\nTOPN(15,\n  SUMMARIZECOLUMNS(\n    'Chat + Agent Interactions (Audit Logs)'[AgentName],\n    \"Sessions\", COUNTROWS('Chat + Agent Interactions (Audit Logs)')\n  ),\n  [Sessions], DESC\n)\nORDER BY [Sessions] DESC",
+    "dax": "EVALUATE\nTOPN(15,\n  SUMMARIZECOLUMNS(\n    'Chat + Agent Interactions (Audit Logs)'[AgentName],\n    \"Sessions\", COUNTROWS('Chat + Agent Interactions (Audit Logs)'),\n    \"Users\", DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId])\n  ),\n  [Sessions], DESC\n)\nORDER BY [Sessions] DESC",
     "columns": {
       "AgentName": "name",
-      "Sessions": "sessions"
+      "Sessions": "sessions",
+      "Users": "distinct users interacting with this agent"
     },
-    "post_process": "Filter out blank AgentName rows. Map to {name, type: 'Store Agent (1P/3P)', users: 0, sessions, sessions_per_user: sessions}.",
-    "description": "Top 15 agents by session count from audit logs."
+    "post_process": "Filter out blank AgentName rows. Map to {name, type: 'Store Agent (1P/3P)', users: Users, sessions, sessions_per_user: round(sessions/users, 1)}.",
+    "description": "Top 15 agents by session count from audit logs, with distinct user counts."
   },
 
   "top_agent_names": {
@@ -494,14 +495,15 @@
 
   "_supplementary_metrics.monthly_data": {
     "type": "tabular",
-    "dax": "EVALUATE\nSUMMARIZECOLUMNS(\n  'Calendar'[Year-Month],\n  \"Licensed\", [NoOfActiveChatUsers (Licensed)],\n  \"Unlicensed\", [NoOfActiveChatUsers (Unlicensed)]\n)\nORDER BY 'Calendar'[Year-Month] ASC",
+    "dax": "EVALUATE\nSUMMARIZECOLUMNS(\n  'Calendar'[Year-Month],\n  \"Licensed\", [NoOfActiveChatUsers (Licensed)],\n  \"Unlicensed\", [NoOfActiveChatUsers (Unlicensed)],\n  \"Prompts\", [PromptsSubmitted]\n)\nORDER BY 'Calendar'[Year-Month] ASC",
     "columns": {
       "Year-Month": "key (formatted as mon_yyyy, e.g. sep_2025)",
       "Licensed": "used in users total",
-      "Unlicensed": "used in users total"
+      "Unlicensed": "used in users total",
+      "Prompts": "PromptsSubmitted measure — total prompts for that month"
     },
-    "post_process": "Convert to object keyed by mon_yyyy: {users: Licensed+Unlicensed, prompts: 0, sessions: 0, avg_prompts_per_user: 0}. Also derives analysis_period from first/last month.",
-    "description": "Monthly time-series of user counts by license tier. Used for trend charts and analysis_period derivation."
+    "post_process": "Convert to object keyed by mon_yyyy: {users: Licensed+Unlicensed, prompts: Prompts, sessions: 0, avg_prompts_per_user: Prompts/users}. Also derives analysis_period from first/last month.",
+    "description": "Monthly time-series of user counts and prompts by license tier. Used for trend charts and analysis_period derivation."
   },
 
   "_supplementary_metrics.per_tier_monthly_users": {
@@ -519,9 +521,34 @@
 
   "_supplementary_metrics.per_tier_active_day_bands": {
     "type": "tabular",
-    "status": "NOT_IMPLEMENTED",
-    "dax_sketch": "Would need per-month per-tier band queries against ActiveDaysSummary, bucketing PromptCount into 1-5, 6-10, 11-15, 16+ day bands per LicenseStatus per MonthStart.",
-    "description": "Per-tier active day band distributions over time. Not currently extracted — would require custom DAX bucketing queries."
+    "dax": "EVALUATE\nSUMMARIZECOLUMNS(\n  'ActiveDaysSummary'[MonthStart],\n  'ActiveDaysSummary'[LicenseStatus],\n  \"Users_1_5\", COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[ChatActiveDays] >= 1 && 'ActiveDaysSummary'[ChatActiveDays] <= 5)),\n  \"Users_6_10\", COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[ChatActiveDays] >= 6 && 'ActiveDaysSummary'[ChatActiveDays] <= 10)),\n  \"Users_11_15\", COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[ChatActiveDays] >= 11 && 'ActiveDaysSummary'[ChatActiveDays] <= 15)),\n  \"Users_16_plus\", COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[ChatActiveDays] >= 16))\n)\nORDER BY 'ActiveDaysSummary'[MonthStart] ASC",
+    "columns": {
+      "MonthStart": "month date",
+      "LicenseStatus": "M365 Copilot Licensed or Unlicensed",
+      "Users_1_5": "count in 1-5 band",
+      "Users_6_10": "count in 6-10 band",
+      "Users_11_15": "count in 11-15 band",
+      "Users_16_plus": "count in 16+ band"
+    },
+    "post_process": "Group by month, map LicenseStatus to Licensed/Unlicensed, compute band percentages per tier.",
+    "description": "Per-tier active day band distributions over time from ActiveDaysSummary."
+  },
+
+  "_supplementary_metrics.retention_cohorts": {
+    "type": "computed_from_monthly",
+    "description": "Retention cohorts computed from monthly_data and retained_users/churned_users. For the most recent month pair, uses exact retained/churned counts; for earlier pairs, estimates from overall retention rate."
+  },
+
+  "_supplementary_metrics.license_priority_orgs": {
+    "type": "tabular",
+    "dax": "EVALUATE\nSUMMARIZECOLUMNS(\n  'Chat + Agent Org Data'[Organization],\n  \"Licensed\", [NoOfActiveChatUsers (Licensed)],\n  \"Unlicensed\", [NoOfActiveChatUsers (Unlicensed)]\n)\nORDER BY [Unlicensed] DESC",
+    "columns": {
+      "Organization": "org name",
+      "Licensed": "licensed active users",
+      "Unlicensed": "unlicensed active users"
+    },
+    "post_process": "Filter to orgs with unlicensed > 0, take top 15, compute ratio_unlicensed_to_licensed.",
+    "description": "Per-org licensed vs unlicensed user counts for license priority analysis."
   },
 
   "_supplementary_metrics.app_interactions": {

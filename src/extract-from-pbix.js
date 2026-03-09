@@ -327,13 +327,17 @@ async function main() {
     try {
       const agentResult = await runDax(agentTableConfig.dax);
       const agents = (agentResult._rows || []).filter(r => r.AgentName && r.AgentName !== '');
-      data.agent_table = agents.map(r => ({
-        name: r.AgentName,
-        type: 'Store Agent (1P/3P)',
-        users: 0,
-        sessions: Number(r.Sessions) || 0,
-        sessions_per_user: Number(r.Sessions) || 0
-      }));
+      data.agent_table = agents.map(r => {
+        const sessions = Number(r.Sessions) || 0;
+        const users = Number(r.Users) || 0;
+        return {
+          name: r.AgentName,
+          type: 'Store Agent (1P/3P)',
+          users,
+          sessions,
+          sessions_per_user: users > 0 ? Math.round(sessions / users * 10) / 10 : sessions
+        };
+      });
       data.top_agent_names = data.agent_table.slice(0, 8).map(a => a.name);
       data.top_agent_sessions = data.agent_table.slice(0, 8).map(a => a.sessions_per_user);
       console.log('  agent_table: ' + data.agent_table.length + ' agents');
@@ -400,11 +404,12 @@ async function main() {
         const licensed = Number(r.Licensed) || 0;
         const unlicensed = Number(r.Unlicensed) || 0;
         const users = licensed + unlicensed;
+        const prompts = Number(r.Prompts) || 0;
         monthlyData[key] = {
           users,
-          prompts: 0,
+          prompts,
           sessions: 0,
-          avg_prompts_per_user: 0
+          avg_prompts_per_user: users > 0 ? Math.round(prompts / users * 10) / 10 : 0
         };
       });
 
@@ -480,6 +485,77 @@ async function main() {
       console.log('  app_interactions: ' + Object.keys(appMap).length + ' app surfaces');
     } catch (e) {
       console.log('  app_interactions: error - ' + e.message.substring(0, 150));
+    }
+  }
+
+  // --- Per-Tier Active Day Bands ---
+  const bandConfig = measureMap['_supplementary_metrics.per_tier_active_day_bands'];
+  if (bandConfig && bandConfig.dax) {
+    try {
+      const bandResult = await runDax(bandConfig.dax);
+      const rows = bandResult._rows || [];
+      const monthFull = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const perTierBands = [];
+
+      rows.forEach(r => {
+        // Parse month from MonthStart (date string like "2025-09-01T00:00:00")
+        const ms = r.MonthStart || '';
+        let monthLabel = ms;
+        const dateParts = ms.match(/^(\d{4})-(\d{2})/);
+        if (dateParts) {
+          const monthIdx = parseInt(dateParts[2], 10) - 1;
+          monthLabel = (monthFull[monthIdx] || dateParts[2]) + ' ' + dateParts[1];
+        }
+
+        // Map license status
+        const rawStatus = r.LicenseStatus || '';
+        const tier = rawStatus.includes('Licensed') && !rawStatus.includes('Unlicensed') ? 'Licensed' : 'Unlicensed';
+
+        const b1 = Number(r.Users_1_5) || 0;
+        const b2 = Number(r.Users_6_10) || 0;
+        const b3 = Number(r.Users_11_15) || 0;
+        const b4 = Number(r.Users_16_plus) || 0;
+        const total = b1 + b2 + b3 + b4;
+
+        if (total > 0) {
+          perTierBands.push({
+            month: monthLabel,
+            tier,
+            band_1_5_pct: Math.round(b1 / total * 1000) / 10,
+            band_6_10_pct: Math.round(b2 / total * 1000) / 10,
+            band_11_15_pct: Math.round(b3 / total * 1000) / 10,
+            band_16_plus_pct: Math.round(b4 / total * 1000) / 10
+          });
+        }
+      });
+
+      data._supplementary_metrics.per_tier_active_day_bands = perTierBands;
+      console.log('  per_tier_active_day_bands: ' + perTierBands.length + ' tier-month rows');
+    } catch (e) {
+      console.log('  per_tier_active_day_bands: error - ' + e.message.substring(0, 150));
+    }
+  }
+
+  // --- License Priority Orgs ---
+  const lpConfig = measureMap['_supplementary_metrics.license_priority_orgs'];
+  if (lpConfig && lpConfig.dax) {
+    try {
+      const lpResult = await runDax(lpConfig.dax);
+      const rows = (lpResult._rows || []).filter(r => r.Organization && r.Organization !== '');
+      data._supplementary_metrics.license_priority_orgs = rows.slice(0, 15).map(r => {
+        const lic = Number(r.Licensed) || 0;
+        const unlic = Number(r.Unlicensed) || 0;
+        return {
+          org: r.Organization,
+          licensed_users: lic,
+          unlicensed_users: unlic,
+          ratio_unlicensed_to_licensed: lic > 0 ? Math.round(unlic / lic * 10) / 10 : null,
+          unlicensed_median_sessions_weekly: null
+        };
+      }).filter(r => r.unlicensed_users > 0);
+      console.log('  license_priority_orgs: ' + data._supplementary_metrics.license_priority_orgs.length + ' orgs with unlicensed users');
+    } catch (e) {
+      console.log('  license_priority_orgs: error - ' + e.message.substring(0, 150));
     }
   }
 
@@ -710,6 +786,35 @@ async function main() {
           }
         }
       } catch (e) { console.log('  agent_creators_pct fallback failed: ' + e.message.substring(0, 80)); }
+    }
+  }
+
+  // retention_cohorts: compute from monthly_data + retained/churned users
+  const s = data._supplementary_metrics || {};
+  if (data.retained_users && data.churned_users && s.monthly_data) {
+    const months = Object.keys(s.monthly_data);
+    if (months.length >= 2) {
+      const cohorts = {};
+      for (let i = 1; i < months.length; i++) {
+        const prev = months[i - 1];
+        const curr = months[i];
+        const prevUsers = s.monthly_data[prev].users;
+        const currUsers = s.monthly_data[curr].users;
+        const isLast = (i === months.length - 1);
+        const retPct = typeof data.m365_retention === 'number' ? data.m365_retention / 100 : 0.8;
+        const retained = isLast ? data.retained_users : Math.round(prevUsers * retPct);
+        const churned = isLast ? data.churned_users : prevUsers - retained;
+        const newUsers = currUsers - retained;
+        cohorts[prev + '_to_' + curr] = {
+          prev: prevUsers,
+          retained,
+          new: Math.max(0, newUsers),
+          churned,
+          retention_pct: prevUsers > 0 ? Math.round(retained / prevUsers * 1000) / 10 : 0
+        };
+      }
+      s.retention_cohorts = cohorts;
+      console.log('  retention_cohorts: ' + Object.keys(cohorts).length + ' transitions');
     }
   }
 

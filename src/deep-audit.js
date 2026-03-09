@@ -160,6 +160,22 @@ if (data.chat_users) addVal(Math.min(Math.round(data.chat_users * 0.13), 5000));
 if (Array.isArray(data.org_scatter_data)) {
   data.org_scatter_data.forEach(function(org) { addVal(org.x); addVal(org.y); addVal(org.r); });
 }
+// License priority org values + derived ratios
+if (supp && supp.license_priority_orgs) {
+  supp.license_priority_orgs.forEach(function(org) {
+    addVal(org.licensed_users); addVal(org.unlicensed_users);
+    if (org.ratio_unlicensed_to_licensed) addVal(org.ratio_unlicensed_to_licensed);
+    // The template shows ratio as "X.Yx" — the integer part may appear separately
+    if (org.ratio_unlicensed_to_licensed) addVal(Math.floor(org.ratio_unlicensed_to_licensed));
+  });
+}
+// Retention cohort values
+if (supp && supp.retention_cohorts) {
+  Object.values(supp.retention_cohorts).forEach(function(c) {
+    addVal(c.prev); addVal(c.retained); addVal(c.new); addVal(c.churned);
+    addVal(c.retention_pct);
+  });
+}
 
 // Structural/framework numbers that always appear (phase numbers, day ranges, thresholds, etc.)
 const frameworkNumbers = new Set([
