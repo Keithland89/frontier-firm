@@ -118,12 +118,12 @@
     },
     "agent_health": {
       "name": "Agent Return Rate",
-      "unit": "% return rate",
+      "unit": "% return rate (multi-user agents only)",
       "bands": [50, 80],
       "band_labels": ["Foundation", "Expansion", "Frontier"],
       "signal": "skill",
       "data_field": "agent_health",
-      "description": "Percentage of agent users who return to use agents again"
+      "description": "Return rate for multi-user agents only (agents with 2+ distinct users). Single-user agents are excluded as they inflate the metric."
     }
   },
 

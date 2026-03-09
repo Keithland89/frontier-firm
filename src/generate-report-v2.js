@@ -284,12 +284,12 @@ function generateTemplateInsights() {
     TITLE_REACH: 'Reach: ' + Math.round(d.m365_enablement) + '% activated \u2014 ' + (typeof d.inactive_licenses === 'number' ? fmt(d.inactive_licenses) : '0') + ' sit idle',
     TITLE_HABIT: d.embedded_user_rate + '% are embedded \u2014 ' + d.m365_retention + '% come back each month',
     TITLE_SKILL: d.m365_breadth + ' app surfaces per user \u2014 the breadth gap is the blocker',
-    TITLE_VALUE: '~' + timeSavedRealised + 'K hours saved \u2014 with ~' + timeSavedUnrealised + 'K more on the table',
+    TITLE_VALUE: (safe(d.licensed_avg_days, 0) > 0 && safe(d.unlicensed_avg_days, 0) > 0 ? Math.round(safe(d.licensed_avg_days, 0) / safe(d.unlicensed_avg_days, 1) * 10) / 10 + 'x Engagement Depth' : '~' + timeSavedRealised + 'K Hours Saved'),
     TITLE_MATURITY: 'Pattern ' + pattern.number + ': ' + pattern.name,
     SUBTITLE_REACH: 'Copilot has landed across ' + data.org_count + ' organisations. The deployment is real \u2014 but ' + (safe(d.total_licensed_seats, 1) > 0 ? ((safe(d.inactive_licenses, 0) / safe(d.total_licensed_seats, 1)) * 100).toFixed(0) : '0') + '% of licenses are gathering dust.',
     SUBTITLE_HABIT: 'The challenge is converting monthly visitors into truly embedded users who rely on AI daily.',
     SUBTITLE_SKILL: 'Users stick to ' + d.m365_breadth + ' app surfaces out of 27 available. The agent ecosystem is growing but narrow.',
-    SUBTITLE_VALUE: 'Every active user saves time. Every idle license is unrealised potential.',
+    SUBTITLE_VALUE: 'Licensed users engage ' + (safe(d.licensed_avg_days, 0) > 0 ? safe(d.licensed_avg_days, 0) : '?') + ' days/month vs ' + (safe(d.unlicensed_avg_days, 0) > 0 ? safe(d.unlicensed_avg_days, 0) : '?') + ' for unlicensed \u2014 ' + safe(d.inactive_licenses, 0) + ' idle licenses to repurpose',
     SUBTITLE_MATURITY: (pattern.name === 'Expansion' ? 'Deployed but not yet embedded.' : pattern.name === 'Foundation' ? 'Early stages of AI adoption.' : 'AI is deeply embedded.') + ' AI is scaling but habits and skills lag behind deployment.',
   };
 }
@@ -419,8 +419,31 @@ function populateTemplate(template, insights) {
   html = safeSub(html, /\{\{UNLICENSED_AVG_PROMPTS\}\}/g, data.unlicensed_avg_prompts, 'unlicensed_avg_prompts');
   html = safeSub(html, /\{\{LICENSED_AVG_DAYS\}\}/g, data.licensed_avg_days, 'licensed_avg_days');
   html = safeSub(html, /\{\{UNLICENSED_AVG_DAYS\}\}/g, data.unlicensed_avg_days, 'unlicensed_avg_days');
+  // Days multiplier — how many times more active days licensed vs unlicensed
+  const daysMultiplier = (typeof data.licensed_avg_days === 'number' && typeof data.unlicensed_avg_days === 'number' && data.unlicensed_avg_days > 0)
+    ? Math.round(data.licensed_avg_days / data.unlicensed_avg_days * 10) / 10
+    : 'not_available';
+  html = safeSub(html, /\{\{DAYS_MULTIPLIER\}\}/g, daysMultiplier, 'days_multiplier');
   html = html.replace(/\{\{TIME_SAVED_REALISED\}\}/g, String(timeSavedRealised));
   html = html.replace(/\{\{TIME_SAVED_UNREALISED\}\}/g, String(timeSavedUnrealised));
+
+  // ── License priority table — orgs with highest unlicensed users ──
+  let licensePriorityHtml = '<p style="font-size:.8rem;color:var(--text-3)">Per-organisation license priority data not available in this dataset.</p>';
+  const orgData = data.org_scatter_data;
+  if (Array.isArray(orgData) && orgData.length > 0) {
+    // Use org scatter data: x = active users, y = agent adoption %
+    // Show top orgs sorted by active users (these have the most unlicensed users to convert)
+    const sorted = [...orgData].sort((a, b) => (b.x || 0) - (a.x || 0)).slice(0, 8);
+    licensePriorityHtml = '<table class="agent-table"><thead><tr><th>Organisation</th><th>Active Users</th><th>Agent Adoption</th><th>Priority</th></tr></thead><tbody>';
+    sorted.forEach(org => {
+      const priority = (org.y || 0) > 10 ? '<span style="color:var(--green);font-weight:700">High</span>' :
+                       (org.y || 0) > 3 ? '<span style="color:var(--amber);font-weight:700">Medium</span>' :
+                       '<span style="color:var(--text-3);font-weight:600">Low</span>';
+      licensePriorityHtml += '<tr><td>' + org.label + '</td><td>' + (org.x || 0).toLocaleString() + '</td><td>' + (org.y || 0) + '%</td><td>' + priority + '</td></tr>';
+    });
+    licensePriorityHtml += '</tbody></table>';
+  }
+  html = html.replace(/\{\{LICENSE_PRIORITY_HTML\}\}/g, licensePriorityHtml);
 
   // ── Retention ──
   html = safeSub(html, /\{\{M365_RETENTION\}\}/g, data.m365_retention, 'm365_retention');

@@ -562,15 +562,23 @@ body{font-family:'Inter','Segoe UI Variable','Segoe UI',-apple-system,BlinkMacSy
     <h2 class="section-title reveal reveal-d1">{{TITLE_VALUE}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_VALUE}}</p>
 
+    <!-- Engagement depth comparison — active days (fairer than prompts) -->
     <div class="stat-row reveal reveal-d3">
-      <div class="stat-card"><div class="stat-card-value" style="color:var(--green)">{{LICENSED_AVG_DAYS}}</div><div class="stat-card-label">Avg Active Days/Month (Licensed)</div></div>
-      <div class="stat-card"><div class="stat-card-value" style="color:var(--amber)">{{UNLICENSED_AVG_DAYS}}</div><div class="stat-card-label">Avg Active Days/Month (Unlicensed)</div></div>
-      <div class="stat-card"><div class="stat-card-value" style="color:var(--purple)">{{LICENSE_PRIORITY}}x</div><div class="stat-card-label">Engagement Premium</div></div>
-      <div class="stat-card"><div class="stat-card-value" style="color:var(--teal)">~{{TIME_SAVED_REALISED}}K</div><div class="stat-card-label">Hours/Year Saved</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--green)">{{LICENSED_AVG_DAYS}}</div><div class="stat-card-label">Avg Active Days/Month<br>(Licensed)</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--amber)">{{UNLICENSED_AVG_DAYS}}</div><div class="stat-card-label">Avg Active Days/Month<br>(Unlicensed)</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--teal)">~{{TIME_SAVED_REALISED}}K</div><div class="stat-card-label">Estimated Hours/Year<br>Saved</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--red-soft)">{{INACTIVE_LICENSES}}</div><div class="stat-card-label">Idle Licenses<br>to Repurpose</div></div>
     </div>
 
     <div class="insight-callout reveal reveal-d4" style="--signal-accent:var(--color-value)">
-      Licensed users average <strong>{{LICENSED_AVG_DAYS}} active days/month</strong> compared to <strong>{{UNLICENSED_AVG_DAYS}} days</strong> for unlicensed users. Combined with a <strong>{{LICENSE_PRIORITY}}x engagement premium</strong> in prompts per user, this demonstrates a clear depth gap between licensed and unlicensed cohorts. The {{CHAT_USERS}} unlicensed users showing organic demand represent the strongest candidates for license conversion.
+      Licensed users average <strong>{{LICENSED_AVG_DAYS}} active days/month</strong> compared to <strong>{{UNLICENSED_AVG_DAYS}} days</strong> for unlicensed users — nearly <strong>{{DAYS_MULTIPLIER}}x the engagement depth</strong>. This gap demonstrates the value of a license: users don't just use Copilot more often, they build it into their daily routine. {{INACTIVE_LICENSES}} idle licenses can be immediately repurposed to high-engagement unlicensed users.
+    </div>
+
+    <!-- License prioritisation -->
+    <div class="chart-card reveal reveal-d5" style="margin-top:1.5rem">
+      <div class="chart-card-title">Where to Prioritise Licenses Next</div>
+      <div class="chart-card-sub">Organisations with highest unlicensed engagement — strongest candidates for license conversion</div>
+      {{LICENSE_PRIORITY_HTML}}
     </div>
 
     <p class="reveal reveal-d5" style="font-size:.75rem;color:var(--text-3);margin-top:1rem;font-style:italic">Value is not scored in the maturity pattern — it is presented as narrative context to support the business case for investment.</p>
