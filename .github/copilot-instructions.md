@@ -30,14 +30,17 @@ npm run report -- --pbix "Customer Name" --output output/
 ### Pipeline Gates
 
 ```
-Gate 0 (optional): Extract from PBIX
-Gate 1: Validate data against schema (65 fields)
-Gate 1.5: Check AI insights (pauses if needed)
+Gate 0 (optional): Extract from PBIX (measure-map driven)
+Gate 0.5: Cross-validate against PBIX (10 independent checks)
+Gate 1: Validate data + semantic sanity checks
+Gate 1.5: Check AI insights (pauses if needed, exit 2)
 Gate 2: Generate report (safeSub protection)
 Gate 3: Validate HTML output
 Gate 4: Headless visual verification (10 charts, mandatory)
 Gate 5: Deep number audit
 ```
+
+Exit code 2: AI insights needed. Exit code 3: measure mapping needed (custom PBIX).
 
 ### Manual Extraction (if not using --pbix)
 

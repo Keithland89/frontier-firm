@@ -29,8 +29,9 @@ npm run report -- --pbix "Customer Name" --output output/
 ### Pipeline Gates
 
 ```
-Gate 0 (optional): Extract from PBIX    → data/{customer}.json
-Gate 1: Validate data against schema     → catches missing/malformed fields
+Gate 0 (optional): Extract from PBIX     → data/{customer}.json (measure-map driven)
+Gate 0.5: Cross-validate against PBIX    → re-queries key values, fails if >5% diff
+Gate 1: Validate data + sanity checks    → schema, user hierarchy, % ranges, rounding
 Gate 1.5: Check AI insights              → pauses if insights needed (exit 2)
 Gate 2: Generate report (safeSub)        → fails on undefined/NaN injection
 Gate 3: Validate HTML output             → bad values, sections, charts
@@ -39,6 +40,10 @@ Gate 5: Deep number audit                → every visible number traced to data
 ```
 
 If any gate fails, the pipeline stops with a clear error message. Fix the issue and re-run.
+
+### Exit codes
+- **Exit 2:** AI insights needed — read `temp/insights_request.json`, generate 30 keys, save, re-run
+- **Exit 3:** Measure mapping needed — read `temp/measure_mapping_request.json`, map fields to PBIX measures, save override, re-run
 
 ## Quick Start
 
@@ -69,20 +74,36 @@ When the pipeline pauses for insight generation (exit code 2):
 
 | File | Purpose |
 |------|---------|
+| `schema/measure_map.json` | Declarative mapping: schema fields → PBIX measures/DAX |
 | `schema/ff_data_schema.json` | Required fields and type constraints (65 fields) |
 | `schema/ff_schema.json` | Metric definitions, scoring bands, signal groupings |
 | `template/ff_template.html` | Templatised HTML report (dark mode, interactive charts) |
 | `src/run-pipeline.js` | Pipeline orchestrator — runs all gates |
-| `src/validate-data.js` | Gate 1: Schema validation |
-| `src/generate-report.js` | Gate 2: Generator with safeSub protection |
+| `src/extract-from-pbix.js` | Gate 0: Map-driven PBIX extraction (9 phases) |
+| `src/cross-validate.js` | Gate 0.5: PBI cross-validation (10 checks) |
+| `src/validate-data.js` | Gate 1: Schema + semantic sanity checks |
+| `src/generate-report.js` | Gate 2: Generator with safeSub/safeJSON |
 | `src/validate-report.js` | Gate 3: HTML output validation |
 | `src/visual-check.js` | Gate 4: Headless Playwright visual verification |
 | `src/deep-audit.js` | Gate 5: Deep number tracing audit |
-| `src/generate-insights.js` | AI insight request builder |
-| `src/extract-from-pbix.js` | PBIX auto-extraction via PBI MCP subprocess |
+| `src/generate-insights.js` | AI insight request builder (exit 2) |
 | `src/export-pdf.js` | PDF export via Playwright |
-| `prompts/01-06` | Extraction and insight prompts |
-| `data/sample_contoso.json` | Sample data for testing |
+
+### Measure Map
+
+`schema/measure_map.json` maps every schema field to its PBIX source. The extractor reads this map — no hardcoded measure names in code. Supports:
+- Multiple measure name fallbacks (newer vs older PBIX templates)
+- Computed fields (full DAX queries)
+- Derived fields (computed from other extracted values)
+- Per-customer overrides: `data/{customer}_measure_overrides.json`
+
+### Measure Mapping (exit code 3)
+
+When a PBIX has custom/renamed measures that don't match the map:
+1. Read `temp/measure_mapping_request.json`
+2. Map unmatched fields to available PBIX measures
+3. Save to `data/{customer}_measure_overrides.json`
+4. Re-run the pipeline
 
 ## Scoring System
 

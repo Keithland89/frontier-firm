@@ -713,17 +713,16 @@ async function main() {
     }
   }
 
-  // complex_sessions: fallback (% of user-months with >1 prompt)
+  // complex_sessions: fallback — avg prompts per active day from ActiveDaysSummary
   if (data.complex_sessions === 'not_available') {
     const complexConfig = measureMap['complex_sessions'];
     if (complexConfig && complexConfig.fallback_dax) {
       try {
         const complexResult = await runDax(complexConfig.fallback_dax);
         if (complexResult._rows && complexResult._rows.length > 0) {
-          let pct = Number(complexResult._rows[0].v || complexResult._rows[0][Object.keys(complexResult._rows[0])[0]]) || 0;
-          if (complexConfig.fallback_transform === 'toPct') pct = toPct(pct);
-          data.complex_sessions = typeof pct === 'number' ? Math.round(pct * 10) / 10 : pct;
-          console.log('  complex_sessions: fallback = ' + data.complex_sessions);
+          const val = Number(complexResult._rows[0].v || complexResult._rows[0][Object.keys(complexResult._rows[0])[0]]) || 0;
+          data.complex_sessions = Math.round(val * 10) / 10;
+          console.log('  complex_sessions: fallback = ' + data.complex_sessions + ' prompts/active day');
         }
       } catch (e) { console.log('  complex_sessions fallback failed: ' + e.message.substring(0, 80)); }
     }

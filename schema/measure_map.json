@@ -226,9 +226,8 @@
   "complex_sessions": {
     "type": "scalar",
     "measures": ["[Avg Turns Per Conversation]"],
-    "fallback_dax": "EVALUATE ROW(\"v\", DIVIDE(COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[PromptCount] > 1)), COUNTROWS('ActiveDaysSummary'), 0))",
-    "fallback_transform": "toPct",
-    "description": "Multi-turn conversation depth. Primary: Avg Turns Per Conversation. Fallback: % of user-months with >1 prompt."
+    "fallback_dax": "EVALUATE ROW(\"v\", DIVIDE(SUMX('ActiveDaysSummary', 'ActiveDaysSummary'[PromptCount]), SUMX('ActiveDaysSummary', 'ActiveDaysSummary'[ChatActiveDays]), 0))",
+    "description": "Session depth — avg prompts per active day. Primary: Avg Turns Per Conversation. Fallback: PromptCount / ChatActiveDays from ActiveDaysSummary."
   },
 
   "agent_health": {
