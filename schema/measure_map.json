@@ -1,0 +1,539 @@
+{
+  "$schema": "Frontier Firm Measure Map — maps all 65 required schema fields to PBIX data sources",
+  "$version": "1.0.0",
+  "$notes": [
+    "Newer PBIX templates (0803, 2302): 11-15 / 16+ day bands, Agent Return Rate",
+    "Older PBIX templates (MOJ, NR): 11-19 / 20+ day bands, Avg Agent Return Rate %",
+    "All measures returning 0-1 rates need toPct transform (multiply by 100)",
+    "Fallback measures are tried in order — first non-null wins"
+  ],
+
+  "customer_name": {
+    "type": "string",
+    "description": "Customer/tenant name — passed via CLI --pbix argument"
+  },
+
+  "analysis_period": {
+    "type": "string",
+    "description": "Date range string derived from monthly data (e.g. 'Sep 2025 – Feb 2026'). Set from first/last months in _supplementary_metrics.monthly_data."
+  },
+
+  "total_active_users": {
+    "type": "monthly_backfill",
+    "measures": ["[Total Active Chat Users Last Month]"],
+    "fallback_dax": "EVALUATE ROW(\"v\", [NoOfActiveChatUsers (Licensed)] + [NoOfActiveChatUsers (Unlicensed)])",
+    "description": "Total active users (Licensed + Unlicensed). Initially extracted from measure, then overwritten from per_tier_monthly_users (second-to-last month, licensed + unlicensed)."
+  },
+
+  "licensed_users": {
+    "type": "monthly_backfill",
+    "measures": ["[NoOfActiveChatUsers (Licensed)]"],
+    "description": "Active licensed Copilot users. Initially extracted from measure, then overwritten from per_tier_monthly_users (second-to-last month)."
+  },
+
+  "chat_users": {
+    "type": "monthly_backfill",
+    "measures": ["[NoOfActiveChatUsers (Unlicensed)]"],
+    "description": "Active unlicensed chat users. Initially extracted from measure, then overwritten from per_tier_monthly_users (second-to-last month)."
+  },
+
+  "agent_users": {
+    "type": "scalar",
+    "measures": ["[UsersInteractingWithAgents, Last Month]"],
+    "description": "Users who interacted with agents in the last complete month."
+  },
+
+  "total_licensed_seats": {
+    "type": "computed",
+    "dax": "EVALUATE ROW(\"v\", COUNTROWS('Copilot Licensed'))",
+    "description": "Total assigned Copilot licenses (rows in 'Copilot Licensed' table)."
+  },
+
+  "inactive_licenses": {
+    "type": "derived",
+    "formula": "max(0, total_licensed_seats - licensed_users)",
+    "depends_on": ["total_licensed_seats", "licensed_users"],
+    "description": "Licensed seats with no active usage. Clamped to 0."
+  },
+
+  "m365_enablement": {
+    "type": "derived",
+    "formula": "round(licensed_users / total_licensed_seats * 100, 1)",
+    "depends_on": ["licensed_users", "total_licensed_seats"],
+    "description": "Activation rate — percentage of licensed seats that are actively used."
+  },
+
+  "m365_adoption": {
+    "type": "scalar",
+    "measures": ["[Engagement Rate]"],
+    "transform": "toPct",
+    "fallback_derived": {
+      "formula": "round(licensed_users / total_licensed_seats * 100, 1)",
+      "depends_on": ["licensed_users", "total_licensed_seats"]
+    },
+    "description": "M365 Copilot engagement/adoption rate. Falls back to licensed_users / total_licensed_seats if measure unavailable."
+  },
+
+  "agent_adoption": {
+    "type": "scalar",
+    "measures": ["[Agent Adoption Rate]", "[% Copilot Users Using Agents (Licensed)]"],
+    "transform": "toPct",
+    "description": "Percentage of Copilot users who also use agents."
+  },
+
+  "agent_enablement": {
+    "type": "scalar",
+    "measures": ["[Agent Org Spread]"],
+    "description": "Number of organisations with agent activity (used as both agent_enablement and org_count initial value)."
+  },
+
+  "org_count": {
+    "type": "scalar",
+    "measures": ["[Agent Org Spread]"],
+    "fallback_note": "Also derived from DISTINCTCOUNT of orgs in org_scatter_data query if measure returns null.",
+    "description": "Count of organisations with Copilot activity."
+  },
+
+  "license_priority": {
+    "type": "derived",
+    "formula": "round(licensed_avg_prompts / unlicensed_avg_prompts, 2)",
+    "depends_on": ["licensed_avg_prompts", "unlicensed_avg_prompts"],
+    "description": "Engagement premium — ratio of licensed vs unlicensed prompts per user (e.g. 10.2x)."
+  },
+
+  "m365_frequency": {
+    "type": "scalar",
+    "measures": [
+      "[Licensed Users 16+ Active Day Rate Last Month]",
+      "[Licensed Users 20+ Active Day Rate Last Month]"
+    ],
+    "transform": "toPct",
+    "description": "Habitual usage rate for licensed users (16+ or 20+ active days last month)."
+  },
+
+  "chat_habit": {
+    "type": "scalar",
+    "measures": [
+      "[16+ Active Day Rate, Last Month (Chat)]",
+      "[>20 Active Day Rate, Last Month (Chat)]"
+    ],
+    "transform": "toPct",
+    "description": "Habitual chat usage rate (16+ or 20+ active days last month)."
+  },
+
+  "agent_frequency": {
+    "type": "scalar",
+    "measures": [
+      "[16+ Active Day Rate, Last Month (Agent)]",
+      "[>20 Active Day Rate, Last Month (Agent)]"
+    ],
+    "transform": "toPct",
+    "description": "Habitual agent usage rate (16+ or 20+ active days last month)."
+  },
+
+  "m365_retention": {
+    "type": "scalar",
+    "measures": ["[Agent Return Rate]", "[Avg Agent Return Rate %]"],
+    "transform": "toPct",
+    "fallback_dax": "EVALUATE\nVAR LastMonth = MAXX('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart])\nVAR PrevMonth = MAXX(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart] < LastMonth), 'ActiveDaysSummary'[MonthStart])\nVAR UsersLast = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = LastMonth)\nVAR UsersPrev = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = PrevMonth)\nRETURN ROW(\"RetentionPct\", DIVIDE(COUNTROWS(INTERSECT(UsersLast, UsersPrev)), COUNTROWS(UsersPrev), 0))",
+    "description": "Month-over-month user retention rate. Primary: Agent Return Rate measure. Fallback: ActiveDaysSummary INTERSECT computation."
+  },
+
+  "chat_retention": {
+    "type": "scalar",
+    "measures": ["[Satisfaction Rate]"],
+    "transform": "toPct",
+    "fallback_dax": "EVALUATE\nVAR LastMonth = MAXX('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart])\nVAR PrevMonth = MAXX(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart] < LastMonth), 'ActiveDaysSummary'[MonthStart])\nVAR UsersLast = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = LastMonth, 'ActiveDaysSummary'[LicenseStatus] = \"Unlicensed\")\nVAR UsersPrev = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = PrevMonth, 'ActiveDaysSummary'[LicenseStatus] = \"Unlicensed\")\nRETURN ROW(\"RetPct\", DIVIDE(COUNTROWS(INTERSECT(UsersLast, UsersPrev)), COUNTROWS(UsersPrev), 0))",
+    "description": "Chat (unlicensed) user retention. Primary: Satisfaction Rate measure. Fallback: per-tier ActiveDaysSummary INTERSECT."
+  },
+
+  "agent_retention": {
+    "type": "scalar",
+    "measures": ["[Agent Return Rate]", "[Avg Agent Return Rate %]"],
+    "transform": "toPct",
+    "description": "Agent user return rate month-over-month."
+  },
+
+  "m365_intensity": {
+    "type": "scalar",
+    "measures": [
+      "[Average Sessions Per Active User (Licensed)]",
+      "[Average Sessions Per Active User (All)]"
+    ],
+    "description": "Average sessions per active user (licensed or all). Absolute count, not a rate."
+  },
+
+  "chat_intensity": {
+    "type": "scalar",
+    "measures": ["[Average Chat Sessions Per Active User (Unlicensed)]"],
+    "description": "Average chat sessions per active unlicensed user. Absolute count."
+  },
+
+  "agent_intensity": {
+    "type": "scalar",
+    "measures": ["[Average Agent Sessions Per Active Agent User]"],
+    "description": "Average agent sessions per active agent user. Absolute count."
+  },
+
+  "licensed_avg_prompts": {
+    "type": "scalar",
+    "measures": ["[AverageActionsPerUser (Licensed Copilot Only)]"],
+    "description": "Average prompts/actions per licensed Copilot user."
+  },
+
+  "unlicensed_avg_prompts": {
+    "type": "scalar",
+    "measures": [
+      "[Average Chat Sessions Per Active User (Unlicensed)]",
+      "[Average Chat + Agent Sessions Per Active User (Unlicensed)]"
+    ],
+    "description": "Average prompts per unlicensed chat user."
+  },
+
+  "weekly_m365": {
+    "type": "scalar",
+    "measures": ["[Average Active Days Per User Per Week (Licensed Copilot)]"],
+    "description": "Average active days per week for licensed Copilot users."
+  },
+
+  "weekly_chat": {
+    "type": "scalar",
+    "measures": [
+      "[Average Chat Sessions Per User Per Week (All Licenses)]",
+      "[Average Chat Sessions Per User Per Week (Unlicensed)]"
+    ],
+    "description": "Average chat sessions per user per week."
+  },
+
+  "weekly_agents": {
+    "type": "scalar",
+    "measures": ["[Average Agent Sessions Per User Per Week (All Licenses)]"],
+    "description": "Average agent sessions per user per week."
+  },
+
+  "m365_breadth": {
+    "type": "scalar",
+    "measures": ["[Average Chat Active Days Per User]"],
+    "description": "Average number of chat active days per user (breadth of engagement)."
+  },
+
+  "agent_breadth": {
+    "type": "scalar",
+    "measures": ["[Average Agent Active Days Per User]"],
+    "description": "Average number of agent active days per user."
+  },
+
+  "complex_sessions": {
+    "type": "scalar",
+    "measures": ["[Avg Turns Per Conversation]"],
+    "fallback_dax": "EVALUATE ROW(\"v\", DIVIDE(COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[PromptCount] > 1)), COUNTROWS('ActiveDaysSummary'), 0))",
+    "fallback_transform": "toPct",
+    "description": "Multi-turn conversation depth. Primary: Avg Turns Per Conversation. Fallback: % of user-months with >1 prompt."
+  },
+
+  "agent_health": {
+    "type": "scalar",
+    "measures": ["[Agent Return Rate]", "[Avg Agent Return Rate %]"],
+    "transform": "toPct",
+    "description": "Agent ecosystem health — agent return rate as percentage."
+  },
+
+  "agent_creators_pct": {
+    "type": "scalar",
+    "measures": ["[Credit Utilization Rate]"],
+    "transform": "toPct",
+    "fallback_dax": "EVALUATE ROW(\"v\", DISTINCTCOUNT('Agents 365'[Agent Creator]))",
+    "fallback_formula": "round(distinctcount_agent_creators / total_active_users * 100, 1)",
+    "description": "Agent creator percentage. Primary: Credit Utilization Rate. Fallback: DISTINCTCOUNT of agent creators / total_active_users."
+  },
+
+  "license_coverage": {
+    "type": "derived",
+    "formula": "round(licensed_users / total_active_users * 100, 1)",
+    "depends_on": ["licensed_users", "total_active_users"],
+    "description": "Percentage of active users who hold a license."
+  },
+
+  "agent_habitual": {
+    "type": "scalar",
+    "measures": [
+      "[16+ Active Day Rate, Last Month (Agent)]",
+      "[>20 Active Day Rate, Last Month (Agent)]"
+    ],
+    "transform": "toPct",
+    "description": "Habitual agent users — same measure as agent_frequency (16+ or 20+ active day rate)."
+  },
+
+  "band_1_5": {
+    "type": "scalar",
+    "measures": ["[1-5 Active Days, Last Month (Chat)]"],
+    "description": "Count of users with 1-5 active chat days last month."
+  },
+
+  "band_6_10": {
+    "type": "scalar",
+    "measures": ["[6-10 Active Days, Last Month (ChatO)]"],
+    "description": "Count of users with 6-10 active chat days last month. Note: measure name has 'ChatO' suffix in some PBIX files."
+  },
+
+  "band_11_15": {
+    "type": "scalar",
+    "measures": [
+      "[11-15 Active Days, Last Month (Chat)]",
+      "[11-19 Active Days, Last Month (Chat)]"
+    ],
+    "description": "Count of users with 11-15 (or 11-19 in older PBIX) active chat days last month."
+  },
+
+  "band_16_plus": {
+    "type": "scalar",
+    "measures": [
+      "[16+ Active Days, Last Month (Chat)]",
+      "[>20 Active Days, Last Month (Chat)]"
+    ],
+    "description": "Count of users with 16+ (or 20+ in older PBIX) active chat days last month."
+  },
+
+  "band_1_5_pct": {
+    "type": "derived",
+    "formula": "round(band_1_5 / (band_1_5 + band_6_10 + band_11_15 + band_16_plus) * 100, 1)",
+    "depends_on": ["band_1_5", "band_6_10", "band_11_15", "band_16_plus"],
+    "description": "Percentage of users in the 1-5 active day band."
+  },
+
+  "band_6_10_pct": {
+    "type": "derived",
+    "formula": "round(band_6_10 / (band_1_5 + band_6_10 + band_11_15 + band_16_plus) * 100, 1)",
+    "depends_on": ["band_1_5", "band_6_10", "band_11_15", "band_16_plus"],
+    "description": "Percentage of users in the 6-10 active day band."
+  },
+
+  "band_11_15_pct": {
+    "type": "derived",
+    "formula": "round(band_11_15 / (band_1_5 + band_6_10 + band_11_15 + band_16_plus) * 100, 1)",
+    "depends_on": ["band_1_5", "band_6_10", "band_11_15", "band_16_plus"],
+    "description": "Percentage of users in the 11-15 active day band."
+  },
+
+  "band_16_plus_pct": {
+    "type": "derived",
+    "formula": "round(band_16_plus / (band_1_5 + band_6_10 + band_11_15 + band_16_plus) * 100, 1)",
+    "depends_on": ["band_1_5", "band_6_10", "band_11_15", "band_16_plus"],
+    "description": "Percentage of users in the 16+ active day band."
+  },
+
+  "chat_band_1_5_pct": {
+    "type": "scalar",
+    "measures": ["[1-5 Active Day Rate, Last Month (Chat)]"],
+    "transform": "toPct",
+    "description": "Chat tier: percentage of users with 1-5 active days."
+  },
+
+  "chat_band_6_10_pct": {
+    "type": "scalar",
+    "measures": ["[6-10 Active Day Rate, Last Month (Chat)]"],
+    "transform": "toPct",
+    "description": "Chat tier: percentage of users with 6-10 active days."
+  },
+
+  "chat_band_11_15_pct": {
+    "type": "scalar",
+    "measures": [
+      "[11-15 Active Day Rate, Last Month (Chat)]",
+      "[11-19 Active Day Rate, Last Month (Chat)]"
+    ],
+    "transform": "toPct",
+    "description": "Chat tier: percentage of users with 11-15 (or 11-19) active days."
+  },
+
+  "chat_band_16_plus_pct": {
+    "type": "scalar",
+    "measures": [
+      "[16+ Active Day Rate, Last Month (Chat)]",
+      "[>20 Active Day Rate, Last Month (Chat)]"
+    ],
+    "transform": "toPct",
+    "description": "Chat tier: percentage of users with 16+ (or 20+) active days."
+  },
+
+  "agent_band_1_5_pct": {
+    "type": "scalar",
+    "measures": ["[1-5 Active Days Rate, Last Month (Agent)]"],
+    "transform": "toPct",
+    "description": "Agent tier: percentage of users with 1-5 active days. Note: measure name is 'Days Rate' (plural) not 'Day Rate'."
+  },
+
+  "agent_band_6_10_pct": {
+    "type": "scalar",
+    "measures": ["[6-10 Active Day Rate, Last Month (Agent)]"],
+    "transform": "toPct",
+    "description": "Agent tier: percentage of users with 6-10 active days."
+  },
+
+  "agent_band_11_15_pct": {
+    "type": "scalar",
+    "measures": [
+      "[11-15 Active Day Rate, Last Month (Agent)]",
+      "[11-19 Active Day Rate, Last Month (Agent)]"
+    ],
+    "transform": "toPct",
+    "description": "Agent tier: percentage of users with 11-15 (or 11-19) active days."
+  },
+
+  "agent_band_16_plus_pct": {
+    "type": "scalar",
+    "measures": [
+      "[16+ Active Day Rate, Last Month (Agent)]",
+      "[>20 Active Day Rate, Last Month (Agent)]"
+    ],
+    "transform": "toPct",
+    "description": "Agent tier: percentage of users with 16+ (or 20+) active days."
+  },
+
+  "total_agents": {
+    "type": "scalar",
+    "measures": ["[Active Agents]"],
+    "description": "Count of active agents in the tenant."
+  },
+
+  "multi_user_agents": {
+    "type": "scalar",
+    "measures": ["[High Impact Agents]", "[Agents with Credits]"],
+    "description": "Agents used by multiple users. Try High Impact Agents first, then Agents with Credits."
+  },
+
+  "agents_keep": {
+    "type": "scalar",
+    "measures": ["[Agents to Keep]"],
+    "description": "Agents recommended to keep (high usage/impact)."
+  },
+
+  "agents_review": {
+    "type": "scalar",
+    "measures": ["[Agents to Review]"],
+    "description": "Agents that need review (moderate usage)."
+  },
+
+  "agents_retire": {
+    "type": "scalar",
+    "measures": ["[Dormant Agents]", "[Inactive Agents]"],
+    "description": "Agents recommended for retirement (low/no usage)."
+  },
+
+  "agent_table": {
+    "type": "tabular",
+    "dax": "EVALUATE\nTOPN(15,\n  SUMMARIZECOLUMNS(\n    'Chat + Agent Interactions (Audit Logs)'[AgentName],\n    \"Sessions\", COUNTROWS('Chat + Agent Interactions (Audit Logs)')\n  ),\n  [Sessions], DESC\n)\nORDER BY [Sessions] DESC",
+    "columns": {
+      "AgentName": "name",
+      "Sessions": "sessions"
+    },
+    "post_process": "Filter out blank AgentName rows. Map to {name, type: 'Store Agent (1P/3P)', users: 0, sessions, sessions_per_user: sessions}.",
+    "description": "Top 15 agents by session count from audit logs."
+  },
+
+  "top_agent_names": {
+    "type": "derived",
+    "formula": "agent_table.slice(0, 8).map(a => a.name)",
+    "depends_on": ["agent_table"],
+    "description": "Names of the top 8 agents (for bar chart)."
+  },
+
+  "top_agent_sessions": {
+    "type": "derived",
+    "formula": "agent_table.slice(0, 8).map(a => a.sessions_per_user)",
+    "depends_on": ["agent_table"],
+    "description": "Session counts for the top 8 agents (for bar chart)."
+  },
+
+  "radar_reach": {
+    "type": "derived",
+    "formula": "Computed by scoring engine from reach metrics. Placeholder: [0,0,0,0,0,0].",
+    "depends_on": ["m365_adoption", "agent_adoption", "agent_enablement", "license_coverage", "m365_enablement", "org_count"],
+    "description": "Radar chart scores for the Reach signal (6 axes). Computed by generate-report.js scoring engine."
+  },
+
+  "radar_habit": {
+    "type": "derived",
+    "formula": "Computed by scoring engine from habit metrics. Placeholder: [0,0,0,0,0,0,0].",
+    "depends_on": ["m365_frequency", "chat_habit", "agent_frequency", "m365_retention", "chat_retention", "agent_retention", "agent_habitual"],
+    "description": "Radar chart scores for the Habit signal (7 axes). Computed by generate-report.js scoring engine."
+  },
+
+  "radar_skill": {
+    "type": "derived",
+    "formula": "Computed by scoring engine from skill metrics. Placeholder: [0,0,0,0].",
+    "depends_on": ["m365_intensity", "chat_intensity", "agent_intensity", "complex_sessions"],
+    "description": "Radar chart scores for the Skill signal (4 axes). Computed by generate-report.js scoring engine."
+  },
+
+  "org_scatter_data": {
+    "type": "tabular",
+    "dax_variants": [
+      "EVALUATE TOPN(15, SUMMARIZECOLUMNS('Chat + Agent Org Data'[Organization], \"ActiveUsers\", [Total Active Chat Users Last Month], \"Agents\", [UsersInteractingWithAgents, Last Month]), [ActiveUsers], DESC)",
+      "EVALUATE TOPN(15, SUMMARIZECOLUMNS('Chat + Agent Org Data'[Organization], \"ActiveUsers\", COUNTROWS('Chat + Agent Org Data')), [ActiveUsers], DESC)"
+    ],
+    "columns": {
+      "Organization": "label",
+      "ActiveUsers": "x",
+      "Agents": "used for y calculation"
+    },
+    "post_process": "Map to {label: Organization, x: ActiveUsers, y: round(Agents/ActiveUsers*100, 1), r: ActiveUsers}. Take top 15.",
+    "description": "Organisation scatter bubble data — x=user count, y=agent adoption %, r=bubble size (user count)."
+  },
+
+  "retained_users": {
+    "type": "computed",
+    "dax": "EVALUATE\nVAR LastMonth = MAXX('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart])\nVAR PrevMonth = MAXX(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart] < LastMonth), 'ActiveDaysSummary'[MonthStart])\nVAR UsersLast = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = LastMonth)\nVAR UsersPrev = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = PrevMonth)\nRETURN ROW(\"Retained\", COUNTROWS(INTERSECT(UsersLast, UsersPrev)))",
+    "description": "Users active in both the last and previous months (month-over-month retention count)."
+  },
+
+  "churned_users": {
+    "type": "computed",
+    "dax": "EVALUATE\nVAR LastMonth = MAXX('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart])\nVAR PrevMonth = MAXX(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart] < LastMonth), 'ActiveDaysSummary'[MonthStart])\nVAR UsersLast = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = LastMonth)\nVAR UsersPrev = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = PrevMonth)\nRETURN ROW(\"Churned\", COUNTROWS(UsersPrev) - COUNTROWS(INTERSECT(UsersLast, UsersPrev)))",
+    "description": "Users active in previous month but not in last month (churn count)."
+  },
+
+  "_supplementary_metrics.monthly_data": {
+    "type": "tabular",
+    "dax": "EVALUATE\nSUMMARIZECOLUMNS(\n  'Calendar'[Year-Month],\n  \"Licensed\", [NoOfActiveChatUsers (Licensed)],\n  \"Unlicensed\", [NoOfActiveChatUsers (Unlicensed)]\n)\nORDER BY 'Calendar'[Year-Month] ASC",
+    "columns": {
+      "Year-Month": "key (formatted as mon_yyyy, e.g. sep_2025)",
+      "Licensed": "used in users total",
+      "Unlicensed": "used in users total"
+    },
+    "post_process": "Convert to object keyed by mon_yyyy: {users: Licensed+Unlicensed, prompts: 0, sessions: 0, avg_prompts_per_user: 0}. Also derives analysis_period from first/last month.",
+    "description": "Monthly time-series of user counts by license tier. Used for trend charts and analysis_period derivation."
+  },
+
+  "_supplementary_metrics.per_tier_monthly_users": {
+    "type": "tabular",
+    "dax": "EVALUATE\nSUMMARIZECOLUMNS(\n  'Calendar'[Year-Month],\n  \"Licensed\", [NoOfActiveChatUsers (Licensed)],\n  \"Unlicensed\", [NoOfActiveChatUsers (Unlicensed)],\n  \"Agents\", [UsersInteractingWithAgents]\n)\nORDER BY 'Calendar'[Year-Month] ASC",
+    "columns": {
+      "Year-Month": "formatted as 'Mon YYYY' (e.g. Sep 2025)",
+      "Licensed": "licensed",
+      "Unlicensed": "unlicensed",
+      "Agents": "agents"
+    },
+    "post_process": "Map to array of {month, licensed, unlicensed, agents}. Second-to-last month backfills licensed_users, chat_users, total_active_users (last month may be partial).",
+    "description": "Per-tier monthly user counts. Critical for monthly_backfill of core user fields."
+  },
+
+  "_supplementary_metrics.per_tier_active_day_bands": {
+    "type": "tabular",
+    "status": "NOT_IMPLEMENTED",
+    "dax_sketch": "Would need per-month per-tier band queries against ActiveDaysSummary, bucketing PromptCount into 1-5, 6-10, 11-15, 16+ day bands per LicenseStatus per MonthStart.",
+    "description": "Per-tier active day band distributions over time. Not currently extracted — would require custom DAX bucketing queries."
+  },
+
+  "_supplementary_metrics.app_interactions": {
+    "type": "tabular",
+    "dax": "EVALUATE\nSUMMARIZECOLUMNS(\n  'Copilot Actions'[CopilotApp],\n  \"Interactions\", COUNT('Copilot Actions'[Action]),\n  \"Users\", DISTINCTCOUNT('Copilot Actions'[UserEmail])\n)\nORDER BY [Interactions] DESC",
+    "columns": {
+      "CopilotApp": "key (lowercased, spaces replaced with underscores)",
+      "Interactions": "interactions",
+      "Users": "users"
+    },
+    "post_process": "Map to object keyed by normalised app name: {interactions, pct: round(interactions/total*100, 1), users}.",
+    "description": "Copilot usage breakdown by M365 application surface."
+  }
+}
