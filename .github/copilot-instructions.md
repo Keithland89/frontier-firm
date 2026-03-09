@@ -40,19 +40,23 @@ Gate 4: Headless visual verification (10 charts, mandatory)
 Gate 5: Deep number audit
 ```
 
-Exit code 2: AI insights needed. Exit code 3: measure mapping needed (custom PBIX).
+### Exit codes — handle automatically, DO NOT ask the user
 
-### Manual Extraction (if not using --pbix)
+**Exit 2 (insights needed):** YOU must immediately read `temp/insights_request.json`, analyse the full customer dataset, generate all 30 `_ai_insights` keys, save into the data JSON, and re-run. See `prompts/06-ai-insights.md` for quality rules. Never pause — you are the analyst.
 
-Run each prompt file in `prompts/` in order (01 through 05). Each prompt tells you what DAX queries to use. Merge results into `data/{customer}.json`.
+**Exit 3 (measure mapping needed):** YOU must read `temp/measure_mapping_request.json`, examine the available measures, map them to schema fields, save the override, and re-run.
 
-## Insight Generation
+## YOU are the insight engine
 
-When the pipeline pauses for insight generation (exit code 2):
-1. Read `temp/insights_request.json`
-2. Generate all 30 `_ai_insights` keys following quality rules in `prompts/06-ai-insights.md`
-3. Save the `_ai_insights` block into the customer data JSON
-4. Re-run: `npm run report -- --data data/{customer}.json`
+This pipeline follows the pbi-to-exec-deck pattern: YOU are the intelligence layer. You don't just extract — you interpret, narrate, and recommend. The quality of insights is the quality of the report.
+
+When generating insights:
+- Analyse ALL extracted data — monthly trends, tier comparisons, org scatter, agent leaderboard
+- Every claim references a specific number
+- Every recommendation names a specific cohort, org, or target
+- Simple language for non-technical executives
+- "Habitual" = 11+ active days — never say "daily" unless 20+
+- No generic insights that could apply to any customer
 
 ## Quality Rules
 

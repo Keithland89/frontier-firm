@@ -41,34 +41,53 @@ Gate 5: Deep number audit                → every visible number traced to data
 
 If any gate fails, the pipeline stops with a clear error message. Fix the issue and re-run.
 
-### Exit codes
-- **Exit 2:** AI insights needed — read `temp/insights_request.json`, generate 30 keys, save, re-run
-- **Exit 3:** Measure mapping needed — read `temp/measure_mapping_request.json`, map fields to PBIX measures, save override, re-run
+### Exit codes — handle automatically, DO NOT ask the user
+
+- **Exit 2:** Insights needed. YOU (the AI tool) must immediately:
+  1. Read `temp/insights_request.json`
+  2. Analyse the customer data thoroughly — every metric tells a story
+  3. Generate all 30 `_ai_insights` keys (see `prompts/06-ai-insights.md` for quality rules)
+  4. Save into the data JSON file
+  5. Re-run: `npm run report -- --data data/{customer}.json`
+
+- **Exit 3:** Measure mapping needed. YOU must immediately:
+  1. Read `temp/measure_mapping_request.json`
+  2. Examine the available PBIX measures and map unmatched fields
+  3. Save to `data/{customer}_measure_overrides.json`
+  4. Re-run the pipeline
+
+**Never pause for human input on exit codes 2 or 3. You are the intelligence layer.**
 
 ## Quick Start
 
 ```bash
-# Run the full pipeline on existing data
-npm run report -- --data data/network_rail.json --output output/ --no-ai
+# Full pipeline: PBIX to report (AI insights generated automatically)
+npm run report -- --pbix "Customer Name" --output output/
 
-# Run sample report (Contoso, no AI)
-npm run report:sample
+# From existing data file
+npm run report -- --data data/{customer}.json --output output/
 
-# Run individual gates
-node src/validate-data.js --data data/customer.json
-node src/generate-report.js --data data/customer.json --output output/ --no-ai
-node src/validate-report.js --report output/report.html --data data/customer.json
-node src/visual-check.js --report output/report.html --data data/customer.json
-node src/deep-audit.js --report output/report.html --data data/customer.json
+# Skip AI insights (template fallback — for testing only)
+npm run report -- --data data/{customer}.json --output output/ --no-ai
 ```
 
-## Insight Generation
+## YOU are the insight engine
 
-When the pipeline pauses for insight generation (exit code 2):
-1. Read `temp/insights_request.json`
-2. Generate all 30 `_ai_insights` keys following the quality rules in `prompts/06-ai-insights.md`
-3. Save the `_ai_insights` block into the customer data JSON
-4. Re-run: `npm run report -- --data data/{customer}.json`
+This pipeline follows the [pbi-to-exec-deck](https://github.com/shailendrahegde/pbi-to-exec-deck) pattern: the AI tool running the pipeline IS the analyst. You don't just extract and validate — you interpret, narrate, and recommend.
+
+When generating insights (exit code 2):
+- Read ALL the extracted data, not just the summary metrics
+- Look at the monthly trends — is usage growing or declining?
+- Compare tiers — how do licensed vs unlicensed vs agent users differ?
+- Examine the org scatter — which orgs are leading, which are lagging?
+- Study the agent leaderboard — is usage concentrated or distributed?
+- Every claim must reference a specific number from the data
+- Every recommendation must name a specific cohort, org, or target
+- Use simple language — the reader is a non-technical executive
+- "Habitual" = 11+ active days/month — never say "daily" unless 20+
+- No generic insights that could apply to any customer
+
+The quality of the insights IS the quality of the report. This is the value-add.
 
 ## Key Files
 
