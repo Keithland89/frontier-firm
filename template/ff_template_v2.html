@@ -227,6 +227,16 @@ body{font-family:'Inter','Segoe UI Variable','Segoe UI',-apple-system,BlinkMacSy
 .rec-card p{font-size:.8rem;color:var(--text-2);line-height:1.65}
 
 /* ═══════════════════════════════════════════════════════════
+   FLIP CARDS
+   ═══════════════════════════════════════════════════════════ */
+.flip-card{perspective:800px;cursor:pointer}
+.flip-card-inner{position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.16,1,.3,1);transform-style:preserve-3d}
+.flip-card.flipped .flip-card-inner{transform:rotateY(180deg)}
+.flip-card-front,.flip-card-back{position:absolute;inset:0;backface-visibility:hidden;border-radius:10px;display:flex;flex-direction:column}
+.flip-card-back{transform:rotateY(180deg)}
+.flip-card-hint{font-size:.55rem;font-weight:600;margin-top:auto;padding-top:.5rem;opacity:.5;text-align:center}
+
+/* ═══════════════════════════════════════════════════════════
    FOOTER
    ═══════════════════════════════════════════════════════════ */
 .footer{text-align:center;padding:3rem 2rem;color:var(--text-3);font-size:.7rem;border-top:1px solid var(--border)}
@@ -299,30 +309,75 @@ body{font-family:'Inter','Segoe UI Variable','Segoe UI',-apple-system,BlinkMacSy
     </div>
 
     <div class="hero-metrics">
-      <div class="hero-metric" style="--metric-color:var(--color-reach)">
-        <div class="hero-metric-value"><span class="counter" data-target="{{M365_ENABLEMENT}}" data-suffix="%">0</span><span class="hero-metric-unit">%</span></div>
-        <div class="hero-metric-name">License Activation</div>
-        <span class="hero-metric-tier {{M365_ENABLEMENT_TIER_CLASS}}">{{M365_ENABLEMENT_TIER}}</span>
+      <div class="flip-card hero-metric" style="--metric-color:var(--color-reach);height:140px" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.4rem 1rem 1rem;text-align:center;border-top:3px solid var(--metric-color)">
+            <div class="hero-metric-value"><span class="counter" data-target="{{M365_ENABLEMENT}}" data-suffix="%">0</span><span class="hero-metric-unit">%</span></div>
+            <div class="hero-metric-name">License Activation</div>
+            <span class="hero-metric-tier {{M365_ENABLEMENT_TIER_CLASS}}">{{M365_ENABLEMENT_TIER}}</span>
+          </div>
+          <div class="flip-card-back" style="background:rgba(14,165,233,.06);border:1px solid rgba(14,165,233,.15);border-radius:12px;padding:1rem;text-align:center;border-top:3px solid var(--metric-color)">
+            <div style="font-size:.6rem;font-weight:700;color:var(--color-reach);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem">License Activation</div>
+            <div style="font-size:.7rem;color:var(--text-2);line-height:1.5">% of assigned Copilot licenses that are actively used. Threshold: 60% Expansion, 85% Frontier.</div>
+            <div class="flip-card-hint" style="color:var(--color-reach)">Flip back</div>
+          </div>
+        </div>
       </div>
-      <div class="hero-metric" style="--metric-color:var(--color-reach)">
-        <div class="hero-metric-value"><span class="counter" data-target="{{AGENT_ADOPTION}}" data-suffix="%">0</span><span class="hero-metric-unit">%</span></div>
-        <div class="hero-metric-name">Agent Adoption</div>
-        <span class="hero-metric-tier {{AGENT_ADOPTION_TIER_CLASS}}">{{AGENT_ADOPTION_TIER}}</span>
+      <div class="flip-card hero-metric" style="--metric-color:var(--color-reach);height:140px" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.4rem 1rem 1rem;text-align:center;border-top:3px solid var(--metric-color)">
+            <div class="hero-metric-value"><span class="counter" data-target="{{AGENT_ADOPTION}}" data-suffix="%">0</span><span class="hero-metric-unit">%</span></div>
+            <div class="hero-metric-name">Agent Adoption</div>
+            <span class="hero-metric-tier {{AGENT_ADOPTION_TIER_CLASS}}">{{AGENT_ADOPTION_TIER}}</span>
+          </div>
+          <div class="flip-card-back" style="background:rgba(14,165,233,.06);border:1px solid rgba(14,165,233,.15);border-radius:12px;padding:1rem;text-align:center;border-top:3px solid var(--metric-color)">
+            <div style="font-size:.6rem;font-weight:700;color:var(--color-reach);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem">Agent Adoption</div>
+            <div style="font-size:.7rem;color:var(--text-2);line-height:1.5">% of active users engaging with agents. Threshold: 10% Expansion, 25% Frontier.</div>
+            <div class="flip-card-hint" style="color:var(--color-reach)">Flip back</div>
+          </div>
+        </div>
       </div>
-      <div class="hero-metric" style="--metric-color:var(--color-habit)">
-        <div class="hero-metric-value"><span class="counter" data-target="{{EMBEDDED_USER_RATE}}" data-suffix="%">0</span><span class="hero-metric-unit">%</span></div>
-        <div class="hero-metric-name">Embedded User Rate</div>
-        <span class="hero-metric-tier {{EMBEDDED_USER_RATE_TIER_CLASS}}">{{EMBEDDED_USER_RATE_TIER}}</span>
+      <div class="flip-card hero-metric" style="--metric-color:var(--color-habit);height:140px" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.4rem 1rem 1rem;text-align:center;border-top:3px solid var(--metric-color)">
+            <div class="hero-metric-value"><span class="counter" data-target="{{EMBEDDED_USER_RATE}}" data-suffix="%">0</span><span class="hero-metric-unit">%</span></div>
+            <div class="hero-metric-name">Embedded User Rate</div>
+            <span class="hero-metric-tier {{EMBEDDED_USER_RATE_TIER_CLASS}}">{{EMBEDDED_USER_RATE_TIER}}</span>
+          </div>
+          <div class="flip-card-back" style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:12px;padding:1rem;text-align:center;border-top:3px solid var(--metric-color)">
+            <div style="font-size:.6rem;font-weight:700;color:var(--color-habit);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem">Embedded User Rate</div>
+            <div style="font-size:.7rem;color:var(--text-2);line-height:1.5">Users averaging 6+ active days/month over 3 months AND present in 2/3 months. Threshold: 15% Expansion, 35% Frontier.</div>
+            <div class="flip-card-hint" style="color:var(--color-habit)">Flip back</div>
+          </div>
+        </div>
       </div>
-      <div class="hero-metric" style="--metric-color:var(--color-skill)">
-        <div class="hero-metric-value"><span class="counter" data-target="{{M365_BREADTH}}" data-decimals="1">0</span></div>
-        <div class="hero-metric-name">App Surface Breadth</div>
-        <span class="hero-metric-tier {{M365_BREADTH_TIER_CLASS}}">{{M365_BREADTH_TIER}}</span>
+      <div class="flip-card hero-metric" style="--metric-color:var(--color-skill);height:140px" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.4rem 1rem 1rem;text-align:center;border-top:3px solid var(--metric-color)">
+            <div class="hero-metric-value"><span class="counter" data-target="{{M365_BREADTH}}" data-decimals="1">0</span></div>
+            <div class="hero-metric-name">App Surface Breadth</div>
+            <span class="hero-metric-tier {{M365_BREADTH_TIER_CLASS}}">{{M365_BREADTH_TIER}}</span>
+          </div>
+          <div class="flip-card-back" style="background:rgba(123,47,242,.06);border:1px solid rgba(123,47,242,.15);border-radius:12px;padding:1rem;text-align:center;border-top:3px solid var(--metric-color)">
+            <div style="font-size:.6rem;font-weight:700;color:var(--color-skill);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem">App Surface Breadth</div>
+            <div style="font-size:.7rem;color:var(--text-2);line-height:1.5">Avg distinct M365 app surfaces per user. Threshold: 3 Expansion, 5 Frontier.</div>
+            <div class="flip-card-hint" style="color:var(--color-skill)">Flip back</div>
+          </div>
+        </div>
       </div>
-      <div class="hero-metric" style="--metric-color:var(--color-skill)">
-        <div class="hero-metric-value"><span class="counter" data-target="{{AGENT_BREADTH}}" data-decimals="1">0</span></div>
-        <div class="hero-metric-name">Agent Breadth</div>
-        <span class="hero-metric-tier {{AGENT_BREADTH_TIER_CLASS}}">{{AGENT_BREADTH_TIER}}</span>
+      <div class="flip-card hero-metric" style="--metric-color:var(--color-skill);height:140px" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.4rem 1rem 1rem;text-align:center;border-top:3px solid var(--metric-color)">
+            <div class="hero-metric-value"><span class="counter" data-target="{{AGENT_BREADTH}}" data-decimals="1">0</span></div>
+            <div class="hero-metric-name">Agent Breadth</div>
+            <span class="hero-metric-tier {{AGENT_BREADTH_TIER_CLASS}}">{{AGENT_BREADTH_TIER}}</span>
+          </div>
+          <div class="flip-card-back" style="background:rgba(123,47,242,.06);border:1px solid rgba(123,47,242,.15);border-radius:12px;padding:1rem;text-align:center;border-top:3px solid var(--metric-color)">
+            <div style="font-size:.6rem;font-weight:700;color:var(--color-skill);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem">Agent Breadth</div>
+            <div style="font-size:.7rem;color:var(--text-2);line-height:1.5">Avg distinct agents per user. Threshold: 2 Expansion, 4 Frontier.</div>
+            <div class="flip-card-hint" style="color:var(--color-skill)">Flip back</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

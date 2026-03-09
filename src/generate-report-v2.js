@@ -620,8 +620,11 @@ function populateTemplate(template, insights) {
   for (const [sigKey, sigDef] of Object.entries(schema.signals)) {
     const sigMetrics = sigDef.metrics;
     const colCount = sigMetrics.length;
+    // Extract hex color for rgba backgrounds
+    const hex = sigDef.color;
+    const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
     scorecardHtml += '<div style="margin-bottom:1.5rem">';
-    scorecardHtml += '<div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:' + sigDef.color + ';margin-bottom:.75rem">' + sigDef.label + ' <span style="font-weight:400;opacity:.6">' + sigDef.question + '</span></div>';
+    scorecardHtml += '<div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:' + hex + ';margin-bottom:.75rem">' + sigDef.label + ' <span style="font-weight:400;opacity:.6">' + sigDef.question + '</span></div>';
     scorecardHtml += '<div style="display:grid;grid-template-columns:repeat(' + colCount + ',1fr);gap:.75rem">';
     for (const metricId of sigMetrics) {
       const mDef = schema.metrics[metricId];
@@ -630,11 +633,24 @@ function populateTemplate(template, insights) {
       const rawVal = data[mDef.data_field];
       const displayVal = typeof rawVal === 'number' ? (Number.isInteger(rawVal) ? String(rawVal) : String(Math.round(rawVal * 10) / 10)) : '\u2014';
       const unit = (mDef.unit || '').replace(/%.*/, '%').replace(/apps.*/, '').replace(/agents.*/, '');
-      scorecardHtml += '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid ' + sigDef.color + '">';
-      scorecardHtml += '<div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:' + sigDef.color + ';margin-bottom:.3rem">' + mDef.name + '</div>';
+      const bands = mDef.bands || [];
+      const bandText = bands.length >= 2 ? bands[0] + (unit.includes('%') ? '%' : '') + ' Expansion, ' + bands[1] + (unit.includes('%') ? '%' : '') + ' Frontier' : '';
+      // Flip card with definition on back
+      scorecardHtml += '<div class="flip-card" style="height:120px;cursor:pointer" onclick="this.classList.toggle(\'flipped\')">';
+      scorecardHtml += '<div class="flip-card-inner">';
+      // Front — value + tier
+      scorecardHtml += '<div class="flip-card-front" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid ' + hex + '">';
+      scorecardHtml += '<div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:' + hex + ';margin-bottom:.3rem">' + mDef.name + '</div>';
       scorecardHtml += '<div style="font-size:1.2rem;font-weight:900;color:#fff">' + displayVal + (unit.includes('%') ? '%' : '') + '</div>';
       scorecardHtml += '<span class="hero-metric-tier ' + tierClass + '" style="margin-top:.4rem">' + tier + '</span>';
       scorecardHtml += '</div>';
+      // Back — definition + thresholds
+      scorecardHtml += '<div class="flip-card-back" style="background:rgba(' + r + ',' + g + ',' + b + ',.06);border:1px solid rgba(' + r + ',' + g + ',' + b + ',.15);border-radius:10px;padding:.8rem;text-align:center;border-top:3px solid ' + hex + '">';
+      scorecardHtml += '<div style="font-size:.55rem;font-weight:700;color:' + hex + ';text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem">' + mDef.name + '</div>';
+      scorecardHtml += '<div style="font-size:.62rem;color:rgba(255,255,255,.65);line-height:1.5">' + (mDef.description || '') + '</div>';
+      if (bandText) scorecardHtml += '<div style="font-size:.55rem;color:rgba(255,255,255,.4);margin-top:.3rem">' + bandText + '</div>';
+      scorecardHtml += '</div>';
+      scorecardHtml += '</div></div>';
     }
     scorecardHtml += '</div></div>';
   }
