@@ -433,6 +433,16 @@ function populateTemplate(template, insights) {
   html = html.replace(/\{\{HABIT_GAUGE_OFFSET\}\}/g, String(Math.round((408.4 * (1 - gauges.habit / 100)) * 10) / 10));
   html = html.replace(/\{\{SKILL_GAUGE_OFFSET\}\}/g, String(Math.round((408.4 * (1 - gauges.skill / 100)) * 10) / 10));
 
+  // ── Journey track: progress line + dot styles ──
+  const journeyProgress = pattern.number === 1 ? 15 : pattern.number === 2 ? 50 : 90;
+  html = html.replace(/\{\{JOURNEY_PROGRESS\}\}/g, String(journeyProgress));
+  const passedDot = 'background:var(--brand);border:2px solid var(--brand)';
+  const currentDot = 'background:var(--brand);border:2px solid #fff;box-shadow:0 0 0 5px rgba(34,100,229,.25),0 0 16px rgba(34,100,229,.35);width:28px;height:28px';
+  const futureDot = 'background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15)';
+  html = html.replace(/\{\{JOURNEY_1_STYLE\}\}/g, pattern.number >= 2 ? passedDot : pattern.number === 1 ? currentDot : futureDot);
+  html = html.replace(/\{\{JOURNEY_2_STYLE\}\}/g, pattern.number >= 3 ? passedDot : pattern.number === 2 ? currentDot : futureDot);
+  html = html.replace(/\{\{JOURNEY_3_STYLE\}\}/g, pattern.number >= 3 ? currentDot : futureDot);
+
   // ── Chart data: Monthly users ──
   // per_tier_monthly_users is an array [{month, licensed, unlicensed, agents}, ...]
   // monthly_data is an object keyed by month slug — convert to array if needed
