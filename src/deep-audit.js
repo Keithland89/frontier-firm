@@ -110,7 +110,12 @@ if (data._ai_insights) {
   Object.values(data._ai_insights).forEach(function(txt) {
     if (typeof txt !== 'string') return;
     const nums = txt.match(/[\d,]+\.?\d*/g) || [];
-    nums.forEach(function(n) { legitimate.add(n); legitimate.add(n.replace(/,/g, '')); });
+    nums.forEach(function(n) {
+      // Clean trailing period (e.g. "1,700." at end of sentence)
+      var clean = n.replace(/\.$/, '');
+      legitimate.add(clean);
+      legitimate.add(clean.replace(/,/g, ''));
+    });
   });
 }
 
