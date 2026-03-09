@@ -259,7 +259,7 @@ async function main() {
 
   for (const [field, config] of Object.entries(measureMap)) {
     if (field.startsWith('$')) continue;  // skip metadata keys
-    if (config.type !== 'scalar' && config.type !== 'monthly_backfill') continue;
+    if (config.type !== 'scalar') continue;
 
     const measures = config.measures || [];
     const matched = measures.find(m => {
@@ -694,37 +694,35 @@ async function main() {
   }
 
   // ============================================================
-  // PHASE 6: MONTHLY BACKFILL — overwrite core user counts from
-  // most recent complete month in per_tier_monthly_users
+  // PHASE 6: DERIVE TOTAL ACTIVE USERS
+  // NOTE: monthly_backfill was REMOVED (2026-03-09). The PBIX measures
+  // [NoOfActiveChatUsers (Licensed/Unlicensed)] are ALL-TIME cumulative
+  // counts (any user active at least once in the analysis period).
+  // The report must match the PBIX cards exactly — no overwriting
+  // with single-month data from per_tier_monthly_users.
+  // Monthly per-tier data is still extracted for trend charts.
   // ============================================================
-  console.log('\n=== Phase 6: Monthly Backfill ===');
+  console.log('\n=== Phase 6: Derive Total Active Users ===');
 
-  if (data._supplementary_metrics && data._supplementary_metrics.per_tier_monthly_users) {
-    const tiers = data._supplementary_metrics.per_tier_monthly_users;
-    if (tiers.length >= 2) {
-      const fullMonth = tiers[tiers.length - 2];  // second-to-last (avoid partial)
-      console.log('  Backfilling from ' + fullMonth.month);
-      data.licensed_users = fullMonth.licensed;
-      data.chat_users = fullMonth.unlicensed;
-      data.total_active_users = fullMonth.licensed + fullMonth.unlicensed;
+  // total_active_users = licensed + unlicensed (ALL-TIME cumulative)
+  if (typeof data.licensed_users === 'number' && typeof data.chat_users === 'number') {
+    data.total_active_users = data.licensed_users + data.chat_users;
+    console.log('  total_active_users = ' + data.licensed_users + ' + ' + data.chat_users + ' = ' + data.total_active_users);
+  }
 
-      // Recalculate derived fields that depend on user counts
-      if (typeof data.total_licensed_seats === 'number' && data.total_licensed_seats > 0) {
-        data.m365_enablement = Math.round(data.licensed_users / data.total_licensed_seats * 1000) / 10;
-        data.m365_adoption = data.m365_adoption === 'not_available'
-          ? data.m365_enablement
-          : data.m365_adoption;
-      }
-      if (data.total_active_users > 0) {
-        data.license_coverage = Math.round(data.licensed_users / data.total_active_users * 1000) / 10;
-      }
-      if (typeof data.total_licensed_seats === 'number') {
-        data.inactive_licenses = Math.max(0, data.total_licensed_seats - data.licensed_users);
-      }
-      if (typeof data.licensed_avg_prompts === 'number' && typeof data.unlicensed_avg_prompts === 'number' && data.unlicensed_avg_prompts > 0) {
-        data.license_priority = Math.round(data.licensed_avg_prompts / data.unlicensed_avg_prompts * 100) / 100;
-      }
-    }
+  // Recalculate derived fields that depend on user counts
+  if (typeof data.total_licensed_seats === 'number' && data.total_licensed_seats > 0 && typeof data.licensed_users === 'number') {
+    data.m365_enablement = Math.round(data.licensed_users / data.total_licensed_seats * 1000) / 10;
+    if (data.m365_adoption === 'not_available') data.m365_adoption = data.m365_enablement;
+  }
+  if (typeof data.total_active_users === 'number' && data.total_active_users > 0 && typeof data.licensed_users === 'number') {
+    data.license_coverage = Math.round(data.licensed_users / data.total_active_users * 1000) / 10;
+  }
+  if (typeof data.total_licensed_seats === 'number' && typeof data.licensed_users === 'number') {
+    data.inactive_licenses = Math.max(0, data.total_licensed_seats - data.licensed_users);
+  }
+  if (typeof data.licensed_avg_prompts === 'number' && typeof data.unlicensed_avg_prompts === 'number' && data.unlicensed_avg_prompts > 0) {
+    data.license_priority = Math.round(data.licensed_avg_prompts / data.unlicensed_avg_prompts * 100) / 100;
   }
 
   // ============================================================

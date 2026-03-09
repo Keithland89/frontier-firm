@@ -6,7 +6,9 @@
     "Older PBIX templates (MOJ, NR): 11-19 / 20+ day bands, Avg Agent Return Rate %",
     "All measures returning 0-1 rates need toPct transform (multiply by 100)",
     "Fallback measures are tried in order — first non-null wins",
-    "TODO: Value signal is excluded from maturity pattern scoring (Reach/Habit/Skill only). Generator and template visual bars should NOT include Value in the pattern calculation — fix in generate-report.js and ff_template.html."
+    "CRITICAL: licensed_users, chat_users, agent_users are ALL-TIME cumulative measures. They count any user active at least once in the full analysis period. DO NOT overwrite with monthly_backfill — the PBIX cards show cumulative counts and the report must match exactly.",
+    "Monthly per-tier data (_supplementary_metrics.per_tier_monthly_users) is still extracted for trend charts, but never overwrites the top-level user counts.",
+    "TODO: Value signal is excluded from maturity pattern scoring (Reach/Habit/Skill only)."
   ],
 
   "customer_name": {
@@ -20,28 +22,28 @@
   },
 
   "total_active_users": {
-    "type": "monthly_backfill",
-    "measures": ["[Total Active Chat Users Last Month]"],
-    "fallback_dax": "EVALUATE ROW(\"v\", [NoOfActiveChatUsers (Licensed)] + [NoOfActiveChatUsers (Unlicensed)])",
-    "description": "Total active users (Licensed + Unlicensed). Initially extracted from measure, then overwritten from per_tier_monthly_users (second-to-last month, licensed + unlicensed)."
+    "type": "derived",
+    "formula": "licensed_users + chat_users",
+    "depends_on": ["licensed_users", "chat_users"],
+    "description": "Total active users (Licensed + Unlicensed). Derived from ALL-TIME cumulative measures to match PBIX card totals. DO NOT use monthly_backfill — the PBIX shows all-time counts, not per-month."
   },
 
   "licensed_users": {
-    "type": "monthly_backfill",
+    "type": "scalar",
     "measures": ["[NoOfActiveChatUsers (Licensed)]"],
-    "description": "Active licensed Copilot users. Initially extracted from measure, then overwritten from per_tier_monthly_users (second-to-last month)."
+    "description": "Active licensed Copilot users. ALL-TIME cumulative — counts any user active at least once in the analysis period. Matches PBIX 'M365 Copilot - Active Users' card."
   },
 
   "chat_users": {
-    "type": "monthly_backfill",
+    "type": "scalar",
     "measures": ["[NoOfActiveChatUsers (Unlicensed)]"],
-    "description": "Active unlicensed chat users. Initially extracted from measure, then overwritten from per_tier_monthly_users (second-to-last month)."
+    "description": "Active unlicensed chat users. ALL-TIME cumulative — counts any user active at least once in the analysis period. Matches PBIX 'Unlicensed Chat - Active Users' card."
   },
 
   "agent_users": {
     "type": "scalar",
-    "measures": ["[UsersInteractingWithAgents, Last Month]"],
-    "description": "Users who interacted with agents in the last complete month."
+    "measures": ["[UsersInteractingWithAgents]", "[UsersInteractingWithAgents, Last Month]"],
+    "description": "Users who interacted with agents. Primary: ALL-TIME cumulative [UsersInteractingWithAgents] to match PBIX card. Fallback: [UsersInteractingWithAgents, Last Month] if cumulative not available."
   },
 
   "total_licensed_seats": {
