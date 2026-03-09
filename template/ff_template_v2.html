@@ -658,33 +658,9 @@ body{font-family:'Inter','Segoe UI Variable','Segoe UI',-apple-system,BlinkMacSy
       </div>
     </div>
 
-    <!-- 5 hero metric detail -->
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin-top:2rem" class="reveal reveal-d5">
-      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--color-reach)">
-        <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-reach);margin-bottom:.3rem">License Activation</div>
-        <div style="font-size:1.4rem;font-weight:900;color:#fff">{{M365_ENABLEMENT}}%</div>
-        <span class="hero-metric-tier {{M365_ENABLEMENT_TIER_CLASS}}" style="margin-top:.4rem">{{M365_ENABLEMENT_TIER}}</span>
-      </div>
-      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--color-reach)">
-        <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-reach);margin-bottom:.3rem">Agent Adoption</div>
-        <div style="font-size:1.4rem;font-weight:900;color:#fff">{{AGENT_ADOPTION}}%</div>
-        <span class="hero-metric-tier {{AGENT_ADOPTION_TIER_CLASS}}" style="margin-top:.4rem">{{AGENT_ADOPTION_TIER}}</span>
-      </div>
-      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--color-habit)">
-        <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-habit);margin-bottom:.3rem">Embedded User Rate</div>
-        <div style="font-size:1.4rem;font-weight:900;color:#fff">{{EMBEDDED_USER_RATE}}%</div>
-        <span class="hero-metric-tier {{EMBEDDED_USER_RATE_TIER_CLASS}}" style="margin-top:.4rem">{{EMBEDDED_USER_RATE_TIER}}</span>
-      </div>
-      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--color-skill)">
-        <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-skill);margin-bottom:.3rem">App Surface Breadth</div>
-        <div style="font-size:1.4rem;font-weight:900;color:#fff">{{M365_BREADTH}}</div>
-        <span class="hero-metric-tier {{M365_BREADTH_TIER_CLASS}}" style="margin-top:.4rem">{{M365_BREADTH_TIER}}</span>
-      </div>
-      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--color-skill)">
-        <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-skill);margin-bottom:.3rem">Agent Breadth</div>
-        <div style="font-size:1.4rem;font-weight:900;color:#fff">{{AGENT_BREADTH}}</div>
-        <span class="hero-metric-tier {{AGENT_BREADTH_TIER_CLASS}}" style="margin-top:.4rem">{{AGENT_BREADTH_TIER}}</span>
-      </div>
+    <!-- 11-metric scorecard grouped by signal -->
+    <div class="reveal reveal-d5">
+      {{MATURITY_SCORECARD_HTML}}
     </div>
   </div>
 </section>

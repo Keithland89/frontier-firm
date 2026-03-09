@@ -1,25 +1,25 @@
 {
   "$schema": "Frontier Firm Report Schema v2 — Simplified",
-  "description": "5 hero metrics across 3 signals. Value is narrative only, not scored.",
+  "description": "11 metrics across 3 signals (Reach, Habit, Skill). Value is narrative only, not scored. Frontier thresholds are deliberately stretching — most organisations will be Foundation or Expansion.",
 
   "signals": {
     "reach": {
       "label": "Reach",
       "question": "How broadly is it adopted?",
       "color": "#0EA5E9",
-      "metrics": ["license_activation", "agent_adoption"]
+      "metrics": ["license_activation", "agent_adoption", "license_coverage", "org_penetration"]
     },
     "habit": {
       "label": "Habit",
       "question": "Is it embedded in daily work?",
       "color": "#F59E0B",
-      "metrics": ["embedded_user_rate"]
+      "metrics": ["embedded_user_rate", "retention_3mo", "habitual_rate"]
     },
     "skill": {
       "label": "Skill",
       "question": "Is it going deep?",
       "color": "#7B2FF2",
-      "metrics": ["app_surface_breadth", "agent_breadth"]
+      "metrics": ["app_surface_breadth", "agent_breadth", "complex_sessions", "agent_health"]
     }
   },
 
@@ -27,7 +27,7 @@
     "license_activation": {
       "name": "License Activation",
       "unit": "% seats active",
-      "bands": [50, 80],
+      "bands": [60, 85],
       "band_labels": ["Foundation", "Expansion", "Frontier"],
       "signal": "reach",
       "data_field": "m365_enablement",
@@ -35,26 +35,64 @@
     },
     "agent_adoption": {
       "name": "Agent Adoption",
-      "unit": "% of active users",
-      "bands": [5, 15],
+      "unit": "% of active users using agents",
+      "bands": [10, 25],
       "band_labels": ["Foundation", "Expansion", "Frontier"],
       "signal": "reach",
       "data_field": "agent_adoption",
       "description": "agent_users / total_active_users * 100"
     },
+    "license_coverage": {
+      "name": "License Coverage",
+      "unit": "% of active users licensed",
+      "bands": [25, 60],
+      "band_labels": ["Foundation", "Expansion", "Frontier"],
+      "signal": "reach",
+      "data_field": "license_coverage",
+      "description": "licensed_users / total_active_users * 100"
+    },
+    "org_penetration": {
+      "name": "Org Penetration",
+      "unit": "active orgs",
+      "bands": [5, 15],
+      "band_labels": ["Foundation", "Expansion", "Frontier"],
+      "signal": "reach",
+      "data_field": "org_count",
+      "description": "Distinct organisations with Copilot activity"
+    },
+
     "embedded_user_rate": {
       "name": "Embedded User Rate",
       "unit": "% embedded users",
-      "bands": [5, 15],
+      "bands": [15, 35],
       "band_labels": ["Foundation", "Expansion", "Frontier"],
       "signal": "habit",
       "data_field": "embedded_user_rate",
       "description": "Users with avg 6+ active days/month over last 3 months AND present in 2/3 months"
     },
+    "retention_3mo": {
+      "name": "3-Month Retention",
+      "unit": "% avg MoM retention",
+      "bands": [70, 88],
+      "band_labels": ["Foundation", "Expansion", "Frontier"],
+      "signal": "habit",
+      "data_field": "m365_retention",
+      "description": "Average month-over-month user retention across last 3 complete months"
+    },
+    "habitual_rate": {
+      "name": "Habitual User Rate",
+      "unit": "% with 11+ active days",
+      "bands": [15, 35],
+      "band_labels": ["Foundation", "Expansion", "Frontier"],
+      "signal": "habit",
+      "data_field": "m365_frequency",
+      "description": "Percentage of licensed users with 11+ active days last month"
+    },
+
     "app_surface_breadth": {
       "name": "App Surface Breadth",
       "unit": "apps/user",
-      "bands": [2, 4],
+      "bands": [3, 5],
       "band_labels": ["Foundation", "Expansion", "Frontier"],
       "signal": "skill",
       "data_field": "m365_breadth",
@@ -63,19 +101,37 @@
     "agent_breadth": {
       "name": "Agent Breadth",
       "unit": "agents/user",
-      "bands": [1.5, 3],
+      "bands": [2, 4],
       "band_labels": ["Foundation", "Expansion", "Frontier"],
       "signal": "skill",
       "data_field": "agent_breadth",
       "description": "Avg distinct agents per user"
+    },
+    "complex_sessions": {
+      "name": "Multi-Turn Sessions",
+      "unit": "% multi-turn",
+      "bands": [40, 70],
+      "band_labels": ["Foundation", "Expansion", "Frontier"],
+      "signal": "skill",
+      "data_field": "complex_sessions",
+      "description": "Percentage of sessions with multiple conversational turns"
+    },
+    "agent_health": {
+      "name": "Agent Return Rate",
+      "unit": "% return rate",
+      "bands": [50, 80],
+      "band_labels": ["Foundation", "Expansion", "Frontier"],
+      "signal": "skill",
+      "data_field": "agent_health",
+      "description": "Percentage of agent users who return to use agents again"
     }
   },
 
   "pattern_rules": {
-    "description": "Pattern determined by counting how many of 5 hero metrics reach Expansion or Frontier threshold",
-    "p1_foundation": "0-1 metrics at Expansion+",
-    "p2_expansion": "2-3 metrics at Expansion+",
-    "p3_frontier": "4-5 metrics at Expansion+, or 3+ at Frontier"
+    "description": "Pattern determined by signal tiers, not individual metrics. Each signal scores Foundation/Expansion/Frontier based on its metrics. Pattern requires strong performance across ALL signals.",
+    "p1_foundation": "Any signal at Foundation",
+    "p2_expansion": "All signals at Expansion+, with at most 1 at Frontier",
+    "p3_frontier": "All 3 signals at Expansion+, with 2+ at Frontier"
   },
 
   "insight_blocks": [

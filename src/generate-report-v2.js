@@ -96,13 +96,15 @@ console.log('Metric tiers:', metricTiers);
 function scoreSignalV2(signalName) {
   const signal = schema.signals[signalName];
   const tiers = signal.metrics.map(m => metricTiers[m] || 'Foundation');
+  const n = tiers.length;
   const frontierCount = tiers.filter(t => t === 'Frontier').length;
-  const expansionCount = tiers.filter(t => t === 'Expansion').length;
-  const atExpansionPlus = frontierCount + expansionCount;
-  const half = Math.ceil(tiers.length / 2);
+  const foundationCount = tiers.filter(t => t === 'Foundation').length;
+  const atExpansionPlus = n - foundationCount;
 
-  if (frontierCount >= 1 && atExpansionPlus >= half) return 'Frontier';
-  if (atExpansionPlus >= half) return 'Expansion';
+  // Frontier: majority at Expansion+ AND at least half at Frontier
+  if (frontierCount >= Math.ceil(n / 2) && foundationCount === 0) return 'Frontier';
+  // Expansion: majority at Expansion+ (no more than 1 Foundation allowed)
+  if (atExpansionPlus > n / 2 && foundationCount <= 1) return 'Expansion';
   return 'Foundation';
 }
 
@@ -113,21 +115,20 @@ const signalTiers = {
 };
 console.log('Signal tiers:', signalTiers);
 
-// Pattern determination (counts hero metrics, not signals)
-function determinePatternV2(metricTiers) {
-  const tiers = Object.values(metricTiers);
+// Pattern determination (signal-based, not metric-count)
+function determinePatternV2(signalTiers) {
+  const tiers = Object.values(signalTiers);
+  const foundationCount = tiers.filter(t => t === 'Foundation').length;
   const frontierCount = tiers.filter(t => t === 'Frontier').length;
-  const expansionCount = tiers.filter(t => t === 'Expansion').length;
-  const atExpansionPlus = frontierCount + expansionCount;
 
-  if (atExpansionPlus >= 4 || frontierCount >= 3) return { number: 3, name: 'Frontier' };
-  if (atExpansionPlus >= 2) return { number: 2, name: 'Expansion' };
-  return { number: 1, name: 'Foundation' };
+  if (foundationCount > 0) return { number: 1, name: 'Foundation' };
+  if (frontierCount >= 2) return { number: 3, name: 'Frontier' };
+  return { number: 2, name: 'Expansion' };
 }
 
 const pattern = data.pattern && data.pattern_name
   ? { number: data.pattern, name: data.pattern_name }
-  : determinePatternV2(metricTiers);
+  : determinePatternV2(signalTiers);
 console.log(`Pattern: ${pattern.number} (${pattern.name})`);
 
 // Gauge widths
@@ -387,6 +388,31 @@ function populateTemplate(template, insights) {
   html = html.replace(/\{\{AGENT_BREADTH_TIER\}\}/g, metricTiers.agent_breadth);
   html = html.replace(/\{\{AGENT_BREADTH_TIER_CLASS\}\}/g, tierClassFn(metricTiers.agent_breadth));
 
+  // Additional metric tiers for the 11-metric scorecard
+  html = safeSub(html, /\{\{LICENSE_COVERAGE\}\}/g, data.license_coverage, 'license_coverage');
+  html = html.replace(/\{\{LICENSE_COVERAGE_TIER\}\}/g, metricTiers.license_coverage || 'Foundation');
+  html = html.replace(/\{\{LICENSE_COVERAGE_TIER_CLASS\}\}/g, 'tier-' + (metricTiers.license_coverage || 'Foundation').toLowerCase());
+
+  html = safeSub(html, /\{\{M365_FREQUENCY\}\}/g, data.m365_frequency, 'm365_frequency');
+  html = html.replace(/\{\{M365_FREQUENCY_TIER\}\}/g, metricTiers.habitual_rate || 'Foundation');
+  html = html.replace(/\{\{M365_FREQUENCY_TIER_CLASS\}\}/g, 'tier-' + (metricTiers.habitual_rate || 'Foundation').toLowerCase());
+
+  html = safeSub(html, /\{\{COMPLEX_SESSIONS\}\}/g, data.complex_sessions, 'complex_sessions');
+  html = html.replace(/\{\{COMPLEX_SESSIONS_TIER\}\}/g, metricTiers.complex_sessions || 'Foundation');
+  html = html.replace(/\{\{COMPLEX_SESSIONS_TIER_CLASS\}\}/g, 'tier-' + (metricTiers.complex_sessions || 'Foundation').toLowerCase());
+
+  html = safeSub(html, /\{\{AGENT_HEALTH\}\}/g, data.agent_health, 'agent_health');
+  html = html.replace(/\{\{AGENT_HEALTH_TIER\}\}/g, metricTiers.agent_health || 'Foundation');
+  html = html.replace(/\{\{AGENT_HEALTH_TIER_CLASS\}\}/g, 'tier-' + (metricTiers.agent_health || 'Foundation').toLowerCase());
+
+  // ── Org Penetration tier ──
+  html = html.replace(/\{\{ORG_PENETRATION_TIER\}\}/g, metricTiers.org_penetration || 'Foundation');
+  html = html.replace(/\{\{ORG_PENETRATION_TIER_CLASS\}\}/g, 'tier-' + (metricTiers.org_penetration || 'Foundation').toLowerCase());
+
+  // ── Retention tier ──
+  html = html.replace(/\{\{RETENTION_3MO_TIER\}\}/g, metricTiers.retention_3mo || 'Foundation');
+  html = html.replace(/\{\{RETENTION_3MO_TIER_CLASS\}\}/g, 'tier-' + (metricTiers.retention_3mo || 'Foundation').toLowerCase());
+
   // ── Value section ──
   html = safeSub(html, /\{\{LICENSE_PRIORITY\}\}/g, data.license_priority, 'license_priority');
   html = safeSub(html, /\{\{LICENSED_AVG_PROMPTS\}\}/g, data.licensed_avg_prompts, 'licensed_avg_prompts');
@@ -437,7 +463,7 @@ function populateTemplate(template, insights) {
   const journeyProgress = pattern.number === 1 ? 15 : pattern.number === 2 ? 50 : 90;
   html = html.replace(/\{\{JOURNEY_PROGRESS\}\}/g, String(journeyProgress));
   const passedDot = 'background:var(--brand);border:2px solid var(--brand)';
-  const currentDot = 'background:var(--brand);border:2px solid #fff;box-shadow:0 0 0 5px rgba(34,100,229,.25),0 0 16px rgba(34,100,229,.35);width:28px;height:28px';
+  const currentDot = 'background:var(--brand);border:3px solid #fff;box-shadow:0 0 0 4px rgba(34,100,229,.4),0 0 20px rgba(34,100,229,.3);width:30px;height:30px';
   const futureDot = 'background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15)';
   html = html.replace(/\{\{JOURNEY_1_STYLE\}\}/g, pattern.number >= 2 ? passedDot : pattern.number === 1 ? currentDot : futureDot);
   html = html.replace(/\{\{JOURNEY_2_STYLE\}\}/g, pattern.number >= 3 ? passedDot : pattern.number === 2 ? currentDot : futureDot);
@@ -559,6 +585,36 @@ function populateTemplate(template, insights) {
     tableHtml = '<p style="font-size:.82rem;color:var(--text-3);padding:1rem;text-align:center">Agent portfolio data not available.</p>';
   }
   html = html.replace(/\{\{AGENT_TABLE_HTML\}\}/g, tableHtml);
+
+  // ── Maturity scorecard: 11 metrics grouped by signal ──
+  const signalColors = {};
+  for (const [sigKey, sigDef] of Object.entries(schema.signals)) {
+    signalColors[sigKey] = sigDef.color;
+  }
+  let scorecardHtml = '<div style="margin-top:2rem">';
+  for (const [sigKey, sigDef] of Object.entries(schema.signals)) {
+    const sigMetrics = sigDef.metrics;
+    const colCount = sigMetrics.length;
+    scorecardHtml += '<div style="margin-bottom:1.5rem">';
+    scorecardHtml += '<div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:' + sigDef.color + ';margin-bottom:.75rem">' + sigDef.label + ' <span style="font-weight:400;opacity:.6">' + sigDef.question + '</span></div>';
+    scorecardHtml += '<div style="display:grid;grid-template-columns:repeat(' + colCount + ',1fr);gap:.75rem">';
+    for (const metricId of sigMetrics) {
+      const mDef = schema.metrics[metricId];
+      const tier = metricTiers[metricId] || 'Foundation';
+      const tierClass = 'tier-' + tier.toLowerCase();
+      const rawVal = data[mDef.data_field];
+      const displayVal = typeof rawVal === 'number' ? (Number.isInteger(rawVal) ? String(rawVal) : String(Math.round(rawVal * 10) / 10)) : '\u2014';
+      const unit = (mDef.unit || '').replace(/%.*/, '%').replace(/apps.*/, '').replace(/agents.*/, '');
+      scorecardHtml += '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid ' + sigDef.color + '">';
+      scorecardHtml += '<div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:' + sigDef.color + ';margin-bottom:.3rem">' + mDef.name + '</div>';
+      scorecardHtml += '<div style="font-size:1.2rem;font-weight:900;color:#fff">' + displayVal + (unit.includes('%') ? '%' : '') + '</div>';
+      scorecardHtml += '<span class="hero-metric-tier ' + tierClass + '" style="margin-top:.4rem">' + tier + '</span>';
+      scorecardHtml += '</div>';
+    }
+    scorecardHtml += '</div></div>';
+  }
+  scorecardHtml += '</div>';
+  html = html.replace(/\{\{MATURITY_SCORECARD_HTML\}\}/g, scorecardHtml);
 
   // ── Insight blocks ──
   for (const [key, value] of Object.entries(insights)) {
