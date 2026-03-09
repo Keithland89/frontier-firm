@@ -41,7 +41,8 @@ if (pbixName) {
   dataPath = path.join('data', customerSlug + '.json');
   gates.push({
     name: 'Gate 0: Extract from PBIX',
-    cmd: 'node src/extract-from-pbix.js --pbix "' + pbixName + '" --output data/'
+    cmd: 'node src/extract-from-pbix.js --pbix "' + pbixName + '" --output data/',
+    allowExit3: true
   });
 }
 
@@ -54,6 +55,14 @@ if (pbixName) {
   reportName = data.customer_name.toLowerCase().replace(/\s+/g, '_') + '_frontier_firm.html';
 }
 const reportPath = path.join(outputDir, reportName);
+
+// Gate 0.5 (optional): Cross-validate against PBIX
+if (pbixName) {
+  gates.push({
+    name: 'Gate 0.5: Cross-validate against PBIX',
+    cmd: 'node src/cross-validate.js --data "' + dataPath + '"'
+  });
+}
 
 // Gate 1: Validate data
 gates.push({
@@ -108,6 +117,15 @@ for (const gate of gates) {
     console.log('  PASSED\n');
     passed++;
   } catch (e) {
+    if (gate.allowExit3 && e.status === 3) {
+      console.log('\n  MEASURE MAPPING NEEDED');
+      console.log('  The AI tool should now:');
+      console.log('  1. Read temp/measure_mapping_request.json');
+      console.log('  2. Map unmatched fields to available PBIX measures');
+      console.log('  3. Save to data/' + pbixName.toLowerCase().replace(/\s+/g, '_') + '_measure_overrides.json');
+      console.log('  4. Re-run the pipeline\n');
+      process.exit(3);
+    }
     if (gate.allowExit2 && e.status === 2) {
       console.log('\n  INSIGHT GENERATION NEEDED');
       console.log('  The AI tool should now:');

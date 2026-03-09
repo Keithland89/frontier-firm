@@ -88,10 +88,10 @@
   },
 
   "org_count": {
-    "type": "scalar",
-    "measures": ["[Agent Org Spread]"],
-    "fallback_note": "Also derived from DISTINCTCOUNT of orgs in org_scatter_data query if measure returns null.",
-    "description": "Count of organisations with Copilot activity."
+    "type": "derived",
+    "formula": "org_scatter_data.length or fallback to 0",
+    "depends_on": ["org_scatter_data"],
+    "description": "Count of distinct organisations — derived from org scatter query results."
   },
 
   "license_priority": {

@@ -561,6 +561,13 @@ async function main() {
       continue;
     }
 
+    // --- org_count (from org scatter data) ---
+    if (field === 'org_count') {
+      data[field] = Array.isArray(data.org_scatter_data) ? data.org_scatter_data.length : 0;
+      console.log('  ' + field + ': ' + data[field] + ' orgs');
+      continue;
+    }
+
     // --- radar placeholders (scoring engine computes real values) ---
     if (field === 'radar_reach') { data[field] = [0, 0, 0, 0, 0, 0]; continue; }
     if (field === 'radar_habit') { data[field] = [0, 0, 0, 0, 0, 0, 0]; continue; }

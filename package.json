@@ -7,6 +7,7 @@
     "report": "node src/run-pipeline.js",
     "report:sample": "node src/run-pipeline.js --data data/sample_contoso.json --output output/ --no-ai",
     "extract": "node src/extract-from-pbix.js",
+    "cross-validate": "node src/cross-validate.js",
     "validate-data": "node src/validate-data.js",
     "generate": "node src/generate-report.js",
     "validate": "node src/validate-report.js",
