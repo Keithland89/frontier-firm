@@ -53,12 +53,12 @@
     },
     "org_penetration": {
       "name": "Org Penetration",
-      "unit": "active orgs",
-      "bands": [5, 15],
+      "unit": "% orgs with licensed + agents",
+      "bands": [20, 50],
       "band_labels": ["Foundation", "Expansion", "Frontier"],
       "signal": "reach",
-      "data_field": "org_count",
-      "description": "Distinct organisations with Copilot activity"
+      "data_field": "org_penetration_pct",
+      "description": "% of active orgs where BOTH licensed Copilot users AND agent users are present"
     },
 
     "embedded_user_rate": {

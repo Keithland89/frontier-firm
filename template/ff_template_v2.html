@@ -563,16 +563,17 @@ body{font-family:'Inter','Segoe UI Variable','Segoe UI',-apple-system,BlinkMacSy
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_VALUE}}</p>
 
     <div class="stat-row reveal reveal-d3">
-      <div class="stat-card"><div class="stat-card-value" style="color:var(--green)">~{{TIME_SAVED_REALISED}}K</div><div class="stat-card-label">Hours/Year Saved (current users)</div></div>
-      <div class="stat-card"><div class="stat-card-value" style="color:var(--amber)">~{{TIME_SAVED_UNREALISED}}K</div><div class="stat-card-label">Hours/Year Unrealised (idle licenses)</div></div>
-      <div class="stat-card"><div class="stat-card-value" style="color:var(--purple)">{{LICENSE_PRIORITY}}x</div><div class="stat-card-label">Engagement Premium (Licensed vs Unlicensed)</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--green)">{{LICENSED_AVG_DAYS}}</div><div class="stat-card-label">Avg Active Days/Month (Licensed)</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--amber)">{{UNLICENSED_AVG_DAYS}}</div><div class="stat-card-label">Avg Active Days/Month (Unlicensed)</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--purple)">{{LICENSE_PRIORITY}}x</div><div class="stat-card-label">Engagement Premium</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--teal)">~{{TIME_SAVED_REALISED}}K</div><div class="stat-card-label">Hours/Year Saved</div></div>
     </div>
 
     <div class="insight-callout reveal reveal-d4" style="--signal-accent:var(--color-value)">
-      Licensed users generate <strong>{{LICENSED_AVG_PROMPTS}} prompts/user</strong> compared to <strong>{{UNLICENSED_AVG_PROMPTS}}</strong> for unlicensed users — a <strong>{{LICENSE_PRIORITY}}x engagement premium</strong>. This gap represents the economic case for expanding licensing to active unlicensed users, where {{CHAT_USERS}} users are already demonstrating demand.
+      Licensed users average <strong>{{LICENSED_AVG_DAYS}} active days/month</strong> compared to <strong>{{UNLICENSED_AVG_DAYS}} days</strong> for unlicensed users. Combined with a <strong>{{LICENSE_PRIORITY}}x engagement premium</strong> in prompts per user, this demonstrates a clear depth gap between licensed and unlicensed cohorts. The {{CHAT_USERS}} unlicensed users showing organic demand represent the strongest candidates for license conversion.
     </div>
 
-    <p class="reveal reveal-d4" style="font-size:.75rem;color:var(--text-3);margin-top:1rem;font-style:italic">Value is not scored in the maturity pattern — it is presented as narrative context to support the business case for investment.</p>
+    <p class="reveal reveal-d5" style="font-size:.75rem;color:var(--text-3);margin-top:1rem;font-style:italic">Value is not scored in the maturity pattern — it is presented as narrative context to support the business case for investment.</p>
   </div>
 </section>
 

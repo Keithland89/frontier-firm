@@ -17,9 +17,12 @@
   "m365_frequency": 26.7,
   "complex_sessions": 97.8,
   "agent_health": 93.7,
+  "org_penetration_pct": 24,
   "license_priority": 9.99,
   "licensed_avg_prompts": 691.4,
   "unlicensed_avg_prompts": 69.2,
+  "licensed_avg_days": 6.9,
+  "unlicensed_avg_days": 3.7,
   "m365_retention": 70,
   "retained_users": 7199,
   "churned_users": 3078,
@@ -127,66 +130,16 @@
     110.2
   ],
   "org_scatter_data": [
-    {
-      "label": "Regions",
-      "x": 648,
-      "y": 0,
-      "r": 0
-    },
-    {
-      "label": "Finance & Business Support",
-      "x": 208,
-      "y": 0,
-      "r": 0
-    },
-    {
-      "label": "Finance",
-      "x": 189,
-      "y": 0,
-      "r": 0
-    },
-    {
-      "label": "Human Resources",
-      "x": 146,
-      "y": 0,
-      "r": 0
-    },
-    {
-      "label": "Commercial & Procurement",
-      "x": 132,
-      "y": 0,
-      "r": 0
-    },
-    {
-      "label": "System Operator",
-      "x": 113,
-      "y": 0,
-      "r": 0
-    },
-    {
-      "label": "Communications",
-      "x": 96,
-      "y": 0,
-      "r": 0
-    },
-    {
-      "label": "Chief Engineer",
-      "x": 90,
-      "y": 0,
-      "r": 0
-    },
-    {
-      "label": "Route Services",
-      "x": 78,
-      "y": 0,
-      "r": 0
-    },
-    {
-      "label": "Infrastructure Projects",
-      "x": 73,
-      "y": 0,
-      "r": 0
-    }
+    {"label": "Regions", "x": 648, "y": 18.5, "r": 648},
+    {"label": "Finance & Business Support", "x": 208, "y": 25.5, "r": 208},
+    {"label": "Finance", "x": 189, "y": 8.2, "r": 189},
+    {"label": "Human Resources", "x": 146, "y": 12.3, "r": 146},
+    {"label": "Commercial & Procurement", "x": 132, "y": 6.8, "r": 132},
+    {"label": "System Operator", "x": 113, "y": 3.5, "r": 113},
+    {"label": "Communications", "x": 96, "y": 9.4, "r": 96},
+    {"label": "Chief Engineer", "x": 90, "y": 2.2, "r": 90},
+    {"label": "Route Services", "x": 78, "y": 5.1, "r": 78},
+    {"label": "Infrastructure Projects", "x": 73, "y": 4.1, "r": 73}
   ],
   "_supplementary_metrics": {
     "monthly_data": {
