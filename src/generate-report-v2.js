@@ -353,10 +353,11 @@ function populateTemplate(template, insights) {
   html = html.replace(/\{\{PATTERN_CLASS\}\}/g, pattern.name.toLowerCase());
 
   // ── Core user counts ──
-  html = safeSub(html, /\{\{TOTAL_ACTIVE_USERS\}\}/g, fmtN(data.total_active_users), 'total_active_users');
-  html = safeSub(html, /\{\{LICENSED_USERS\}\}/g, fmtN(data.licensed_users), 'licensed_users');
-  html = safeSub(html, /\{\{CHAT_USERS\}\}/g, fmtN(data.chat_users), 'chat_users');
-  html = safeSub(html, /\{\{AGENT_USERS\}\}/g, fmtN(data.agent_users), 'agent_users');
+  // Core counts — use RAW numbers (not formatted) because counter JS uses parseFloat on data-target
+  html = safeSub(html, /\{\{TOTAL_ACTIVE_USERS\}\}/g, data.total_active_users, 'total_active_users');
+  html = safeSub(html, /\{\{LICENSED_USERS\}\}/g, data.licensed_users, 'licensed_users');
+  html = safeSub(html, /\{\{CHAT_USERS\}\}/g, data.chat_users, 'chat_users');
+  html = safeSub(html, /\{\{AGENT_USERS\}\}/g, data.agent_users, 'agent_users');
   html = safeSub(html, /\{\{TOTAL_LICENSED_SEATS\}\}/g, fmtN(data.total_licensed_seats), 'total_licensed_seats');
   html = safeSub(html, /\{\{INACTIVE_LICENSES\}\}/g, fmtN(data.inactive_licenses), 'inactive_licenses');
   html = safeSub(html, /\{\{ORG_COUNT\}\}/g, data.org_count, 'org_count');
@@ -395,8 +396,8 @@ function populateTemplate(template, insights) {
 
   // ── Retention ──
   html = safeSub(html, /\{\{M365_RETENTION\}\}/g, data.m365_retention, 'm365_retention');
-  html = safeSub(html, /\{\{RETAINED_USERS\}\}/g, fmtN(data.retained_users), 'retained_users');
-  html = safeSub(html, /\{\{CHURNED_USERS\}\}/g, fmtN(data.churned_users), 'churned_users');
+  html = safeSub(html, /\{\{RETAINED_USERS\}\}/g, data.retained_users, 'retained_users');
+  html = safeSub(html, /\{\{CHURNED_USERS\}\}/g, data.churned_users, 'churned_users');
 
   // ── Active day bands ──
   html = safeSub(html, /\{\{BAND_1_5\}\}/g, data.band_1_5, 'band_1_5');
@@ -433,13 +434,26 @@ function populateTemplate(template, insights) {
   html = html.replace(/\{\{SKILL_GAUGE_OFFSET\}\}/g, String(Math.round((408.4 * (1 - gauges.skill / 100)) * 10) / 10));
 
   // ── Chart data: Monthly users ──
-  const monthlyData = (data._supplementary_metrics && data._supplementary_metrics.monthly_data)
-    || (data._supplementary_metrics && data._supplementary_metrics.per_tier_monthly_users)
-    || data.per_tier_monthly_users || [];
-  if (monthlyData.length > 0) {
-    const labels = monthlyData.map(m => '"' + (m.month || m.label || '') + '"').join(',');
-    const licensed = monthlyData.map(m => m.licensed || m.licensed_users || 0).join(',');
-    const unlicensed = monthlyData.map(m => m.unlicensed || m.unlicensed_users || m.chat_users || 0).join(',');
+  // per_tier_monthly_users is an array [{month, licensed, unlicensed, agents}, ...]
+  // monthly_data is an object keyed by month slug — convert to array if needed
+  let monthlyArr = [];
+  if (data._supplementary_metrics) {
+    if (Array.isArray(data._supplementary_metrics.per_tier_monthly_users)) {
+      monthlyArr = data._supplementary_metrics.per_tier_monthly_users;
+    } else if (data._supplementary_metrics.monthly_data && typeof data._supplementary_metrics.monthly_data === 'object') {
+      // Convert object {jul_2025: {users, prompts, ...}} to array
+      monthlyArr = Object.entries(data._supplementary_metrics.monthly_data).map(([key, val]) => ({
+        month: key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+        licensed: val.licensed || 0,
+        unlicensed: val.unlicensed || (val.users - (val.licensed || 0)) || 0,
+        agents: val.agents || 0
+      }));
+    }
+  }
+  if (monthlyArr.length > 0) {
+    const labels = monthlyArr.map(m => '"' + (m.month || '') + '"').join(',');
+    const licensed = monthlyArr.map(m => m.licensed || 0).join(',');
+    const unlicensed = monthlyArr.map(m => m.unlicensed || 0).join(',');
     html = html.replace(/\{\{MONTHLY_USERS_LABELS\}\}/g, labels);
     html = html.replace(/\{\{MONTHLY_USERS_LICENSED\}\}/g, licensed);
     html = html.replace(/\{\{MONTHLY_USERS_UNLICENSED\}\}/g, unlicensed);
@@ -450,14 +464,38 @@ function populateTemplate(template, insights) {
   }
 
   // ── Chart data: Org scatter ──
-  const orgScatter = Array.isArray(data.org_scatter_data) ? data.org_scatter_data : [];
+  // Scale bubble radius for visibility: r = max(sqrt(x) * 0.8, 4)
+  let orgScatter = Array.isArray(data.org_scatter_data) ? data.org_scatter_data : [];
+  orgScatter = orgScatter.map(d => ({
+    label: d.label, x: d.x, y: d.y,
+    r: Math.max(Math.sqrt(d.x || 1) * 0.8, 4)
+  }));
   html = html.replace(/\{\{ORG_SCATTER_JSON\}\}/g, safeJSON(orgScatter, 'org_scatter_data'));
 
   // ── Chart data: Retention trend ──
-  const retentionData = (data._supplementary_metrics && data._supplementary_metrics.per_tier_retention) || [];
-  if (retentionData.length > 0) {
-    const retLabels = retentionData.map(r => '"' + (r.month || r.label || '') + '"').join(',');
-    const retValues = retentionData.map(r => r.licensed_retention_pct || r.retention_pct || 0).join(',');
+  // Try per_tier_retention, retention_cohorts, or compute from per_tier_monthly_users
+  let retentionArr = [];
+  if (data._supplementary_metrics) {
+    if (Array.isArray(data._supplementary_metrics.per_tier_retention)) {
+      retentionArr = data._supplementary_metrics.per_tier_retention;
+    } else if (data._supplementary_metrics.retention_cohorts && typeof data._supplementary_metrics.retention_cohorts === 'object') {
+      retentionArr = Object.entries(data._supplementary_metrics.retention_cohorts).map(([month, val]) => ({
+        month: month,
+        retention_pct: val.retained_pct || val.retention_pct || (val.retained && val.previous ? Math.round(val.retained / val.previous * 100) : 0)
+      }));
+    } else if (monthlyArr.length >= 2) {
+      // Estimate retention from monthly user overlap (rough: current/previous * 100)
+      for (let i = 1; i < monthlyArr.length; i++) {
+        const prev = (monthlyArr[i-1].licensed || 0) + (monthlyArr[i-1].unlicensed || 0);
+        const curr = (monthlyArr[i].licensed || 0) + (monthlyArr[i].unlicensed || 0);
+        const retPct = prev > 0 ? Math.min(Math.round(curr / prev * 100), 100) : 0;
+        retentionArr.push({ month: monthlyArr[i].month, retention_pct: retPct });
+      }
+    }
+  }
+  if (retentionArr.length > 0) {
+    const retLabels = retentionArr.map(r => '"' + (r.month || r.label || '') + '"').join(',');
+    const retValues = retentionArr.map(r => r.licensed_retention_pct || r.retention_pct || 0).join(',');
     html = html.replace(/\{\{MONTHLY_RETENTION_LABELS\}\}/g, retLabels);
     html = html.replace(/\{\{MONTHLY_RETENTION_DATA\}\}/g, retValues);
   } else {
