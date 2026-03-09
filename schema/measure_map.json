@@ -5,7 +5,8 @@
     "Newer PBIX templates (0803, 2302): 11-15 / 16+ day bands, Agent Return Rate",
     "Older PBIX templates (MOJ, NR): 11-19 / 20+ day bands, Avg Agent Return Rate %",
     "All measures returning 0-1 rates need toPct transform (multiply by 100)",
-    "Fallback measures are tried in order — first non-null wins"
+    "Fallback measures are tried in order — first non-null wins",
+    "TODO: Value signal is excluded from maturity pattern scoring (Reach/Habit/Skill only). Generator and template visual bars should NOT include Value in the pattern calculation — fix in generate-report.js and ff_template.html."
   ],
 
   "customer_name": {

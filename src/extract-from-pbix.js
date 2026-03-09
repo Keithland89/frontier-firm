@@ -349,6 +349,43 @@ async function main() {
     }
   }
 
+  // --- Enrich agent_table with types from Agents 365 ---
+  if (data.agent_table && data.agent_table.length > 0) {
+    try {
+      const typesResult = await runDax(`
+        EVALUATE
+        SUMMARIZECOLUMNS(
+          'Agents 365'[Title ID],
+          'Agents 365'[Agent Type Combined],
+          'Agents 365'[Created in]
+        )
+      `);
+      if (typesResult._rows) {
+        // Build a type map — try matching agent names to Title IDs
+        const typeMap = {};
+        typesResult._rows.forEach(r => {
+          const title = r['Title ID'] || '';
+          const type = r['Agent Type Combined'] || r['Created in'] || '';
+          // Simplify type names
+          let shortType = type;
+          if (type.includes('Agent Builder')) shortType = 'Agent Builder';
+          else if (type.includes('SharePoint')) shortType = 'SharePoint';
+          else if (type.includes('Copilot Studio')) shortType = 'Copilot Studio';
+          else if (type.includes('Microsoft')) shortType = 'Store Agent (1P)';
+          typeMap[title] = shortType;
+        });
+        // For now just set a default based on Created in distribution
+        // The agent names from interactions don't directly map to Title IDs
+        // Use the most common type as default
+        const typeCounts = {};
+        Object.values(typeMap).forEach(t => { typeCounts[t] = (typeCounts[t]||0) + 1; });
+        const defaultType = Object.entries(typeCounts).sort((a,b) => b[1]-a[1])[0]?.[0] || 'Unknown';
+        data.agent_table.forEach(a => { if (a.type === 'Store Agent (1P/3P)') a.type = defaultType; });
+        console.log('  Agent types enriched (default: ' + defaultType + ')');
+      }
+    } catch(e) { console.log('  Agent type enrichment failed: ' + e.message.substring(0, 80)); }
+  }
+
   // --- Org Scatter Data ---
   const orgConfig = measureMap['org_scatter_data'];
   if (orgConfig && orgConfig.type === 'tabular') {
@@ -831,6 +868,53 @@ async function main() {
         }
       } catch (e) { console.log('  complex_sessions fallback failed: ' + e.message.substring(0, 80)); }
     }
+  }
+
+  // Per-tier retention cohorts (for cohort flow chart tier toggle)
+  if (!s.per_tier_retention_cohorts) {
+    try {
+      const ptrResult = await runDax(`
+        EVALUATE
+        VAR LastMonth = MAXX('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart])
+        VAR PrevMonth = MAXX(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart] < LastMonth), 'ActiveDaysSummary'[MonthStart])
+        VAR LicLast = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = LastMonth, 'ActiveDaysSummary'[LicenseStatus] = "M365 Copilot Licensed")
+        VAR LicPrev = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = PrevMonth, 'ActiveDaysSummary'[LicenseStatus] = "M365 Copilot Licensed")
+        VAR UnlicLast = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = LastMonth, 'ActiveDaysSummary'[LicenseStatus] = "Unlicensed")
+        VAR UnlicPrev = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = PrevMonth, 'ActiveDaysSummary'[LicenseStatus] = "Unlicensed")
+        VAR AgentLast = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = LastMonth, 'ActiveDaysSummary'[IsAgentUser] = 1)
+        VAR AgentPrev = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = PrevMonth, 'ActiveDaysSummary'[IsAgentUser] = 1)
+        RETURN ROW(
+          "LicRetained", COUNTROWS(INTERSECT(LicLast, LicPrev)),
+          "LicNew", COUNTROWS(LicLast) - COUNTROWS(INTERSECT(LicLast, LicPrev)),
+          "LicChurned", COUNTROWS(LicPrev) - COUNTROWS(INTERSECT(LicLast, LicPrev)),
+          "UnlicRetained", COUNTROWS(INTERSECT(UnlicLast, UnlicPrev)),
+          "UnlicNew", COUNTROWS(UnlicLast) - COUNTROWS(INTERSECT(UnlicLast, UnlicPrev)),
+          "UnlicChurned", COUNTROWS(UnlicPrev) - COUNTROWS(INTERSECT(UnlicLast, UnlicPrev)),
+          "AgentRetained", COUNTROWS(INTERSECT(AgentLast, AgentPrev)),
+          "AgentNew", COUNTROWS(AgentLast) - COUNTROWS(INTERSECT(AgentLast, AgentPrev)),
+          "AgentChurned", COUNTROWS(AgentPrev) - COUNTROWS(INTERSECT(AgentLast, AgentPrev))
+        )
+      `);
+      if (ptrResult._rows && ptrResult._rows.length > 0) {
+        const r = ptrResult._rows[0];
+        const licPrev = (Number(r.LicRetained)||0) + (Number(r.LicChurned)||0);
+        const unlicPrev = (Number(r.UnlicRetained)||0) + (Number(r.UnlicChurned)||0);
+        const agentPrev = (Number(r.AgentRetained)||0) + (Number(r.AgentChurned)||0);
+        // Use the last two months from per_tier_monthly_users for the period label
+        const tiers = s.per_tier_monthly_users;
+        const lastTwoMonths = tiers && tiers.length >= 2 ? tiers[tiers.length-2].month + ' → ' + tiers[tiers.length-1].month : 'Last period';
+        s.per_tier_retention_cohorts = [{
+          period: lastTwoMonths.split(' ')[0].substring(0,3) + '→' + lastTwoMonths.split('→')[1]?.trim().split(' ')[0].substring(0,3) || 'Last',
+          licensed: { retained: Number(r.LicRetained)||0, new: Number(r.LicNew)||0, churned: Number(r.LicChurned)||0 },
+          unlicensed: { retained: Number(r.UnlicRetained)||0, new: Number(r.UnlicNew)||0, churned: Number(r.UnlicChurned)||0 },
+          agents: { retained: Number(r.AgentRetained)||0, new: Number(r.AgentNew)||0, churned: Number(r.AgentChurned)||0 },
+          licensed_retention_pct: licPrev > 0 ? Math.round((Number(r.LicRetained)||0) / licPrev * 1000) / 10 : 0,
+          unlicensed_retention_pct: unlicPrev > 0 ? Math.round((Number(r.UnlicRetained)||0) / unlicPrev * 1000) / 10 : 0,
+          agent_retention_pct: agentPrev > 0 ? Math.round((Number(r.AgentRetained)||0) / agentPrev * 1000) / 10 : 0
+        }];
+        console.log('  per_tier_retention_cohorts: licensed=' + (Number(r.LicRetained)||0) + '/' + licPrev + ', unlicensed=' + (Number(r.UnlicRetained)||0) + '/' + unlicPrev);
+      }
+    } catch(e) { console.log('  per_tier_retention failed: ' + e.message.substring(0, 80)); }
   }
 
   // ============================================================
