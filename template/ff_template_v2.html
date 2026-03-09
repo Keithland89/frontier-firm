@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{CUSTOMER_NAME}} — Frontier Firm Assessment</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   CSS VARIABLES & THEME
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  --brand: #2264E5;
+  --brand-dark: #1A4FBF;
+  --copilot-purple: #7B2FF2;
+  --copilot-blue: #2264E5;
+  --copilot-teal: #0EA5E9;
+  --copilot-green: #10B981;
+  --copilot-gradient: linear-gradient(135deg, #7B2FF2, #2264E5, #0EA5E9, #10B981);
+  --copilot-gradient-h: linear-gradient(90deg, #7B2FF2, #2264E5, #0EA5E9, #10B981);
+  --purple: #7B2FF2;
+  --teal: #0EA5E9;
+  --dark-teal: #0284C7;
+  --amber: #F59E0B;
+  --green: #10B981;
+  --red-soft: #EF4444;
+  --hero-bg: #0A0A1A;
+  --section-dark: #0F1024;
+  --bg: #0A0A1A;
+  --surface: #161630;
+  --border: #252550;
+  --text: #F1F5F9;
+  --text-2: #CBD5E1;
+  --text-3: #64748B;
+  --nav-bg: rgba(10,10,26,0.94);
+  --color-reach: #0EA5E9;
+  --color-habit: #F59E0B;
+  --color-skill: #7B2FF2;
+  --color-value: #10B981;
+  --tier-foundation: #2264E5;
+  --tier-expansion: #7B2FF2;
+  --tier-frontier: #10B981;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.2);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.3);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.4);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Inter','Segoe UI Variable','Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════════════ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transform:translateY(-100%);transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.nav.visible{transform:translateY(0)}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;padding:0 1.5rem;height:48px;gap:1rem}
+.nav-brand{font-weight:800;font-size:.65rem;color:var(--teal);text-transform:uppercase;letter-spacing:.08em;flex-shrink:0}
+.nav-links{display:flex;gap:0;flex:1;justify-content:center}
+.nav-link{padding:.4rem .7rem;font-size:.62rem;font-weight:600;color:var(--text-3);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;transition:all .3s;text-transform:uppercase;letter-spacing:.04em}
+.nav-link:hover,.nav-link.active{color:var(--teal);border-bottom-color:var(--teal)}
+.scroll-progress{position:fixed;top:0;left:0;width:0%;height:3px;background:var(--copilot-gradient-h);z-index:1001;transition:width .1s linear}
+
+/* ═══════════════════════════════════════════════════════════
+   SECTIONS & LAYOUT
+   ═══════════════════════════════════════════════════════════ */
+.section{position:relative;overflow:hidden}
+.section-inner{max-width:1080px;margin:0 auto;padding:5rem 2.5rem}
+.section-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--signal-accent,var(--teal));margin-bottom:.6rem;display:inline-flex;align-items:center;gap:.4rem}
+.section-label::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.section-title{font-family:'Outfit','Inter',sans-serif;font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:800;line-height:1.15;margin-bottom:.75rem;color:var(--text);letter-spacing:-.02em}
+.section-subtitle{font-size:1rem;color:var(--text-2);max-width:640px;line-height:1.7;font-weight:400}
+.section-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0}
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLL REVEAL
+   ═══════════════════════════════════════════════════════════ */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:.1s}.reveal-d2{transition-delay:.2s}.reveal-d3{transition-delay:.3s}.reveal-d4{transition-delay:.4s}.reveal-d5{transition-delay:.5s}
+
+/* ═══════════════════════════════════════════════════════════
+   1. HERO
+   ═══════════════════════════════════════════════════════════ */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--hero-bg);position:relative;overflow:hidden}
+.hero-mesh{position:absolute;inset:0;opacity:.07;background-image:radial-gradient(circle at 20% 50%,var(--copilot-purple) 0%,transparent 50%),radial-gradient(circle at 80% 20%,var(--copilot-teal) 0%,transparent 40%),radial-gradient(circle at 60% 80%,var(--copilot-green) 0%,transparent 45%)}
+.hero-grid{position:absolute;inset:0;opacity:.025;background-image:linear-gradient(rgba(255,255,255,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.1) 1px,transparent 1px);background-size:80px 80px}
+.hero-content{position:relative;z-index:2;text-align:center;max-width:1000px;padding:2rem}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.18em;color:var(--copilot-teal);margin-bottom:2rem;padding:.5rem 1.4rem;border:1px solid rgba(14,165,233,.25);border-radius:100px;background:rgba(14,165,233,.05)}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:'Outfit','Inter',sans-serif;font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:900;color:#fff;line-height:1.06;margin-bottom:1.2rem;letter-spacing:-.03em}
+.hero h1 .accent{background:var(--copilot-gradient-h);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.05rem;color:rgba(255,255,255,.45);font-weight:300;margin-bottom:3rem;max-width:560px;margin-left:auto;margin-right:auto;line-height:1.7}
+.hero-pattern{display:inline-flex;align-items:center;gap:.6rem;padding:.6rem 1.5rem;border-radius:100px;margin-bottom:3rem;font-size:.82rem;font-weight:700;letter-spacing:.04em}
+.hero-pattern.foundation{background:rgba(34,100,229,.1);border:1px solid rgba(34,100,229,.25);color:var(--brand)}
+.hero-pattern.expansion{background:rgba(123,47,242,.1);border:1px solid rgba(123,47,242,.25);color:var(--purple)}
+.hero-pattern.frontier{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:var(--green)}
+.hero-pattern-num{font-size:1.1rem;font-weight:900}
+
+/* Hero metric cards — the 5 heroes */
+.hero-metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;max-width:960px;margin:0 auto}
+.hero-metric{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.4rem 1rem 1.1rem;text-align:center;position:relative;overflow:hidden;transition:all .3s}
+.hero-metric:hover{background:rgba(255,255,255,.06);transform:translateY(-2px)}
+.hero-metric::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--metric-color,var(--teal))}
+.hero-metric-value{font-family:'Outfit','Inter',sans-serif;font-size:clamp(1.6rem,2.5vw,2.2rem);font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums}
+.hero-metric-unit{font-size:.7rem;color:rgba(255,255,255,.35);font-weight:400;margin-left:.15rem}
+.hero-metric-name{font-size:.65rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.06em;margin-top:.5rem;font-weight:600;line-height:1.3}
+.hero-metric-tier{display:inline-block;margin-top:.5rem;padding:.15rem .55rem;border-radius:100px;font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.tier-foundation{background:rgba(34,100,229,.15);color:var(--brand)}
+.tier-expansion{background:rgba(123,47,242,.15);color:var(--purple)}
+.tier-frontier{background:rgba(16,185,129,.15);color:var(--green)}
+
+.hero-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;color:rgba(255,255,255,.2);font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+.scroll-arrow{width:14px;height:14px;border-right:2px solid rgba(255,255,255,.2);border-bottom:2px solid rgba(255,255,255,.2);transform:rotate(45deg)}
+
+/* ═══════════════════════════════════════════════════════════
+   EXECUTIVE SUMMARY
+   ═══════════════════════════════════════════════════════════ */
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.6rem;position:relative;overflow:hidden;border-top:3px solid var(--card-accent,var(--teal));transition:transform .3s}
+.summary-card:hover{transform:translateY(-2px)}
+.summary-card-label{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--card-accent,var(--teal));margin-bottom:.6rem}
+.summary-card p{font-size:.82rem;color:var(--text-2);line-height:1.65}
+
+/* ═══════════════════════════════════════════════════════════
+   2. FRAMEWORK
+   ═══════════════════════════════════════════════════════════ */
+.phase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
+.phase-card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--phase-color,var(--brand));border-radius:0 0 12px 12px;padding:1.5rem;transition:transform .3s}
+.phase-card:hover{transform:translateY(-3px)}
+.phase-num{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.04);border:2px solid var(--phase-color,var(--brand));display:flex;align-items:center;justify-content:center;color:var(--phase-color,var(--brand));font-weight:800;font-size:.9rem;margin-bottom:.75rem}
+.phase-label{font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--phase-color,var(--brand));margin-bottom:.25rem}
+.phase-name{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3}
+.phase-desc{font-size:.75rem;color:var(--text-2);line-height:1.6}
+
+/* ═══════════════════════════════════════════════════════════
+   SIGNAL SECTIONS — shared styles
+   ═══════════════════════════════════════════════════════════ */
+.signal-section{--signal-accent:var(--color-reach)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;position:relative}
+.chart-card-title{font-size:.78rem;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.2rem}
+.chart-card-sub{font-size:.72rem;color:var(--text-3);margin-bottom:1rem}
+.chart-wrap{position:relative;width:100%;aspect-ratio:4/3}
+
+/* Headline stat */
+.headline-stat{display:flex;align-items:baseline;gap:1rem;margin:2rem 0 1.5rem;flex-wrap:wrap}
+.headline-stat-value{font-family:'Outfit','Inter',sans-serif;font-size:clamp(3rem,5vw,4.5rem);font-weight:900;color:var(--signal-accent);line-height:1;font-variant-numeric:tabular-nums}
+.headline-stat-label{font-size:1rem;color:var(--text-2);max-width:400px;line-height:1.5}
+.headline-stat-tier{padding:.25rem .75rem;border-radius:100px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;align-self:center}
+
+/* Insight callout — the ONE insight per section */
+.insight-callout{padding:1.25rem 1.5rem;border-radius:12px;font-size:.88rem;line-height:1.7;color:var(--text-2);background:rgba(255,255,255,.02);border:1px solid var(--border);border-left:4px solid var(--signal-accent,var(--teal));margin:1.5rem 0}
+.insight-callout strong{color:var(--text);font-weight:700}
+
+/* Pull quotes */
+.pull-quote{text-align:center;padding:3rem 2rem;background:var(--section-dark)}
+.pull-quote-text{font-family:'Outfit','Inter',sans-serif;font-size:clamp(1.2rem,2.5vw,1.6rem);font-weight:600;color:var(--text);max-width:700px;margin:0 auto;line-height:1.5;font-style:italic}
+.pull-quote-text::before{content:'\201C';color:var(--teal);font-size:2rem;vertical-align:-.2em;margin-right:.2rem}
+.pull-quote-source{font-size:.65rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.1em;margin-top:.75rem}
+
+/* Stat callouts */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:1.5rem 0}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem;text-align:center}
+.stat-card-value{font-family:'Outfit','Inter',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text);line-height:1;font-variant-numeric:tabular-nums}
+.stat-card-label{font-size:.65rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-top:.4rem;line-height:1.3}
+
+/* ═══════════════════════════════════════════════════════════
+   HABIT — Active Day Bands
+   ═══════════════════════════════════════════════════════════ */
+.band-stack{display:flex;flex-direction:column;gap:.5rem;margin:1.5rem 0}
+.band-row{display:grid;grid-template-columns:100px 1fr 60px;align-items:center;gap:.75rem}
+.band-label{font-size:.75rem;font-weight:600;color:var(--text-2);text-align:right}
+.band-track{height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden}
+.band-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:.75rem;transition:width 1.4s cubic-bezier(.16,1,.3,1)}
+.band-fill span{font-size:.7rem;font-weight:700;color:#fff}
+.band-pct{font-size:.78rem;font-weight:700;color:var(--text)}
+
+/* ═══════════════════════════════════════════════════════════
+   SKILL — Agent Leaderboard
+   ═══════════════════════════════════════════════════════════ */
+.agent-table{width:100%;border-collapse:collapse;margin:1rem 0}
+.agent-table th{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);text-align:left;padding:.6rem .75rem;border-bottom:1px solid var(--border)}
+.agent-table th:last-child,.agent-table td:last-child{text-align:right}
+.agent-table td{font-size:.78rem;padding:.6rem .75rem;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text-2)}
+.agent-table td:first-child{font-weight:600;color:var(--text)}
+.agent-table tr:hover td{background:rgba(255,255,255,.02)}
+
+/* ═══════════════════════════════════════════════════════════
+   MATURITY — Gauges
+   ═══════════════════════════════════════════════════════════ */
+.maturity-section{background:var(--section-dark)}
+.gauges-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin:2.5rem 0}
+.gauge-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:2rem 1.5rem;text-align:center}
+.gauge-svg{width:140px;height:140px;margin:0 auto 1.2rem}
+.gauge-track{fill:none;stroke:rgba(255,255,255,.06);stroke-width:10}
+.gauge-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1.8s cubic-bezier(.16,1,.3,1)}
+.gauge-value{font-size:1.6rem;font-weight:800;fill:#fff;text-anchor:middle}
+.gauge-sublabel{font-size:.55rem;fill:rgba(255,255,255,.3);text-anchor:middle;text-transform:uppercase;letter-spacing:.08em}
+.gauge-card h3{font-family:'Outfit','Inter',sans-serif;font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:.5rem}
+.gauge-status{display:inline-block;padding:.2rem .65rem;border-radius:100px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.75rem}
+
+/* Pattern badge — large */
+.pattern-display{text-align:center;margin-bottom:3rem}
+.pattern-number{font-family:'Outfit','Inter',sans-serif;font-size:5rem;font-weight:900;line-height:1}
+.pattern-number.foundation{color:var(--brand)}
+.pattern-number.expansion{color:var(--purple)}
+.pattern-number.frontier{color:var(--green)}
+.pattern-label{font-size:1rem;font-weight:600;color:var(--text-2);margin-top:.25rem;text-transform:uppercase;letter-spacing:.08em}
+
+/* ═══════════════════════════════════════════════════════════
+   RECOMMENDATIONS
+   ═══════════════════════════════════════════════════════════ */
+.recs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
+.rec-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;position:relative;overflow:hidden;transition:transform .3s}
+.rec-card:hover{transform:translateY(-3px)}
+.rec-num{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;color:#fff;background:var(--brand);margin-bottom:1rem}
+.rec-card h3{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3}
+.rec-card p{font-size:.8rem;color:var(--text-2);line-height:1.65}
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════ */
+.footer{text-align:center;padding:3rem 2rem;color:var(--text-3);font-size:.7rem;border-top:1px solid var(--border)}
+.footer-brand{font-weight:800;font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal);margin-bottom:.5rem}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════ */
+@media(max-width:900px){
+  .hero-metrics{grid-template-columns:repeat(3,1fr)}
+  .hero-metrics .hero-metric:nth-child(4),.hero-metrics .hero-metric:nth-child(5){grid-column:span 1}
+  .two-col,.summary-grid,.phase-grid,.gauges-row,.recs-grid{grid-template-columns:1fr}
+  .section-inner{padding:3rem 1.5rem}
+}
+@media(max-width:600px){
+  .hero-metrics{grid-template-columns:repeat(2,1fr)}
+  .hero-metrics .hero-metric:last-child{grid-column:1/-1}
+  .band-row{grid-template-columns:80px 1fr 50px}
+  .stat-row{grid-template-columns:1fr 1fr}
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PRINT
+   ═══════════════════════════════════════════════════════════ */
+@media print{
+  .nav,.hero-scroll,.scroll-progress{display:none!important}
+  .section-inner{padding:2rem 1rem}
+  .hero{min-height:auto;padding:3rem 2rem}
+  .reveal{opacity:1!important;transform:none!important}
+  body{background:#fff;color:#0F172A}
+  .hero{background:#1a1a2e!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<!-- Scroll progress bar -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Navigation -->
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <div class="nav-brand">Frontier Firm</div>
+    <div class="nav-links">
+      <a href="#overview" class="nav-link active" data-section="overview">Overview</a>
+      <a href="#framework" class="nav-link" data-section="framework">Framework</a>
+      <a href="#reach" class="nav-link" data-section="reach">Reach</a>
+      <a href="#habit" class="nav-link" data-section="habit">Habit</a>
+      <a href="#skill" class="nav-link" data-section="skill">Skill</a>
+      <a href="#value" class="nav-link" data-section="value">Value</a>
+      <a href="#maturity" class="nav-link" data-section="maturity">Maturity</a>
+      <a href="#actions" class="nav-link" data-section="actions">Actions</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════
+     1. HERO BANNER
+     ═══════════════════════════════════════════════════════════ -->
+<section class="hero section" id="overview">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><span class="hero-dot"></span>Frontier Firm Assessment</div>
+    <h1>{{CUSTOMER_NAME}}<br><span class="accent">AI Maturity Assessment</span></h1>
+    <p class="hero-sub">{{ANALYSIS_PERIOD}} | {{TOTAL_ACTIVE_USERS}} active users across {{ORG_COUNT}} organisations. Five metrics. Three signals. One clear picture.</p>
+
+    <div class="hero-pattern {{PATTERN_CLASS}}">
+      <span class="hero-pattern-num">{{PATTERN_NUMBER}}</span> Pattern {{PATTERN_NUMBER}}: {{PATTERN_NAME}}
+    </div>
+
+    <div class="hero-metrics">
+      <div class="hero-metric" style="--metric-color:var(--color-reach)">
+        <div class="hero-metric-value"><span class="counter" data-target="{{M365_ENABLEMENT}}" data-suffix="%">0</span><span class="hero-metric-unit">%</span></div>
+        <div class="hero-metric-name">License Activation</div>
+        <span class="hero-metric-tier {{M365_ENABLEMENT_TIER_CLASS}}">{{M365_ENABLEMENT_TIER}}</span>
+      </div>
+      <div class="hero-metric" style="--metric-color:var(--color-reach)">
+        <div class="hero-metric-value"><span class="counter" data-target="{{AGENT_ADOPTION}}" data-suffix="%">0</span><span class="hero-metric-unit">%</span></div>
+        <div class="hero-metric-name">Agent Adoption</div>
+        <span class="hero-metric-tier {{AGENT_ADOPTION_TIER_CLASS}}">{{AGENT_ADOPTION_TIER}}</span>
+      </div>
+      <div class="hero-metric" style="--metric-color:var(--color-habit)">
+        <div class="hero-metric-value"><span class="counter" data-target="{{EMBEDDED_USER_RATE}}" data-suffix="%">0</span><span class="hero-metric-unit">%</span></div>
+        <div class="hero-metric-name">Embedded User Rate</div>
+        <span class="hero-metric-tier {{EMBEDDED_USER_RATE_TIER_CLASS}}">{{EMBEDDED_USER_RATE_TIER}}</span>
+      </div>
+      <div class="hero-metric" style="--metric-color:var(--color-skill)">
+        <div class="hero-metric-value"><span class="counter" data-target="{{M365_BREADTH}}" data-decimals="1">0</span></div>
+        <div class="hero-metric-name">App Surface Breadth</div>
+        <span class="hero-metric-tier {{M365_BREADTH_TIER_CLASS}}">{{M365_BREADTH_TIER}}</span>
+      </div>
+      <div class="hero-metric" style="--metric-color:var(--color-skill)">
+        <div class="hero-metric-value"><span class="counter" data-target="{{AGENT_BREADTH}}" data-decimals="1">0</span></div>
+        <div class="hero-metric-name">Agent Breadth</div>
+        <span class="hero-metric-tier {{AGENT_BREADTH_TIER_CLASS}}">{{AGENT_BREADTH_TIER}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll"><span>Scroll</span><div class="scroll-arrow"></div></div>
+</section>
+
+<!-- Executive Summary -->
+<section class="section" id="summary">
+  <div class="section-inner">
+    <div class="section-label reveal" style="--signal-accent:var(--teal)">Executive Summary</div>
+    <h2 class="section-title reveal reveal-d1">The headlines</h2>
+    <p class="section-subtitle reveal reveal-d2">{{CUSTOMER_NAME}} is at <strong style="color:var(--purple)">Pattern {{PATTERN_NUMBER}}: {{PATTERN_NAME}}</strong>. Here's what stands out.</p>
+    <div class="summary-grid reveal reveal-d3">
+      <div class="summary-card" style="--card-accent:var(--color-reach)">
+        <div class="summary-card-label">What's working</div>
+        <p>{{EXEC_SUMMARY_GOOD}}</p>
+      </div>
+      <div class="summary-card" style="--card-accent:var(--color-habit)">
+        <div class="summary-card-label">The gap</div>
+        <p>{{EXEC_SUMMARY_GAP}}</p>
+      </div>
+      <div class="summary-card" style="--card-accent:var(--color-value)">
+        <div class="summary-card-label">The opportunity</div>
+        <p>{{EXEC_SUMMARY_OPP}}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="pull-quote"><div class="pull-quote-text">{{PULLQUOTE_0}}</div><div class="pull-quote-source">Frontier Firm Assessment</div></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     2. FRAMEWORK
+     ═══════════════════════════════════════════════════════════ -->
+<section class="section" id="framework">
+  <div class="section-inner">
+    <div class="section-label reveal" style="--signal-accent:var(--teal)">Frontier Firm Framework</div>
+    <h2 class="section-title reveal reveal-d1">Three phases of AI transformation</h2>
+    <p class="section-subtitle reveal reveal-d2">A Frontier Firm is where humans and AI agents work together as teams. Microsoft defines three phases of this journey.</p>
+
+    <div class="phase-grid reveal reveal-d3">
+      <div class="phase-card" style="--phase-color:var(--brand)">
+        <div class="phase-num">1</div>
+        <div class="phase-label">Phase 1</div>
+        <div class="phase-name">Human with Assistant</div>
+        <p class="phase-desc">Copilot augments individual work. AI drafts, summarises and researches — but it's a personal tool, not yet part of shared workflows.</p>
+      </div>
+      <div class="phase-card" style="--phase-color:var(--purple)">
+        <div class="phase-num">2</div>
+        <div class="phase-label">Phase 2</div>
+        <div class="phase-name">Human-Agent Teams</div>
+        <p class="phase-desc">Teams delegate tasks to agents embedded in real workflows. Human-agent collaboration becomes a repeating pattern.</p>
+      </div>
+      <div class="phase-card" style="--phase-color:var(--green)">
+        <div class="phase-num">3</div>
+        <div class="phase-label">Phase 3</div>
+        <div class="phase-name">Human-Led, Agent-Operated</div>
+        <p class="phase-desc">Agents run enterprise workflows end-to-end. Humans set direction and govern outcomes. AI is embedded in how the organisation operates.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     3. REACH
+     ═══════════════════════════════════════════════════════════ -->
+<section class="section signal-section" id="reach" style="--signal-accent:var(--color-reach)">
+  <div class="section-inner">
+    <div class="section-label reveal">Reach</div>
+    <h2 class="section-title reveal reveal-d1">{{TITLE_REACH}}</h2>
+    <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_REACH}}</p>
+
+    <div class="headline-stat reveal reveal-d2">
+      <div class="headline-stat-value">{{M365_ENABLEMENT}}%</div>
+      <div class="headline-stat-label">of {{TOTAL_LICENSED_SEATS}} licensed seats are active — with {{AGENT_ADOPTION}}% of users also engaging agents</div>
+    </div>
+
+    <div class="insight-callout reveal reveal-d3">{{INSIGHT_REACH}}</div>
+
+    <div class="stat-row reveal reveal-d3">
+      <div class="stat-card"><div class="stat-card-value"><span class="counter" data-target="{{TOTAL_ACTIVE_USERS}}">0</span></div><div class="stat-card-label">Total Active Users</div></div>
+      <div class="stat-card"><div class="stat-card-value"><span class="counter" data-target="{{LICENSED_USERS}}">0</span></div><div class="stat-card-label">Licensed Users</div></div>
+      <div class="stat-card"><div class="stat-card-value"><span class="counter" data-target="{{CHAT_USERS}}">0</span></div><div class="stat-card-label">Unlicensed Chat</div></div>
+      <div class="stat-card"><div class="stat-card-value"><span class="counter" data-target="{{AGENT_USERS}}">0</span></div><div class="stat-card-label">Agent Users</div></div>
+    </div>
+
+    <div class="two-col reveal reveal-d4">
+      <div class="chart-card">
+        <div class="chart-card-title">Monthly User Trend</div>
+        <div class="chart-card-sub">Licensed vs unlicensed users over time</div>
+        <div class="chart-wrap"><canvas id="chartUserTrend"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Organisation Landscape</div>
+        <div class="chart-card-sub">User count vs agent adoption by org</div>
+        <div class="chart-wrap"><canvas id="chartOrgScatter"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="pull-quote"><div class="pull-quote-text">{{PULLQUOTE_1}}</div><div class="pull-quote-source">Frontier Firm Assessment</div></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     4. HABIT
+     ═══════════════════════════════════════════════════════════ -->
+<section class="section signal-section" id="habit" style="--signal-accent:var(--color-habit)">
+  <div class="section-inner">
+    <div class="section-label reveal">Habit</div>
+    <h2 class="section-title reveal reveal-d1">{{TITLE_HABIT}}</h2>
+    <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_HABIT}}</p>
+
+    <div class="headline-stat reveal reveal-d2">
+      <div class="headline-stat-value">{{EMBEDDED_USER_RATE}}%</div>
+      <div class="headline-stat-label">of users are embedded — averaging 6+ active days/month over 3 months and present in at least 2 of those months</div>
+    </div>
+
+    <div class="insight-callout reveal reveal-d3">{{INSIGHT_HABIT}}</div>
+
+    <!-- Active day band distribution -->
+    <div class="chart-card reveal reveal-d3" style="margin-top:2rem">
+      <div class="chart-card-title">Active Day Distribution</div>
+      <div class="chart-card-sub">How many days per month are users engaging?</div>
+      <div class="band-stack">
+        <div class="band-row">
+          <div class="band-label">1-5 days</div>
+          <div class="band-track"><div class="band-fill" style="width:{{BAND_1_5_PCT}}%;background:var(--brand)"><span>{{BAND_1_5_FMT}}</span></div></div>
+          <div class="band-pct">{{BAND_1_5_PCT}}%</div>
+        </div>
+        <div class="band-row">
+          <div class="band-label">6-10 days</div>
+          <div class="band-track"><div class="band-fill" style="width:{{BAND_6_10_PCT}}%;background:var(--purple)"><span>{{BAND_6_10_FMT}}</span></div></div>
+          <div class="band-pct">{{BAND_6_10_PCT}}%</div>
+        </div>
+        <div class="band-row">
+          <div class="band-label">11-15 days</div>
+          <div class="band-track"><div class="band-fill" style="width:{{BAND_11_15_PCT}}%;background:var(--teal)"><span>{{BAND_11_15_FMT}}</span></div></div>
+          <div class="band-pct">{{BAND_11_15_PCT}}%</div>
+        </div>
+        <div class="band-row">
+          <div class="band-label">16+ days</div>
+          <div class="band-track"><div class="band-fill" style="width:{{BAND_16_PLUS_PCT_SCALED}}%;background:var(--green)"><span>{{BAND_16_PLUS_FMT}}</span></div></div>
+          <div class="band-pct">{{BAND_16_PLUS_PCT}}%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col reveal reveal-d4" style="margin-top:1.5rem">
+      <div class="chart-card">
+        <div class="chart-card-title">Retention Trend</div>
+        <div class="chart-card-sub">Month-over-month user retention</div>
+        <div class="chart-wrap"><canvas id="chartRetention"></canvas></div>
+      </div>
+      <div class="stat-row" style="display:flex;flex-direction:column;gap:1rem">
+        <div class="stat-card"><div class="stat-card-value" style="color:var(--green)"><span class="counter" data-target="{{RETAINED_USERS}}">0</span></div><div class="stat-card-label">Retained Users (MoM)</div></div>
+        <div class="stat-card"><div class="stat-card-value" style="color:var(--red-soft)"><span class="counter" data-target="{{CHURNED_USERS}}">0</span></div><div class="stat-card-label">Churned Users (MoM)</div></div>
+        <div class="stat-card"><div class="stat-card-value" style="color:var(--amber)">{{M365_RETENTION}}%</div><div class="stat-card-label">Retention Rate</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="pull-quote"><div class="pull-quote-text">{{PULLQUOTE_2}}</div><div class="pull-quote-source">Frontier Firm Assessment</div></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     5. SKILL
+     ═══════════════════════════════════════════════════════════ -->
+<section class="section signal-section" id="skill" style="--signal-accent:var(--color-skill)">
+  <div class="section-inner">
+    <div class="section-label reveal">Skill</div>
+    <h2 class="section-title reveal reveal-d1">{{TITLE_SKILL}}</h2>
+    <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_SKILL}}</p>
+
+    <div class="headline-stat reveal reveal-d2">
+      <div class="headline-stat-value">{{M365_BREADTH}}</div>
+      <div class="headline-stat-label">average app surfaces per user — with {{AGENT_BREADTH}} agents per user across {{TOTAL_AGENTS}} active agents</div>
+    </div>
+
+    <div class="insight-callout reveal reveal-d3">{{INSIGHT_SKILL}}</div>
+
+    <div class="two-col reveal reveal-d4" style="margin-top:2rem">
+      <div class="chart-card">
+        <div class="chart-card-title">App Surface Distribution</div>
+        <div class="chart-card-sub">Copilot usage by M365 application</div>
+        <div class="chart-wrap"><canvas id="chartAppSurface"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Agent Leaderboard</div>
+        <div class="chart-card-sub">Top agents by sessions per user</div>
+        <div class="chart-wrap"><canvas id="chartAgentBar"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Agent detail table -->
+    <div class="chart-card reveal reveal-d5" style="margin-top:1.5rem">
+      <div class="chart-card-title">Agent Portfolio</div>
+      <div class="chart-card-sub">{{TOTAL_AGENTS}} active agents, {{MULTI_USER_AGENTS}} used by multiple users</div>
+      {{AGENT_TABLE_HTML}}
+    </div>
+  </div>
+</section>
+
+<div class="pull-quote"><div class="pull-quote-text">{{PULLQUOTE_3}}</div><div class="pull-quote-source">Frontier Firm Assessment</div></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     6. VALUE (narrative only — not scored)
+     ═══════════════════════════════════════════════════════════ -->
+<section class="section signal-section" id="value" style="--signal-accent:var(--color-value)">
+  <div class="section-inner">
+    <div class="section-label reveal">Value</div>
+    <h2 class="section-title reveal reveal-d1">{{TITLE_VALUE}}</h2>
+    <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_VALUE}}</p>
+
+    <div class="stat-row reveal reveal-d3">
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--green)">~{{TIME_SAVED_REALISED}}K</div><div class="stat-card-label">Hours/Year Saved (current users)</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--amber)">~{{TIME_SAVED_UNREALISED}}K</div><div class="stat-card-label">Hours/Year Unrealised (idle licenses)</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--purple)">{{LICENSE_PRIORITY}}x</div><div class="stat-card-label">Engagement Premium (Licensed vs Unlicensed)</div></div>
+    </div>
+
+    <div class="insight-callout reveal reveal-d4" style="--signal-accent:var(--color-value)">
+      Licensed users generate <strong>{{LICENSED_AVG_PROMPTS}} prompts/user</strong> compared to <strong>{{UNLICENSED_AVG_PROMPTS}}</strong> for unlicensed users — a <strong>{{LICENSE_PRIORITY}}x engagement premium</strong>. This gap represents the economic case for expanding licensing to active unlicensed users, where {{CHAT_USERS}} users are already demonstrating demand.
+    </div>
+
+    <p class="reveal reveal-d4" style="font-size:.75rem;color:var(--text-3);margin-top:1rem;font-style:italic">Value is not scored in the maturity pattern — it is presented as narrative context to support the business case for investment.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     7. MATURITY ASSESSMENT
+     ═══════════════════════════════════════════════════════════ -->
+<section class="section maturity-section" id="maturity">
+  <div class="section-inner">
+    <div class="section-label reveal" style="--signal-accent:rgba(255,255,255,.4)">Maturity Assessment</div>
+    <h2 class="section-title reveal reveal-d1" style="color:#fff">{{TITLE_MATURITY}}</h2>
+    <p class="section-subtitle reveal reveal-d2" style="color:rgba(255,255,255,.5)">{{SUBTITLE_MATURITY}}</p>
+
+    <div class="pattern-display reveal reveal-d2">
+      <div class="pattern-number {{PATTERN_CLASS}}">{{PATTERN_NUMBER}}</div>
+      <div class="pattern-label">Pattern {{PATTERN_NUMBER}}: {{PATTERN_NAME}}</div>
+    </div>
+
+    <div class="insight-callout reveal reveal-d3" style="--signal-accent:var(--purple);background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.08);color:rgba(255,255,255,.7)">{{SPOTLIGHT_MATURITY}}</div>
+
+    <div class="gauges-row reveal reveal-d4">
+      <!-- Reach gauge -->
+      <div class="gauge-card">
+        <h3 style="color:var(--color-reach)">Reach</h3>
+        <span class="gauge-status tier-{{REACH_TIER_LOWER}}">{{REACH_TIER}}</span>
+        <svg class="gauge-svg" viewBox="0 0 160 160">
+          <circle class="gauge-track" cx="80" cy="80" r="65" />
+          <circle class="gauge-fill" cx="80" cy="80" r="65" stroke="var(--color-reach)"
+            stroke-dasharray="408.4" stroke-dashoffset="{{REACH_GAUGE_OFFSET}}"
+            transform="rotate(-90 80 80)" />
+          <text class="gauge-value" x="80" y="78">{{REACH_TIER}}</text>
+          <text class="gauge-sublabel" x="80" y="98">Signal</text>
+        </svg>
+      </div>
+      <!-- Habit gauge -->
+      <div class="gauge-card">
+        <h3 style="color:var(--color-habit)">Habit</h3>
+        <span class="gauge-status tier-{{HABIT_TIER_LOWER}}">{{HABIT_TIER}}</span>
+        <svg class="gauge-svg" viewBox="0 0 160 160">
+          <circle class="gauge-track" cx="80" cy="80" r="65" />
+          <circle class="gauge-fill" cx="80" cy="80" r="65" stroke="var(--color-habit)"
+            stroke-dasharray="408.4" stroke-dashoffset="{{HABIT_GAUGE_OFFSET}}"
+            transform="rotate(-90 80 80)" />
+          <text class="gauge-value" x="80" y="78">{{HABIT_TIER}}</text>
+          <text class="gauge-sublabel" x="80" y="98">Signal</text>
+        </svg>
+      </div>
+      <!-- Skill gauge -->
+      <div class="gauge-card">
+        <h3 style="color:var(--color-skill)">Skill</h3>
+        <span class="gauge-status tier-{{SKILL_TIER_LOWER}}">{{SKILL_TIER}}</span>
+        <svg class="gauge-svg" viewBox="0 0 160 160">
+          <circle class="gauge-track" cx="80" cy="80" r="65" />
+          <circle class="gauge-fill" cx="80" cy="80" r="65" stroke="var(--color-skill)"
+            stroke-dasharray="408.4" stroke-dashoffset="{{SKILL_GAUGE_OFFSET}}"
+            transform="rotate(-90 80 80)" />
+          <text class="gauge-value" x="80" y="78">{{SKILL_TIER}}</text>
+          <text class="gauge-sublabel" x="80" y="98">Signal</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 5 hero metric detail -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin-top:2rem" class="reveal reveal-d5">
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--color-reach)">
+        <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-reach);margin-bottom:.3rem">License Activation</div>
+        <div style="font-size:1.4rem;font-weight:900;color:#fff">{{M365_ENABLEMENT}}%</div>
+        <span class="hero-metric-tier {{M365_ENABLEMENT_TIER_CLASS}}" style="margin-top:.4rem">{{M365_ENABLEMENT_TIER}}</span>
+      </div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--color-reach)">
+        <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-reach);margin-bottom:.3rem">Agent Adoption</div>
+        <div style="font-size:1.4rem;font-weight:900;color:#fff">{{AGENT_ADOPTION}}%</div>
+        <span class="hero-metric-tier {{AGENT_ADOPTION_TIER_CLASS}}" style="margin-top:.4rem">{{AGENT_ADOPTION_TIER}}</span>
+      </div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--color-habit)">
+        <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-habit);margin-bottom:.3rem">Embedded User Rate</div>
+        <div style="font-size:1.4rem;font-weight:900;color:#fff">{{EMBEDDED_USER_RATE}}%</div>
+        <span class="hero-metric-tier {{EMBEDDED_USER_RATE_TIER_CLASS}}" style="margin-top:.4rem">{{EMBEDDED_USER_RATE_TIER}}</span>
+      </div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--color-skill)">
+        <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-skill);margin-bottom:.3rem">App Surface Breadth</div>
+        <div style="font-size:1.4rem;font-weight:900;color:#fff">{{M365_BREADTH}}</div>
+        <span class="hero-metric-tier {{M365_BREADTH_TIER_CLASS}}" style="margin-top:.4rem">{{M365_BREADTH_TIER}}</span>
+      </div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--color-skill)">
+        <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-skill);margin-bottom:.3rem">Agent Breadth</div>
+        <div style="font-size:1.4rem;font-weight:900;color:#fff">{{AGENT_BREADTH}}</div>
+        <span class="hero-metric-tier {{AGENT_BREADTH_TIER_CLASS}}" style="margin-top:.4rem">{{AGENT_BREADTH_TIER}}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     8. RECOMMENDATIONS
+     ═══════════════════════════════════════════════════════════ -->
+<section class="section" id="actions">
+  <div class="section-inner">
+    <div class="section-label reveal" style="--signal-accent:var(--teal)">Recommended Actions</div>
+    <h2 class="section-title reveal reveal-d1">Three moves to accelerate</h2>
+    <p class="section-subtitle reveal reveal-d2">Targeted actions to move {{CUSTOMER_NAME}} toward the next phase of AI maturity.</p>
+
+    <div class="recs-grid reveal reveal-d3">
+      <div class="rec-card">
+        <div class="rec-num">1</div>
+        <h3>{{REC_1_TITLE}}</h3>
+        <p>{{REC_1_DESC}}</p>
+      </div>
+      <div class="rec-card">
+        <div class="rec-num" style="background:var(--purple)">2</div>
+        <h3>{{REC_2_TITLE}}</h3>
+        <p>{{REC_2_DESC}}</p>
+      </div>
+      <div class="rec-card">
+        <div class="rec-num" style="background:var(--green)">3</div>
+        <h3>{{REC_3_TITLE}}</h3>
+        <p>{{REC_3_DESC}}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-brand">Frontier Firm Assessment</div>
+  <p>Generated {{GENERATION_DATE}} | Data: {{ANALYSIS_PERIOD}} | Powered by Microsoft Copilot Analytics</p>
+  <p style="margin-top:.4rem">This assessment is AI-generated from Microsoft 365 Copilot usage data. All numbers are sourced directly from the customer's PBIX analytics.</p>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCRIPTS
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+// ── Chart defaults ──
+Chart.defaults.color = 'rgba(255,255,255,.5)';
+Chart.defaults.borderColor = 'rgba(255,255,255,.06)';
+Chart.defaults.font.family = "'Inter','Segoe UI',sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.plugins.legend.display = false;
+
+// ── 1. Monthly User Trend ──
+new Chart(document.getElementById('chartUserTrend'), {
+  type: 'bar',
+  data: {
+    labels: [{{MONTHLY_USERS_LABELS}}],
+    datasets: [
+      { label: 'Licensed', data: [{{MONTHLY_USERS_LICENSED}}], backgroundColor: 'rgba(34,100,229,.7)', borderRadius: 4 },
+      { label: 'Unlicensed', data: [{{MONTHLY_USERS_UNLICENSED}}], backgroundColor: 'rgba(123,47,242,.5)', borderRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: true, position: 'top', labels: { boxWidth: 10, padding: 12, font: { size: 10 } } } },
+    scales: {
+      x: { stacked: true, grid: { display: false } },
+      y: { stacked: true, ticks: { callback: v => v >= 1000 ? (v/1000)+'K' : v } }
+    }
+  }
+});
+
+// ── 2. Org Scatter ──
+new Chart(document.getElementById('chartOrgScatter'), {
+  type: 'bubble',
+  data: {
+    datasets: [{
+      data: {{ORG_SCATTER_JSON}},
+      backgroundColor: 'rgba(14,165,233,.35)',
+      borderColor: 'rgba(14,165,233,.6)',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: ctx => ctx.raw.label + ': ' + ctx.raw.x + ' users, ' + ctx.raw.y + '% agent adoption'
+        }
+      }
+    },
+    scales: {
+      x: { title: { display: true, text: 'Active Users', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,.04)' } },
+      y: { title: { display: true, text: 'Agent Adoption %', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,.04)' } }
+    }
+  }
+});
+
+// ── 3. Retention Trend ──
+new Chart(document.getElementById('chartRetention'), {
+  type: 'line',
+  data: {
+    labels: [{{MONTHLY_RETENTION_LABELS}}],
+    datasets: [{
+      label: 'Retention %',
+      data: [{{MONTHLY_RETENTION_DATA}}],
+      borderColor: '#F59E0B',
+      backgroundColor: 'rgba(245,158,11,.08)',
+      fill: true,
+      tension: .3,
+      pointRadius: 4,
+      pointBackgroundColor: '#F59E0B'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      y: { min: 0, max: 100, ticks: { callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,.04)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ── 4. App Surface Distribution ──
+new Chart(document.getElementById('chartAppSurface'), {
+  type: 'bar',
+  data: {
+    labels: [{{APP_SURFACE_LABELS}}],
+    datasets: [{
+      data: [{{APP_SURFACE_DATA}}],
+      backgroundColor: [
+        'rgba(123,47,242,.7)', 'rgba(34,100,229,.7)', 'rgba(14,165,233,.7)',
+        'rgba(16,185,129,.7)', 'rgba(245,158,11,.7)', 'rgba(249,115,22,.7)',
+        'rgba(239,68,68,.5)', 'rgba(100,116,139,.5)'
+      ],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    indexAxis: 'y',
+    scales: {
+      x: { ticks: { callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,.04)' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// ── 5. Agent Leaderboard Bar ──
+new Chart(document.getElementById('chartAgentBar'), {
+  type: 'bar',
+  data: {
+    labels: {{TOP_AGENT_NAMES_JSON}},
+    datasets: [{
+      data: {{TOP_AGENT_SESSIONS_JSON}},
+      backgroundColor: 'rgba(14,165,233,.6)',
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    indexAxis: 'y',
+    scales: {
+      x: { title: { display: true, text: 'Sessions per User', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,.04)' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// ── Scroll reveal ──
+const reveals = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => revealObserver.observe(el));
+
+// ── Nav visibility ──
+const nav = document.getElementById('mainNav');
+const navLinks = document.querySelectorAll('.nav-link');
+const sections = document.querySelectorAll('.section[id]');
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  // Show nav after scrolling past hero
+  if (y > window.innerHeight * 0.5) nav.classList.add('visible');
+  else nav.classList.remove('visible');
+  // Scroll progress
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('scrollProgress').style.width = (y / max * 100) + '%';
+  // Active nav link
+  let current = '';
+  sections.forEach(s => { if (y >= s.offsetTop - 200) current = s.id; });
+  navLinks.forEach(l => { l.classList.toggle('active', l.dataset.section === current); });
+  lastScroll = y;
+});
+
+// ── Counter animation ──
+const counters = document.querySelectorAll('.counter');
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const target = parseFloat(el.dataset.target);
+    if (isNaN(target)) { el.textContent = el.dataset.target || '\u2014'; counterObserver.unobserve(el); return; }
+    const suffix = el.dataset.suffix || '';
+    const decimals = parseInt(el.dataset.decimals) || 0;
+    const duration = 1200;
+    const start = performance.now();
+    const animate = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = target * eased;
+      if (target >= 1000 && decimals === 0) el.textContent = Math.round(current).toLocaleString() + suffix;
+      else if (decimals > 0) el.textContent = current.toFixed(decimals) + suffix;
+      else el.textContent = Math.round(current) + suffix;
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+    counterObserver.unobserve(el);
+  });
+}, { threshold: 0.3 });
+counters.forEach(el => counterObserver.observe(el));
+</script>
+</body>
+</html>

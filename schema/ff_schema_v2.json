@@ -1,0 +1,116 @@
+{
+  "$schema": "Frontier Firm Report Schema v2 — Simplified",
+  "description": "5 hero metrics across 3 signals. Value is narrative only, not scored.",
+
+  "signals": {
+    "reach": {
+      "label": "Reach",
+      "question": "How broadly is it adopted?",
+      "color": "#0EA5E9",
+      "metrics": ["license_activation", "agent_adoption"]
+    },
+    "habit": {
+      "label": "Habit",
+      "question": "Is it embedded in daily work?",
+      "color": "#F59E0B",
+      "metrics": ["embedded_user_rate"]
+    },
+    "skill": {
+      "label": "Skill",
+      "question": "Is it going deep?",
+      "color": "#7B2FF2",
+      "metrics": ["app_surface_breadth", "agent_breadth"]
+    }
+  },
+
+  "metrics": {
+    "license_activation": {
+      "name": "License Activation",
+      "unit": "% seats active",
+      "bands": [50, 80],
+      "band_labels": ["Foundation", "Expansion", "Frontier"],
+      "signal": "reach",
+      "data_field": "m365_enablement",
+      "description": "licensed_users / total_licensed_seats * 100"
+    },
+    "agent_adoption": {
+      "name": "Agent Adoption",
+      "unit": "% of active users",
+      "bands": [5, 15],
+      "band_labels": ["Foundation", "Expansion", "Frontier"],
+      "signal": "reach",
+      "data_field": "agent_adoption",
+      "description": "agent_users / total_active_users * 100"
+    },
+    "embedded_user_rate": {
+      "name": "Embedded User Rate",
+      "unit": "% embedded users",
+      "bands": [5, 15],
+      "band_labels": ["Foundation", "Expansion", "Frontier"],
+      "signal": "habit",
+      "data_field": "embedded_user_rate",
+      "description": "Users with avg 6+ active days/month over last 3 months AND present in 2/3 months"
+    },
+    "app_surface_breadth": {
+      "name": "App Surface Breadth",
+      "unit": "apps/user",
+      "bands": [2, 4],
+      "band_labels": ["Foundation", "Expansion", "Frontier"],
+      "signal": "skill",
+      "data_field": "m365_breadth",
+      "description": "Avg distinct M365 apps/surfaces per user"
+    },
+    "agent_breadth": {
+      "name": "Agent Breadth",
+      "unit": "agents/user",
+      "bands": [1.5, 3],
+      "band_labels": ["Foundation", "Expansion", "Frontier"],
+      "signal": "skill",
+      "data_field": "agent_breadth",
+      "description": "Avg distinct agents per user"
+    }
+  },
+
+  "pattern_rules": {
+    "description": "Pattern determined by counting how many of 5 hero metrics reach Expansion or Frontier threshold",
+    "p1_foundation": "0-1 metrics at Expansion+",
+    "p2_expansion": "2-3 metrics at Expansion+",
+    "p3_frontier": "4-5 metrics at Expansion+, or 3+ at Frontier"
+  },
+
+  "insight_blocks": [
+    "EXEC_SUMMARY_GOOD",
+    "EXEC_SUMMARY_GAP",
+    "EXEC_SUMMARY_OPP",
+    "INSIGHT_REACH",
+    "INSIGHT_HABIT",
+    "INSIGHT_SKILL",
+    "SPOTLIGHT_MATURITY",
+    "PULLQUOTE_0",
+    "PULLQUOTE_1",
+    "PULLQUOTE_2",
+    "PULLQUOTE_3",
+    "REC_1_TITLE",
+    "REC_1_DESC",
+    "REC_2_TITLE",
+    "REC_2_DESC",
+    "REC_3_TITLE",
+    "REC_3_DESC",
+    "TITLE_REACH",
+    "TITLE_HABIT",
+    "TITLE_SKILL",
+    "TITLE_VALUE",
+    "TITLE_MATURITY",
+    "SUBTITLE_REACH",
+    "SUBTITLE_HABIT",
+    "SUBTITLE_SKILL",
+    "SUBTITLE_VALUE",
+    "SUBTITLE_MATURITY"
+  ],
+
+  "derived_metrics": {
+    "time_saved_realised": "licensed_users * licensed_avg_prompts * 6 / 60 * 12",
+    "time_saved_unrealised": "inactive_licenses * licensed_avg_prompts * 6 / 60 * 12",
+    "activation_rate": "licensed_users / total_licensed_seats * 100"
+  }
+}

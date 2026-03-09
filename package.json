@@ -5,6 +5,7 @@
   "main": "src/generate-report.js",
   "scripts": {
     "report": "node src/run-pipeline.js",
+    "report-v2": "node src/run-pipeline.js --v2",
     "report:sample": "node src/run-pipeline.js --data data/sample_contoso.json --output output/ --no-ai",
     "extract": "node src/extract-from-pbix.js",
     "cross-validate": "node src/cross-validate.js",

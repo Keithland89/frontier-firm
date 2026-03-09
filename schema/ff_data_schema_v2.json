@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Frontier Firm Data Schema v2",
+  "description": "Required fields for the v2 simplified Frontier Firm report. Every field must be present with a valid value or set to \"not_available\".",
+  "type": "object",
+  "required": [
+    "customer_name",
+    "analysis_period",
+    "total_active_users",
+    "licensed_users",
+    "chat_users",
+    "agent_users",
+    "total_licensed_seats",
+    "inactive_licenses",
+    "m365_enablement",
+    "agent_adoption",
+    "embedded_user_rate",
+    "m365_breadth",
+    "agent_breadth",
+    "license_priority",
+    "licensed_avg_prompts",
+    "unlicensed_avg_prompts",
+    "m365_retention",
+    "retained_users",
+    "churned_users",
+    "org_count",
+    "total_agents",
+    "multi_user_agents",
+    "band_1_5",
+    "band_6_10",
+    "band_11_15",
+    "band_16_plus",
+    "band_1_5_pct",
+    "band_6_10_pct",
+    "band_11_15_pct",
+    "band_16_plus_pct",
+    "agent_table",
+    "top_agent_names",
+    "top_agent_sessions",
+    "org_scatter_data"
+  ],
+  "properties": {
+    "customer_name": { "type": "string", "minLength": 1 },
+    "analysis_period": { "type": "string", "minLength": 1 },
+
+    "total_active_users": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "licensed_users": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "chat_users": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "agent_users": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "total_licensed_seats": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "inactive_licenses": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+
+    "m365_enablement": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "agent_adoption": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "embedded_user_rate": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "m365_breadth": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "agent_breadth": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+
+    "license_priority": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "licensed_avg_prompts": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "unlicensed_avg_prompts": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "m365_retention": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "retained_users": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "churned_users": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "org_count": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "total_agents": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "multi_user_agents": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+
+    "band_1_5": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "band_6_10": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "band_11_15": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "band_16_plus": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "band_1_5_pct": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "band_6_10_pct": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "band_11_15_pct": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+    "band_16_plus_pct": { "oneOf": [{ "type": "number", "minimum": 0 }, { "const": "not_available" }] },
+
+    "agent_table": {
+      "oneOf": [
+        { "type": "array", "minItems": 1, "items": {
+          "type": "object",
+          "required": ["name", "type", "users", "sessions", "sessions_per_user"],
+          "properties": {
+            "name": { "type": "string" },
+            "type": { "type": "string" },
+            "users": { "type": "number" },
+            "sessions": { "type": "number" },
+            "sessions_per_user": { "type": "number" }
+          }
+        }},
+        { "const": "not_available" }
+      ]
+    },
+    "top_agent_names": {
+      "oneOf": [
+        { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        { "const": "not_available" }
+      ]
+    },
+    "top_agent_sessions": {
+      "oneOf": [
+        { "type": "array", "minItems": 1, "items": { "type": "number" } },
+        { "const": "not_available" }
+      ]
+    },
+    "org_scatter_data": {
+      "oneOf": [
+        { "type": "array", "minItems": 1, "items": {
+          "type": "object",
+          "required": ["label", "x", "y", "r"],
+          "properties": {
+            "label": { "type": "string" },
+            "x": { "type": "number" },
+            "y": { "type": "number" },
+            "r": { "type": "number" }
+          }
+        }},
+        { "const": "not_available" }
+      ]
+    },
+
+    "_supplementary_metrics": {
+      "type": "object",
+      "properties": {
+        "monthly_data": { "type": "object" },
+        "per_tier_monthly_users": { "type": "array", "minItems": 1 },
+        "app_interactions": { "type": "object" },
+        "retention_cohorts": { "type": "object" }
+      }
+    }
+  },
+  "additionalProperties": true
+}

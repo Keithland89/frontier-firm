@@ -25,6 +25,7 @@ const pbixName = args.find((a, i) => args[i - 1] === '--pbix');
 let dataPath = args.find((a, i) => args[i - 1] === '--data');
 const outputDir = args.find((a, i) => args[i - 1] === '--output') || 'output/';
 const noAI = args.includes('--no-ai');
+const isV2 = args.includes('--v2');
 
 if (!dataPath && !pbixName) {
   console.error('Usage: node run-pipeline.js --pbix "Customer Name" [--output dir] [--no-ai]');
@@ -47,12 +48,13 @@ if (pbixName) {
 }
 
 // Derive report filename from data
+const suffix = isV2 ? '_frontier_firm_v2.html' : '_frontier_firm.html';
 let reportName;
 if (pbixName) {
-  reportName = pbixName.toLowerCase().replace(/\s+/g, '_') + '_frontier_firm.html';
+  reportName = pbixName.toLowerCase().replace(/\s+/g, '_') + suffix;
 } else {
   const data = JSON.parse(fs.readFileSync(path.resolve(dataPath), 'utf8'));
-  reportName = data.customer_name.toLowerCase().replace(/\s+/g, '_') + '_frontier_firm.html';
+  reportName = data.customer_name.toLowerCase().replace(/\s+/g, '_') + suffix;
 }
 const reportPath = path.join(outputDir, reportName);
 
@@ -67,7 +69,7 @@ if (pbixName) {
 // Gate 1: Validate data
 gates.push({
   name: 'Gate 1: Validate Data',
-  cmd: 'node src/validate-data.js --data "' + dataPath + '"'
+  cmd: 'node src/validate-data.js --data "' + dataPath + '"' + (isV2 ? ' --v2' : '')
 });
 
 // Gate 1.5: Generate insights (skip if --no-ai)
@@ -80,9 +82,10 @@ if (!noAI) {
 }
 
 // Gate 2: Generate report
+const generator = isV2 ? 'generate-report-v2.js' : 'generate-report.js';
 gates.push({
-  name: 'Gate 2: Generate Report',
-  cmd: 'node src/generate-report.js --data "' + dataPath + '" --output "' + outputDir + '"' + (noAI ? ' --no-ai' : '')
+  name: 'Gate 2: Generate Report' + (isV2 ? ' (v2)' : ''),
+  cmd: 'node src/' + generator + ' --data "' + dataPath + '" --output "' + outputDir + '"' + (noAI ? ' --no-ai' : '')
 });
 
 // Gate 3: Validate HTML
