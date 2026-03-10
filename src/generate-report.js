@@ -959,22 +959,22 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     html = html.replace(new RegExp('\\{\\{' + tag + '_TIER_NAME\\}\\}', 'g'), info.tier);
   }
 
-  // ── V4 Two Lanes Scorecard Grid ──
+  // ── V4 Two Lanes Scorecard Grid — flip cards ──
   if (schemaV4) {
-    const tierBg = function(t) { return t === 'Frontier' ? 'rgba(16,185,129,.15)' : t === 'Expansion' ? 'rgba(245,158,11,.15)' : 'rgba(100,116,139,.12)'; };
-    const tierColor = function(t) { return t === 'Frontier' ? '#10B981' : t === 'Expansion' ? '#F59E0B' : '#94A3B8'; };
-    const pillarKeys = Object.keys(schemaV4.pillars);
-    const laneKeys = Object.keys(schemaV4.lanes);
+    var v4TierBg = function(t) { return t === 'Frontier' ? 'rgba(16,185,129,.15)' : t === 'Expansion' ? 'rgba(245,158,11,.15)' : 'rgba(100,116,139,.12)'; };
+    var v4TierColor = function(t) { return t === 'Frontier' ? '#10B981' : t === 'Expansion' ? '#F59E0B' : '#94A3B8'; };
+    var pillarKeys = Object.keys(schemaV4.pillars);
+    var laneKeys = Object.keys(schemaV4.lanes);
 
-    var gridHtml = '<div style="display:grid;grid-template-columns:100px repeat(' + pillarKeys.length + ',1fr);gap:3px">';
+    var gridHtml = '<div style="display:grid;grid-template-columns:120px repeat(' + pillarKeys.length + ',1fr);gap:4px">';
 
     // Header row
     gridHtml += '<div></div>';
     pillarKeys.forEach(function(pKey) {
       var p = schemaV4.pillars[pKey];
-      gridHtml += '<div style="text-align:center;padding:.6rem .4rem;background:rgba(255,255,255,.03);border-radius:8px 8px 0 0">';
-      gridHtml += '<div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:' + p.color_accent + '">' + p.label + '</div>';
-      gridHtml += '<div style="font-size:.5rem;color:rgba(255,255,255,.35);margin-top:.15rem">' + p.question + '</div>';
+      gridHtml += '<div style="text-align:center;padding:1rem .5rem;background:rgba(255,255,255,.03);border-radius:10px 10px 0 0">';
+      gridHtml += '<div style="font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:' + p.color_accent + '">' + p.label + '</div>';
+      gridHtml += '<div style="font-size:.6rem;color:rgba(255,255,255,.4);margin-top:.25rem;font-style:italic">' + p.question + '</div>';
       gridHtml += '</div>';
     });
 
@@ -984,32 +984,57 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       var laneTier = v4LaneTiers[lKey] || 'Foundation';
 
       // Lane label cell
-      gridHtml += '<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;padding:.5rem;background:rgba(255,255,255,.02);border-radius:8px 0 0 8px">';
-      gridHtml += '<div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:' + lane.color + ';text-align:center">' + lane.label + '</div>';
-      gridHtml += '<div style="margin-top:.3rem;padding:.1rem .4rem;border-radius:100px;font-size:.5rem;font-weight:700;background:' + tierBg(laneTier) + ';color:' + tierColor(laneTier) + '">' + laneTier + '</div>';
+      gridHtml += '<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;padding:.75rem;background:rgba(255,255,255,.02);border-radius:10px 0 0 10px">';
+      gridHtml += '<div style="font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:' + lane.color + ';text-align:center;line-height:1.3">' + lane.label + '</div>';
+      gridHtml += '<div style="margin-top:.5rem;padding:.15rem .5rem;border-radius:100px;font-size:.55rem;font-weight:700;background:' + v4TierBg(laneTier) + ';color:' + v4TierColor(laneTier) + '">' + laneTier + '</div>';
       gridHtml += '</div>';
 
-      // Pillar cells
+      // Pillar cells — each is a flip card
       pillarKeys.forEach(function(pKey) {
+        var pDef = schemaV4.pillars[pKey];
         var pillarTier = v4PillarTiers[lKey] ? v4PillarTiers[lKey][pKey] || 'Foundation' : 'Foundation';
         var cellMetrics = Object.entries(schemaV4.metrics).filter(function(e) { return e[1].lane === lKey && e[1].pillar === pKey; });
         var deepLink = lKey === 'copilot' ? '#reach' : '#skill';
 
-        gridHtml += '<a href="' + deepLink + '" style="text-decoration:none;display:block;padding:.6rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:6px;transition:all .2s" onmouseover="this.style.background=\'rgba(255,255,255,.07)\';this.style.borderColor=\'rgba(255,255,255,.12)\'" onmouseout="this.style.background=\'rgba(255,255,255,.03)\';this.style.borderColor=\'rgba(255,255,255,.05)\'">';
-        gridHtml += '<div style="text-align:right;margin-bottom:.4rem"><span style="padding:.1rem .35rem;border-radius:100px;font-size:.45rem;font-weight:700;background:' + tierBg(pillarTier) + ';color:' + tierColor(pillarTier) + '">' + pillarTier + '</span></div>';
+        gridHtml += '<div class="flip-card" style="min-height:160px;cursor:pointer" onclick="this.classList.toggle(\'flipped\')">';
+        gridHtml += '<div class="flip-card-inner">';
 
+        // FRONT — values
+        gridHtml += '<div class="flip-card-front" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;display:flex;flex-direction:column">';
+        gridHtml += '<div style="text-align:right;margin-bottom:.5rem"><span style="padding:.12rem .4rem;border-radius:100px;font-size:.5rem;font-weight:700;background:' + v4TierBg(pillarTier) + ';color:' + v4TierColor(pillarTier) + '">' + pillarTier + '</span></div>';
         cellMetrics.forEach(function(entry) {
-          var mId = entry[0], mDef = entry[1];
+          var mDef = entry[1];
           var val = data[mDef.data_field];
           var display = typeof val === 'number' ? (Number.isInteger(val) ? String(val) : String(Math.round(val * 10) / 10)) : '\u2014';
-          var mTier = v4Tiers[mId] || 'Foundation';
-          gridHtml += '<div style="margin-bottom:.35rem">';
-          gridHtml += '<div style="font-size:.45rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:rgba(255,255,255,.35)">' + mDef.name + '</div>';
-          gridHtml += '<div style="font-size:.9rem;font-weight:800;color:' + tierColor(mTier) + '">' + display + (mDef.unit === '%' ? '%' : '') + '</div>';
+          var mTier = v4Tiers[entry[0]] || 'Foundation';
+          gridHtml += '<div style="margin-bottom:.5rem">';
+          gridHtml += '<div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:rgba(255,255,255,.4)">' + mDef.name + '</div>';
+          gridHtml += '<div style="font-size:1.15rem;font-weight:800;color:' + v4TierColor(mTier) + '">' + display + (mDef.unit === '%' ? '%' : '') + '</div>';
           gridHtml += '</div>';
         });
+        gridHtml += '<div style="margin-top:auto;font-size:.5rem;color:rgba(255,255,255,.25);text-align:center">Click to see what this measures</div>';
+        gridHtml += '</div>';
 
-        gridHtml += '</a>';
+        // BACK — descriptions + thresholds
+        var backBg = lKey === 'copilot' ? 'rgba(34,100,229,.06)' : 'rgba(123,47,242,.06)';
+        var backBorder = lKey === 'copilot' ? 'rgba(34,100,229,.15)' : 'rgba(123,47,242,.15)';
+        gridHtml += '<div class="flip-card-back" style="background:' + backBg + ';border:1px solid ' + backBorder + ';border-radius:10px;padding:1rem;display:flex;flex-direction:column;overflow-y:auto">';
+        gridHtml += '<div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:' + pDef.color_accent + ';margin-bottom:.6rem">' + pDef.label + ' \u2014 ' + lane.label + '</div>';
+        cellMetrics.forEach(function(entry) {
+          var mDef = entry[1];
+          gridHtml += '<div style="margin-bottom:.6rem">';
+          gridHtml += '<div style="font-size:.55rem;font-weight:700;color:rgba(255,255,255,.6)">' + mDef.name + '</div>';
+          gridHtml += '<div style="font-size:.55rem;color:rgba(255,255,255,.45);line-height:1.5;margin-top:.15rem">' + (mDef.description || '') + '</div>';
+          if (mDef.bands && mDef.bands.length >= 2) {
+            var u = mDef.unit === '%' ? '%' : '';
+            gridHtml += '<div style="font-size:.5rem;color:rgba(255,255,255,.3);margin-top:.2rem">' + mDef.bands[0] + u + ' Expansion \u00b7 ' + mDef.bands[1] + u + ' Frontier</div>';
+          }
+          gridHtml += '</div>';
+        });
+        gridHtml += '<a href="' + deepLink + '" style="margin-top:auto;font-size:.55rem;color:' + pDef.color_accent + ';text-decoration:none;font-weight:600">See evidence \u2192</a>';
+        gridHtml += '</div>';
+
+        gridHtml += '</div></div>';
       });
     });
 
