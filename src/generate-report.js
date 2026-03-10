@@ -624,6 +624,11 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = safeSub(html, /\{\{AGENT_CREATORS_PCT\}\}/g, data.agent_creators_pct, 'agent_creators_pct');
   html = safeSub(html, /\{\{LICENSE_COVERAGE_PCT\}\}/g, data.license_coverage, 'license_coverage');
   html = safeSub(html, /\{\{AGENT_HABITUAL_PCT\}\}/g, data.agent_habitual, 'agent_habitual');
+  html = safeSub(html, /\{\{AGENT_WEEKLY_SESSIONS\}\}/g, data.agent_weekly_sessions || data.weekly_agents, 'agent_weekly_sessions');
+  html = safeSub(html, /\{\{AGENT_SESSIONS_MOM_PCT\}\}/g,
+    (data._scorecard_metrics && data._scorecard_metrics.agent_sessions_mom_pct) || 'N/A', 'agent_sessions_mom_pct');
+  html = safeSub(html, /\{\{AGENT_USER_GROWTH_PCT\}\}/g,
+    (data._scorecard_metrics && data._scorecard_metrics.agent_user_growth_pct) || 'N/A', 'agent_user_growth_pct');
   html = safeSub(html, /\{\{COHORT_CHURN_DELTA\}\}/g,
     typeof data.m365_retention === 'number' && typeof data.chat_retention === 'number'
       ? Math.round(data.m365_retention - data.chat_retention) + 'pp' : 'not_available', 'cohort_churn_delta');

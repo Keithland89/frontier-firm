@@ -134,6 +134,15 @@
     "description": "Habitual agent usage rate (16+ or 20+ active days last month)."
   },
 
+  "agent_weekly_sessions": {
+    "type": "scalar",
+    "measures": [
+      "[Sessions (Weekly)]"
+    ],
+    "page": "Agents Usage Trends",
+    "description": "Average weekly agent sessions per user. Source: 'Sessions (Weekly)' KPI card on Agents Usage Trends page."
+  },
+
   "m365_retention": {
     "type": "scalar",
     "measures": ["[Agent Return Rate]", "[Avg Agent Return Rate %]"],

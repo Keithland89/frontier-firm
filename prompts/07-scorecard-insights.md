@@ -10,6 +10,7 @@
 4. **Quantify the opportunity** — e.g. "484 idle licences" not "some licences are unused"
 5. **One action per bullet** — keep recommendations atomic and executable
 6. **No jargon** — written for a non-technical executive sponsor
+7. **Complete months only** — never include partial months in growth calculations. If the analysis period ends mid-month, exclude that month entirely. Document the basis (e.g. "Apr→May, complete months")
 
 ## Reach Card
 
@@ -83,9 +84,12 @@ Use McKinsey-style flowing paragraphs. Each card has two sections separated by a
 
 ### Reach Card
 
-**Metrics:** Agent Active User % (`agent_adoption`), Orgs with Active Agents (`org_count`)
+**Metrics:** Agent Active User % (`agent_adoption`), Agent User Growth Rate MoM (`_scorecard_metrics.agent_user_growth_pct`)
+
+**IMPORTANT:** Only use completed months for growth calculations. Partial months (e.g. Jun 1-6) MUST be excluded as they skew rates downward.
 
 **What's Working (green):**
+- State user growth: `agent_user_growth_pct`% MoM (prev_month_users → current_month_users)
 - State org-wide reach: all `org_count` orgs have agent users (if true)
 - Name **top 3 agents by user count** from `agent_table` or `_scorecard_metrics.agent_return_details`
 - Highlight agents with clear functional purposes (IT Service Agent, CRU QA Analyzer) — these signal real workflow embedding
@@ -97,23 +101,29 @@ Use McKinsey-style flowing paragraphs. Each card has two sections separated by a
 - Name the long tail: `total_agents` agents exist but most have low adoption
 - Recommend promoting proven winners to untouched departments
 
-**Formula:** Agent Active Users % = `agent_users / total_active_users × 100`
+**Formula:** Agent User Growth % = `(current_month_users - prev_month_users) / prev_month_users × 100` — completed months only
+**Source:** `agent_mom_prev` (previous complete month), `agent_users` (latest complete month)
 
 ### Habit Card
 
-**Metrics:** Agent MoM Return Rate (`_scorecard_metrics.agent_mom_retention`), Agent Weekly Sessions (`agent_frequency`)
+**Metrics:** Agent MoM Return Rate (`_scorecard_metrics.agent_mom_retention`), Agent Session Growth Rate MoM (`_scorecard_metrics.agent_sessions_mom_pct` — from PBIX "Agent Sessions MoM %" KPI on Agents Usage Trends page)
+
+**IMPORTANT:** Only use completed months. The PBIX MoM % KPI inherently uses complete month pairs. Verify date range excludes partial months.
 
 **What's Working (green):**
+- State session growth: `agent_sessions_mom_pct`% MoM — usage is accelerating
 - State retention: `agent_mom_retained` of `agent_mom_prev` returned = `agent_mom_retention`%
 - Name **agents with highest return rates** from `agent_return_details` — focus on those with 100% return AND meaningful user counts (>5 users)
 - Link stickiness to functional value: agents that solve real problems retain perfectly
 
 **Where to Act (amber):**
-- State frequency gap: `agent_frequency` sessions/week = episodic, not habitual
+- Name **top and bottom orgs by weekly sessions** from `_scorecard_metrics.agent_weekly_sessions_by_org` — highlight the spread (e.g. Finance 7.6 vs IT 2.0)
 - State habitual gap: only `agent_habitual`% reach 11+ active days
 - Recommend embedding top agents into existing workflows as default starting points
 
+**Formula:** Agent Session Growth MoM = PBIX "Agent Sessions MoM %" KPI (complete months)
 **Formula:** Agent MoM Return = `agent_mom_retained / agent_mom_prev × 100`
+**Source:** `agent_sessions_mom_pct` = "Agent Sessions MoM %" KPI card, `agent_weekly_sessions_by_org` = "Weekly Sessions Per User" bar chart (both on Agents Usage Trends page)
 
 ### Skill Card
 
@@ -136,7 +146,11 @@ Use McKinsey-style flowing paragraphs. Each card has two sections separated by a
 ```
 agent_adoption           — % of users engaging with agents
 agent_users              — count of agent users
-agent_frequency          — sessions per user per week
+agent_frequency          — % agent users with 16+ active days (legacy, same as habitual)
+agent_weekly_sessions    — avg weekly agent sessions per user (from PBIX "Sessions (Weekly)" KPI)
+_scorecard_metrics.agent_user_growth_pct  — MoM user growth % (completed months only)
+_scorecard_metrics.agent_sessions_mom_pct — MoM session growth % (from PBIX KPI, completed months)
+_scorecard_metrics.agent_weekly_sessions_by_org — {org: sessions/week} per department
 agent_habitual           — % agent users with 11+ active days
 agent_creators_pct       — % users building agents
 org_count                — number of orgs with active agents

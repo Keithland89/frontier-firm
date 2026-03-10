@@ -1521,6 +1521,25 @@
     "chat_hab_11_15_pct": 12.7,
     "chat_hab_16_plus_pct": 8.2,
     "chat_hab_11plus_pct": 20.9,
-    "single_shot_pct": 82.5
-  }
+    "single_shot_pct": 82.5,
+    "agent_weekly_sessions": 3.6,
+    "agent_weekly_sessions_by_org": {
+      "Finance": 7.6,
+      "Legal": 4.6,
+      "Sales": 3.6,
+      "Operations": 3.5,
+      "Support": 3,
+      "HR": 2.6,
+      "Marketing": 2.1,
+      "IT": 2
+    },
+    "active_agents": 169,
+    "agent_users_full": 180,
+    "agent_sessions_mom_pct": 9.4,
+    "agent_user_growth_pct": 30.3,
+    "agent_user_growth_basis": "Apr 2025 (89 users) to May 2025 (116 users) — complete months only",
+    "agent_sessions_mom_basis": "PBIX KPI: Agent Sessions MoM % — complete months only",
+    "analysis_note": "June 2025 is partial (1-6 Jun) and excluded from all growth calculations"
+  },
+  "agent_weekly_sessions": 3.6
 }
