@@ -51,6 +51,8 @@ try {
 const schema = JSON.parse(fs.readFileSync(SCHEMA_PATH, 'utf8'));
 const schemaV2Path = path.resolve(__dirname, '..', 'schema', 'ff_schema_v2.json');
 const schemaV2 = fs.existsSync(schemaV2Path) ? JSON.parse(fs.readFileSync(schemaV2Path, 'utf8')) : null;
+const schemaV4Path = path.resolve(__dirname, '..', 'schema', 'ff_schema_v4.json');
+const schemaV4 = fs.existsSync(schemaV4Path) ? JSON.parse(fs.readFileSync(schemaV4Path, 'utf8')) : null;
 const data = JSON.parse(fs.readFileSync(path.resolve(dataArg), 'utf8'));
 console.log(`Loaded data for: ${data.customer_name}`);
 
@@ -213,6 +215,66 @@ if (schemaV2) {
   gauges.habit = gaugeMapV2[signalTiers.habit];
   gauges.skill = gaugeMapV2[signalTiers.skill];
   console.log('Using V2 scoring for report output');
+}
+
+// ============================================================
+// V4 TWO LANES SCORING
+// ============================================================
+let v4Tiers = {};
+let v4PillarTiers = {};
+let v4LaneTiers = {};
+
+if (schemaV4) {
+  // Score each metric
+  for (const [id, m] of Object.entries(schemaV4.metrics)) {
+    const val = data[m.data_field];
+    if (typeof val !== 'number') { v4Tiers[id] = 'Foundation'; continue; }
+    v4Tiers[id] = val >= m.bands[1] ? 'Frontier' : val >= m.bands[0] ? 'Expansion' : 'Foundation';
+  }
+
+  // Score each pillar per lane (weakest metric = pillar tier)
+  for (const lane of Object.keys(schemaV4.lanes)) {
+    v4PillarTiers[lane] = {};
+    for (const pillar of Object.keys(schemaV4.pillars)) {
+      const metrics = Object.entries(schemaV4.metrics)
+        .filter(([_, m]) => m.lane === lane && m.pillar === pillar);
+      const tiers = metrics.map(([id]) => v4Tiers[id]);
+      if (tiers.includes('Foundation')) v4PillarTiers[lane][pillar] = 'Foundation';
+      else if (tiers.includes('Expansion')) v4PillarTiers[lane][pillar] = 'Expansion';
+      else v4PillarTiers[lane][pillar] = tiers.length > 0 ? 'Frontier' : 'Foundation';
+    }
+  }
+
+  // Lane tier = weakest pillar
+  for (const lane of Object.keys(schemaV4.lanes)) {
+    const pillars = Object.values(v4PillarTiers[lane]);
+    if (pillars.includes('Foundation')) v4LaneTiers[lane] = 'Foundation';
+    else if (pillars.includes('Expansion')) v4LaneTiers[lane] = 'Expansion';
+    else v4LaneTiers[lane] = 'Frontier';
+  }
+
+  // Overall pattern = weaker lane
+  const v4Lanes = Object.values(v4LaneTiers);
+  if (v4Lanes.includes('Foundation')) { pattern.number = 1; pattern.name = 'Foundation'; }
+  else if (v4Lanes.every(t => t === 'Frontier')) { pattern.number = 3; pattern.name = 'Frontier'; }
+  else { pattern.number = 2; pattern.name = 'Expansion'; }
+
+  // Recalculate gauges
+  const gMap = { 'Foundation': 30, 'Expansion': 65, 'Frontier': 90 };
+  if (v4PillarTiers.copilot) {
+    gauges.reach = gMap[v4PillarTiers.copilot.reach || 'Foundation'];
+    gauges.habit = gMap[v4PillarTiers.copilot.consistency || 'Foundation'];
+    gauges.skill = gMap[v4PillarTiers.copilot.skill || 'Foundation'];
+  }
+  // Use lane tiers for signal display
+  signalTiers.reach = v4LaneTiers.copilot || 'Foundation';
+  signalTiers.habit = v4LaneTiers.agents || 'Foundation';
+  signalTiers.skill = v4PillarTiers.agents ? v4PillarTiers.agents.skill || 'Foundation' : 'Foundation';
+
+  console.log('V4 Metric tiers:', v4Tiers);
+  console.log('V4 Pillar tiers:', v4PillarTiers);
+  console.log('V4 Lane tiers:', v4LaneTiers);
+  console.log('V4 Pattern:', pattern.number, '(' + pattern.name + ')');
 }
 
 // ============================================================
@@ -897,50 +959,66 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     html = html.replace(new RegExp('\\{\\{' + tag + '_TIER_NAME\\}\\}', 'g'), info.tier);
   }
 
-  // ── V2 Scorecard: 11 metrics, 3 signals, flip cards ──
-  if (schemaV2 && patternV2) {
-    var v2Html = '<div style="margin-top:2rem">';
-    for (var _sigKey of Object.keys(schemaV2.signals)) {
-      var _sigDef = schemaV2.signals[_sigKey];
-      var sigMetrics = _sigDef.metrics;
-      var colCount = sigMetrics.length;
-      var hex = _sigDef.color;
-      var r2 = parseInt(hex.slice(1,3),16), g2 = parseInt(hex.slice(3,5),16), b2 = parseInt(hex.slice(5,7),16);
-      v2Html += '<div style="margin-bottom:1.5rem">';
-      v2Html += '<div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:' + hex + ';margin-bottom:.75rem">' + _sigDef.label + ' <span style="font-weight:400;opacity:.6">' + _sigDef.question + '</span></div>';
-      v2Html += '<div style="display:grid;grid-template-columns:repeat(' + colCount + ',1fr);gap:.75rem">';
-      for (var _mId of sigMetrics) {
-        var _mDef = schemaV2.metrics[_mId];
-        var _tier = metricTiersV2[_mId] || 'Foundation';
-        var _tierClass = 'tier-' + _tier.toLowerCase();
-        var _rawVal = data[_mDef.data_field];
-        var _displayVal = typeof _rawVal === 'number' ? (Number.isInteger(_rawVal) ? String(_rawVal) : String(Math.round(_rawVal * 10) / 10)) : '\u2014';
-        var _unit = (_mDef.unit || '').replace(/%.*/, '%').replace(/apps.*/, '').replace(/agents.*/, '');
-        var _bands = _mDef.bands || [];
-        var _bandText = _bands.length >= 2 ? _bands[0] + (_unit.includes('%') ? '%' : '') + ' Expansion, ' + _bands[1] + (_unit.includes('%') ? '%' : '') + ' Frontier' : '';
-        // Flip card with definition on back
-        v2Html += '<div class="flip-card" style="height:120px;cursor:pointer" onclick="this.classList.toggle(\'flipped\')">';
-        v2Html += '<div class="flip-card-inner">';
-        // Front — value + tier
-        v2Html += '<div class="flip-card-front" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid ' + hex + '">';
-        v2Html += '<div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:' + hex + ';margin-bottom:.3rem">' + _mDef.name + '</div>';
-        v2Html += '<div style="font-size:1.2rem;font-weight:900;color:#fff">' + _displayVal + (_unit.includes('%') ? '%' : '') + '</div>';
-        v2Html += '<span class="hero-metric-tier ' + _tierClass + '" style="margin-top:.4rem">' + _tier + '</span>';
-        v2Html += '</div>';
-        // Back — definition + thresholds
-        v2Html += '<div class="flip-card-back" style="background:rgba(' + r2 + ',' + g2 + ',' + b2 + ',.06);border:1px solid rgba(' + r2 + ',' + g2 + ',' + b2 + ',.15);border-radius:10px;padding:.8rem;text-align:center;border-top:3px solid ' + hex + '">';
-        v2Html += '<div style="font-size:.55rem;font-weight:700;color:' + hex + ';text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem">' + _mDef.name + '</div>';
-        v2Html += '<div style="font-size:.62rem;color:rgba(255,255,255,.65);line-height:1.5">' + (_mDef.description || '') + '</div>';
-        if (_bandText) v2Html += '<div style="font-size:.55rem;color:rgba(255,255,255,.4);margin-top:.3rem">' + _bandText + '</div>';
-        v2Html += '</div>';
-        v2Html += '</div></div>';
-      }
-      v2Html += '</div></div>';
-    }
-    v2Html += '</div>';
-    html = html.replace(/\{\{V2_SCORECARD_HTML\}\}/g, v2Html);
+  // ── V4 Two Lanes Scorecard Grid ──
+  if (schemaV4) {
+    const tierBg = function(t) { return t === 'Frontier' ? 'rgba(16,185,129,.15)' : t === 'Expansion' ? 'rgba(245,158,11,.15)' : 'rgba(100,116,139,.12)'; };
+    const tierColor = function(t) { return t === 'Frontier' ? '#10B981' : t === 'Expansion' ? '#F59E0B' : '#94A3B8'; };
+    const pillarKeys = Object.keys(schemaV4.pillars);
+    const laneKeys = Object.keys(schemaV4.lanes);
+
+    var gridHtml = '<div style="display:grid;grid-template-columns:100px repeat(' + pillarKeys.length + ',1fr);gap:3px">';
+
+    // Header row
+    gridHtml += '<div></div>';
+    pillarKeys.forEach(function(pKey) {
+      var p = schemaV4.pillars[pKey];
+      gridHtml += '<div style="text-align:center;padding:.6rem .4rem;background:rgba(255,255,255,.03);border-radius:8px 8px 0 0">';
+      gridHtml += '<div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:' + p.color_accent + '">' + p.label + '</div>';
+      gridHtml += '<div style="font-size:.5rem;color:rgba(255,255,255,.35);margin-top:.15rem">' + p.question + '</div>';
+      gridHtml += '</div>';
+    });
+
+    // Lane rows
+    laneKeys.forEach(function(lKey) {
+      var lane = schemaV4.lanes[lKey];
+      var laneTier = v4LaneTiers[lKey] || 'Foundation';
+
+      // Lane label cell
+      gridHtml += '<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;padding:.5rem;background:rgba(255,255,255,.02);border-radius:8px 0 0 8px">';
+      gridHtml += '<div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:' + lane.color + ';text-align:center">' + lane.label + '</div>';
+      gridHtml += '<div style="margin-top:.3rem;padding:.1rem .4rem;border-radius:100px;font-size:.5rem;font-weight:700;background:' + tierBg(laneTier) + ';color:' + tierColor(laneTier) + '">' + laneTier + '</div>';
+      gridHtml += '</div>';
+
+      // Pillar cells
+      pillarKeys.forEach(function(pKey) {
+        var pillarTier = v4PillarTiers[lKey] ? v4PillarTiers[lKey][pKey] || 'Foundation' : 'Foundation';
+        var cellMetrics = Object.entries(schemaV4.metrics).filter(function(e) { return e[1].lane === lKey && e[1].pillar === pKey; });
+        var deepLink = lKey === 'copilot' ? '#reach' : '#skill';
+
+        gridHtml += '<a href="' + deepLink + '" style="text-decoration:none;display:block;padding:.6rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:6px;transition:all .2s" onmouseover="this.style.background=\'rgba(255,255,255,.07)\';this.style.borderColor=\'rgba(255,255,255,.12)\'" onmouseout="this.style.background=\'rgba(255,255,255,.03)\';this.style.borderColor=\'rgba(255,255,255,.05)\'">';
+        gridHtml += '<div style="text-align:right;margin-bottom:.4rem"><span style="padding:.1rem .35rem;border-radius:100px;font-size:.45rem;font-weight:700;background:' + tierBg(pillarTier) + ';color:' + tierColor(pillarTier) + '">' + pillarTier + '</span></div>';
+
+        cellMetrics.forEach(function(entry) {
+          var mId = entry[0], mDef = entry[1];
+          var val = data[mDef.data_field];
+          var display = typeof val === 'number' ? (Number.isInteger(val) ? String(val) : String(Math.round(val * 10) / 10)) : '\u2014';
+          var mTier = v4Tiers[mId] || 'Foundation';
+          gridHtml += '<div style="margin-bottom:.35rem">';
+          gridHtml += '<div style="font-size:.45rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:rgba(255,255,255,.35)">' + mDef.name + '</div>';
+          gridHtml += '<div style="font-size:.9rem;font-weight:800;color:' + tierColor(mTier) + '">' + display + (mDef.unit === '%' ? '%' : '') + '</div>';
+          gridHtml += '</div>';
+        });
+
+        gridHtml += '</a>';
+      });
+    });
+
+    gridHtml += '</div>';
+    html = html.replace(/\{\{V2_SCORECARD_HTML\}\}/g, gridHtml);
+    html = html.replace(/\{\{V4_SCORECARD_HTML\}\}/g, gridHtml);
   } else {
     html = html.replace(/\{\{V2_SCORECARD_HTML\}\}/g, '');
+    html = html.replace(/\{\{V4_SCORECARD_HTML\}\}/g, '');
   }
 
   // Org scatter chart data — transform to Chart.js bubble dataset format
@@ -956,6 +1034,13 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     };
   });
   html = html.replace(/\{\{ORG_SCATTER_DATA\}\}/g, safeJSON(scatterDatasets, 'org_scatter_data'));
+
+  // Concentration Index — % of orgs above median usage
+  if (orgScatter.length >= 2 && !data.concentration_index) {
+    var usages = orgScatter.map(function(o) { return o.x || 0; }).sort(function(a, b) { return a - b; });
+    var median = usages[Math.floor(usages.length / 2)];
+    data.concentration_index = Math.round(usages.filter(function(u) { return u >= median; }).length / usages.length * 100);
+  }
 
   // Org scatter insights — dynamic from the data
   var orgInsights = '';
