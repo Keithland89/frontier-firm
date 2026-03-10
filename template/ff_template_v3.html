@@ -1121,18 +1121,6 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       </div>
     </div>
 
-    <!-- Monthly cohort flow -->
-    <div class="slide-frame reveal" style="--signal-accent:#F59E0B;margin-top:1.5rem">
-      <div class="slide-label">Monthly Cohort Flow</div>
-      <div class="two-col reveal reveal-d1">
-        <div class="chart-card" style="flex:1.5"><div class="chart-card-title">Month-over-Month User Flow</div><div class="chart-card-sub">Retained (came back) + New (first time) + Churned (didn't return)</div><div class="tier-toggle" data-chart="cohortFlow"><button class="tier-nav-btn tier-chart-btn active" data-tier="all">All Users</button><button class="tier-nav-btn tier-chart-btn" data-tier="m365">M365 Copilot</button><button class="tier-nav-btn tier-chart-btn" data-tier="chat">Copilot Chat</button><button class="tier-nav-btn tier-chart-btn" data-tier="agents">Agents</button></div><div style="height:280px"><canvas id="chartCohortFlow"></canvas></div></div>
-        <div style="display:flex;flex-direction:column;gap:1rem">
-          <div class="stat-callout" style="--accent:#2264E5"><div class="stat-callout-val">{{M365_RETENTION}}%</div><div class="stat-callout-label">licensed M365 Copilot users retained month-over-month</div></div>
-          <div class="stat-callout" style="--accent:#0EA5E9"><div class="stat-callout-val">{{CHAT_RETENTION}}%</div><div class="stat-callout-label">unlicensed Chat users retained — {{COHORT_CHURN_DELTA}} lower than licensed</div></div>
-          <div class="stat-callout" style="--accent:#7B2FF2"><div class="stat-callout-val">{{AGENT_RETENTION}}%</div><div class="stat-callout-label">agent users retained — highest churn signals experimental usage</div></div>
-        </div>
-      </div>
-    </div>
 
     <div class="so-what reveal" style="--signal-accent:#F59E0B;margin-top:1.5rem">
       <div class="so-what-text">{{INSIGHT_HABIT}}</div>
@@ -1144,7 +1132,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <div class="two-col reveal reveal-d1">
         <div class="chart-card" style="flex:1.5;margin-bottom:0">
           <div class="chart-card-title">Active Day Distribution — Monthly Trend</div>
-          <div class="chart-card-sub">How the frequency mix evolves over time. "Habitual" (11+ days) is the metric that matters.</div>
+          <div class="chart-card-sub">How the frequency mix evolves over time. 11+ active days is the metric that matters.</div>
           <div class="tier-toggle" data-chart="habit"><button class="tier-nav-btn tier-chart-btn active" data-tier="m365">M365 Copilot</button><button class="tier-nav-btn tier-chart-btn" data-tier="chat">Copilot Chat</button><button class="tier-nav-btn tier-chart-btn" data-tier="agents">Agents</button></div>
           <div style="height:280px"><canvas id="chartHabit"></canvas></div>
         </div>
@@ -1456,9 +1444,6 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
         <div style="font-size:.75rem;font-weight:600;color:#7B2FF2">Skill</div>
         <div style="height:10px;border-radius:5px;background:var(--border);overflow:hidden"><div class="signal-gauge-fill" data-width="{{SKILL_GAUGE}}" style="width:0;height:100%;border-radius:5px;background:linear-gradient(90deg,#7B2FF2,#9B5FFF)"></div></div>
         <span class="signal-tier {{SKILL_TIER_CLASS}}" style="font-size:.55rem">{{SKILL_TIER}}</span>
-        <div style="font-size:.75rem;font-weight:600;color:#10B981">Value</div>
-        <div style="height:10px;border-radius:5px;background:var(--border);overflow:hidden"><div class="signal-gauge-fill" data-width="{{VALUE_GAUGE}}" style="width:0;height:100%;border-radius:5px;background:linear-gradient(90deg,#10B981,#34D399)"></div></div>
-        <span class="signal-tier {{VALUE_TIER_CLASS}}" style="font-size:.55rem">{{VALUE_TIER}}</span>
       </div>
     </div>
 
@@ -1470,7 +1455,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 
     <!-- V2 Scorecard: 11 metrics across 3 signals (Reach, Habit, Skill) -->
     <div class="reveal reveal-d6" style="margin-top:1.5rem">
-      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);margin-bottom:.25rem">Simplified Scorecard — 11 Metrics &middot; 3 Signals</div>
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);margin-bottom:.25rem">Scorecard — 11 Metrics &middot; 3 Signals</div>
       <p style="font-size:.65rem;color:rgba(255,255,255,.35);margin:0 0 .5rem;font-style:italic">Click any card to see the definition and thresholds.</p>
       {{V2_SCORECARD_HTML}}
     </div>
@@ -1637,10 +1622,10 @@ function getHabitDatasets(tierKey){
   if(!d)return{labels:[],datasets:[]};
   const lbls=tierKey==='agents'&&_perTierAD.agentLabels?_perTierAD.agentLabels:_perTierAD.labels;
   return{labels:lbls,datasets:[
-    {label:'1-5 Days',data:d.map(r=>r.b1_5),backgroundColor:'rgba(123,47,242,.55)',borderRadius:{topLeft:0,topRight:0,bottomLeft:4,bottomRight:4}},
-    {label:'6-10 Days',data:d.map(r=>r.b6_10),backgroundColor:'rgba(34,100,229,.6)',borderRadius:0},
-    {label:'11-19 Days',data:d.map(r=>r.b11_19),backgroundColor:'rgba(14,165,233,.7)',borderRadius:0},
-    {label:'20+ Days',data:d.map(r=>r.b20),backgroundColor:'rgba(16,185,129,.8)',borderRadius:{topLeft:4,topRight:4,bottomLeft:0,bottomRight:0}}
+    {label:'1-5 Active Days',data:d.map(r=>r.b1_5),backgroundColor:'rgba(123,47,242,.55)',borderRadius:{topLeft:0,topRight:0,bottomLeft:4,bottomRight:4}},
+    {label:'6-10 Active Days',data:d.map(r=>r.b6_10),backgroundColor:'rgba(34,100,229,.6)',borderRadius:0},
+    {label:'11-15 Active Days',data:d.map(r=>r.b11_19),backgroundColor:'rgba(14,165,233,.7)',borderRadius:0},
+    {label:'16+ Active Days',data:d.map(r=>r.b20),backgroundColor:'rgba(16,185,129,.8)',borderRadius:{topLeft:4,topRight:4,bottomLeft:0,bottomRight:0}}
   ]};
 }
 const _habitInit=getHabitDatasets(_habitDefaultTier);
@@ -1657,11 +1642,6 @@ new Chart(document.getElementById('chartAgentSessions'),{type:'bar',data:{labels
 /* Chart: Retention */
 new Chart(document.getElementById('chartRetention'),{type:'doughnut',data:{labels:['Retained ({{RETENTION_MONTH_FROM}} -> {{RETENTION_MONTH_TO}})','Churned'],datasets:[{data:[{{RETAINED_USERS}},{{CHURNED_USERS}}],backgroundColor:['#2264E5','rgba(255,255,255,.08)'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false},datalabels:{display:ctx=>ctx.dataIndex===0,color:'#fff',font:{weight:800,size:22},formatter:()=>'{{M365_RETENTION}}%'}}}});
 
-/* Chart: Cohort Flow */
-let chartCohortFlowInst;
-if(document.getElementById('chartCohortFlow')){
-chartCohortFlowInst=new Chart(document.getElementById('chartCohortFlow'),{type:'bar',data:{labels:{{COHORT_LABELS_JSON}},datasets:[{label:'Retained',data:{{COHORT_RETAINED_JSON}},backgroundColor:'rgba(34,100,229,.7)',borderRadius:4},{label:'New Users',data:{{COHORT_NEW_JSON}},backgroundColor:'rgba(14,165,233,.6)',borderRadius:4},{label:'Churned',data:{{COHORT_CHURNED_JSON}},backgroundColor:'rgba(239,68,68,.35)',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,pointStyle:'circle',padding:16,font:{size:10,weight:500},color:cLegend}},datalabels:{display:ctx=>ctx.dataset.data[ctx.dataIndex]>2000,color:'#fff',font:{weight:700,size:10},formatter:v=>Math.round(v/1000)+'K'}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}},y:{stacked:true,grid:{color:cGrid},ticks:{color:cTickSub,callback:v=>Math.round(v/1000)+'K'}}}}});
-}
 
 /* Chart: License ROI */
 new Chart(document.getElementById('chartLicense'),{type:'doughnut',data:{labels:['Active','Inactive'],datasets:[{data:[{{LICENSED_USERS}},{{INACTIVE_LICENSES}}],backgroundColor:['#2264E5','rgba(148,163,184,.2)'],borderWidth:3,borderColor:'rgba(10,10,26,.9)',hoverBackgroundColor:['#4A8AFF','rgba(148,163,184,.35)'],hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},datalabels:{display:false}}}});
@@ -1670,7 +1650,6 @@ new Chart(document.getElementById('chartLicense'),{type:'doughnut',data:{labels:
 const _perTierMU={{PER_TIER_MONTHLY_USERS_JSON}};
 const _perTierRet={{PER_TIER_RETENTION_JSON}};
 const _allMonthlyUsers={{MONTHLY_USERS_JSON}};
-const _allCohort={retained:{{COHORT_RETAINED_JSON}},new_users:{{COHORT_NEW_JSON}},churned:{{COHORT_CHURNED_JSON}}};
 const _tierColors={m365:'#2264E5',chat:'#0EA5E9',agents:'#7B2FF2',all:'#F59E0B'};
 
 document.querySelectorAll('.tier-toggle').forEach(container=>{
@@ -1699,24 +1678,6 @@ document.querySelectorAll('.tier-toggle').forEach(container=>{
         c.update();
       }
 
-      if(chartTarget==='cohortFlow'&&chartCohortFlowInst){
-        const c=chartCohortFlowInst;
-        if(tier==='all'){
-          c.data.datasets[0].data=_allCohort.retained;
-          c.data.datasets[1].data=_allCohort.new_users;
-          c.data.datasets[2].data=_allCohort.churned;
-          c.data.labels={{COHORT_LABELS_JSON}};
-        }else if(_perTierRet){
-          const td=_perTierRet[tier];
-          if(td){
-            c.data.labels=_perTierRet.labels;
-            c.data.datasets[0].data=td.retained;
-            c.data.datasets[1].data=td.new_users;
-            c.data.datasets[2].data=td.churned;
-          }
-        }
-        c.update();
-      }
 
       if(chartTarget==='habit'&&chartHabitInst){
         const hd=getHabitDatasets(tier);

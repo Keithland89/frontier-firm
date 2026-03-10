@@ -88,6 +88,16 @@
         "agents": 775
       }
     ],
+    "license_priority_orgs": [
+      {"org": "VOIN", "licensed": 11112, "unlicensed": 2024, "ratio": 0.18},
+      {"org": "UK", "licensed": 5935, "unlicensed": 474, "ratio": 0.08},
+      {"org": "VOEG", "licensed": 4058, "unlicensed": 978, "ratio": 0.24},
+      {"org": "RO", "licensed": 1417, "unlicensed": 569, "ratio": 0.40},
+      {"org": "VORO", "licensed": 2072, "unlicensed": 417, "ratio": 0.20},
+      {"org": "CZ", "licensed": 1113, "unlicensed": 361, "ratio": 0.32},
+      {"org": "VOHU", "licensed": 975, "unlicensed": 187, "ratio": 0.19},
+      {"org": "ZA", "licensed": 0, "unlicensed": 1542, "ratio": 999}
+    ],
     "app_interactions": {
       "office": {
         "interactions": 1139872,
@@ -444,7 +454,7 @@
   "chat_retention": 59.6,
   "agent_retention": 85.2,
   "agent_creators_pct": 0,
-  "agents_keep": 0,
-  "agents_review": 0,
-  "agents_retire": 0
+  "agents_keep": 1594,
+  "agents_review": 623,
+  "agents_retire": 521
 }
