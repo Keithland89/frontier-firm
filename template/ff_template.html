@@ -902,6 +902,34 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 .sc-commentary-list li{margin-bottom:4px}
 @media(max-width:768px){.sc-details{grid-template-columns:1fr}.sc-detail-stat-value{font-size:1rem}}
 @media print{.sc-details{break-inside:avoid}}
+
+/* Side-by-side commentary panels */
+.sc-commentary-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:20px 24px}
+.sc-commentary-panel{border-radius:10px;padding:18px 20px}
+.sc-commentary-panel--win{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15)}
+.sc-commentary-panel--act{background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15)}
+.sc-commentary-panel-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:.82rem;font-weight:700;letter-spacing:0.04em}
+.sc-commentary-panel--win .sc-commentary-panel-header{color:#10B981}
+.sc-commentary-panel--act .sc-commentary-panel-header{color:#F59E0B}
+.sc-commentary-panel-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
+.sc-commentary-panel--win .sc-commentary-panel-icon{background:rgba(16,185,129,0.15);color:#10B981}
+.sc-commentary-panel--act .sc-commentary-panel-icon{background:rgba(245,158,11,0.15);color:#F59E0B}
+.sc-commentary-panel p{font-size:.92rem;line-height:1.65;color:#94a3b8;margin:0 0 10px 0}
+.sc-commentary-panel p:last-child{margin-bottom:0}
+.sc-commentary-panel strong{color:#f0f4fc;font-weight:600}
+.sc-commentary-panel .sc-highlight{display:inline;padding:1px 6px;border-radius:4px;font-weight:700;font-variant-numeric:tabular-nums}
+.sc-commentary-panel--win .sc-highlight{background:rgba(16,185,129,0.12);color:#34d399}
+.sc-commentary-panel--act .sc-highlight{background:rgba(245,158,11,0.12);color:#fbbf24}
+
+/* McKinsey narrative style */
+.sc-narrative{padding:20px 24px;font-size:.95rem;line-height:1.75;color:#94a3b8}
+.sc-narrative strong{color:#f0f4fc;font-weight:600}
+.sc-narrative .num{font-weight:700;font-variant-numeric:tabular-nums;color:#f0f4fc}
+.sc-narrative .win{color:#34d399}
+.sc-narrative .gap{color:#fbbf24}
+.sc-narrative .divider{display:block;width:40px;height:2px;margin:14px 0;border-radius:1px}
+.sc-narrative .divider--win{background:rgba(16,185,129,.4)}
+.sc-narrative .divider--gap{background:rgba(245,158,11,.4)}
 </style>
 </head>
 <body>
@@ -1091,16 +1119,19 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
         <div class="sc-metric-name">Copilot Reach</div>
         <div class="sc-metric-value">{{SC_COMBINED_REACH_PCT}}%</div>
         <div class="sc-metric-note">Total Copilot users / total employees</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{SC_COMBINED_REACH_PCT}}%;background:#0EA5E9"></div></div>
       </div>
       <div class="sc-cell">
         <div class="sc-metric-name">Habitual Users</div>
         <div class="sc-metric-value">{{SC_COMBINED_HABITUAL_PCT}}%</div>
         <div class="sc-metric-note">Users with 11+ active days/month</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{SC_COMBINED_HABITUAL_PCT}}%;background:#F59E0B"></div></div>
       </div>
       <div class="sc-cell">
         <div class="sc-metric-name">Deep Interactions</div>
         <div class="sc-metric-value">{{SC_MULTI_TURN_PCT}}%</div>
         <div class="sc-metric-note">Sessions with 5+ prompts</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{SC_MULTI_TURN_PCT}}%;background:#7B2FF2"></div></div>
       </div>
 
       <!-- Pattern 2: Expansion (active row for customer) -->
@@ -1114,16 +1145,19 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
         <div class="sc-metric-name">Agent Active Users</div>
         <div class="sc-metric-value">{{AGENT_ADOPTION}}%</div>
         <div class="sc-metric-note">{{AGENT_USERS}} users across {{SC_TOTAL_AGENTS_FULL}} agents</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{AGENT_ADOPTION}}%;background:#0EA5E9"></div></div>
       </div>
       <div class="sc-cell sc-active">
         <div class="sc-metric-name">Agent MoM Retention</div>
         <div class="sc-metric-value">{{SC_AGENT_MOM_RETENTION}}%</div>
         <div class="sc-metric-note">Agent users who return next month</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{SC_AGENT_MOM_RETENTION}}%;background:#F59E0B"></div></div>
       </div>
       <div class="sc-cell sc-active">
         <div class="sc-metric-name">Users with 3+ Agents</div>
         <div class="sc-metric-value">{{SC_PCT_USERS_3PLUS_AGENTS}}%</div>
         <div class="sc-metric-note">{{SC_USERS_3PLUS_AGENTS}} users exploring multiple agents</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{SC_PCT_USERS_3PLUS_AGENTS}}%;background:#7B2FF2"></div></div>
       </div>
 
       <!-- Pattern 3: Frontier -->
@@ -1133,19 +1167,22 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
         <div class="sc-phase-desc">Agents embedded in org workflows at scale</div>
       </div>
       <div class="sc-cell">
-        <div class="sc-metric-name">Agent Return Rate</div>
-        <div class="sc-metric-value">{{SC_PCT_AGENTS_RETURN_50}}%</div>
-        <div class="sc-metric-note">Agents with >50% user return</div>
+        <div class="sc-metric-name">Agents Active</div>
+        <div class="sc-metric-value">{{AGENT_ADOPTION}}%</div>
+        <div class="sc-metric-note">% of users engaging with agents</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{AGENT_ADOPTION}}%;background:#0EA5E9"></div></div>
       </div>
       <div class="sc-cell">
-        <div class="sc-metric-name">Avg Sessions / Agent</div>
-        <div class="sc-metric-value">—</div>
-        <div class="sc-metric-note">Coming soon</div>
+        <div class="sc-metric-name">Agent Habitual Users</div>
+        <div class="sc-metric-value">{{AGENT_HABITUAL_PCT}}%</div>
+        <div class="sc-metric-note">Agent users with 11+ active days</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{AGENT_HABITUAL_PCT}}%;background:#F59E0B"></div></div>
       </div>
       <div class="sc-cell">
         <div class="sc-metric-name">Agents 5+ Users</div>
         <div class="sc-metric-value">{{SC_PCT_AGENTS_5PLUS_USERS}}%</div>
         <div class="sc-metric-note">Agents with broad team adoption</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{SC_PCT_AGENTS_5PLUS_USERS}}%;background:#7B2FF2"></div></div>
       </div>
     </div>
   </div>
@@ -1180,22 +1217,11 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
             <div class="sc-detail-stat-label">Licensed</div>
           </div>
         </div>
-        <div class="sc-detail-narrative">
-          <div style="margin-bottom:18px">
-            <div class="sc-commentary-heading" style="color:#10B981">✓ Greenshoots</div>
-            <ul class="sc-commentary-list">
-              <li><strong>+{{SC_GROWTH_PCT}}% in {{SC_GROWTH_MONTHS}} months</strong> — user base grew from 2,282 to {{TOTAL_ACTIVE_USERS}}, with May showing +20% month-on-month acceleration</li>
-              <li><strong>{{CHAT_USERS_FMT}} organic Chat adopters</strong> outnumber {{LICENSED_USERS}} licensed users — demand is real, not mandated</li>
-              <li><strong>IT leads</strong> with an 8.3 habit score; Sales (7.9) and HR (7.7) close behind</li>
-            </ul>
-          </div>
-          <div>
-            <div class="sc-commentary-heading" style="color:#F59E0B">⚡ Highest-return action</div>
-            <ul class="sc-commentary-list">
-              <li><strong>484 licences sit unused</strong> — reassign to top free-tier users in Support, Operations, and HR where unlicensed-to-licensed ratios exceed 1.6:1</li>
-              <li>Licensed users generate <strong>{{LICENSE_PRIORITY}}× more prompts</strong> — every converted licence amplifies output</li>
-            </ul>
-          </div>
+        <div class="sc-narrative">
+          <span class="divider divider--win"></span>
+          The user base grew <span class="num win">+{{SC_GROWTH_PCT}}%</span> in {{SC_GROWTH_MONTHS}} months — from 2,282 to <span class="num">{{TOTAL_ACTIVE_USERS}}</span> users — with May accelerating at +20% month-on-month. Critically, <strong>{{CHAT_USERS_FMT}} organic Chat adopters</strong> outnumber <span class="num">{{LICENSED_USERS}}</span> licensed users, signalling that demand is real, not mandated. <strong>IT</strong> (8.3 habit score), <strong>Sales</strong> (7.9) and <strong>HR</strong> (7.7) are leading the charge.
+          <span class="divider divider--gap"></span>
+          The biggest unlock sits in <strong>484 unused licences</strong>. Reassigning them to top free-tier users in Support, Operations and HR — where unlicensed-to-licensed ratios exceed 1.6:1 — would immediately expand depth. Licensed users already generate <span class="num gap">{{LICENSE_PRIORITY}}×</span> more prompts, so every conversion directly amplifies output.
         </div>
       </div>
 
@@ -1215,22 +1241,11 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
             <div class="sc-detail-stat-label">M365 Sessions / Wk</div>
           </div>
         </div>
-        <div class="sc-detail-narrative">
-          <div style="margin-bottom:18px">
-            <div class="sc-commentary-heading" style="color:#10B981">✓ Greenshoots</div>
-            <ul class="sc-commentary-list">
-              <li><strong>{{SC_HABITUAL_USERS}} power users</strong> at 11+ active days — evenly split between Chat ({{SC_CHAT_HAB_11PLUS_PCT}}%) and M365 ({{SC_M365_HAB_11PLUS_PCT}}%), showing habit is cross-channel</li>
-              <li><strong>79% month-on-month retention</strong> — users who start tend to stick</li>
-              <li><strong>IT and Sales</strong> have the deepest habits — use them as internal champions</li>
-            </ul>
-          </div>
-          <div>
-            <div class="sc-commentary-heading" style="color:#F59E0B">⚡ Highest-return action</div>
-            <ul class="sc-commentary-list">
-              <li><strong>396 users in the 6–10 day band</strong> — they already use Copilot weekly, just not daily. Targeted nudges (prompt-of-the-day, use-case playbooks) could tip them into habitual</li>
-              <li><strong>Legal (4.5) and Marketing (5.1)</strong> have the weakest habit scores — run department-specific enablement sprints</li>
-            </ul>
-          </div>
+        <div class="sc-narrative">
+          <span class="divider divider--win"></span>
+          <span class="num win">{{SC_HABITUAL_USERS}}</span> users have crossed the 11+ active-day threshold, split evenly between Chat (<span class="num">{{SC_CHAT_HAB_11PLUS_PCT}}%</span>) and M365 (<span class="num">{{SC_M365_HAB_11PLUS_PCT}}%</span>) — proving habit is forming across channels, not siloed. Month-on-month retention sits at a solid <strong>79%</strong>, meaning users who start tend to stick. <strong>IT</strong> and <strong>Sales</strong> show the deepest habits and should be leveraged as internal champions.
+          <span class="divider divider--gap"></span>
+          The clearest conversion opportunity is the <span class="num gap">396 users in the 6–10 day band</span>. They already use Copilot weekly — targeted nudges like prompt-of-the-day or department playbooks could tip them into habitual use. Meanwhile, <strong>Legal</strong> (4.5 habit score) and <strong>Marketing</strong> (5.1) trail significantly — department-specific enablement sprints would have the highest impact here.
         </div>
       </div>
 
@@ -1250,130 +1265,14 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
             <div class="sc-detail-stat-label">Apps per User</div>
           </div>
         </div>
-        <div class="sc-detail-narrative">
-          <div style="margin-bottom:18px">
-            <div class="sc-commentary-heading" style="color:#10B981">✓ Greenshoots</div>
-            <ul class="sc-commentary-list">
-              <li><strong>{{M365_BREADTH}} M365 apps per user</strong> — Frontier-level breadth means users are not siloed in one tool</li>
-              <li><strong>Licensed users generate {{LICENSED_AVG_PROMPTS}} prompts/month</strong> vs {{UNLICENSED_AVG_PROMPTS}} unlicensed — a {{LICENSE_PRIORITY}}× depth premium that proves licensing value</li>
-              <li><strong>Prompt volume grew +80%</strong> (71K → 128K) in 3 months while per-user intensity rose from 31 to 42</li>
-            </ul>
-          </div>
-          <div>
-            <div class="sc-commentary-heading" style="color:#F59E0B">⚡ Highest-return action</div>
-            <ul class="sc-commentary-list">
-              <li><strong>82.5% of sessions are single-shot</strong> — train users to iterate (refine, follow up, chain tasks) rather than one-and-done queries</li>
-              <li><strong>Share power-user prompt patterns</strong> from IT and Sales with lagging departments to accelerate skill transfer</li>
-            </ul>
-          </div>
+        <div class="sc-narrative">
+          <span class="divider divider--win"></span>
+          Users engage with <span class="num win">{{M365_BREADTH}} M365 apps</span> on average — Frontier-level breadth that shows AI is woven across the full suite, not confined to one tool. Licensed users generate <span class="num">{{LICENSED_AVG_PROMPTS}}</span> prompts per month versus <span class="num">{{UNLICENSED_AVG_PROMPTS}}</span> for unlicensed — a <strong>{{LICENSE_PRIORITY}}× depth premium</strong> that validates the licence investment. Overall prompt volume grew <strong>+80%</strong> in three months while per-user intensity rose from 31 to 42.
+          <span class="divider divider--gap"></span>
+          The gap is depth: <span class="num gap">82.5%</span> of sessions are still single-shot. Training users to iterate — refine outputs, ask follow-ups, chain tasks — would materially increase value per session. Sharing power-user prompt patterns from <strong>IT</strong> and <strong>Sales</strong> with lagging departments is the fastest route to accelerating skill transfer org-wide.
         </div>
       </div>
 
-    </div>
-        </div>
-        <div class="sc-detail-narrative" style="padding:20px 24px">
-          <div style="margin-bottom:14px">
-            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#10B981;margin-bottom:8px">✓ What's going well</div>
-            <ul style="margin:0;padding-left:1.2em;font-size:.88rem;color:var(--text-2);line-height:1.8">
-              <li>{{CHAT_USERS_FMT}} free Chat users adopted organically — outnumbering {{LICENSED_USERS}} licensed users</li>
-              <li>+{{SC_GROWTH_PCT}}% user growth over {{SC_GROWTH_MONTHS}} months</li>
-              <li>{{SC_COMBINED_REACH_PCT}}% of the {{SC_TOTAL_EMPLOYEES}}-person workforce now active</li>
-            </ul>
-          </div>
-          <div>
-            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#F59E0B;margin-bottom:8px">⚡ What could improve</div>
-            <ul style="margin:0;padding-left:1.2em;font-size:.88rem;color:var(--text-2);line-height:1.8">
-              <li>Only {{LICENSE_COVERAGE_PCT}}% of active users hold an M365 licence</li>
-              <li>Large unlicensed base = proven demand — convert to unlock deeper M365 integration</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- P1 Habit Detail -->
-      <div class="sc-detail-card" style="border-top:3px solid #F59E0B">
-        <div class="sc-detail-header">
-          <div class="sc-detail-signal" style="color:#F59E0B">② Habit</div>
-          <div class="sc-detail-phase">{{SC_COMBINED_HABITUAL_PCT}}% habitual (11+ days)</div>
-        </div>
-        <div class="sc-detail-stats">
-          <div class="sc-detail-stat">
-            <div class="sc-detail-stat-value" style="color:#F59E0B">{{SC_CHAT_HAB_11PLUS_PCT}}%</div>
-            <div class="sc-detail-stat-label">Chat Habitual (11+ days)</div>
-          </div>
-          <div class="sc-detail-stat">
-            <div class="sc-detail-stat-value" style="color:#F59E0B">{{SC_M365_HAB_11PLUS_PCT}}%</div>
-            <div class="sc-detail-stat-label">M365 Habitual (11+ days)</div>
-          </div>
-          <div class="sc-detail-stat">
-            <div class="sc-detail-stat-value">{{WEEKLY_CHAT}}</div>
-            <div class="sc-detail-stat-label">Chat Sessions / Week</div>
-          </div>
-          <div class="sc-detail-stat">
-            <div class="sc-detail-stat-value">{{WEEKLY_M365}}</div>
-            <div class="sc-detail-stat-label">M365 Sessions / Week</div>
-          </div>
-        </div>
-        <div class="sc-detail-narrative" style="padding:20px 24px">
-          <div style="margin-bottom:14px">
-            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#10B981;margin-bottom:8px">✓ What's going well</div>
-            <ul style="margin:0;padding-left:1.2em;font-size:.88rem;color:var(--text-2);line-height:1.8">
-              <li>Habitual rates balanced across channels: {{SC_CHAT_HAB_11PLUS_PCT}}% Chat, {{SC_M365_HAB_11PLUS_PCT}}% M365</li>
-              <li>{{SC_HABITUAL_USERS}} users at 11+ active days/month — habit is forming, not siloed</li>
-            </ul>
-          </div>
-          <div>
-            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#F59E0B;margin-bottom:8px">⚡ What could improve</div>
-            <ul style="margin:0;padding-left:1.2em;font-size:.88rem;color:var(--text-2);line-height:1.8">
-              <li>~80% of users remain light or moderate (fewer than 11 active days)</li>
-              <li>Weekly sessions average {{WEEKLY_CHAT}} (Chat) and {{WEEKLY_M365}} (M365) — a few times per week, not daily</li>
-              <li>Target the "moderate" cohort (6–10 days) — they are closest to tipping into habitual use</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- P1 Skill Detail -->
-      <div class="sc-detail-card" style="border-top:3px solid #7B2FF2">
-        <div class="sc-detail-header">
-          <div class="sc-detail-signal" style="color:#7B2FF2">③ Skill</div>
-          <div class="sc-detail-phase">{{SC_MULTI_TURN_PCT}}% deep interactions</div>
-        </div>
-        <div class="sc-detail-stats">
-          <div class="sc-detail-stat">
-            <div class="sc-detail-stat-value" style="color:#7B2FF2">{{SC_MULTI_TURN_PCT}}%</div>
-            <div class="sc-detail-stat-label">Multi-Turn Sessions (5+ prompts)</div>
-          </div>
-          <div class="sc-detail-stat">
-            <div class="sc-detail-stat-value" style="color:#7B2FF2">{{M365_BREADTH}}</div>
-            <div class="sc-detail-stat-label">Avg Apps per User</div>
-          </div>
-          <div class="sc-detail-stat">
-            <div class="sc-detail-stat-value">{{LICENSED_AVG_PROMPTS}}</div>
-            <div class="sc-detail-stat-label">Licensed Prompts / Month</div>
-          </div>
-          <div class="sc-detail-stat">
-            <div class="sc-detail-stat-value">{{UNLICENSED_AVG_PROMPTS}}</div>
-            <div class="sc-detail-stat-label">Unlicensed Prompts / Month</div>
-          </div>
-        </div>
-        <div class="sc-detail-narrative" style="padding:20px 24px">
-          <div style="margin-bottom:14px">
-            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#10B981;margin-bottom:8px">✓ What's going well</div>
-            <ul style="margin:0;padding-left:1.2em;font-size:.88rem;color:var(--text-2);line-height:1.8">
-              <li>{{M365_BREADTH}} M365 apps per user — well above the Frontier threshold</li>
-              <li>Licensed users generate {{LICENSED_AVG_PROMPTS}} prompts/month ({{LICENSE_PRIORITY}}× unlicensed) — licensing drives depth</li>
-            </ul>
-          </div>
-          <div>
-            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#F59E0B;margin-bottom:8px">⚡ What could improve</div>
-            <ul style="margin:0;padding-left:1.2em;font-size:.88rem;color:var(--text-2);line-height:1.8">
-              <li>Only {{SC_MULTI_TURN_PCT}}% of sessions reach 5+ prompts — most interactions are single-shot</li>
-              <li>Coach users on multi-turn dialogue (refine outputs, ask follow-ups) to increase value per session</li>
-            </ul>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </section>
