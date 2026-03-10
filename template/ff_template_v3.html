@@ -1202,12 +1202,6 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <div class="headline-stat-label">apps per user out of 27 available — with only {{COMPLEX_SESSIONS}}% of sessions involving complex multi-turn work</div>
       <span class="headline-stat-tier {{SKILL_TIER_CLASS}}" style="background:rgba(123,47,242,.1);color:#7B2FF2;border:1px solid rgba(123,47,242,.15)">{{SKILL_TIER}}</span>
     </div>
-    <div class="tier-nav reveal reveal-d2">
-      <button class="tier-nav-btn active" data-tier="all">Overall</button>
-      <button class="tier-nav-btn" data-tier="m365">M365 Copilot</button>
-      <button class="tier-nav-btn" data-tier="agents">Agents</button>
-    </div>
-    <div class="tier-group" data-tier-content="all">
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1.5rem 0" class="reveal reveal-d3">
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--purple)">
         <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--purple);margin-bottom:.3rem">App Surface Breadth</div>
@@ -1258,69 +1252,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 
     <div class="so-what reveal" style="--signal-accent:#7B2FF2">
       <div class="so-what-text">{{INSIGHT_SKILL}}</div>
-    </div></div><!-- /tier-group overall -->
-    <div class="tier-group" data-tier-content="m365">
-    <div class="tier-header" data-tier="m365"><span class="tier-header-badge m365">M365 Copilot</span><span class="tier-header-label">Licensed Copilot Proficiency</span></div>
-    <div style="margin-top:1rem" class="reveal reveal-d2">
-      <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">M365 Copilot App Surface Distribution <span style="display:inline-block;padding:.15rem .5rem;border-radius:100px;font-size:.6rem;font-weight:600;background:rgba(34,100,229,.1);color:var(--brand);border:1px solid rgba(34,100,229,.2)">M365 Copilot</span></h3>
-      <p style="font-size:.88rem;color:var(--text-2);margin-bottom:1.5rem">With only {{M365_BREADTH}} apps/user average, expanding into Teams meetings and Outlook email workflows is the fastest path to depth.</p>
-      <div style="display:flex;flex-direction:column;gap:.5rem;max-width:700px">
-        {{APP_SURFACE_BARS}}
-      </div>
-      <div class="insight-box insight-box--warning" style="--accent:#F59E0B;margin-top:1.25rem"><div class="insight-box-eyebrow">Growth Signal</div>{{SKILL_GROWTH_SIGNAL}}</div>
-      <p style="font-size:.72rem;color:var(--text-3);margin-top:1rem">{{ORG_FUNCTION_SUMMARY}}</p>
     </div>
-    </div><!-- /tier-group m365 -->
-    <div class="detail-toggle-bar reveal" style="margin-top:1.5rem" onclick="this.classList.toggle('open');document.getElementById('agentDeepDive').classList.toggle('open')"><span>View detailed agent analysis</span><span class="arr">&#9660;</span></div><div class="detail-section" id="agentDeepDive"><div class="tier-group" data-tier-content="agents">
-    <div class="tier-header" data-tier="agents"><span class="tier-header-badge agents">Agents</span><span class="tier-header-label">Agent Ecosystem & Proficiency</span></div>
-    <div class="agent-grid">
-      <div class="agent-panel reveal reveal-d2">
-        <h3>The Discovery Gap <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(123,47,242,.1);color:#7B2FF2;border:1px solid rgba(123,47,242,.15);margin-left:.4rem;vertical-align:middle">Agents</span></h3>
-        <div class="circle-compare"><div class="compare-circle compare-big"><span class="num"><span class="counter" data-target="{{TOTAL_AGENTS}}">0</span></span><span class="lbl">Total Agents</span></div><span class="compare-vs">vs</span><div class="compare-circle compare-small"><span class="num"><span class="counter" data-target="{{MULTI_USER_AGENTS}}">0</span></span><span class="lbl">Multi-User<br>Agents</span></div></div>
-        <p style="text-align:center;font-size:.82rem;color:var(--text-3)">Only <strong style="color:var(--brand);font-size:1.05rem">{{AGENT_MULTI_USER_PCT}}%</strong> of agents have 2+ users</p>
-        <div class="insight-box insight-box--success" style="--accent:var(--purple);margin-top:1rem"><div class="insight-box-eyebrow">Quality Signal</div>{{AGENT_QUALITY_INSIGHT}}</div>
-      </div>
-      <div class="agent-panel reveal reveal-d3">
-        <h3>Agent Portfolio Health <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(123,47,242,.1);color:#7B2FF2;border:1px solid rgba(123,47,242,.15);margin-left:.4rem;vertical-align:middle">Agents</span></h3>
-        <div style="position:relative;height:240px;margin-bottom:1.25rem">
-          <canvas id="chartAgentHealth"></canvas>
-          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none">
-            <div style="font-size:1.6rem;font-weight:800;color:var(--text)">{{TOTAL_AGENTS_FMT}}</div>
-            <div style="font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3)">Total Agents</div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem">
-          <div style="background:rgba(34,100,229,.06);border:1px solid rgba(34,100,229,.18);border-radius:8px;padding:.6rem;text-align:center">
-            <div style="font-size:1.1rem;font-weight:800;color:#2264E5">{{AGENTS_KEEP_FMT}}</div>
-            <div style="font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Keep</div>
-          </div>
-          <div style="background:rgba(123,47,242,.06);border:1px solid rgba(123,47,242,.18);border-radius:8px;padding:.6rem;text-align:center">
-            <div style="font-size:1.1rem;font-weight:800;color:#7B2FF2">{{AGENTS_REVIEW_FMT}}</div>
-            <div style="font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Review</div>
-          </div>
-          <div style="background:rgba(148,163,184,.06);border:1px solid rgba(148,163,184,.18);border-radius:8px;padding:.6rem;text-align:center">
-            <div style="font-size:1.1rem;font-weight:800;color:#94A3B8">{{AGENTS_DORMANT_FMT}}</div>
-            <div style="font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Dormant</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- 2. The Good Agents — full performance table -->
-    <div style="margin-top:2rem" class="reveal reveal-d4">
-      <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">Top Agents by Impact <span style="display:inline-block;padding:.15rem .5rem;border-radius:100px;font-size:.6rem;font-weight:600;background:rgba(123,47,242,.1);color:var(--purple);border:1px solid rgba(123,47,242,.2)">Agents</span></h3>
-      <p style="font-size:.85rem;color:var(--text-2);margin-bottom:1.25rem">The agents that matter most — ranked by total sessions with type, reach and stickiness.</p>
-      <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;font-size:.78rem">
-          <thead><tr style="border-bottom:2px solid var(--border)"><th style="text-align:left;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Agent</th><th style="text-align:left;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Type</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Users</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Sessions</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Sess/User</th></tr></thead>
-          <tbody>{{AGENT_TABLE_ROWS}}</tbody>
-        </table>
-      </div>
-      <div class="insight-box" style="--accent:var(--purple);margin-top:1.25rem">
-        <div class="insight-box-eyebrow" style="color:var(--purple)">Agent Proficiency</div>
-        {{AGENT_PROFICIENCY_INSIGHT}}
-      </div>
-    </div>
-    </div><!-- /tier-group agents --></div>
 </section>
 
 <div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_3}}</div><div class="pull-quote-source">Next: License Intelligence</div></div>

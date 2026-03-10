@@ -93,14 +93,15 @@
       }
     ],
     "license_priority_orgs": [
-      {"org": "VOIN", "licensed": 11112, "unlicensed": 2024, "ratio": 0.18},
-      {"org": "UK", "licensed": 5935, "unlicensed": 474, "ratio": 0.08},
-      {"org": "VOEG", "licensed": 4058, "unlicensed": 978, "ratio": 0.24},
-      {"org": "RO", "licensed": 1417, "unlicensed": 569, "ratio": 0.40},
-      {"org": "VORO", "licensed": 2072, "unlicensed": 417, "ratio": 0.20},
-      {"org": "CZ", "licensed": 1113, "unlicensed": 361, "ratio": 0.32},
-      {"org": "VOHU", "licensed": 975, "unlicensed": 187, "ratio": 0.19},
-      {"org": "ZA", "licensed": 0, "unlicensed": 1542, "ratio": 999}
+      {"org": "ZA", "licensed": 762, "unlicensed": 2056, "unlicensed_median_sessions_weekly": 1.4},
+      {"org": "VOIN", "licensed": 11112, "unlicensed": 2024, "unlicensed_median_sessions_weekly": 1.5},
+      {"org": "VOEG", "licensed": 4058, "unlicensed": 978, "unlicensed_median_sessions_weekly": 1.3},
+      {"org": "RO", "licensed": 1417, "unlicensed": 569, "unlicensed_median_sessions_weekly": 1.0},
+      {"org": "UK", "licensed": 5935, "unlicensed": 474, "unlicensed_median_sessions_weekly": 1.2},
+      {"org": "MZ", "licensed": 62, "unlicensed": 428, "unlicensed_median_sessions_weekly": 1.5},
+      {"org": "VORO", "licensed": 2072, "unlicensed": 417, "unlicensed_median_sessions_weekly": 1.0},
+      {"org": "CZ", "licensed": 1113, "unlicensed": 361, "unlicensed_median_sessions_weekly": 1.0},
+      {"org": "VOHU", "licensed": 975, "unlicensed": 187, "unlicensed_median_sessions_weekly": 1.5}
     ],
     "app_interactions": {
       "office": {
