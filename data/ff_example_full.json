@@ -1,0 +1,444 @@
+{
+  "version": 2,
+  "customer_name": "FF Example",
+  "radar_reach": [0,0,0,0,0],
+  "radar_habit": [0,0,0,0,0],
+  "radar_skill": [0,0,0,0],
+  "licensed_users": 38075,
+  "chat_users": 18991,
+  "total_active_users": 57066,
+  "total_licensed_seats": 50496,
+  "agent_users": 4846,
+  "inactive_licenses": 12421,
+  "agent_adoption": 8.5,
+  "agent_health": 85.2,
+  "complex_sessions": 4.943529411764706,
+  "m365_retention": 59.6,
+  "m365_enablement": 75.4,
+  "license_coverage": 66.7,
+  "licensed_avg_days": 3.8,
+  "unlicensed_avg_days": 3.2,
+  "m365_breadth": 2.26,
+  "agent_breadth": 1.14,
+  "embedded_user_rate": 16.5,
+  "band_1_5": 9797,
+  "band_6_10": 1908,
+  "band_11_15": 508,
+  "band_16_plus": 115,
+  "band_1_5_pct": 79.5,
+  "band_6_10_pct": 15.5,
+  "band_11_15_pct": 4.1,
+  "band_16_plus_pct": 0.9,
+  "licensed_band_1_5_pct": 71.8,
+  "licensed_band_6_10_pct": 21.2,
+  "licensed_band_11_15_pct": 5.5,
+  "licensed_band_16_plus_pct": 1,
+  "m365_frequency": 1,
+  "chat_band_1_5_pct": 79.5,
+  "chat_band_6_10_pct": 15.5,
+  "chat_band_11_15_pct": 4.1,
+  "chat_band_16_plus_pct": 0.9,
+  "chat_habit": 0.9,
+  "agent_band_1_5_pct": 94.6,
+  "agent_band_6_10_pct": 4.2,
+  "agent_band_11_15_pct": 0.9,
+  "agent_band_16_plus_pct": 0.3,
+  "agent_habitual": 1.2,
+  "agent_habitual_rate": 5.4,
+  "licensed_avg_prompts": 19.1,
+  "unlicensed_avg_prompts": 8.3,
+  "weekly_m365": 1.56,
+  "weekly_chat": 1.63,
+  "weekly_agents": 1.49,
+  "m365_intensity": 13.2,
+  "chat_intensity": 8.3,
+  "agent_intensity": 3.8,
+  "license_priority": 2.3,
+  "analysis_period": "Sep 2025 – Dec 2025",
+  "_supplementary_metrics": {
+    "per_tier_monthly_users": [
+      {
+        "month": "2025-09",
+        "licensed": 29994,
+        "unlicensed": 10797,
+        "agents": 1950
+      },
+      {
+        "month": "2025-10",
+        "licensed": 32006,
+        "unlicensed": 12280,
+        "agents": 2215
+      },
+      {
+        "month": "2025-11",
+        "licensed": 31587,
+        "unlicensed": 12403,
+        "agents": 2241
+      },
+      {
+        "month": "2025-12",
+        "licensed": 17502,
+        "unlicensed": 5801,
+        "agents": 775
+      }
+    ],
+    "app_interactions": {
+      "office": {
+        "interactions": 1139872,
+        "pct": 43.8,
+        "users": 32287
+      },
+      "word": {
+        "interactions": 626620,
+        "pct": 24.1,
+        "users": 28459
+      },
+      "teams": {
+        "interactions": 280926,
+        "pct": 10.8,
+        "users": 15684
+      },
+      "edge": {
+        "interactions": 218195,
+        "pct": 8.4,
+        "users": 12007
+      },
+      "outlook": {
+        "interactions": 205421,
+        "pct": 7.9,
+        "users": 19765
+      },
+      "forms": {
+        "interactions": 34812,
+        "pct": 1.3,
+        "users": 3461
+      },
+      "powerpoint": {
+        "interactions": 20643,
+        "pct": 0.8,
+        "users": 5410
+      },
+      "excel": {
+        "interactions": 17448,
+        "pct": 0.7,
+        "users": 4803
+      },
+      "outlooksidepane": {
+        "interactions": 13819,
+        "pct": 0.5,
+        "users": 2730
+      },
+      "copilot_studio": {
+        "interactions": 10791,
+        "pct": 0.4,
+        "users": 256
+      },
+      "sharepoint": {
+        "interactions": 8314,
+        "pct": 0.3,
+        "users": 1356
+      },
+      "autonomous": {
+        "interactions": 8099,
+        "pct": 0.3,
+        "users": 18
+      },
+      "microsoft_teams": {
+        "interactions": 5924,
+        "pct": 0.2,
+        "users": 352
+      },
+      "stream": {
+        "interactions": 2605,
+        "pct": 0.1,
+        "users": 745
+      },
+      "onenote": {
+        "interactions": 2064,
+        "pct": 0.1,
+        "users": 523
+      },
+      "officecopilotnotebook": {
+        "interactions": 1658,
+        "pct": 0.1,
+        "users": 126
+      },
+      "designer": {
+        "interactions": 1156,
+        "pct": 0,
+        "users": 610
+      },
+      "officecopilotsearchanswer": {
+        "interactions": 680,
+        "pct": 0,
+        "users": 174
+      },
+      "vivaengage": {
+        "interactions": 461,
+        "pct": 0,
+        "users": 341
+      },
+      "loop": {
+        "interactions": 146,
+        "pct": 0,
+        "users": 68
+      },
+      "whiteboard": {
+        "interactions": 114,
+        "pct": 0,
+        "users": 52
+      },
+      "planner": {
+        "interactions": 84,
+        "pct": 0,
+        "users": 37
+      },
+      "pva-maker-evaluation": {
+        "interactions": 49,
+        "pct": 0,
+        "users": 7
+      },
+      "pva-s2s-studio": {
+        "interactions": 44,
+        "pct": 0,
+        "users": 4
+      },
+      "onenotecopilotnotebook": {
+        "interactions": 26,
+        "pct": 0,
+        "users": 9
+      },
+      "m365admincenter": {
+        "interactions": 5,
+        "pct": 0,
+        "users": 4
+      },
+      "oaiautomationagent": {
+        "interactions": 2,
+        "pct": 0,
+        "users": 1
+      }
+    }
+  },
+  "org_scatter_data": [
+    {
+      "label": "ZA",
+      "x": 1542,
+      "y": 5.5,
+      "r": 1542
+    },
+    {
+      "label": "VOIN",
+      "x": 1362,
+      "y": 38,
+      "r": 1362
+    },
+    {
+      "label": "VOEG",
+      "x": 645,
+      "y": 32.1,
+      "r": 645
+    },
+    {
+      "label": "RO",
+      "x": 354,
+      "y": 13.8,
+      "r": 354
+    },
+    {
+      "label": "MZ",
+      "x": 334,
+      "y": 3.6,
+      "r": 334
+    },
+    {
+      "label": "UK",
+      "x": 251,
+      "y": 84.5,
+      "r": 251
+    },
+    {
+      "label": "VORO",
+      "x": 231,
+      "y": 37.7,
+      "r": 231
+    },
+    {
+      "label": "CZ",
+      "x": 219,
+      "y": 37.9,
+      "r": 219
+    },
+    {
+      "label": "CD",
+      "x": 165,
+      "y": 3.6,
+      "r": 165
+    },
+    {
+      "label": "TZ",
+      "x": 146,
+      "y": 0.7,
+      "r": 146
+    },
+    {
+      "label": "VOHU",
+      "x": 117,
+      "y": 60.7,
+      "r": 117
+    },
+    {
+      "label": "LS",
+      "x": 95,
+      "y": 1.1,
+      "r": 95
+    },
+    {
+      "label": "Automotive",
+      "x": 85,
+      "y": 12.9,
+      "r": 85
+    },
+    {
+      "label": "AL",
+      "x": 54,
+      "y": 22.2,
+      "r": 54
+    }
+  ],
+  "org_count": 14,
+  "org_penetration_pct": 100,
+  "agent_table": [
+    {
+      "name": "Researcher",
+      "type": "Store Agent (1P/3P)",
+      "users": 671,
+      "sessions": 36070,
+      "sessions_per_user": 53.8
+    },
+    {
+      "name": "Analyst",
+      "type": "Store Agent (1P/3P)",
+      "users": 566,
+      "sessions": 24639,
+      "sessions_per_user": 43.5
+    },
+    {
+      "name": "Broadband Buddy",
+      "type": "Store Agent (1P/3P)",
+      "users": 233,
+      "sessions": 2784,
+      "sessions_per_user": 11.9
+    },
+    {
+      "name": "Prompt Coach",
+      "type": "Store Agent (1P/3P)",
+      "users": 614,
+      "sessions": 2321,
+      "sessions_per_user": 3.8
+    },
+    {
+      "name": "Investigador",
+      "type": "Store Agent (1P/3P)",
+      "users": 31,
+      "sessions": 1824,
+      "sessions_per_user": 58.8
+    },
+    {
+      "name": "summarizer-agent",
+      "type": "Store Agent (1P/3P)",
+      "users": 291,
+      "sessions": 1703,
+      "sessions_per_user": 5.9
+    },
+    {
+      "name": "MVNO Remedy Notes Generator",
+      "type": "Store Agent (1P/3P)",
+      "users": 12,
+      "sessions": 1452,
+      "sessions_per_user": 121
+    },
+    {
+      "name": "MPN checker",
+      "type": "Store Agent (1P/3P)",
+      "users": 10,
+      "sessions": 1363,
+      "sessions_per_user": 136.3
+    },
+    {
+      "name": "Writing Coach",
+      "type": "Store Agent (1P/3P)",
+      "users": 104,
+      "sessions": 972,
+      "sessions_per_user": 9.3
+    },
+    {
+      "name": "VISTA: Smart Sales Companion",
+      "type": "Store Agent (1P/3P)",
+      "users": 83,
+      "sessions": 924,
+      "sessions_per_user": 11.1
+    },
+    {
+      "name": "Analista",
+      "type": "Store Agent (1P/3P)",
+      "users": 18,
+      "sessions": 611,
+      "sessions_per_user": 33.9
+    },
+    {
+      "name": "Agent Coach",
+      "type": "Store Agent (1P/3P)",
+      "users": 156,
+      "sessions": 529,
+      "sessions_per_user": 3.4
+    },
+    {
+      "name": "Idea Coach",
+      "type": "Store Agent (1P/3P)",
+      "users": 99,
+      "sessions": 442,
+      "sessions_per_user": 4.5
+    },
+    {
+      "name": "Analytik",
+      "type": "Store Agent (1P/3P)",
+      "users": 7,
+      "sessions": 355,
+      "sessions_per_user": 50.7
+    }
+  ],
+  "top_agent_names": [
+    "Researcher",
+    "Analyst",
+    "Broadband Buddy",
+    "Prompt Coach",
+    "Investigador",
+    "summarizer-agent",
+    "MVNO Remedy Notes Generator",
+    "MPN checker"
+  ],
+  "top_agent_sessions": [
+    53.8,
+    43.5,
+    11.9,
+    3.8,
+    58.8,
+    5.9,
+    121,
+    136.3
+  ],
+  "total_agents": 2746,
+  "multi_user_agents": 8,
+  "retained_users": 20954,
+  "churned_users": 23036,
+  "m365_adoption": 75.4,
+  "agent_enablement": 100,
+  "agent_frequency": 0.3,
+  "chat_retention": 59.6,
+  "agent_retention": 85.2,
+  "agent_creators_pct": 0,
+  "agents_keep": 0,
+  "agents_review": 0,
+  "agents_retire": 0
+}

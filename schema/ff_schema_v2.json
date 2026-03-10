@@ -80,12 +80,12 @@
       "description": "Average month-over-month user retention across last 3 complete months"
     },
     "habitual_rate": {
-      "name": "Habitual User Rate",
-      "unit": "% with 11+ active days",
-      "bands": [15, 35],
+      "name": "Agent Habitual Rate",
+      "unit": "% agent users with 6+ days",
+      "bands": [5, 15],
       "band_labels": ["Foundation", "Expansion", "Frontier"],
       "signal": "habit",
-      "data_field": "m365_frequency",
+      "data_field": "agent_habitual_rate",
       "description": "Percentage of licensed users with 11+ active days last month"
     },
 
