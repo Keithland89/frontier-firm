@@ -957,6 +957,21 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   });
   html = html.replace(/\{\{ORG_SCATTER_DATA\}\}/g, safeJSON(scatterDatasets, 'org_scatter_data'));
 
+  // Org scatter insights — dynamic from the data
+  var orgInsights = '';
+  if (orgScatter.length > 0) {
+    var sorted = orgScatter.slice().sort(function(a,b) { return (b.y||0) - (a.y||0); });
+    var topAdopt = sorted[0];
+    var biggest = orgScatter.slice().sort(function(a,b) { return (b.x||0) - (a.x||0); })[0];
+    var lowAdopt = sorted.filter(function(o) { return (o.y||0) < 5; });
+    orgInsights += '<div style="display:flex;flex-direction:column;gap:.75rem">';
+    if (topAdopt) orgInsights += '<div style="font-size:.78rem;color:var(--text-2);line-height:1.5"><strong style="color:var(--green)">' + topAdopt.label + '</strong> leads agent adoption at <strong style="color:#fff">' + topAdopt.y + '%</strong> — study what they do differently</div>';
+    if (biggest && biggest.label !== topAdopt.label) orgInsights += '<div style="font-size:.78rem;color:var(--text-2);line-height:1.5"><strong style="color:var(--brand)">' + biggest.label + '</strong> is the largest org (' + fmtN(biggest.x) + ' users) at <strong style="color:#fff">' + biggest.y + '%</strong> agent adoption</div>';
+    if (lowAdopt.length > 0) orgInsights += '<div style="font-size:.78rem;color:var(--text-2);line-height:1.5"><strong style="color:var(--amber)">' + lowAdopt.length + ' orgs</strong> below 5% agent adoption — the untapped opportunity</div>';
+    orgInsights += '</div>';
+  }
+  html = html.replace(/\{\{ORG_SCATTER_INSIGHTS\}\}/g, orgInsights || '<p style="font-size:.78rem;color:var(--text-3)">Org data not available</p>');
+
   // Value section — time savings comparison
   const licensedHrsPerUserYr = Math.round(n('licensed_avg_prompts') * 6 / 60 * 12);
   const unlicensedHrsPerUserYr = Math.round(n('unlicensed_avg_prompts') * 6 / 60 * 12);
