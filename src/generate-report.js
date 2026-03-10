@@ -199,6 +199,19 @@ if (schemaV2) {
 
   console.log('V2 Signal tiers:', signalTiersV2);
   console.log('V2 Pattern:', patternV2.number, '(' + patternV2.name + ')');
+
+  // USE V2 SCORING as the actual pattern/signal tiers for the report
+  signalTiers.reach = signalTiersV2.reach;
+  signalTiers.habit = signalTiersV2.habit;
+  signalTiers.skill = signalTiersV2.skill;
+  pattern.number = patternV2.number;
+  pattern.name = patternV2.name;
+  // Recalculate gauge widths with v2 tiers
+  const gaugeMapV2 = { 'Foundation': 30, 'Expansion': 65, 'Frontier': 90 };
+  gauges.reach = gaugeMapV2[signalTiers.reach];
+  gauges.habit = gaugeMapV2[signalTiers.habit];
+  gauges.skill = gaugeMapV2[signalTiers.skill];
+  console.log('Using V2 scoring for report output');
 }
 
 // ============================================================

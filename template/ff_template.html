@@ -1028,36 +1028,18 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
     <div class="section-label reveal">Executive Summary</div>
     <h2 class="section-title reveal reveal-d1">The headlines</h2>
     <p class="section-subtitle reveal reveal-d2">{{CUSTOMER_NAME}} is in <strong style="color:#A78BFA">{{PATTERN_LABEL}}</strong>. Here’s where they stand across the three signals.</p>
-    <div class="theme-grid" style="margin-top:1.5rem">
-      <div class="theme-card reveal reveal-d1" style="--accent:#0EA5E9">
-        <div class="theme-card-label" style="color:#0EA5E9">Reach: Strong</div>
-        <div class="theme-card-verdict">{{CUSTOMER_NAME}}: {{TOTAL_ACTIVE_USERS}} users deployed, {{M365_RETENTION}}% come back every month</div>
-        <h3 style="font-size:.82rem;font-weight:500;color:var(--text-2);margin-bottom:0">The rollout has landed</h3>
-        <div class="theme-card-body"><div style="flex:1;font-size:.75rem;color:var(--text-2);line-height:1.5">{{EXEC_SUMMARY_GOOD}}</div></div>
-        <div class="theme-card-sentiment sentiment-strong">&#10003; Strong foundation</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem">
+      <div class="theme-card reveal reveal-d1" style="--accent:#0EA5E9;border-top:3px solid #0EA5E9;border-left:none;border-radius:12px">
+        <div class="theme-card-label" style="color:#0EA5E9">What's working</div>
+        <div class="theme-card-body"><div style="flex:1;font-size:.82rem;color:var(--text-2);line-height:1.65">{{EXEC_SUMMARY_GOOD}}</div></div>
       </div>
-      <div class="theme-card reveal reveal-d2" style="--accent:#F59E0B">
-        <div class="theme-card-label" style="color:#F59E0B">Habit: The bottleneck</div>
-        <div class="theme-card-verdict">Only {{M365_FREQUENCY}}% use it daily, most stick to {{M365_BREADTH}} apps</div>
-        <h3 style="font-size:.82rem;font-weight:500;color:var(--text-2);margin-bottom:0">Usage is wide but shallow</h3>
-        <div class="theme-card-body"><div style="flex:1;font-size:.75rem;color:var(--text-2);line-height:1.5">{{EXEC_SUMMARY_GAP}}</div></div>
-        <div class="theme-card-sentiment sentiment-caution">&#9888; Depth opportunity</div>
+      <div class="theme-card reveal reveal-d2" style="--accent:#F59E0B;border-top:3px solid #F59E0B;border-left:none;border-radius:12px">
+        <div class="theme-card-label" style="color:#F59E0B">The gap</div>
+        <div class="theme-card-body"><div style="flex:1;font-size:.82rem;color:var(--text-2);line-height:1.65">{{EXEC_SUMMARY_GAP}}</div></div>
       </div>
-      <div class="theme-card reveal reveal-d3" style="--accent:#10B981">
-        <div class="theme-card-label" style="color:#10B981">Skill + Value: The lever</div>
-        <div class="theme-card-verdict">{{TIME_SAVED_UNREALISED}} hours/year on the table + {{BAND_6_10_FMT}} users one nudge away</div>
-        <h3 style="font-size:.82rem;font-weight:500;color:var(--text-2);margin-bottom:0">Clear paths to double the impact</h3>
-        <div class="theme-card-body"><div style="flex:1;font-size:.75rem;color:var(--text-2);line-height:1.5">{{EXEC_SUMMARY_OPP}}</div></div>
-        <div class="theme-card-sentiment sentiment-strong">&#10003; Actionable levers</div>
-      </div>
-    </div>
-    <div class="reveal reveal-d4" style="text-align:center;margin-top:1.5rem;padding:.6rem 0">
-      <div style="display:inline-flex;align-items:center;gap:.6rem;font-size:.7rem;color:var(--text-3);font-weight:500">
-        <span style="color:#0EA5E9;font-weight:700">Deployed</span>
-        <span style="opacity:.3">→</span>
-        <span style="color:#F59E0B;font-weight:700">but shallow</span>
-        <span style="opacity:.3">→</span>
-        <span style="color:#10B981;font-weight:700">so here's the lever</span>
+      <div class="theme-card reveal reveal-d3" style="--accent:#10B981;border-top:3px solid #10B981;border-left:none;border-radius:12px">
+        <div class="theme-card-label" style="color:#10B981">The opportunity</div>
+        <div class="theme-card-body"><div style="flex:1;font-size:.82rem;color:var(--text-2);line-height:1.65">{{EXEC_SUMMARY_OPP}}</div></div>
       </div>
     </div>
   </div>
