@@ -83,10 +83,10 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 .nav.visible{transform:translateY(0)}
 .nav-inner{max-width:1600px;margin:0 auto;display:flex;align-items:center;padding:0 1rem;height:46px;gap:.4rem}
 .nav-brand{display:flex;align-items:center;gap:.4rem;font-weight:800;font-size:.65rem;color:var(--brand);text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
-.nav-links{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;flex:1;justify-content:center}
+.nav-links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1;justify-content:center}
 .nav-links::-webkit-scrollbar{display:none}
-.nav-link{padding:.3rem .45rem;font-size:.58rem;font-weight:600;color:var(--text-3);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;transition:all .3s;text-transform:uppercase;letter-spacing:.02em}
-.nav-link:hover,.nav-link.active{color:var(--brand);border-bottom-color:var(--brand)}
+.nav-link{padding:.5rem .9rem;font-size:.72rem;font-weight:600;color:var(--text-3);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;transition:all .3s;text-transform:uppercase;letter-spacing:.06em;border-radius:6px}
+.nav-link:hover{color:var(--brand);background:rgba(59,130,246,0.06)}.nav-link.active{color:#fff;background:var(--brand);border-bottom-color:transparent;border-radius:6px}
 .theme-toggle{width:42px;height:22px;border-radius:11px;background:var(--toggle-bg);border:none;cursor:pointer;position:relative;transition:background .3s}
 .theme-toggle::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .3s}
 [data-theme="dark"] .theme-toggle{background:var(--brand)}
@@ -950,8 +950,8 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <a href="#framework" class="nav-link active" data-section="framework">Framework</a>
       <a href="#maturity-scorecard" class="nav-link" data-section="maturity-scorecard">Scorecard</a>
       <a href="#summary" class="nav-link" data-section="summary">Summary</a>
-      <a href="#phase1-detail" class="nav-link" data-section="phase1-detail">Phase 1</a>
-      <a href="#phase2-detail" class="nav-link" data-section="phase2-detail">Phase 2</a>
+      <a href="#phase1-detail" class="nav-link" data-section="phase1-detail">Pattern 1</a>
+      <a href="#phase2-detail" class="nav-link" data-section="phase2-detail">Pattern 2</a>
       <!-- Phase 3 deep-dive section to be added -->
       <!-- <a href="#phase3-detail" class="nav-link" data-section="phase3-detail">Phase 3</a> -->
       <!-- Commented out: original signal/maturity tabs
@@ -998,17 +998,17 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
     <p style="font-size:.86rem;color:var(--text-3);margin:.75rem 0 1.5rem;font-style:italic" class="reveal reveal-d3">Click each phase card to explore what it looks like in practice.</p>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:.5rem" class="reveal reveal-d3">
 <!-- Phase 1 flip card -->
-      <div class="flip-card" role="button" aria-label="Phase 1: Foundation — click to explore">
+      <div class="flip-card" role="button" aria-label="Pattern 1: Foundation — click to explore">
         <div class="flip-card-inner">
           <div class="flip-card-front" style="border-top:3px solid var(--brand)">
             <div style="width:40px;height:40px;border-radius:50%;background:rgba(34,100,229,.1);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;color:var(--brand);font-weight:800;font-size:1rem;margin-bottom:.75rem">1</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.3rem">Phase 1 · Foundation</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.3rem">Pattern 1 · Foundation</div>
             <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human with Assistant</div>
             <p style="font-size:.88rem;color:var(--text-2);line-height:1.55;margin:0">Copilot augments individual work. Employees use AI to draft, summarise and research — but it's a personal tool, not yet part of shared team workflows.</p>
-            <div class="flip-card-hint" style="color:var(--brand)">Explore Phase 1 <span>→</span></div>
+            <div class="flip-card-hint" style="color:var(--brand)">Explore Pattern 1 <span>→</span></div>
           </div>
           <div class="flip-card-back" style="border-top:3px solid var(--brand);background:rgba(34,100,229,.03)">
-            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.75rem">Phase 1 · Foundation</div>
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.75rem">Pattern 1 · Foundation</div>
             <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
             <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
               <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Copilot is deployed but usage varies widely — heavy users sit alongside those who rarely open it</div>
@@ -1022,17 +1022,17 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       </div>
 
       <!-- Phase 2 flip card -->
-      <div class="flip-card" role="button" aria-label="Phase 2: Expansion — click to explore">
+      <div class="flip-card" role="button" aria-label="Pattern 2: Expansion — click to explore">
         <div class="flip-card-inner">
           <div class="flip-card-front" style="border-top:3px solid var(--copilot-purple)">
             <div style="width:40px;height:40px;border-radius:50%;background:rgba(123,47,242,.1);border:2px solid var(--copilot-purple);display:flex;align-items:center;justify-content:center;color:var(--copilot-purple);font-weight:800;font-size:1rem;margin-bottom:.75rem">2</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.3rem">Phase 2 · Expansion</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.3rem">Pattern 2 · Expansion</div>
             <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human-Agent Teams</div>
             <p style="font-size:.88rem;color:var(--text-2);line-height:1.55;margin:0">Teams delegate tasks to AI agents embedded in real workflows. Human-agent collaboration becomes a repeating pattern — not a one-off experiment.</p>
-            <div class="flip-card-hint" style="color:var(--copilot-purple)">Explore Phase 2 <span>→</span></div>
+            <div class="flip-card-hint" style="color:var(--copilot-purple)">Explore Pattern 2 <span>→</span></div>
           </div>
           <div class="flip-card-back" style="border-top:3px solid var(--copilot-purple);background:rgba(123,47,242,.03)">
-            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.75rem">Phase 2 · Expansion</div>
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.75rem">Pattern 2 · Expansion</div>
             <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
             <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
               <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Specific teams have agents embedded in daily workflows — not just experimenting</div>
@@ -1046,17 +1046,17 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       </div>
 
       <!-- Phase 3 flip card -->
-      <div class="flip-card" role="button" aria-label="Phase 3: Frontier — click to explore">
+      <div class="flip-card" role="button" aria-label="Pattern 3: Frontier — click to explore">
         <div class="flip-card-inner">
           <div class="flip-card-front" style="border-top:3px solid var(--copilot-green)">
             <div style="width:40px;height:40px;border-radius:50%;background:rgba(16,185,129,.1);border:2px solid var(--copilot-green);display:flex;align-items:center;justify-content:center;color:var(--copilot-green);font-weight:800;font-size:1rem;margin-bottom:.75rem">3</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.3rem">Phase 3 · Frontier</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.3rem">Pattern 3 · Frontier</div>
             <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human-Led, Agent-Operated</div>
             <p style="font-size:.88rem;color:var(--text-2);line-height:1.55;margin:0">AI agents run enterprise workflows end-to-end. Humans set direction and govern outcomes — agents execute. AI is embedded in how the organisation operates, not just how individuals work.</p>
-            <div class="flip-card-hint" style="color:var(--copilot-green)">Explore Phase 3 <span>→</span></div>
+            <div class="flip-card-hint" style="color:var(--copilot-green)">Explore Pattern 3 <span>→</span></div>
           </div>
           <div class="flip-card-back" style="border-top:3px solid var(--copilot-green);background:rgba(16,185,129,.03)">
-            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.75rem">Phase 3 · Frontier</div>
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.75rem">Pattern 3 · Frontier</div>
             <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
             <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
               <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Agents execute complete workflows — onboarding, incident response, reporting — with minimal human intervention per step</div>
@@ -1203,7 +1203,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 <section class="section" id="phase1-detail" style="background:var(--bg);padding:2.5rem 0 3rem">
   <div class="section-inner" style="max-width:1120px">
     <div class="section-label reveal" style="color:var(--brand)">Pattern 1 Deep Dive</div>
-    <h2 class="section-title reveal reveal-d1" style="font-size:clamp(1.4rem,3vw,2rem)">How are we doing on Phase 1 — Human with Assistant?</h2>
+    <h2 class="section-title reveal reveal-d1" style="font-size:clamp(1.4rem,3vw,2rem)">How are we doing on Pattern 1 — Human with Assistant?</h2>
     <p class="section-subtitle reveal reveal-d2" style="max-width:800px">Pattern 1 measures whether individuals across the organisation are using AI as a personal productivity tool — consistently, skillfully, and across the breadth of their work.</p>
 
     <div class="sc-details reveal reveal-d3" style="margin-top:2rem;gap:1.5rem">
@@ -1293,7 +1293,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 <section class="section" id="phase2-detail" style="background:var(--bg);padding:2rem 0 3rem">
   <div class="section-inner" style="max-width:1120px">
     <div class="section-label reveal" style="color:var(--copilot-purple)">Pattern 2 Deep Dive</div>
-    <h2 class="section-title reveal reveal-d1" style="font-size:clamp(1.4rem,3vw,2rem)">How are we doing on Phase 2 — Human-Agent Teams?</h2>
+    <h2 class="section-title reveal reveal-d1" style="font-size:clamp(1.4rem,3vw,2rem)">How are we doing on Pattern 2 — Human-Agent Teams?</h2>
     <p class="section-subtitle reveal reveal-d2" style="max-width:800px">Pattern 2 measures whether agents are being adopted, retained, and used with growing sophistication — the bridge between individual AI use and autonomous agent operations.</p>
 
     <div class="sc-details reveal reveal-d3" style="margin-top:2rem;gap:1.5rem">
@@ -1764,17 +1764,17 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_MATURITY}}</p>
 
     <p style="font-size:.86rem;color:var(--text-3);margin:.75rem 0 1rem;font-style:italic" class="reveal reveal-d3"><p style="font-size:.86rem;color:var(--text-3);margin:.75rem 0 1rem;font-style:italic" class="reveal reveal-d3">Click each pattern to see what it looks like in practice.</p><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:.5rem" class="reveal reveal-d3">{{PHASE_1_WRAPPER_OPEN}}<!-- Phase 1 flip card -->
-      <div class="flip-card" role="button" aria-label="Phase 1: Foundation — click to explore">
+      <div class="flip-card" role="button" aria-label="Pattern 1: Foundation — click to explore">
         <div class="flip-card-inner">
           <div class="flip-card-front" style="border-top:3px solid var(--brand)">
             <div style="width:40px;height:40px;border-radius:50%;background:rgba(34,100,229,.1);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;color:var(--brand);font-weight:800;font-size:1rem;margin-bottom:.75rem">1</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.3rem">Phase 1 · Foundation</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.3rem">Pattern 1 · Foundation</div>
             <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human with Assistant</div>
             <p style="font-size:.88rem;color:var(--text-2);line-height:1.55;margin:0">Copilot augments individual work. Employees use AI to draft, summarise and research — but it's a personal tool, not yet part of shared team workflows.</p>
-            <div class="flip-card-hint" style="color:var(--brand)">Explore Phase 1 <span>→</span></div>
+            <div class="flip-card-hint" style="color:var(--brand)">Explore Pattern 1 <span>→</span></div>
           </div>
           <div class="flip-card-back" style="border-top:3px solid var(--brand);background:rgba(34,100,229,.03)">
-            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.75rem">Phase 1 · Foundation</div>
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.75rem">Pattern 1 · Foundation</div>
             <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
             <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
               <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Copilot is deployed but usage varies widely — heavy users sit alongside those who rarely open it</div>
@@ -1788,17 +1788,17 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       </div>
 
       </div>{{PHASE_2_WRAPPER_OPEN}}<!-- Phase 2 flip card -->
-      <div class="flip-card" role="button" aria-label="Phase 2: Expansion — click to explore">
+      <div class="flip-card" role="button" aria-label="Pattern 2: Expansion — click to explore">
         <div class="flip-card-inner">
           <div class="flip-card-front" style="border-top:3px solid var(--copilot-purple){{PHASE_2_HIGHLIGHT}}">
             <div style="width:40px;height:40px;border-radius:50%;background:rgba(123,47,242,.1);border:2px solid var(--copilot-purple);display:flex;align-items:center;justify-content:center;color:var(--copilot-purple);font-weight:800;font-size:1rem;margin-bottom:.75rem">2</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.3rem">Phase 2 · Expansion</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.3rem">Pattern 2 · Expansion</div>
             <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human-Agent Teams</div>
             <p style="font-size:.88rem;color:var(--text-2);line-height:1.55;margin:0">Teams delegate tasks to AI agents embedded in real workflows. Human-agent collaboration becomes a repeating pattern — not a one-off experiment.</p>
-            <div class="flip-card-hint" style="color:var(--copilot-purple)">Explore Phase 2 <span>→</span></div>
+            <div class="flip-card-hint" style="color:var(--copilot-purple)">Explore Pattern 2 <span>→</span></div>
           </div>
           <div class="flip-card-back" style="border-top:3px solid var(--copilot-purple);background:rgba(123,47,242,.03)">
-            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.75rem">Phase 2 · Expansion</div>
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.75rem">Pattern 2 · Expansion</div>
             <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
             <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
               <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Specific teams have agents embedded in daily workflows — not just experimenting</div>
@@ -1812,17 +1812,17 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       </div>
 
       </div>{{PHASE_3_WRAPPER_OPEN}}<!-- Phase 3 flip card -->
-      <div class="flip-card" role="button" aria-label="Phase 3: Frontier — click to explore">
+      <div class="flip-card" role="button" aria-label="Pattern 3: Frontier — click to explore">
         <div class="flip-card-inner">
           <div class="flip-card-front" style="border-top:3px solid var(--copilot-green)">
             <div style="width:40px;height:40px;border-radius:50%;background:rgba(16,185,129,.1);border:2px solid var(--copilot-green);display:flex;align-items:center;justify-content:center;color:var(--copilot-green);font-weight:800;font-size:1rem;margin-bottom:.75rem">3</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.3rem">Phase 3 · Frontier</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.3rem">Pattern 3 · Frontier</div>
             <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human-Led, Agent-Operated</div>
             <p style="font-size:.88rem;color:var(--text-2);line-height:1.55;margin:0">AI agents run enterprise workflows end-to-end. Humans set direction and govern outcomes — agents execute. AI is embedded in how the organisation operates, not just how individuals work.</p>
-            <div class="flip-card-hint" style="color:var(--copilot-green)">Explore Phase 3 <span>→</span></div>
+            <div class="flip-card-hint" style="color:var(--copilot-green)">Explore Pattern 3 <span>→</span></div>
           </div>
           <div class="flip-card-back" style="border-top:3px solid var(--copilot-green);background:rgba(16,185,129,.03)">
-            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.75rem">Phase 3 · Frontier</div>
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.75rem">Pattern 3 · Frontier</div>
             <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
             <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
               <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Agents execute complete workflows — onboarding, incident response, reporting — with minimal human intervention per step</div>
