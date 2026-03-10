@@ -881,7 +881,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <a href="#reach" class="nav-link" data-section="reach">Reach</a>
       <a href="#habit" class="nav-link" data-section="habit">Habit</a>
       <a href="#skill" class="nav-link" data-section="skill">Skill</a>
-      <a href="#value" class="nav-link" data-section="value">Value</a>
+      <a href="#value" class="nav-link" data-section="value">License Intel</a>
       <a href="#maturity" class="nav-link" data-section="maturity">Maturity</a>
       <a href="#actions" class="nav-link" data-section="actions">Actions</a>
     </div>
@@ -1053,6 +1053,25 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <div class="so-what-text">{{INSIGHT_REACH}}</div>
     </div>
 
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1.5rem 0" class="reveal reveal-d3">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--teal)">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:.3rem">License Activation</div>
+        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{M365_ENABLEMENT}}%</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--teal)">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:.3rem">Agent Adoption</div>
+        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{AGENT_ADOPTION}}%</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--teal)">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:.3rem">License Coverage</div>
+        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{LICENSE_COVERAGE}}%</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--teal)">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:.3rem">Org Penetration</div>
+        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{ORG_PENETRATION_PCT}}%</div>
+      </div>
+    </div>
+
     <!-- Monthly active users trend -->
     <div class="chart-card reveal" style="margin-top:1.5rem"><div class="chart-card-title">Monthly Active Users — Growth Trend</div><div class="chart-card-sub">Total unique active users per month across the analysis period</div><div class="tier-toggle" data-chart="monthlyUsers"><button class="tier-nav-btn tier-chart-btn active" data-tier="all">All Users</button><button class="tier-nav-btn tier-chart-btn" data-tier="m365">M365 Copilot</button><button class="tier-nav-btn tier-chart-btn" data-tier="chat">Copilot Chat</button><button class="tier-nav-btn tier-chart-btn" data-tier="agents">Agents</button></div><div style="height:260px"><canvas id="chartMonthlyUsers"></canvas></div></div>
     <div class="insight-callout reveal" style="margin-top:1rem">{{INSIGHT_MONTHLY_GROWTH}}</div>
@@ -1126,6 +1145,24 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <div class="so-what-text">{{INSIGHT_HABIT}}</div>
     </div>
 
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0" class="reveal reveal-d3">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--amber)">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--amber);margin-bottom:.3rem">Habitual User Rate</div>
+        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{EMBEDDED_USER_RATE}}%</div>
+        <div style="font-size:.65rem;color:var(--text-3)">6+ active days over 3 months</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--amber)">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--amber);margin-bottom:.3rem">Avg MoM Retention</div>
+        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{M365_RETENTION}}%</div>
+        <div style="font-size:.65rem;color:var(--text-3)">across complete months</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--amber)">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--amber);margin-bottom:.3rem">Agent Habitual Rate</div>
+        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{AGENT_HABITUAL_PCT}}%</div>
+        <div style="font-size:.65rem;color:var(--text-3)">agent users with 6+ days</div>
+      </div>
+    </div>
+
     <!-- Habit formation comparison -->
     <div class="slide-frame reveal" style="--signal-accent:#F59E0B;margin-top:1.5rem">
       <div class="slide-label">Habit Depth</div>
@@ -1171,19 +1208,29 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <button class="tier-nav-btn" data-tier="agents">Agents</button>
     </div>
     <div class="tier-group" data-tier-content="all">
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:2rem" class="reveal reveal-d1">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center">
-        <div style="font-size:2rem;font-weight:900;color:var(--brand)">{{M365_BREADTH}}</div>
-        <div style="font-size:.75rem;color:var(--text-2)">apps/user of <strong>27</strong> available</div>
-        <span style="display:inline-block;padding:.15rem .5rem;border-radius:100px;font-size:.6rem;font-weight:600;background:rgba(34,100,229,.1);color:var(--brand);border:1px solid rgba(34,100,229,.2);margin-top:.4rem">M365 Copilot</span>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1.5rem 0" class="reveal reveal-d3">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--purple)">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--purple);margin-bottom:.3rem">App Surface Breadth</div>
+        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{M365_BREADTH}}</div>
+        <div style="font-size:.65rem;color:var(--text-3)">apps/user</div>
       </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center">
-        <div style="font-size:2rem;font-weight:900;color:var(--purple)">{{COMPLEX_SESSIONS}}%</div>
-        <div style="font-size:.75rem;color:var(--text-2)">complex sessions (2+ prompts)</div>
-        <span style="display:inline-block;padding:.15rem .5rem;border-radius:100px;font-size:.6rem;font-weight:600;background:rgba(123,47,242,.1);color:var(--purple);border:1px solid rgba(123,47,242,.2);margin-top:.4rem">Multi-turn depth</span>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--purple)">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--purple);margin-bottom:.3rem">Agent Breadth</div>
+        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{AGENT_BREADTH}}</div>
+        <div style="font-size:.65rem;color:var(--text-3)">agents/user</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--purple)">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--purple);margin-bottom:.3rem">Multi-Turn Sessions</div>
+        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{COMPLEX_SESSIONS}}%</div>
+        <div style="font-size:.65rem;color:var(--text-3)">multi-turn</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--purple)">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--purple);margin-bottom:.3rem">Agent Return Rate</div>
+        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{AGENT_HEALTH}}%</div>
+        <div style="font-size:.65rem;color:var(--text-3)">multi-user agents</div>
       </div>
     </div>
-    
+
     <div class="two-col reveal reveal-d2" style="margin-bottom:1.5rem">
       <div class="chart-card">
         <div class="chart-card-title">App Surface Distribution</div>
@@ -1196,6 +1243,19 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
         <div style="position:relative;height:280px"><canvas id="chartAgentBar"></canvas></div>
       </div>
     </div>
+
+    <!-- Agent table (consolidated into Skill) -->
+    <div style="margin-top:2rem" class="reveal reveal-d4">
+      <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">Top Agents by Impact <span style="display:inline-block;padding:.15rem .5rem;border-radius:100px;font-size:.6rem;font-weight:600;background:rgba(123,47,242,.1);color:var(--purple);border:1px solid rgba(123,47,242,.2)">Agents</span></h3>
+      <p style="font-size:.85rem;color:var(--text-2);margin-bottom:1.25rem">The agents that matter most — ranked by total sessions with type, reach and stickiness.</p>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:.78rem">
+          <thead><tr style="border-bottom:2px solid var(--border)"><th style="text-align:left;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Agent</th><th style="text-align:left;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Type</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Users</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Sessions</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Sess/User</th></tr></thead>
+          <tbody>{{AGENT_TABLE_ROWS}}</tbody>
+        </table>
+      </div>
+    </div>
+
     <div class="so-what reveal" style="--signal-accent:#7B2FF2">
       <div class="so-what-text">{{INSIGHT_SKILL}}</div>
     </div></div><!-- /tier-group overall -->
@@ -1260,93 +1320,44 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
         {{AGENT_PROFICIENCY_INSIGHT}}
       </div>
     </div>
-    <!-- 3. The Governance Problem — donut already above, governance callout here -->
-    <div style="margin-top:2.5rem" class="reveal reveal-d5">
-      <h3 style="font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:1rem">Agent Governance</h3>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.25rem">
-        <div style="background:rgba(34,100,229,.06);border:1px solid rgba(34,100,229,.15);border-bottom:3px solid #2264E5;border-radius:8px;padding:1rem;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#2264E5;font-variant-numeric:tabular-nums">{{AGENTS_KEEP_FMT}}</div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-top:.2rem">Keep</div></div>
-        <div style="background:rgba(123,47,242,.06);border:1px solid rgba(123,47,242,.15);border-bottom:3px solid #7B2FF2;border-radius:8px;padding:1rem;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#7B2FF2;font-variant-numeric:tabular-nums">{{AGENTS_REVIEW_FMT}}</div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-top:.2rem">Under Review</div></div>
-        <div style="background:rgba(148,163,184,.06);border:1px solid rgba(148,163,184,.15);border-bottom:3px solid #94A3B8;border-radius:8px;padding:1rem;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#94A3B8;font-variant-numeric:tabular-nums">{{AGENTS_DORMANT_FMT}}</div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-top:.2rem">Dormant</div></div>
-        <div style="background:rgba(100,116,139,.06);border:1px solid rgba(100,116,139,.15);border-bottom:3px solid #94A3B8;border-radius:8px;padding:1rem;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:var(--text-3);font-variant-numeric:tabular-nums">{{AGENTS_3P}}</div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-top:.2rem">3rd Party*</div></div>
-      </div>
-      <!-- 4. The Builders -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem">
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;border-top:3px solid var(--copilot-teal)">
-          <div style="font-size:1.6rem;font-weight:800;color:var(--copilot-teal)">{{AGENT_CREATORS}}</div>
-          <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-top:.15rem">Copilot Studio Builders</div>
-          <div style="font-size:.82rem;color:var(--text-2);line-height:1.5;margin-top:.5rem">{{AGENT_CREATORS_PCT}}% of licensed users have built or modified an agent — but few reach multi-user adoption.</div>
-        </div>
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;border-top:3px solid var(--purple)">
-          <div style="font-size:1.6rem;font-weight:800;color:var(--purple)">{{MULTI_USER_AGENTS}}</div>
-          <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-top:.15rem">Multi-User Agents</div>
-          <div style="font-size:.82rem;color:var(--text-2);line-height:1.5;margin-top:.5rem">Only {{AGENT_MULTI_USER_PCT}}% of agents have 2+ users. The gap between building and sharing is the real bottleneck.</div>
-        </div>
-      </div>
-      <!-- 5. So What -->
-      <div style="padding:1rem 1.25rem;background:rgba(123,47,242,.04);border-left:4px solid var(--purple);border-radius:0 8px 8px 0;font-size:.85rem;line-height:1.6;color:var(--text-2)">
-        <div style="font-size:1.2rem;color:var(--purple);margin-bottom:.25rem;font-family:'Outfit',sans-serif;line-height:1">&ldquo;&rdquo;</div>
-        <strong style="color:var(--text)">{{CUSTOMER_NAME}} doesn't have an agent creation problem — it has an agent curation problem.</strong> Retire the dormant {{AGENTS_DORMANT_PCT}}%, spotlight the {{AGENTS_KEEP_PCT}}% that work, and create a governed catalogue for the best multi-user agents.
-      </div>
-      <p style="font-size:.68rem;color:var(--text-3);margin-top:.5rem;font-style:italic">* 3rd-party agent usage doesn't track in Purview audit logs. {{AGENTS_3P}} agents classified as ThirdParty are excluded from governance metrics.</p>
-    </div>
     </div><!-- /tier-group agents --></div>
-  <div class="sub-divider"></div><div class="slide-frame reveal" style="--signal-accent:#7B2FF2"><div class="slide-label">Agent Ecosystem</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1rem"><div style="text-align:center;padding:1rem;background:color-mix(in srgb,#7B2FF2 4%,var(--surface));border:1px solid color-mix(in srgb,#7B2FF2 10%,var(--border));border-radius:12px"><div style="font-size:1.8rem;font-weight:800;color:#7B2FF2">{{TOTAL_AGENTS_FMT}}</div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-top:.2rem">Total Agents</div></div><div style="text-align:center;padding:1rem;background:color-mix(in srgb,#7B2FF2 4%,var(--surface));border:1px solid color-mix(in srgb,#7B2FF2 10%,var(--border));border-radius:12px"><div style="font-size:1.8rem;font-weight:800;color:#7B2FF2">{{MULTI_USER_AGENTS}}</div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-top:.2rem">Multi-User</div></div><div style="text-align:center;padding:1rem;background:color-mix(in srgb,#10B981 4%,var(--surface));border:1px solid color-mix(in srgb,#10B981 10%,var(--border));border-radius:12px"><div style="font-size:1.8rem;font-weight:800;color:#10B981">{{AGENT_CREATORS}}</div><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-top:.2rem">Agent Creators ({{AGENT_CREATORS_PCT}}%)</div></div></div><div class="spotlight" style="--signal-accent:#7B2FF2;margin:1rem 0 0"><div class="spotlight-icon">✨</div><div class="spotlight-title">The agent paradox</div><div class="spotlight-body">{{SPOTLIGHT_AGENTS}}</div></div></div></div>
 </section>
 
-<div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_3}}</div><div class="pull-quote-source">Next: Value</div></div>
+<div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_3}}</div><div class="pull-quote-source">Next: License Intelligence</div></div>
 
-<section class="section signal-section" id="value" style="background:var(--section-dark);color:#fff;--signal-accent:#10B981">
+<section class="section" id="value" style="background:var(--section-dark);color:#fff">
   <div class="section-inner">
-    <div class="section-label reveal" style="color:rgba(255,255,255,.4)">Value</div><div class="signal-badge"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Value</div>
+    <div class="section-label reveal" style="color:rgba(255,255,255,.4)">License Intelligence</div>
     <h2 class="section-title reveal reveal-d1" style="color:#fff">{{TITLE_VALUE}}</h2>
     <p class="section-subtitle reveal reveal-d2" style="color:rgba(255,255,255,.5)">{{SUBTITLE_VALUE}}</p>
-    <div class="headline-stat reveal reveal-d2">
-      <div class="headline-stat-value" style="background:linear-gradient(135deg,#10B981,#0EA5E9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">{{TIME_SAVED_REALISED}}</div>
-      <div class="headline-stat-label" style="color:rgba(255,255,255,.6)">hours saved per year by active users — with {{TIME_SAVED_UNREALISED}} more unrealised from {{INACTIVE_LICENSES}} idle licenses</div>
-      <span class="headline-stat-tier {{VALUE_TIER_CLASS}}" style="background:rgba(16,185,129,.1);color:#10B981;border:1px solid rgba(16,185,129,.15)">{{VALUE_TIER}}</span>
-    </div>
-    <!-- 1. License Priority Matrix -->
-    <div class="slide-frame reveal reveal-d3" style="--signal-accent:#10B981;margin-top:2rem">
-      <div class="slide-label">License Priority</div>
-      <h3 style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:.5rem">Where to license next</h3>
-      <p style="font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:1.25rem">Organisations ranked by unlicensed demand intensity and licensing gap. Higher = stronger case for licensing.</p>
-      {{LICENSE_PRIORITY_TABLE}}
-      <div class="insight-callout reveal" style="margin-top:1rem;color:rgba(255,255,255,.85)">{{INSIGHT_LICENSE_PRIORITY}}</div>
+
+    <!-- Beat 1: The Waste -->
+    <div class="headline-stat reveal reveal-d2" style="margin-top:2rem">
+      <div class="headline-stat-value" style="color:var(--red-soft)">{{INACTIVE_LICENSES_FMT}}</div>
+      <div class="headline-stat-label" style="color:rgba(255,255,255,.6)">licenses show zero activity across the analysis period — idle spend that could be reallocated to where demand already exists</div>
     </div>
 
-    <!-- 2. Unused Licenses -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem" class="reveal reveal-d4">
-      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:2rem;text-align:center">
-        <div style="position:relative;height:280px;max-width:280px;margin:0 auto">
-          <canvas id="chartLicense"></canvas>
-          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none">
-            <div style="font-size:2rem;font-weight:900;color:#fff">{{TOTAL_LICENSED_SEATS_FMT}}</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4)">Total Seats</div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:1rem">
-          <div style="text-align:center;padding:.6rem;background:rgba(34,100,229,.08);border:1px solid rgba(34,100,229,.15);border-radius:8px"><div style="font-size:1.1rem;font-weight:800;color:#4A8AFF">{{LICENSED_USERS_FMT}}</div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:rgba(255,255,255,.4);margin-top:.1rem">Active</div></div>
-          <div style="text-align:center;padding:.6rem;background:rgba(148,163,184,.06);border:1px solid rgba(148,163,184,.15);border-radius:8px"><div style="font-size:1.1rem;font-weight:800;color:rgba(255,255,255,.5)">{{INACTIVE_LICENSES_FMT}}</div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:rgba(255,255,255,.4);margin-top:.1rem">Idle</div></div>
-          <div style="text-align:center;padding:.6rem;background:rgba(34,100,229,.06);border:1px solid rgba(34,100,229,.1);border-radius:8px"><div style="font-size:1.1rem;font-weight:800;color:#2264E5">{{M365_ENABLEMENT}}%</div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:rgba(255,255,255,.4);margin-top:.1rem">Activation</div></div>
-        </div>
-      </div>
-      <!-- 3. Time Savings Comparison -->
-      <div>
-        <h3 style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:1rem">The licensing multiplier</h3>
-        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:1.25rem;margin-bottom:1rem">
-          <div style="display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-size:.82rem"><span>Licensed user <span style="display:inline-block;padding:.1rem .4rem;border-radius:100px;font-size:.55rem;font-weight:600;background:rgba(34,100,229,.1);color:#2264E5;border:1px solid rgba(34,100,229,.15);margin-left:.3rem;vertical-align:middle">M365</span></span><span style="font-weight:800;color:#fff">{{LICENSED_AVG_PROMPTS}} prompts &rarr; {{VALUE_LICENSED_HRS}} hrs/yr</span></div>
-          <div style="display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-size:.82rem"><span>Unlicensed user <span style="display:inline-block;padding:.1rem .4rem;border-radius:100px;font-size:.55rem;font-weight:600;background:rgba(14,165,233,.1);color:#0EA5E9;border:1px solid rgba(14,165,233,.15);margin-left:.3rem;vertical-align:middle">Chat</span></span><span style="font-weight:800;color:#fff">{{UNLICENSED_AVG_PROMPTS}} prompts &rarr; {{VALUE_UNLICENSED_HRS}} hrs/yr</span></div>
-          <div style="display:flex;justify-content:space-between;padding:.6rem 0;color:rgba(255,255,255,.7);font-size:.82rem"><span>Licensing uplift</span><span style="font-weight:800;color:#10B981;font-size:1rem">{{VALUE_MULTIPLIER}}x more depth</span></div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
-          <div style="padding:1.25rem;background:rgba(16,185,129,.06);border:2px solid rgba(16,185,129,.2);border-radius:16px;text-align:center"><div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:.3rem">Realised Savings</div><div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:900;background:linear-gradient(90deg,#10B981,#0EA5E9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1">{{TIME_SAVED_REALISED}}</div><div style="font-size:.6rem;color:rgba(255,255,255,.5);margin-top:.35rem">hrs/yr from {{LICENSED_USERS_FMT}} licensed users</div></div>
-          <div style="padding:1.25rem;background:rgba(14,165,233,.06);border:2px solid rgba(14,165,233,.2);border-radius:16px;text-align:center"><div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:.3rem">If All Chat Users Licensed</div><div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:900;background:linear-gradient(90deg,#0EA5E9,#7B2FF2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1">+{{VALUE_CHAT_UPLIFT_K}}K</div><div style="font-size:.6rem;color:rgba(255,255,255,.5);margin-top:.35rem">additional hrs/yr from {{CHAT_USERS_FMT}} users</div></div>
-        </div>
-        <div style="margin-top:1rem;padding:1rem 1.25rem;background:rgba(16,185,129,.06);border-left:4px solid #10B981;border-radius:0 8px 8px 0;font-size:.82rem;color:rgba(255,255,255,.75);line-height:1.6">
-          <strong style="color:#fff">{{CHAT_USERS_FMT}} unlicensed Chat users</strong> currently save ~{{VALUE_CHAT_CURRENT_K}}K hrs/yr. Licensing them would unlock an additional <strong style="color:#10B981">~{{VALUE_CHAT_UPLIFT_K}}K hrs/yr</strong> through the {{VALUE_MULTIPLIER}}x engagement multiplier.
-        </div>
-      </div>
+    <!-- Beat 2: Depth Gap -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2rem 0" class="reveal reveal-d3">
+      <div class="stat-callout" style="--accent:var(--brand);background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06)"><div class="stat-callout-val" style="color:var(--brand)">{{LICENSED_AVG_DAYS}}</div><div class="stat-callout-label" style="color:rgba(255,255,255,.5)">avg active days/month<br><strong style="color:#fff">Licensed users</strong></div></div>
+      <div class="stat-callout" style="--accent:var(--purple);background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06)"><div class="stat-callout-val" style="color:var(--purple)">{{UNLICENSED_AVG_DAYS}}</div><div class="stat-callout-label" style="color:rgba(255,255,255,.5)">avg active days/month<br><strong style="color:#fff">Unlicensed users</strong></div></div>
+      <div class="stat-callout" style="--accent:var(--teal);background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06)"><div class="stat-callout-val" style="color:var(--teal)">{{CHAT_USERS_FMT}}</div><div class="stat-callout-label" style="color:rgba(255,255,255,.5)">unlicensed users<br><strong style="color:#fff">showing organic demand</strong></div></div>
     </div>
+
+    <!-- Beat 3: Where to Reallocate -->
+    <div class="chart-card reveal reveal-d4" style="background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.06)">
+      <div class="chart-card-title" style="color:rgba(255,255,255,.8)">Where to license next</div>
+      <div class="chart-card-sub" style="color:rgba(255,255,255,.4)">Organisations ranked by unlicensed demand — strongest candidates for license reallocation</div>
+      {{LICENSE_PRIORITY_TABLE}}
+    </div>
+
+    <!-- Call to action -->
+    <div class="reveal reveal-d5" style="margin-top:1.5rem;padding:1.25rem 1.5rem;border-radius:12px;background:linear-gradient(135deg,rgba(34,100,229,.08),rgba(16,185,129,.08));border:1px solid rgba(34,100,229,.15)">
+      <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);margin-bottom:.5rem">Recommended Action</div>
+      <div style="font-size:.88rem;color:rgba(255,255,255,.75);line-height:1.65">Reallocate <strong style="color:#fff">{{INACTIVE_LICENSES_FMT}} idle licenses</strong> from lowest-activity users to the top unlicensed-demand organisations above. Licensed users engage <strong style="color:#fff">{{LICENSED_AVG_DAYS}} days/month</strong> vs <strong style="color:#fff">{{UNLICENSED_AVG_DAYS}}</strong> for unlicensed — every reallocation drives deeper adoption.</div>
+    </div>
+
+    <p class="reveal reveal-d5" style="font-size:.7rem;color:rgba(255,255,255,.3);margin-top:1rem;font-style:italic">License Intelligence is not scored in the maturity pattern — it provides actionable context for investment decisions.</p>
   </div>
 </section>
 
@@ -1635,8 +1646,8 @@ new Chart(document.getElementById('chartAgentSessions'),{type:'bar',data:{labels
 new Chart(document.getElementById('chartRetention'),{type:'bar',data:{labels:{{RETENTION_MONTH_LABELS}},datasets:[{label:'MoM Retention %',data:{{RETENTION_MONTH_VALUES}},backgroundColor:{{RETENTION_MONTH_COLORS}},borderRadius:6,barThickness:40}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,color:'#fff',font:{weight:700,size:14},anchor:'center',formatter:v=>v+'%'}},scales:{y:{min:0,max:100,grid:{color:cGrid},ticks:{color:cTickSub,callback:v=>v+'%'}},x:{grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}}}}});
 
 
-/* Chart: License ROI */
-new Chart(document.getElementById('chartLicense'),{type:'doughnut',data:{labels:['Active','Inactive'],datasets:[{data:[{{LICENSED_USERS}},{{INACTIVE_LICENSES}}],backgroundColor:['#2264E5','rgba(148,163,184,.2)'],borderWidth:3,borderColor:'rgba(10,10,26,.9)',hoverBackgroundColor:['#4A8AFF','rgba(148,163,184,.35)'],hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},datalabels:{display:false}}}});
+/* Chart: License ROI (canvas removed in License Intelligence redesign) */
+if(document.getElementById('chartLicense')){new Chart(document.getElementById('chartLicense'),{type:'doughnut',data:{labels:['Active','Inactive'],datasets:[{data:[{{LICENSED_USERS}},{{INACTIVE_LICENSES}}],backgroundColor:['#2264E5','rgba(148,163,184,.2)'],borderWidth:3,borderColor:'rgba(10,10,26,.9)',hoverBackgroundColor:['#4A8AFF','rgba(148,163,184,.35)'],hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},datalabels:{display:false}}}});}
 
 /* ── Tier Toggle Chart Switching ───────────────────────── */
 const _perTierMU={{PER_TIER_MONTHLY_USERS_JSON}};

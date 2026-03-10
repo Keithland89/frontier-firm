@@ -331,98 +331,98 @@
   "agent_table": [
     {
       "name": "Researcher",
-      "type": "Store Agent (1P/3P)",
+      "type": "1P Agent",
       "users": 671,
       "sessions": 36070,
       "sessions_per_user": 53.8
     },
     {
       "name": "Analyst",
-      "type": "Store Agent (1P/3P)",
+      "type": "1P Agent",
       "users": 566,
       "sessions": 24639,
       "sessions_per_user": 43.5
     },
     {
       "name": "Broadband Buddy",
-      "type": "Store Agent (1P/3P)",
+      "type": "Shared",
       "users": 233,
       "sessions": 2784,
       "sessions_per_user": 11.9
     },
     {
       "name": "Prompt Coach",
-      "type": "Store Agent (1P/3P)",
+      "type": "1P Agent",
       "users": 614,
       "sessions": 2321,
       "sessions_per_user": 3.8
     },
     {
       "name": "Investigador",
-      "type": "Store Agent (1P/3P)",
+      "type": "1P Agent",
       "users": 31,
       "sessions": 1824,
       "sessions_per_user": 58.8
     },
     {
       "name": "summarizer-agent",
-      "type": "Store Agent (1P/3P)",
+      "type": "1P Agent",
       "users": 291,
       "sessions": 1703,
       "sessions_per_user": 5.9
     },
     {
       "name": "MVNO Remedy Notes Generator",
-      "type": "Store Agent (1P/3P)",
+      "type": "Custom",
       "users": 12,
       "sessions": 1452,
       "sessions_per_user": 121
     },
     {
       "name": "MPN checker",
-      "type": "Store Agent (1P/3P)",
+      "type": "Custom",
       "users": 10,
       "sessions": 1363,
       "sessions_per_user": 136.3
     },
     {
       "name": "Writing Coach",
-      "type": "Store Agent (1P/3P)",
+      "type": "1P Agent",
       "users": 104,
       "sessions": 972,
       "sessions_per_user": 9.3
     },
     {
       "name": "VISTA: Smart Sales Companion",
-      "type": "Store Agent (1P/3P)",
+      "type": "1P Agent",
       "users": 83,
       "sessions": 924,
       "sessions_per_user": 11.1
     },
     {
       "name": "Analista",
-      "type": "Store Agent (1P/3P)",
+      "type": "1P Agent",
       "users": 18,
       "sessions": 611,
       "sessions_per_user": 33.9
     },
     {
       "name": "Agent Coach",
-      "type": "Store Agent (1P/3P)",
+      "type": "1P Agent",
       "users": 156,
       "sessions": 529,
       "sessions_per_user": 3.4
     },
     {
       "name": "Idea Coach",
-      "type": "Store Agent (1P/3P)",
+      "type": "1P Agent",
       "users": 99,
       "sessions": 442,
       "sessions_per_user": 4.5
     },
     {
       "name": "Analytik",
-      "type": "Store Agent (1P/3P)",
+      "type": "1P Agent",
       "users": 7,
       "sessions": 355,
       "sessions_per_user": 50.7

@@ -359,9 +359,9 @@ function generateTemplateInsights(data, signalTiers, pattern) {
   const fmt = n => typeof n === 'number' ? n.toLocaleString() : n;
 
   return {
-    EXEC_SUMMARY_GOOD: `${fmt(data.total_active_users)} users deployed, ${data.m365_retention}% come back every month. ${fmt(data.licensed_users)} licensed users across ${data.org_count} organisations with strong retention. Active users are saving an estimated ~${timeSavedRealised}K hours per year.`,
+    EXEC_SUMMARY_GOOD: `${fmt(data.total_active_users)} users deployed across ${data.org_count} organisations, with ${data.m365_retention}% average MoM retention. ${fmt(data.licensed_users)} licensed users at ${Math.round(safe(data.m365_enablement, 0))}% activation — the deployment has landed.`,
     EXEC_SUMMARY_GAP: `Only ${data.m365_frequency}% use it daily, most stick to ${data.m365_breadth} apps. ${data.band_1_5_pct}% of licensed users engage fewer than 6 days a month. ${fmt(data.inactive_licenses)} licenses sit completely idle.`,
-    EXEC_SUMMARY_OPP: `~${timeSavedUnrealised}K hours/year on the table + ${fmt(data.band_6_10)} users one nudge away. Activating idle licenses could unlock ~${timeSavedUnrealised}K more hours/year. Converting the 6\u201310 day cohort to habitual would nearly double the power-user base.`,
+    EXEC_SUMMARY_OPP: `${fmt(data.inactive_licenses)} idle licenses to repurpose + ${fmt(data.band_6_10)} users in the 6\u201310 day bracket — one nudge from habitual. Reallocating idle licenses to high-demand orgs and converting the mid-tier cohort would transform the engagement profile.`,
     INSIGHT_REACH: `<strong>${Math.round(data.m365_enablement)}% of licenses are active</strong> \u2014 but only ${data.m365_adoption}% of users engage regularly (6+ days/month). The ${fmt(data.inactive_licenses)} idle licenses represent the fastest path to expanding reach.`,
     INSIGHT_HABIT: `<strong>Retention is ${data.m365_retention > 85 ? 'world-class' : 'healthy'} at ${data.m365_retention}%</strong> \u2014 but habitual use (11+ days) is only ${data.m365_frequency}%. The gap between coming back and building routine is the conversion opportunity.`,
     INSIGHT_SKILL: `<strong>Users are stuck in a narrow loop.</strong> Most use just ${data.m365_breadth} of 27 available app surfaces. Only ${data.complex_sessions}% of sessions involve multi-turn complexity.`,
@@ -371,7 +371,7 @@ function generateTemplateInsights(data, signalTiers, pattern) {
     PULLQUOTE_1: `Scale is won. But are people actually coming back?`,
     PULLQUOTE_2: `They\u2019re coming back \u2014 but what are they doing with it?`,
     PULLQUOTE_3: `Now the question becomes: is all this effort worth it?`,
-    PULLQUOTE_4: `~${timeSavedRealised}K hours/year saved. So where does this all add up?`,
+    PULLQUOTE_4: `${fmt(data.inactive_licenses)} idle licenses. ${fmt(data.chat_users)} unlicensed users showing demand. The maths speaks for itself.`,
     PULLQUOTE_5: `Pattern ${pattern.number}: ${pattern.name}. Here\u2019s how to reach Pattern ${pattern.number + 1}.`,
     REC_1_TITLE: `Convert the 6\u201310 day cohort to habitual`,
     REC_1_DESC: `Target the ${fmt(data.band_6_10)} users who use Copilot 6\u201310 days/month with use-case nudges, peer benchmarks, and learning paths. If 30% convert, the habitual base nearly doubles.`,
@@ -382,7 +382,7 @@ function generateTemplateInsights(data, signalTiers, pattern) {
     TITLE_REACH: 'Reach: ' + Math.round(safe(data.m365_enablement, 0)) + '% activated \u2014 but ' + (typeof data.inactive_licenses === 'number' ? data.inactive_licenses.toLocaleString() : '0') + ' sit idle',
     TITLE_HABIT: data.m365_retention + '% come back \u2014 but only ' + data.m365_frequency + '% have built a daily habit',
     TITLE_SKILL: 'Stuck in ' + data.m365_breadth + ' apps \u2014 the breadth gap is the biggest blocker',
-    TITLE_VALUE: '~' + timeSavedRealised + 'K hours saved \u2014 with ~' + timeSavedUnrealised + 'K more on the table',
+    TITLE_VALUE: fmt(data.inactive_licenses || 0) + ' idle licenses \u2014 ' + fmt(data.chat_users || 0) + ' unlicensed users showing demand',
     TITLE_MATURITY: 'Pattern ' + pattern.number + ': ' + pattern.name,
     SUBTITLE_REACH: 'Copilot has landed across ' + data.org_count + ' organisations. The deployment is real \u2014 but ' + (safe(data.total_licensed_seats, 1) > 0 ? ((safe(data.inactive_licenses, 0) / safe(data.total_licensed_seats, 1)) * 100).toFixed(0) : '0') + '% of licenses are gathering dust.',
     SUBTITLE_HABIT: 'Retention is ' + (data.m365_retention > 85 ? 'world-class' : 'healthy') + '. The challenge is converting monthly visitors into daily users.',
@@ -691,7 +691,10 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = safeSub(html, /\{\{AGENT_HEALTH\}\}/g, data.agent_health, 'agent_health');
   html = safeSub(html, /\{\{AGENT_CREATORS_PCT\}\}/g, data.agent_creators_pct, 'agent_creators_pct');
   html = safeSub(html, /\{\{LICENSE_COVERAGE_PCT\}\}/g, data.license_coverage, 'license_coverage');
-  html = safeSub(html, /\{\{AGENT_HABITUAL_PCT\}\}/g, data.agent_habitual, 'agent_habitual');
+  html = safeSub(html, /\{\{LICENSE_COVERAGE\}\}/g, data.license_coverage, 'license_coverage');
+  html = safeSub(html, /\{\{ORG_PENETRATION_PCT\}\}/g, data.org_penetration_pct, 'org_penetration_pct');
+  html = safeSub(html, /\{\{EMBEDDED_USER_RATE\}\}/g, data.embedded_user_rate, 'embedded_user_rate');
+  html = safeSub(html, /\{\{AGENT_HABITUAL_PCT\}\}/g, data.agent_habitual_rate || data.agent_habitual || 0, 'agent_habitual_pct');
   html = safeSub(html, /\{\{COHORT_CHURN_DELTA\}\}/g,
     typeof data.m365_retention === 'number' && typeof data.chat_retention === 'number'
       ? Math.round(data.m365_retention - data.chat_retention) + 'pp' : 'not_available', 'cohort_churn_delta');
@@ -769,8 +772,10 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{TOTAL_ACTIVE_USERS_K\}\}/g, toK(n('total_active_users')));
   html = html.replace(/\{\{LICENSED_USERS_FMT\}\}/g, fmtN(data.licensed_users));
   html = html.replace(/\{\{CHAT_USERS_FMT\}\}/g, fmtN(data.chat_users));
-  html = html.replace(/\{\{INACTIVE_LICENSES_FMT\}\}/g, fmtN(data.inactive_licenses));
+  html = html.replace(/\{\{INACTIVE_LICENSES_FMT\}\}/g, fmtN(data.inactive_licenses || 0));
   html = html.replace(/\{\{TOTAL_LICENSED_SEATS_FMT\}\}/g, fmtN(data.total_licensed_seats));
+  html = safeSub(html, /\{\{LICENSED_AVG_DAYS\}\}/g, data.licensed_avg_days, 'licensed_avg_days');
+  html = safeSub(html, /\{\{UNLICENSED_AVG_DAYS\}\}/g, data.unlicensed_avg_days, 'unlicensed_avg_days');
   html = html.replace(/\{\{BAND_1_5_FMT\}\}/g, fmtN(data.band_1_5));
   html = html.replace(/\{\{BAND_6_10_FMT\}\}/g, fmtN(data.band_6_10));
   html = html.replace(/\{\{BAND_11_15_FMT\}\}/g, fmtN(data.band_11_15));
