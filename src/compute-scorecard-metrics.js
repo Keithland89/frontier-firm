@@ -199,13 +199,78 @@ RETURN ROW(
 // ============================================================
 // MAIN
 // ============================================================
+function computeDerivedOnly(data) {
+  console.log('\n=== Scorecard Metric Computation (data-only mode) ===\n');
+  console.log('Data file: ' + dataFile);
+  console.log('No PBIX connection — computing derivable metrics only\n');
+  const scorecard = data._scorecard_metrics || {};
+
+  // Combined Habitual Rate (11+ active days)
+  const b11 = typeof data.band_11_15 === 'number' ? data.band_11_15 : 0;
+  const b16 = typeof data.band_16_plus === 'number' ? data.band_16_plus : 0;
+  const b1 = typeof data.band_1_5 === 'number' ? data.band_1_5 : 0;
+  const b6 = typeof data.band_6_10 === 'number' ? data.band_6_10 : 0;
+  const totalBandUsers = b1 + b6 + b11 + b16;
+  const habitualUsers = b11 + b16;
+  if (totalBandUsers > 0) {
+    scorecard.combined_habitual_pct = Math.round(habitualUsers / totalBandUsers * 1000) / 10;
+    scorecard.habitual_users = habitualUsers;
+    scorecard.total_band_users = totalBandUsers;
+    console.log('  Combined habitual: ' + habitualUsers + '/' + totalBandUsers + ' = ' + scorecard.combined_habitual_pct + '%');
+  }
+
+  // Agent MoM retention from per_tier_retention_cohorts
+  const ptrc = data._supplementary_metrics && data._supplementary_metrics.per_tier_retention_cohorts;
+  if (!scorecard.agent_mom_retention && ptrc && ptrc.length > 0) {
+    scorecard.agent_mom_retention = ptrc[0].agent_retention_pct;
+    console.log('  Agent MoM retention (from cohorts): ' + scorecard.agent_mom_retention + '%');
+  }
+
+  // Multi-turn estimate from intensity
+  if (!scorecard.multi_turn_pct && data.m365_intensity > 2) {
+    scorecard.multi_turn_pct = Math.min(Math.round((1 - 1 / data.m365_intensity) * 100), 95);
+    console.log('  Multi-turn estimate (from intensity): ' + scorecard.multi_turn_pct + '%');
+  }
+
+  // Agents with 5+ users from agent_table
+  if (!scorecard.pct_agents_5plus_users && Array.isArray(data.agent_table) && data.total_agents > 0) {
+    const agents5plus = data.agent_table.filter(a => a.users >= 5).length;
+    scorecard.pct_agents_5plus_users = Math.round(agents5plus / data.total_agents * 1000) / 10;
+    console.log('  Agents with 5+ users: ' + agents5plus + '/' + data.total_agents + ' = ' + scorecard.pct_agents_5plus_users + '%');
+  }
+
+  // Growth trend from monthly data
+  const monthly = data._supplementary_metrics && data._supplementary_metrics.monthly_data;
+  if (!scorecard.growth_pct && monthly) {
+    const months = Object.keys(monthly);
+    if (months.length >= 2) {
+      const first = monthly[months[0]].users;
+      const last = monthly[months[months.length - 1]].users;
+      scorecard.growth_pct = Math.round((last - first) / first * 100);
+      scorecard.growth_months = months.length;
+      console.log('  Growth: ' + first + ' -> ' + last + ' = ' + scorecard.growth_pct + '% over ' + months.length + ' months');
+    }
+  }
+
+  return scorecard;
+}
+
 async function main() {
   console.log('\n=== Scorecard Metric Computation ===\n');
   console.log('Data file: ' + dataFile);
 
   const EXE = findMcpExe();
-  if (!EXE) { console.error('ERROR: PBI MCP exe not found'); process.exit(1); }
-  if (!port) { console.error('ERROR: No PBIX port'); process.exit(1); }
+  const hasPbix = EXE && port;
+
+  if (!hasPbix) {
+    // Data-only mode: compute what we can without PBIX
+    const scorecard = computeDerivedOnly(data);
+    if (!data._scorecard_metrics) data._scorecard_metrics = {};
+    Object.assign(data._scorecard_metrics, scorecard);
+    fs.writeFileSync(dataFile, JSON.stringify(data, null, 2), 'utf8');
+    console.log('\nSaved derived scorecard metrics to ' + dataFile);
+    process.exit(0);
+  }
 
   // Connect
   proc = spawn(EXE, ['--start', '--readonly', '--skipconfirmation'], { stdio: ['pipe', 'pipe', 'pipe'] });
@@ -416,6 +481,12 @@ RETURN ROW(
       scorecard.multi_turn_pct = Math.min(Math.round((1 - 1/data.m365_intensity) * 100), 95);
       console.log('  Fallback estimate from intensity: ' + scorecard.multi_turn_pct + '%');
     }
+  }
+
+  // ── Derived: pct_1_5_agents (complement of pct_users_3plus_agents) ──
+  if (scorecard.pct_users_3plus_agents != null) {
+    scorecard.pct_1_5_agents = Math.round((100 - scorecard.pct_users_3plus_agents) * 10) / 10;
+    console.log('\nDerived: Users with 1-5 agents: ' + scorecard.pct_1_5_agents + '%');
   }
 
   // ── Save results ──

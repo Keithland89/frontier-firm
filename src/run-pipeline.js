@@ -72,6 +72,12 @@ gates.push({
   cmd: 'node src/validate-data.js --data "' + dataPath + '"' + (isV2 ? ' --v2' : '')
 });
 
+// Gate 1.25: Compute scorecard metrics
+gates.push({
+  name: 'Gate 1.25: Compute Scorecard Metrics',
+  cmd: 'node src/compute-scorecard-metrics.js --data "' + dataPath + '"'
+});
+
 // Gate 1.5: Generate insights (skip if --no-ai)
 if (!noAI) {
   gates.push({

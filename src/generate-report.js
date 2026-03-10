@@ -793,7 +793,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{SC_USERS_3PLUS_AGENTS\}\}/g, String(sc.users_3plus_agents || 'N/A'));
   html = html.replace(/\{\{SC_PCT_AGENTS_5PLUS_USERS\}\}/g, String(sc.pct_agents_5plus_users || 'N/A'));
   html = html.replace(/\{\{SC_TOTAL_AGENTS_FULL\}\}/g,
-    sc.agent_return_details ? String(sc.agent_return_details.length) : String(data.total_agents || 0));
+    String(data.total_agents || (sc.agent_return_details ? sc.agent_return_details.length : 0)));
   html = html.replace(/\{\{SC_COMBINED_REACH_PCT\}\}/g, String(sc.combined_reach_pct || 'N/A'));
   html = html.replace(/\{\{SC_AGENT_MOM_RETENTION\}\}/g, String(sc.agent_mom_retention || 'N/A'));
   html = html.replace(/\{\{SC_COMBINED_HABITUAL_PCT\}\}/g, String(sc.combined_habitual_pct || 'N/A'));
@@ -895,7 +895,9 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     : 'purpose-built agents with high session depth';
   html = html.replace(/\{\{P2_SPECIALIST_AGENTS_NOTE\}\}/g, specNote);
 
-  html = html.replace(/\{\{P2_PCT_1_5_AGENTS\}\}/g, String(sc.pct_1_5_agents || Math.round((100 - (sc.pct_users_3plus_agents || 0)) * 10) / 10));
+  const pct15agents = sc.pct_1_5_agents || Math.round((100 - (sc.pct_users_3plus_agents || 0)) * 10) / 10;
+  if (!sc.pct_1_5_agents) sc.pct_1_5_agents = pct15agents;
+  html = html.replace(/\{\{P2_PCT_1_5_AGENTS\}\}/g, String(pct15agents));
 
   // Target depts for agent builder sprint (top 2 org by agent usage)
   var targetDepts = orgEntries.slice(0, 2).map(function(e) { return e[0]; }).join(' and ') || 'leading departments';
@@ -1078,6 +1080,19 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   // Retention correction note
   html = html.replace(/\{\{RETENTION_CORRECTION_NOTE\}\}/g,
     'These rates use <strong style="color:#fff">' + retMonths.from + '-' + retMonths.to + '</strong> (most recent complete months). The ' + data.m365_retention + '% licensed retention is a <strong style="color:#fff">' + (data.m365_retention >= 85 ? 'Frontier-tier' : data.m365_retention >= 70 ? 'Expansion-tier' : 'Foundation-tier') + ' signal</strong>.');
+
+  // Retention chart bands from schema (use single-month metric that matches the chart display)
+  const retBands = (schema.metrics.m365_retention || {}).bands || [0.5, 0.7, 0.85];
+  html = html.replace(/\{\{RETENTION_BAND_1\}\}/g, String(Math.round(retBands[0] * 100)));
+  html = html.replace(/\{\{RETENTION_BAND_2\}\}/g, String(Math.round(retBands[1] * 100)));
+  html = html.replace(/\{\{RETENTION_BAND_3\}\}/g, String(Math.round(retBands[2] * 100)));
+
+  // M365 total apps (breadth denominator)
+  html = html.replace(/\{\{M365_TOTAL_APPS\}\}/g, String(data.m365_total_apps || schema.constants && schema.constants.m365_total_apps || 27));
+
+  // Pattern 3 Frontier active threshold (from m365_enablement Frontier band)
+  const enableBands = (schema.metrics.m365_enablement || {}).bands || [0.40, 0.70, 0.90];
+  html = html.replace(/\{\{P3_FRONTIER_ACTIVE_THRESHOLD\}\}/g, String(Math.round(enableBands[2] * 100)));
 
   // Monthly active users trend — from monthly_data
   const monthlyData = data._supplementary_metrics && data._supplementary_metrics.monthly_data;
