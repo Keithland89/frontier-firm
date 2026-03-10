@@ -1197,6 +1197,18 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       </div>
     </div>
     
+    <div class="two-col reveal reveal-d2" style="margin-bottom:1.5rem">
+      <div class="chart-card">
+        <div class="chart-card-title">App Surface Distribution</div>
+        <div class="chart-card-sub">Copilot usage by M365 application</div>
+        <div style="position:relative;height:280px"><canvas id="chartAppSurface"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Agent Leaderboard</div>
+        <div class="chart-card-sub">Top agents by sessions per user</div>
+        <div style="position:relative;height:280px"><canvas id="chartAgentBar"></canvas></div>
+      </div>
+    </div>
     <div class="so-what reveal" style="--signal-accent:#7B2FF2">
       <div class="so-what-text">{{INSIGHT_SKILL}}</div>
     </div></div><!-- /tier-group overall -->
@@ -1803,6 +1815,16 @@ _scatterData.forEach(ds=>{const y=ds.data[0]?ds.data[0].y:0;
   else if(y>=5){ds.backgroundColor='rgba(123,47,242,0.45)';ds.borderColor='#7B2FF2';}
   else{ds.backgroundColor='rgba(148,163,184,0.35)';ds.borderColor='#94A3B8';}});
 new Chart(document.getElementById('chartOrgScatter'),{type:'bubble',data:{datasets:_scatterData},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,color:cLabel,font:{size:9,weight:600},anchor:'end',align:'top',formatter:(v,ctx)=>ctx.dataset.label},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.raw.x+' M365 users, '+ctx.raw.y+'% agents'}}},scales:{x:{title:{display:true,text:'M365 Copilot Licensed Users',color:cTick,font:{size:11,weight:600}},grid:{color:cGrid},ticks:{color:cTickSub,font:{size:9}}},y:{title:{display:true,text:'% Using Agents',color:cTick,font:{size:11,weight:600}},grid:{color:cGrid},ticks:{color:cTickSub,font:{size:9},callback:v=>v+'%'}}}}});
+}
+
+/* Chart: App Surface Distribution */
+if(document.getElementById('chartAppSurface')){
+new Chart(document.getElementById('chartAppSurface'),{type:'bar',data:{labels:[{{APP_SURFACE_LABELS}}],datasets:[{data:[{{APP_SURFACE_DATA}}],backgroundColor:['rgba(123,47,242,.7)','rgba(34,100,229,.7)','rgba(14,165,233,.7)','rgba(16,185,129,.7)','rgba(245,158,11,.7)','rgba(249,115,22,.7)','rgba(239,68,68,.5)','rgba(100,116,139,.5)','rgba(100,116,139,.4)','rgba(100,116,139,.3)'],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},datalabels:{display:false}},scales:{x:{ticks:{callback:v=>v+'%',color:cTickSub},grid:{color:cGrid}},y:{grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}}}}});
+}
+
+/* Chart: Agent Leaderboard Bar */
+if(document.getElementById('chartAgentBar')){
+new Chart(document.getElementById('chartAgentBar'),{type:'bar',data:{labels:JSON.parse('{{TOP_AGENT_NAMES_JSON}}'),datasets:[{data:{{TOP_AGENT_SESSIONS}},backgroundColor:'rgba(14,165,233,.6)',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},datalabels:{display:false}},scales:{x:{title:{display:true,text:'Sessions per User',font:{size:10},color:cTick},grid:{color:cGrid},ticks:{color:cTickSub}},y:{grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}}}}});
 }
 </script>
 

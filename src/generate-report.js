@@ -1213,6 +1213,21 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     html = html.replace(/\{\{APP_SURFACE_BARS\}\}/g, '<p style="font-size:.78rem;color:var(--text-3);font-style:italic">App surface data not available</p>');
   }
 
+  // App surface chart data (for V3 chartAppSurface canvas)
+  if (appData) {
+    const appEntries2 = Object.entries(appData).sort(function(a, b) { return b[1].pct - a[1].pct; }).slice(0, 10);
+    const appLabels = appEntries2.map(function(e) {
+      var names = {office_bizchat:'BizChat',office:'BizChat',teams:'Teams',word:'Word',outlook:'Outlook',edge:'Edge',forms:'Forms',excel:'Excel',powerpoint:'PowerPoint',sharepoint:'SharePoint',designer:'Designer',outlooksidepane:'Outlook Sidepane'};
+      return '"' + (names[e[0]] || e[0]) + '"';
+    }).join(',');
+    var appValues = appEntries2.map(function(e) { return e[1].pct; }).join(',');
+    html = html.replace(/\{\{APP_SURFACE_LABELS\}\}/g, appLabels);
+    html = html.replace(/\{\{APP_SURFACE_DATA\}\}/g, appValues);
+  } else {
+    html = html.replace(/\{\{APP_SURFACE_LABELS\}\}/g, '"No data"');
+    html = html.replace(/\{\{APP_SURFACE_DATA\}\}/g, '0');
+  }
+
   // Skill growth signal — data-driven
   if (appData) {
     const sorted = Object.entries(appData).sort(function(a, b) { return a[1].pct - b[1].pct; });
