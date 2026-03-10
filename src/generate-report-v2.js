@@ -15,7 +15,8 @@ const path = require('path');
 // ============================================================
 // 1. CONFIG & FILE LOADING
 // ============================================================
-const TEMPLATE_PATH = path.resolve(__dirname, '..', 'template', 'ff_template_v2.html');
+const useV3 = process.argv.includes('--v3');
+const TEMPLATE_PATH = path.resolve(__dirname, '..', 'template', useV3 ? 'ff_template_v3.html' : 'ff_template_v2.html');
 const SCHEMA_PATH = path.resolve(__dirname, '..', 'schema', 'ff_schema_v2.json');
 
 const args = process.argv.slice(2);
