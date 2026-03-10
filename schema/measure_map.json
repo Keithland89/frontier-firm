@@ -137,7 +137,8 @@
   "agent_weekly_sessions": {
     "type": "scalar",
     "measures": [
-      "[Sessions (Weekly)]"
+      "[Sessions (Weekly)]",
+      "[Average Agent Sessions Per User Per Week (All Licenses)]"
     ],
     "page": "Agents Usage Trends",
     "description": "Average weekly agent sessions per user. Source: 'Sessions (Weekly)' KPI card on Agents Usage Trends page."
