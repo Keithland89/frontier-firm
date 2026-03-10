@@ -1165,6 +1165,59 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     html = html.replace(/\{\{PER_TIER_ACTIVE_DAY_JSON\}\}/g, 'null');
   }
 
+  // ── Habit: Monthly Users by Tier (V3 chartHabitTiers) ──
+  const perTierM = data._supplementary_metrics && data._supplementary_metrics.per_tier_monthly_users;
+  if (Array.isArray(perTierM) && perTierM.length > 0) {
+    // Exclude last month if it looks partial (< 60% of previous month's total)
+    var tierMonths = perTierM;
+    if (tierMonths.length >= 2) {
+      var lastTotal = (tierMonths[tierMonths.length-1].licensed||0) + (tierMonths[tierMonths.length-1].unlicensed||0);
+      var prevTotal = (tierMonths[tierMonths.length-2].licensed||0) + (tierMonths[tierMonths.length-2].unlicensed||0);
+      if (lastTotal < prevTotal * 0.6) tierMonths = tierMonths.slice(0, -1);
+    }
+    html = html.replace(/\{\{HABIT_TIER_LABELS\}\}/g, JSON.stringify(tierMonths.map(function(m) { return m.month; })));
+    html = html.replace(/\{\{HABIT_TIER_LICENSED\}\}/g, JSON.stringify(tierMonths.map(function(m) { return m.licensed || 0; })));
+    html = html.replace(/\{\{HABIT_TIER_UNLICENSED\}\}/g, JSON.stringify(tierMonths.map(function(m) { return m.unlicensed || 0; })));
+    html = html.replace(/\{\{HABIT_TIER_AGENTS\}\}/g, JSON.stringify(tierMonths.map(function(m) { return m.agents || 0; })));
+  } else {
+    html = html.replace(/\{\{HABIT_TIER_LABELS\}\}/g, '["No data"]');
+    html = html.replace(/\{\{HABIT_TIER_LICENSED\}\}/g, '[0]');
+    html = html.replace(/\{\{HABIT_TIER_UNLICENSED\}\}/g, '[0]');
+    html = html.replace(/\{\{HABIT_TIER_AGENTS\}\}/g, '[0]');
+  }
+
+  // ── Retention: MoM per month pair (V3 bar chart) ──
+  // Compute retention from per_tier_monthly_users: retained = min(current_total, prev_total) / prev_total
+  // Real retention requires cohort overlap, so use m365_retention as baseline
+  if (Array.isArray(perTierM) && perTierM.length >= 2) {
+    var retLabels = [], retValues = [], retColors = [];
+    var fullMonths = perTierM;
+    // Exclude partial last month
+    if (fullMonths.length >= 2) {
+      var lt = (fullMonths[fullMonths.length-1].licensed||0) + (fullMonths[fullMonths.length-1].unlicensed||0);
+      var pt = (fullMonths[fullMonths.length-2].licensed||0) + (fullMonths[fullMonths.length-2].unlicensed||0);
+      if (lt < pt * 0.6) fullMonths = fullMonths.slice(0, -1);
+    }
+    // Use data.retention_per_month if available, otherwise estimate from overall retention
+    var retPerMonth = data._supplementary_metrics && data._supplementary_metrics.retention_per_month;
+    for (var ri = 1; ri < fullMonths.length; ri++) {
+      var fromM = fullMonths[ri-1].month || ('M' + ri);
+      var toM = fullMonths[ri].month || ('M' + (ri+1));
+      var label = fromM.replace(/\d{4}-/, '').replace('09','Sep').replace('10','Oct').replace('11','Nov').replace('12','Dec').replace('01','Jan') + ' \u2192 ' + toM.replace(/\d{4}-/, '').replace('09','Sep').replace('10','Oct').replace('11','Nov').replace('12','Dec').replace('01','Jan');
+      var retPct = retPerMonth && retPerMonth[ri-1] ? retPerMonth[ri-1] : (typeof data.m365_retention === 'number' ? data.m365_retention : 0);
+      retLabels.push(label);
+      retValues.push(Math.round(retPct * 10) / 10);
+      retColors.push(retPct >= 85 ? "'#10B981'" : retPct >= 70 ? "'#F59E0B'" : "'#EF4444'");
+    }
+    html = html.replace(/\{\{RETENTION_MONTH_LABELS\}\}/g, JSON.stringify(retLabels));
+    html = html.replace(/\{\{RETENTION_MONTH_VALUES\}\}/g, JSON.stringify(retValues));
+    html = html.replace(/\{\{RETENTION_MONTH_COLORS\}\}/g, '[' + retColors.join(',') + ']');
+  } else {
+    html = html.replace(/\{\{RETENTION_MONTH_LABELS\}\}/g, '["No data"]');
+    html = html.replace(/\{\{RETENTION_MONTH_VALUES\}\}/g, '[0]');
+    html = html.replace(/\{\{RETENTION_MONTH_COLORS\}\}/g, '["#64748B"]');
+  }
+
   // Cohort flow chart data — from retention_cohorts
   if (retentionCohorts) {
     const cohortLabels = retentionKeys.map(function(k) {
