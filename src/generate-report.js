@@ -731,6 +731,10 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = safeSub(html, /\{\{BAND_6_10_PCT\}\}/g, data.band_6_10_pct, 'band_6_10_pct');
   html = safeSub(html, /\{\{BAND_11_15_PCT\}\}/g, data.band_11_15_pct, 'band_11_15_pct');
   html = safeSub(html, /\{\{BAND_16_PLUS_PCT\}\}/g, data.band_16_plus_pct, 'band_16_plus_pct');
+  html = safeSub(html, /\{\{LIC_BAND_1_5_PCT\}\}/g, data.licensed_band_1_5_pct || 0, 'lic_band_1_5_pct');
+  html = safeSub(html, /\{\{LIC_BAND_6_10_PCT\}\}/g, data.licensed_band_6_10_pct || 0, 'lic_band_6_10_pct');
+  html = safeSub(html, /\{\{LIC_BAND_11_15_PCT\}\}/g, data.licensed_band_11_15_pct || 0, 'lic_band_11_15_pct');
+  html = safeSub(html, /\{\{LIC_BAND_16_PLUS_PCT\}\}/g, data.licensed_band_16_plus_pct || 0, 'lic_band_16_plus_pct');
   html = safeSub(html, /\{\{CHAT_BAND_1_5_PCT\}\}/g, data.chat_band_1_5_pct, 'chat_band_1_5_pct');
   html = safeSub(html, /\{\{CHAT_BAND_6_10_PCT\}\}/g, data.chat_band_6_10_pct, 'chat_band_6_10_pct');
   html = safeSub(html, /\{\{CHAT_BAND_11_15_PCT\}\}/g, data.chat_band_11_15_pct, 'chat_band_11_15_pct');
@@ -971,8 +975,13 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     let tbl = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.78rem">';
     tbl += '<thead><tr style="border-bottom:2px solid rgba(255,255,255,.1)"><th style="text-align:left;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Organisation</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Unlicensed</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Licensed</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Ratio</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Sessions/Wk</th></tr></thead><tbody>';
     licPriorityOrgs.slice(0, 10).forEach(function(org) {
-      const ratio = org.ratio_unlicensed_to_licensed ? org.ratio_unlicensed_to_licensed.toFixed(1) + 'x' : '—';
-      tbl += '<tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:.5rem .4rem;color:#fff;font-weight:600">' + org.org + '</td><td style="text-align:right;padding:.5rem .4rem;color:#0EA5E9">' + fmtN(org.unlicensed_users) + '</td><td style="text-align:right;padding:.5rem .4rem;color:#2264E5">' + fmtN(org.licensed_users) + '</td><td style="text-align:right;padding:.5rem .4rem;color:#F59E0B;font-weight:700">' + ratio + '</td><td style="text-align:right;padding:.5rem .4rem;color:rgba(255,255,255,.7)">' + (org.unlicensed_median_sessions_weekly || '—') + '</td></tr>';
+      const unlicCount = org.unlicensed_users || org.unlicensed || 0;
+      const licCount = org.licensed_users || org.licensed || 0;
+      const ratioVal = org.ratio_unlicensed_to_licensed || org.ratio || (licCount > 0 ? Math.round(unlicCount / licCount * 100) / 100 : 0);
+      const ratioStr = typeof ratioVal === 'number' && ratioVal < 900 ? ratioVal.toFixed(1) + 'x' : '—';
+      const total = licCount + unlicCount;
+      const unlicPct = total > 0 ? Math.round(unlicCount / total * 100) : 0;
+      tbl += '<tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:.5rem .4rem;color:#fff;font-weight:600">' + org.org + '</td><td style="text-align:right;padding:.5rem .4rem;color:#0EA5E9">' + fmtN(unlicCount) + '</td><td style="text-align:right;padding:.5rem .4rem;color:#2264E5">' + fmtN(licCount) + '</td><td style="text-align:right;padding:.5rem .4rem;color:#F59E0B;font-weight:700">' + unlicPct + '%</td><td style="text-align:right;padding:.5rem .4rem;color:rgba(255,255,255,.7)">' + (org.unlicensed_median_sessions_weekly || '—') + '</td></tr>';
     });
     tbl += '</tbody></table></div>';
     html = html.replace(/\{\{LICENSE_PRIORITY_TABLE\}\}/g, tbl);
@@ -1007,22 +1016,37 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     '<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;border-top:3px solid var(--amber)"><div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--amber);margin-bottom:.75rem">Stickiness Leaders</div><div style="font-size:.82rem;color:var(--text-2);line-height:1.5">The agents with the highest sessions-per-user show what embedded AI looks like.</div></div>' +
     '</div>');
 
-  // Agent table rows — generate from top agent data (5 columns: Agent, Type, Users, Sessions, Sess/User)
-  const types = data.top_agent_types || [];
-  const users = data.top_agent_users || [];
+  // Agent table rows — prefer agent_table array (has full data), fallback to top_agent_* arrays
   let tableRows = '';
-  for (let i = 0; i < Math.min(names.length, 8); i++) {
-    const sess = sessions[i] || 0;
-    const type = types[i] || '—';
-    const uCount = users[i] || 0;
-    const sessPerUser = uCount > 0 ? (sess / uCount).toFixed(1) : '—';
-    tableRows += '<tr style="border-bottom:1px solid var(--border)">' +
-      '<td style="padding:.55rem .4rem;font-weight:600;color:var(--text)">' + names[i] + '</td>' +
-      '<td style="padding:.55rem .4rem;font-size:.72rem;color:var(--text-2)">' + type + '</td>' +
-      '<td style="text-align:right;padding:.55rem .4rem;font-variant-numeric:tabular-nums">' + fmtN(uCount) + '</td>' +
-      '<td style="text-align:right;padding:.55rem .4rem;font-variant-numeric:tabular-nums">' + fmtN(sess) + '</td>' +
-      '<td style="text-align:right;padding:.55rem .4rem;font-variant-numeric:tabular-nums;font-weight:600;color:var(--purple)">' + sessPerUser + '</td>' +
-      '</tr>\n';
+  const agentArr = Array.isArray(data.agent_table) ? data.agent_table : [];
+  if (agentArr.length > 0) {
+    agentArr.slice(0, 10).forEach(function(row) {
+      const sessPerUser = row.sessions_per_user || (row.users > 0 ? Math.round(row.sessions / row.users * 10) / 10 : 0);
+      tableRows += '<tr style="border-bottom:1px solid var(--border)">' +
+        '<td style="padding:.55rem .4rem;font-weight:600;color:var(--text)">' + (row.name || '—') + '</td>' +
+        '<td style="padding:.55rem .4rem;font-size:.72rem;color:var(--text-2)">' + (row.type || '—') + '</td>' +
+        '<td style="text-align:right;padding:.55rem .4rem;font-variant-numeric:tabular-nums">' + fmtN(row.users || 0) + '</td>' +
+        '<td style="text-align:right;padding:.55rem .4rem;font-variant-numeric:tabular-nums">' + fmtN(row.sessions || 0) + '</td>' +
+        '<td style="text-align:right;padding:.55rem .4rem;font-variant-numeric:tabular-nums;font-weight:600;color:var(--purple)">' + sessPerUser + '</td>' +
+        '</tr>\n';
+    });
+  } else {
+    // Fallback to top_agent_* arrays
+    const types = data.top_agent_types || [];
+    const users = data.top_agent_users || [];
+    for (let i = 0; i < Math.min(names.length, 8); i++) {
+      const type = types[i] || '—';
+      const uCount = users[i] || 0;
+      const sess = sessions[i] || 0;
+      const sessPerUser = uCount > 0 ? (sess / uCount).toFixed(1) : '—';
+      tableRows += '<tr style="border-bottom:1px solid var(--border)">' +
+        '<td style="padding:.55rem .4rem;font-weight:600;color:var(--text)">' + names[i] + '</td>' +
+        '<td style="padding:.55rem .4rem;font-size:.72rem;color:var(--text-2)">' + type + '</td>' +
+        '<td style="text-align:right;padding:.55rem .4rem;font-variant-numeric:tabular-nums">' + fmtN(uCount) + '</td>' +
+        '<td style="text-align:right;padding:.55rem .4rem;font-variant-numeric:tabular-nums">' + fmtN(sess) + '</td>' +
+        '<td style="text-align:right;padding:.55rem .4rem;font-variant-numeric:tabular-nums;font-weight:600;color:var(--purple)">' + sessPerUser + '</td>' +
+        '</tr>\n';
+    }
   }
   html = html.replace(/\{\{AGENT_TABLE_ROWS\}\}/g, tableRows);
 
