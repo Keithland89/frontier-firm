@@ -20,8 +20,8 @@ npx playwright install chromium
 
 # 4. Open the .pbix file in Power BI Desktop (must stay open during extraction)
 
-# 5. Generate the report (Copilot / Claude will orchestrate automatically)
-npm run report -- --pbix "Customer AI-in-One Dashboard 2202 - w Agent 365" --output output/
+# 5. Generate the report (PBIX must be open in Power BI Desktop)
+npm run frontier -- "Customer AI-in-One Dashboard 2202 - w Agent 365"
 
 # 6. Open the generated HTML in a browser
 ```
