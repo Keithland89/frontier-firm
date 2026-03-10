@@ -852,6 +852,50 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 #habit.signal-section{border-left:6px solid #F59E0B !important;box-shadow:inset 6px 0 20px -6px rgba(245,158,11,.2) !important}
 #skill.signal-section{border-left:6px solid #7B2FF2 !important;box-shadow:inset 6px 0 20px -6px rgba(123,47,242,.2) !important}
 #value.signal-section{border-left:6px solid #10B981 !important;box-shadow:inset 6px 0 20px -6px rgba(16,185,129,.2) !important}
+
+/* ═══════════════════════════════════════════════════════════
+   MATURITY SCORECARD
+   ═══════════════════════════════════════════════════════════ */
+.scorecard{max-width:1120px;margin:0 auto;padding:0 2.5rem}
+.scorecard-title{font-size:clamp(1.2rem,2.5vw,1.6rem);font-weight:700;color:var(--text);text-align:center;margin-bottom:.35rem}
+.scorecard-subtitle{font-size:.85rem;color:var(--text-2);text-align:center;margin-bottom:2rem;max-width:640px;margin-left:auto;margin-right:auto;line-height:1.5}
+.scorecard-grid{display:grid;grid-template-columns:180px repeat(3,1fr);gap:0;border:1px solid var(--border);border-radius:var(--radius-lg,16px);overflow:hidden;background:var(--surface)}
+.sc-header{background:var(--surface);padding:14px 16px;display:flex;align-items:center;gap:8px;border-bottom:2px solid var(--border);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-2)}
+.sc-header-corner{background:var(--surface);padding:14px 16px;border-bottom:2px solid var(--border);font-size:.68rem;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center}
+.sc-header .sc-num{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:#fff;flex-shrink:0}
+.sc-row-label{padding:16px 16px;display:flex;flex-direction:column;gap:4px;border-right:1px solid var(--border)}
+.sc-row-label .sc-phase{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.sc-row-label .sc-phase-name{font-size:.82rem;font-weight:700;color:var(--text);line-height:1.3}
+.sc-row-label .sc-phase-desc{font-size:.68rem;color:var(--text-3);line-height:1.4;margin-top:2px}
+.sc-cell{padding:16px;display:flex;flex-direction:column;justify-content:center;border-top:1px solid var(--border);border-right:1px solid var(--border);position:relative}
+.sc-cell:last-child{border-right:none}
+.sc-row-label{border-top:1px solid var(--border)}
+.sc-cell .sc-metric-name{font-size:.68rem;font-weight:600;color:var(--text-2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.sc-cell .sc-metric-value{font-size:1.35rem;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.sc-cell .sc-metric-note{font-size:.62rem;color:var(--text-3);margin-top:3px;line-height:1.3}
+.sc-cell.sc-active{background:rgba(123,47,242,.04)}
+.sc-cell.sc-active .sc-metric-value{color:var(--copilot-purple)}
+.sc-active-row .sc-row-label{background:rgba(123,47,242,.04)}
+.sc-you-badge{position:absolute;top:6px;right:8px;font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);background:rgba(123,47,242,.1);padding:2px 7px;border-radius:100px}
+.sc-row-badge{display:inline-flex;align-items:center;gap:4px;font-size:.55rem;font-weight:700;color:#fff;background:var(--copilot-purple);padding:2px 8px;border-radius:100px;margin-top:4px;width:fit-content}
+@media(max-width:768px){.scorecard-grid{grid-template-columns:120px repeat(3,1fr)}.sc-cell .sc-metric-value{font-size:1.05rem}.sc-row-label .sc-phase-desc{display:none}}
+@media print{.scorecard-grid{break-inside:avoid}}
+
+/* ── Scorecard Detail Cards ── */
+.sc-details{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2rem;max-width:1120px;margin-left:auto;margin-right:auto;padding:0 2.5rem}
+.sc-detail-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg,16px);overflow:hidden;display:flex;flex-direction:column}
+.sc-detail-header{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.sc-detail-signal{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em}
+.sc-detail-phase{font-size:.62rem;color:var(--text-3);font-weight:500}
+.sc-detail-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-bottom:1px solid var(--border)}
+.sc-detail-stat{padding:14px 18px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.sc-detail-stat:nth-child(2n){border-right:none}
+.sc-detail-stat:nth-last-child(-n+2){border-bottom:none}
+.sc-detail-stat-value{font-size:1.35rem;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.sc-detail-stat-label{font-size:.75rem;color:var(--text-3);margin-top:3px;line-height:1.3}
+.sc-detail-narrative{padding:20px 24px;font-size:.88rem;color:var(--text-2);line-height:1.7;margin:0;flex:1}
+@media(max-width:768px){.sc-details{grid-template-columns:1fr}.sc-detail-stat-value{font-size:1rem}}
+@media print{.sc-details{break-inside:avoid}}
 </style>
 </head>
 <body>
@@ -900,6 +944,8 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
   </div>
   <div class="hero-scroll"><span>Scroll to explore</span><div class="scroll-arrow"></div></div>
 </section>
+
+
 
 
 <section class="section" id="framework" style="background:var(--bg)">
@@ -1014,6 +1060,234 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
     </div>
   </div>
 </section>
+
+<!-- MATURITY SCORECARD -->
+<section class="section" id="maturity-scorecard" style="background:var(--bg);padding:3rem 0 1.5rem">
+  <div class="scorecard">
+    <div class="section-label reveal" style="text-align:center;justify-content:center">Frontier Maturity Scorecard</div>
+    <h2 class="scorecard-title reveal reveal-d1">Where {{CUSTOMER_NAME}} Stands Today</h2>
+    <p class="scorecard-subtitle reveal reveal-d2">Three signals — Reach, Habit and Skill — measured across three stages of AI maturity. {{CUSTOMER_NAME}} is currently at <strong>Pattern {{PATTERN_NUMBER}}</strong>.</p>
+
+    <div class="scorecard-grid reveal reveal-d3">
+      <!-- Header row -->
+      <div class="sc-header-corner">Measurement →</div>
+      <div class="sc-header"><span class="sc-num" style="background:#0EA5E9">1</span> Reach</div>
+      <div class="sc-header"><span class="sc-num" style="background:#F59E0B">2</span> Habit</div>
+      <div class="sc-header"><span class="sc-num" style="background:#7B2FF2">3</span> Skill</div>
+
+      <!-- Pattern 1: Foundation -->
+      <div class="sc-row-label">
+        <div class="sc-phase" style="color:var(--brand)">Pattern 1</div>
+        <div class="sc-phase-name">Human with Assistant</div>
+        <div class="sc-phase-desc">Sustained, repeated individual usage over time</div>
+      </div>
+      <div class="sc-cell">
+        <div class="sc-metric-name">Copilot Reach</div>
+        <div class="sc-metric-value">{{SC_COMBINED_REACH_PCT}}%</div>
+        <div class="sc-metric-note">Total Copilot users / total employees</div>
+      </div>
+      <div class="sc-cell">
+        <div class="sc-metric-name">Habitual Users</div>
+        <div class="sc-metric-value">{{SC_COMBINED_HABITUAL_PCT}}%</div>
+        <div class="sc-metric-note">Users with 11+ active days/month</div>
+      </div>
+      <div class="sc-cell">
+        <div class="sc-metric-name">Deep Interactions</div>
+        <div class="sc-metric-value">{{SC_MULTI_TURN_PCT}}%</div>
+        <div class="sc-metric-note">Sessions with 5+ prompts</div>
+      </div>
+
+      <!-- Pattern 2: Expansion (active row for customer) -->
+      <div class="sc-row-label sc-active-row">
+        <div class="sc-phase" style="color:var(--copilot-purple)">Pattern 2</div>
+        <div class="sc-phase-name">Human-Agent Teams</div>
+        <div class="sc-phase-desc">Effective use, moving to agent-supported workflows</div>
+        <div class="sc-row-badge">◆ You are here</div>
+      </div>
+      <div class="sc-cell sc-active">
+        <div class="sc-metric-name">Agent Active Users</div>
+        <div class="sc-metric-value">{{AGENT_ADOPTION}}%</div>
+        <div class="sc-metric-note">{{AGENT_USERS}} users across {{SC_TOTAL_AGENTS_FULL}} agents</div>
+      </div>
+      <div class="sc-cell sc-active">
+        <div class="sc-metric-name">Agent MoM Retention</div>
+        <div class="sc-metric-value">{{SC_AGENT_MOM_RETENTION}}%</div>
+        <div class="sc-metric-note">Agent users who return next month</div>
+      </div>
+      <div class="sc-cell sc-active">
+        <div class="sc-metric-name">Users with 3+ Agents</div>
+        <div class="sc-metric-value">{{SC_PCT_USERS_3PLUS_AGENTS}}%</div>
+        <div class="sc-metric-note">{{SC_USERS_3PLUS_AGENTS}} users exploring multiple agents</div>
+      </div>
+
+      <!-- Pattern 3: Frontier -->
+      <div class="sc-row-label">
+        <div class="sc-phase" style="color:var(--copilot-green)">Pattern 3</div>
+        <div class="sc-phase-name">Human-led, Agent-operated</div>
+        <div class="sc-phase-desc">Agents embedded in org workflows at scale</div>
+      </div>
+      <div class="sc-cell">
+        <div class="sc-metric-name">Agent Return Rate</div>
+        <div class="sc-metric-value">{{SC_PCT_AGENTS_RETURN_50}}%</div>
+        <div class="sc-metric-note">Agents with >50% user return</div>
+      </div>
+      <div class="sc-cell">
+        <div class="sc-metric-name">Avg Sessions / Agent</div>
+        <div class="sc-metric-value">—</div>
+        <div class="sc-metric-note">Coming soon</div>
+      </div>
+      <div class="sc-cell">
+        <div class="sc-metric-name">Agents 5+ Users</div>
+        <div class="sc-metric-value">{{SC_PCT_AGENTS_5PLUS_USERS}}%</div>
+        <div class="sc-metric-note">Agents with broad team adoption</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE 1 SEPARATOR & DETAIL SECTION -->
+<div style="max-width:1120px;margin:0 auto;padding:0 2.5rem">
+  <hr style="border:none;border-top:1px solid var(--border);margin:0">
+</div>
+
+<section class="section" id="phase1-detail" style="background:var(--bg);padding:2.5rem 0 3rem">
+  <div class="section-inner" style="max-width:1120px">
+    <div class="section-label reveal" style="color:var(--brand)">Pattern 1 Deep Dive</div>
+    <h2 class="section-title reveal reveal-d1" style="font-size:clamp(1.4rem,3vw,2rem)">How are we doing on Phase 1 — Human with Assistant?</h2>
+    <p class="section-subtitle reveal reveal-d2" style="max-width:800px">Pattern 1 measures whether individuals across the organisation are using AI as a personal productivity tool — consistently, skillfully, and across the breadth of their work.</p>
+
+    <div class="sc-details reveal reveal-d3" style="margin-top:2rem">
+      <!-- P1 Reach Detail -->
+      <div class="sc-detail-card" style="border-top:3px solid #0EA5E9">
+        <div class="sc-detail-header">
+          <div class="sc-detail-signal" style="color:#0EA5E9">① Reach</div>
+          <div class="sc-detail-phase">{{SC_COMBINED_REACH_PCT}}% of employees</div>
+        </div>
+        <div class="sc-detail-stats">
+          <div class="sc-detail-stat">
+            <div class="sc-detail-stat-value" style="color:#0EA5E9">{{LICENSED_USERS}}</div>
+            <div class="sc-detail-stat-label">M365 Copilot Users</div>
+          </div>
+          <div class="sc-detail-stat">
+            <div class="sc-detail-stat-value" style="color:#0EA5E9">{{CHAT_USERS_FMT}}</div>
+            <div class="sc-detail-stat-label">Free Chat Users</div>
+          </div>
+          <div class="sc-detail-stat">
+            <div class="sc-detail-stat-value">{{LICENSE_COVERAGE_PCT}}%</div>
+            <div class="sc-detail-stat-label">Company Licensed</div>
+          </div>
+          <div class="sc-detail-stat">
+            <div class="sc-detail-stat-value" style="color:#10B981">+{{SC_GROWTH_PCT}}%</div>
+            <div class="sc-detail-stat-label">Growth ({{SC_GROWTH_MONTHS}} months)</div>
+          </div>
+        </div>
+        <div class="sc-detail-narrative" style="padding:20px 24px">
+          <div style="margin-bottom:14px">
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#10B981;margin-bottom:8px">✓ What's going well</div>
+            <ul style="margin:0;padding-left:1.2em;font-size:.88rem;color:var(--text-2);line-height:1.8">
+              <li>{{CHAT_USERS_FMT}} free Chat users adopted organically — outnumbering {{LICENSED_USERS}} licensed users</li>
+              <li>+{{SC_GROWTH_PCT}}% user growth over {{SC_GROWTH_MONTHS}} months</li>
+              <li>{{SC_COMBINED_REACH_PCT}}% of the {{SC_TOTAL_EMPLOYEES}}-person workforce now active</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#F59E0B;margin-bottom:8px">⚡ What could improve</div>
+            <ul style="margin:0;padding-left:1.2em;font-size:.88rem;color:var(--text-2);line-height:1.8">
+              <li>Only {{LICENSE_COVERAGE_PCT}}% of active users hold an M365 licence</li>
+              <li>Large unlicensed base = proven demand — convert to unlock deeper M365 integration</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- P1 Habit Detail -->
+      <div class="sc-detail-card" style="border-top:3px solid #F59E0B">
+        <div class="sc-detail-header">
+          <div class="sc-detail-signal" style="color:#F59E0B">② Habit</div>
+          <div class="sc-detail-phase">{{SC_COMBINED_HABITUAL_PCT}}% habitual (11+ days)</div>
+        </div>
+        <div class="sc-detail-stats">
+          <div class="sc-detail-stat">
+            <div class="sc-detail-stat-value" style="color:#F59E0B">{{SC_CHAT_HAB_11PLUS_PCT}}%</div>
+            <div class="sc-detail-stat-label">Chat Habitual (11+ days)</div>
+          </div>
+          <div class="sc-detail-stat">
+            <div class="sc-detail-stat-value" style="color:#F59E0B">{{SC_M365_HAB_11PLUS_PCT}}%</div>
+            <div class="sc-detail-stat-label">M365 Habitual (11+ days)</div>
+          </div>
+          <div class="sc-detail-stat">
+            <div class="sc-detail-stat-value">{{WEEKLY_CHAT}}</div>
+            <div class="sc-detail-stat-label">Chat Sessions / Week</div>
+          </div>
+          <div class="sc-detail-stat">
+            <div class="sc-detail-stat-value">{{WEEKLY_M365}}</div>
+            <div class="sc-detail-stat-label">M365 Sessions / Week</div>
+          </div>
+        </div>
+        <div class="sc-detail-narrative" style="padding:20px 24px">
+          <div style="margin-bottom:14px">
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#10B981;margin-bottom:8px">✓ What's going well</div>
+            <ul style="margin:0;padding-left:1.2em;font-size:.88rem;color:var(--text-2);line-height:1.8">
+              <li>Habitual rates balanced across channels: {{SC_CHAT_HAB_11PLUS_PCT}}% Chat, {{SC_M365_HAB_11PLUS_PCT}}% M365</li>
+              <li>{{SC_HABITUAL_USERS}} users at 11+ active days/month — habit is forming, not siloed</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#F59E0B;margin-bottom:8px">⚡ What could improve</div>
+            <ul style="margin:0;padding-left:1.2em;font-size:.88rem;color:var(--text-2);line-height:1.8">
+              <li>~80% of users remain light or moderate (fewer than 11 active days)</li>
+              <li>Weekly sessions average {{WEEKLY_CHAT}} (Chat) and {{WEEKLY_M365}} (M365) — a few times per week, not daily</li>
+              <li>Target the "moderate" cohort (6–10 days) — they are closest to tipping into habitual use</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- P1 Skill Detail -->
+      <div class="sc-detail-card" style="border-top:3px solid #7B2FF2">
+        <div class="sc-detail-header">
+          <div class="sc-detail-signal" style="color:#7B2FF2">③ Skill</div>
+          <div class="sc-detail-phase">{{SC_MULTI_TURN_PCT}}% deep interactions</div>
+        </div>
+        <div class="sc-detail-stats">
+          <div class="sc-detail-stat">
+            <div class="sc-detail-stat-value" style="color:#7B2FF2">{{SC_MULTI_TURN_PCT}}%</div>
+            <div class="sc-detail-stat-label">Multi-Turn Sessions (5+ prompts)</div>
+          </div>
+          <div class="sc-detail-stat">
+            <div class="sc-detail-stat-value" style="color:#7B2FF2">{{M365_BREADTH}}</div>
+            <div class="sc-detail-stat-label">Avg Apps per User</div>
+          </div>
+          <div class="sc-detail-stat">
+            <div class="sc-detail-stat-value">{{LICENSED_AVG_PROMPTS}}</div>
+            <div class="sc-detail-stat-label">Licensed Prompts / Month</div>
+          </div>
+          <div class="sc-detail-stat">
+            <div class="sc-detail-stat-value">{{UNLICENSED_AVG_PROMPTS}}</div>
+            <div class="sc-detail-stat-label">Unlicensed Prompts / Month</div>
+          </div>
+        </div>
+        <div class="sc-detail-narrative" style="padding:20px 24px">
+          <div style="margin-bottom:14px">
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#10B981;margin-bottom:8px">✓ What's going well</div>
+            <ul style="margin:0;padding-left:1.2em;font-size:.88rem;color:var(--text-2);line-height:1.8">
+              <li>{{M365_BREADTH}} M365 apps per user — well above the Frontier threshold</li>
+              <li>Licensed users generate {{LICENSED_AVG_PROMPTS}} prompts/month ({{LICENSE_PRIORITY}}× unlicensed) — licensing drives depth</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#F59E0B;margin-bottom:8px">⚡ What could improve</div>
+            <ul style="margin:0;padding-left:1.2em;font-size:.88rem;color:var(--text-2);line-height:1.8">
+              <li>Only {{SC_MULTI_TURN_PCT}}% of sessions reach 5+ prompts — most interactions are single-shot</li>
+              <li>Coach users on multi-turn dialogue (refine outputs, ask follow-ups) to increase value per session</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_0}}</div><div class="pull-quote-source">Frontier Firm Assessment</div></div>
 
 

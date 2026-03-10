@@ -779,6 +779,32 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{AGENTS_10_PLUS\}\}/g, String(data.agents_10_plus || Math.round((data.multi_user_agents || 0) * 0.3)));
   html = html.replace(/\{\{AGENT_MULTI_SESSIONS\}\}/g, 'N/A');
 
+  // ── Scorecard Metrics ──
+  const sc = data._scorecard_metrics || {};
+  html = html.replace(/\{\{SC_FREE_CHAT_ACTIVE_PCT\}\}/g, String(sc.free_chat_active_pct || 'N/A'));
+  html = html.replace(/\{\{SC_TOTAL_EMPLOYEES\}\}/g, String(sc.total_employees || 'N/A'));
+  html = html.replace(/\{\{SC_PCT_AGENTS_RETURN_50\}\}/g, String(sc.pct_agents_return_50 || 'N/A'));
+  html = html.replace(/\{\{SC_PCT_USERS_3PLUS_AGENTS\}\}/g, String(sc.pct_users_3plus_agents || 'N/A'));
+  html = html.replace(/\{\{SC_USERS_3PLUS_AGENTS\}\}/g, String(sc.users_3plus_agents || 'N/A'));
+  html = html.replace(/\{\{SC_PCT_AGENTS_5PLUS_USERS\}\}/g, String(sc.pct_agents_5plus_users || 'N/A'));
+  html = html.replace(/\{\{SC_TOTAL_AGENTS_FULL\}\}/g,
+    sc.agent_return_details ? String(sc.agent_return_details.length) : String(data.total_agents || 0));
+  html = html.replace(/\{\{SC_COMBINED_REACH_PCT\}\}/g, String(sc.combined_reach_pct || 'N/A'));
+  html = html.replace(/\{\{SC_AGENT_MOM_RETENTION\}\}/g, String(sc.agent_mom_retention || 'N/A'));
+  html = html.replace(/\{\{SC_COMBINED_HABITUAL_PCT\}\}/g, String(sc.combined_habitual_pct || 'N/A'));
+  html = html.replace(/\{\{SC_HABITUAL_USERS\}\}/g, String(sc.habitual_users || 'N/A'));
+  html = html.replace(/\{\{SC_GROWTH_PCT\}\}/g, String(sc.growth_pct || 'N/A'));
+  html = html.replace(/\{\{SC_GROWTH_MONTHS\}\}/g, String(sc.growth_months || 'N/A'));
+  html = html.replace(/\{\{SC_MULTI_TURN_PCT\}\}/g, String(sc.multi_turn_pct || 'N/A'));
+  html = html.replace(/\{\{SC_TOTAL_EMPLOYEES\}\}/g,
+    sc.total_employees ? sc.total_employees.toLocaleString() : 'N/A');
+  html = html.replace(/\{\{SC_M365_HAB_11PLUS_PCT\}\}/g, String(sc.m365_hab_11plus_pct || 'N/A'));
+  html = html.replace(/\{\{SC_M365_HAB_11PLUS\}\}/g, String(sc.m365_hab_11plus || 'N/A'));
+  html = html.replace(/\{\{SC_M365_HAB_TOTAL\}\}/g, String(sc.m365_hab_total || 'N/A'));
+  html = html.replace(/\{\{SC_CHAT_HAB_11PLUS_PCT\}\}/g, String(sc.chat_hab_11plus_pct || 'N/A'));
+  html = html.replace(/\{\{SC_M365_HAB_11_15\}\}/g, String(sc.m365_hab_11_15 || 'N/A'));
+  html = html.replace(/\{\{SC_M365_HAB_16_PLUS\}\}/g, String(sc.m365_hab_16_plus || 'N/A'));
+
   // Agent quality insight — data-driven
   html = html.replace(/\{\{AGENT_QUALITY_INSIGHT\}\}/g,
     '<strong>' + (data.multi_user_agents || 0) + ' agents have multiple users</strong>. The quality is real but concentrated in a small number of well-built agents. Most agents are single-user experiments.');
