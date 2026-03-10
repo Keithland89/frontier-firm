@@ -1,14 +1,17 @@
 # Customer data (never commit real customer data)
 data/*.json
+data/*_measure_overrides.json
 !data/sample_contoso.json
 
 # Generated reports and screenshots
-output/*.html
-output/*.pdf
-output/screenshots/
+output/
+!output/.gitkeep
 
 # Temp files from insight generation
 temp/
+
+# PBIX files (large, customer-specific)
+*.pbix
 
 # Node
 node_modules/
