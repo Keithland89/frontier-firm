@@ -1226,9 +1226,9 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
         </div>
         <div class="sc-narrative">
           <span class="divider divider--win"></span>
-          The user base grew <span class="num win">+{{SC_GROWTH_PCT}}%</span> in {{SC_GROWTH_MONTHS}} months — from 2,282 to <span class="num">{{TOTAL_ACTIVE_USERS}}</span> users — with May accelerating at +20% month-on-month. Critically, <strong>{{CHAT_USERS_FMT}} organic Chat adopters</strong> outnumber <span class="num">{{LICENSED_USERS}}</span> licensed users, signalling that demand is real, not mandated. <strong>IT</strong> (8.3 habit score), <strong>Sales</strong> (7.9) and <strong>HR</strong> (7.7) are leading the charge.
+          The user base grew <span class="num win">+{{SC_GROWTH_PCT}}%</span> in {{SC_GROWTH_MONTHS}} months — from {{P1_BASELINE_USERS}} to <span class="num">{{TOTAL_ACTIVE_USERS}}</span> users — with {{P1_LATEST_MONTH}} accelerating at +{{P1_LATEST_MOM_GROWTH}}% month-on-month. Critically, <strong>{{CHAT_USERS_FMT}} organic Chat adopters</strong> outnumber <span class="num">{{LICENSED_USERS}}</span> licensed users, signalling that demand is real, not mandated. {{P1_TOP_ORGS_REACH}} are leading the charge.
           <span class="divider divider--gap"></span>
-          The biggest unlock sits in <strong>484 unused licences</strong>. Reassigning them to top free-tier users in Support, Operations and HR — where unlicensed-to-licensed ratios exceed 1.6:1 — would immediately expand depth. Licensed users already generate <span class="num gap">{{LICENSE_PRIORITY}}×</span> more prompts, so every conversion directly amplifies output.
+          The biggest unlock sits in <strong>{{INACTIVE_LICENSES}} unused licences</strong>. Reassigning them to top free-tier users in underserved departments would immediately expand depth. Licensed users already generate <span class="num gap">{{LICENSE_PRIORITY}}×</span> more prompts, so every conversion directly amplifies output.
         </div>
       </div>
 
@@ -1250,9 +1250,9 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
         </div>
         <div class="sc-narrative">
           <span class="divider divider--win"></span>
-          <span class="num win">{{SC_HABITUAL_USERS}}</span> users have crossed the 11+ active-day threshold, split evenly between Chat (<span class="num">{{SC_CHAT_HAB_11PLUS_PCT}}%</span>) and M365 (<span class="num">{{SC_M365_HAB_11PLUS_PCT}}%</span>) — proving habit is forming across channels, not siloed. Month-on-month retention sits at a solid <strong>79%</strong>, meaning users who start tend to stick. <strong>IT</strong> and <strong>Sales</strong> show the deepest habits and should be leveraged as internal champions.
+          <span class="num win">{{SC_HABITUAL_USERS}}</span> users have crossed the 11+ active-day threshold, split evenly between Chat (<span class="num">{{SC_CHAT_HAB_11PLUS_PCT}}%</span>) and M365 (<span class="num">{{SC_M365_HAB_11PLUS_PCT}}%</span>) — proving habit is forming across channels, not siloed. Month-on-month retention sits at a solid <strong>{{M365_RETENTION}}%</strong>, meaning users who start tend to stick. {{P1_TOP_ORGS_HABIT}} show the deepest habits and should be leveraged as internal champions.
           <span class="divider divider--gap"></span>
-          The clearest conversion opportunity is the <span class="num gap">396 users in the 6–10 day band</span>. They already use Copilot weekly — targeted nudges like prompt-of-the-day or department playbooks could tip them into habitual use. Meanwhile, <strong>Legal</strong> (4.5 habit score) and <strong>Marketing</strong> (5.1) trail significantly — department-specific enablement sprints would have the highest impact here.
+          The clearest conversion opportunity is the <span class="num gap">{{BAND_6_10}} users in the 6–10 day band</span>. They already use Copilot weekly — targeted nudges like prompt-of-the-day or department playbooks could tip them into habitual use. Meanwhile, {{P1_BOTTOM_ORGS_HABIT}} trail significantly — department-specific enablement sprints would have the highest impact here.
         </div>
       </div>
 
@@ -1274,9 +1274,9 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
         </div>
         <div class="sc-narrative">
           <span class="divider divider--win"></span>
-          Users engage with <span class="num win">{{M365_BREADTH}} M365 apps</span> on average — Frontier-level breadth that shows AI is woven across the full suite, not confined to one tool. Licensed users generate <span class="num">{{LICENSED_AVG_PROMPTS}}</span> prompts per month versus <span class="num">{{UNLICENSED_AVG_PROMPTS}}</span> for unlicensed — a <strong>{{LICENSE_PRIORITY}}× depth premium</strong> that validates the licence investment. Overall prompt volume grew <strong>+80%</strong> in three months while per-user intensity rose from 31 to 42.
+          Users engage with <span class="num win">{{M365_BREADTH}} M365 apps</span> on average — Frontier-level breadth that shows AI is woven across the full suite, not confined to one tool. Licensed users generate <span class="num">{{LICENSED_AVG_PROMPTS}}</span> prompts per month versus <span class="num">{{UNLICENSED_AVG_PROMPTS}}</span> for unlicensed — a <strong>{{LICENSE_PRIORITY}}× depth premium</strong> that validates the licence investment. Overall prompt volume grew <strong>+{{P1_PROMPT_GROWTH_PCT}}%</strong> in {{SC_GROWTH_MONTHS}} months while per-user intensity rose from {{P1_INTENSITY_START}} to {{P1_INTENSITY_END}}.
           <span class="divider divider--gap"></span>
-          The gap is depth: <span class="num gap">82.5%</span> of sessions are still single-shot. Training users to iterate — refine outputs, ask follow-ups, chain tasks — would materially increase value per session. Sharing power-user prompt patterns from <strong>IT</strong> and <strong>Sales</strong> with lagging departments is the fastest route to accelerating skill transfer org-wide.
+          The gap is depth: <span class="num gap">{{SC_SINGLE_SHOT_PCT}}%</span> of sessions are still single-shot. Training users to iterate — refine outputs, ask follow-ups, chain tasks — would materially increase value per session. Sharing power-user prompt patterns from {{P1_TOP_ORGS_SKILL}} with lagging departments is the fastest route to accelerating skill transfer org-wide.
         </div>
       </div>
 
@@ -1316,9 +1316,9 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
         </div>
         <div class="sc-narrative">
           <span class="divider divider--win"></span>
-          Agent users grew <span class="num win">+{{AGENT_USER_GROWTH_PCT}}%</span> month-on-month (89 → 116 users, Apr to May) with all <span class="num">{{ORG_COUNT}} organisations</span> showing active agent users — reach is org-wide, not siloed in IT. <strong>Visual Creator</strong> leads with <span class="num">99 users</span> and 100% return rate, making it the breakout agent. <strong>Researcher</strong> (21 users, 2,066 sessions) and <strong>Analyst</strong> (17 users) round out the top three. Functional agents like <strong>IT Service Agent</strong>, <strong>Secure Message Assistant</strong>, and <strong>CRU QA Analyzer</strong> show agents are solving real workflow problems, not just experimentation.
+          Agent users grew <span class="num win">+{{AGENT_USER_GROWTH_PCT}}%</span> month-on-month ({{P2_PREV_AGENT_USERS}} → {{AGENT_USERS}} users, {{P2_GROWTH_PERIOD}}) with all <span class="num">{{ORG_COUNT}} organisations</span> showing active agent users — reach is org-wide, not siloed in IT. <strong>{{P2_TOP_AGENT_1_NAME}}</strong> leads with <span class="num">{{P2_TOP_AGENT_1_USERS}} users</span> and {{P2_TOP_AGENT_1_RETURN}}% return rate, making it the breakout agent. <strong>{{P2_TOP_AGENT_2_NAME}}</strong> ({{P2_TOP_AGENT_2_USERS}} users) and <strong>{{P2_TOP_AGENT_3_NAME}}</strong> ({{P2_TOP_AGENT_3_USERS}} users) round out the top three. {{P2_FUNCTIONAL_AGENTS_NOTE}}
           <span class="divider divider--gap"></span>
-          At <span class="num gap">{{AGENT_ADOPTION}}%</span>, agent reach is still early-stage — <span class="num">{{AGENT_USERS}}</span> users out of {{TOTAL_ACTIVE_USERS}}. The top 3 agents account for the majority of engagement, leaving <span class="num">{{SC_TOTAL_AGENTS_FULL}}</span> total agents with a long tail of low adoption. Focus on promoting the proven winners — Visual Creator and Researcher — to departments that haven't tried them yet.
+          At <span class="num gap">{{AGENT_ADOPTION}}%</span>, agent reach is still early-stage — <span class="num">{{AGENT_USERS}}</span> users out of {{TOTAL_ACTIVE_USERS}}. The top 3 agents account for the majority of engagement, leaving <span class="num">{{SC_TOTAL_AGENTS_FULL}}</span> total agents with a long tail of low adoption. Focus on promoting the proven winners — {{P2_TOP_AGENT_1_NAME}} and {{P2_TOP_AGENT_2_NAME}} — to departments that haven't tried them yet.
         </div>
       </div>
 
@@ -1340,9 +1340,9 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
         </div>
         <div class="sc-narrative">
           <span class="divider divider--win"></span>
-          Agent sessions are growing at <span class="num win">+{{AGENT_SESSIONS_MOM_PCT}}%</span> month-on-month — usage is accelerating, not plateauing. Of <span class="num">89</span> agent users last month, <span class="num win">54 returned</span> — a <span class="num">{{SC_AGENT_MOM_RETENTION}}%</span> retention rate that exceeds typical early-stage benchmarks. Agents with clear functional value — <strong>IT Service Agent</strong> (100% return, 71.3 sessions/user), <strong>Researcher</strong> (100% return, 98.4 sessions/user), and <strong>Secure Message Assistant</strong> (100% return) — show near-perfect stickiness. When an agent solves a real problem, users come back.
+          Agent sessions are growing at <span class="num win">+{{AGENT_SESSIONS_MOM_PCT}}%</span> month-on-month — usage is accelerating, not plateauing. Of <span class="num">{{P2_PREV_AGENT_USERS}}</span> agent users last month, <span class="num win">{{P2_RETAINED_AGENT_USERS}} returned</span> — a <span class="num">{{SC_AGENT_MOM_RETENTION}}%</span> retention rate that exceeds typical early-stage benchmarks. Agents with clear functional value — {{P2_STICKY_AGENTS_NOTE}} — show near-perfect stickiness. When an agent solves a real problem, users come back.
           <span class="divider divider--gap"></span>
-          Despite strong session growth, usage varies sharply by department: <strong>Finance</strong> leads at 7.6 weekly sessions per user — nearly 4× <strong>IT</strong> (2.0) and <strong>Marketing</strong> (2.1). Only <span class="num gap">{{AGENT_HABITUAL_PCT}}%</span> of agent users reach habitual status (11+ active days). The path forward: embed top agents into existing workflows — make Researcher the default starting point for analysis tasks and IT Service Agent the first stop for helpdesk queries.
+          Despite strong session growth, usage varies sharply by department: {{P2_DEPT_SESSIONS_NOTE}}. Only <span class="num gap">{{AGENT_HABITUAL_PCT}}%</span> of agent users reach habitual status (11+ active days). The path forward: embed top agents into existing workflows — make {{P2_TOP_AGENT_2_NAME}} the default starting point for analysis tasks and {{P2_TOP_STICKY_AGENT}} the first stop for routine queries.
         </div>
       </div>
 
@@ -1364,9 +1364,9 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
         </div>
         <div class="sc-narrative">
           <span class="divider divider--win"></span>
-          <span class="num win">{{SC_PCT_USERS_3PLUS_AGENTS}}%</span> of agent users ({{SC_USERS_3PLUS_AGENTS}} people) have explored 3 or more agents, showing genuine curiosity rather than one-off trials. The agent portfolio itself demonstrates real sophistication — purpose-built agents like <strong>CRU QA Analyzer</strong> (70.3 sessions/user), <strong>Risk and Compliance Policy</strong> (48.8 sessions/user), and <strong>SOP Writing Assistant</strong> signal that teams are designing agents for specific business processes, not generic Q&A.
+          <span class="num win">{{SC_PCT_USERS_3PLUS_AGENTS}}%</span> of agent users ({{SC_USERS_3PLUS_AGENTS}} people) have explored 3 or more agents, showing genuine curiosity rather than one-off trials. The agent portfolio itself demonstrates real sophistication — {{P2_SPECIALIST_AGENTS_NOTE}} signal that teams are designing agents for specific business processes, not generic Q&A.
           <span class="divider divider--gap"></span>
-          Only <span class="num gap">{{AGENT_CREATORS_PCT}}%</span> of users are building agents — the creator base needs to expand for Pattern 3 readiness. Most agent usage is concentrated in the top 5 agents, with <span class="num">87.1%</span> of users engaging with just 1–5 agents. Run an "agent builder sprint" targeting power users in IT and Sales to grow the creator cohort and diversify the agent portfolio beyond the current top performers.
+          Only <span class="num gap">{{AGENT_CREATORS_PCT}}%</span> of users are building agents — the creator base needs to expand for Pattern 3 readiness. Most agent usage is concentrated in the top 5 agents, with <span class="num">{{P2_PCT_1_5_AGENTS}}%</span> of users engaging with just 1–5 agents. Run an "agent builder sprint" targeting power users in {{P2_TARGET_DEPTS}} to grow the creator cohort and diversify the agent portfolio beyond the current top performers.
         </div>
       </div>
 

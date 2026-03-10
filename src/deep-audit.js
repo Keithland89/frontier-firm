@@ -169,6 +169,19 @@ if (data._scorecard_metrics) {
 if (Array.isArray(data.org_scatter_data)) {
   data.org_scatter_data.forEach(function(org) { addVal(org.x); addVal(org.y); addVal(org.r); });
 }
+// Monthly trend arrays
+if (Array.isArray(data.monthly_trend_users_arr)) {
+  data.monthly_trend_users_arr.forEach(addVal);
+}
+// Agent weekly sessions by org — includes computed ratios between depts
+if (data._scorecard_metrics && data._scorecard_metrics.agent_weekly_sessions_by_org) {
+  var wsVals = Object.values(data._scorecard_metrics.agent_weekly_sessions_by_org);
+  wsVals.forEach(addVal);
+  if (wsVals.length >= 2) {
+    var wsMax = Math.max.apply(null, wsVals), wsMin = Math.min.apply(null, wsVals);
+    addVal(Math.round(wsMax / wsMin * 10) / 10);
+  }
+}
 // License priority org values + derived ratios
 if (supp && supp.license_priority_orgs) {
   supp.license_priority_orgs.forEach(function(org) {

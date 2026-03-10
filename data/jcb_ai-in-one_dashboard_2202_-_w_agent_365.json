@@ -1539,7 +1539,23 @@
     "agent_user_growth_pct": 30.3,
     "agent_user_growth_basis": "Apr 2025 (89 users) to May 2025 (116 users) — complete months only",
     "agent_sessions_mom_basis": "PBIX KPI: Agent Sessions MoM % — complete months only",
-    "analysis_note": "June 2025 is partial (1-6 Jun) and excluded from all growth calculations"
+    "analysis_note": "June 2025 is partial (1-6 Jun) and excluded from all growth calculations",
+    "latest_month_name": "May",
+    "latest_mom_growth_pct": 20.3,
+    "prompt_growth_pct": 80,
+    "intensity_start": 31,
+    "intensity_end": 42,
+    "p1_top_orgs_reach": "<strong>IT</strong> (8.3 habit score), <strong>Sales</strong> (7.9) and <strong>HR</strong> (7.7)",
+    "p1_top_orgs_habit": "<strong>IT</strong> and <strong>Sales</strong>",
+    "p1_bottom_orgs_habit": "<strong>Legal</strong> (4.5 habit score) and <strong>Marketing</strong> (5.1)",
+    "p1_top_orgs_skill": "<strong>IT</strong> and <strong>Sales</strong>",
+    "agent_growth_period": "Apr to May",
+    "pct_1_5_agents": 87.1
   },
-  "agent_weekly_sessions": 3.6
+  "agent_weekly_sessions": 3.6,
+  "monthly_trend_users_arr": [
+    2282,
+    2560,
+    3080
+  ]
 }
