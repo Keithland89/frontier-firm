@@ -468,6 +468,40 @@ function populateTemplate(template, insights) {
   const band16PlusPctScaled = Math.min((n('band_16_plus_pct') || 0) * 5, 100);
   html = html.replace(/\{\{BAND_16_PLUS_PCT_SCALED\}\}/g, String(band16PlusPctScaled));
 
+  // ── Per-tier user population bars (Reach section) ──
+  const totalUsers = n('total_active_users') || 1;
+  html = html.replace(/\{\{LICENSED_PCT\}\}/g, String(Math.round(n('licensed_users') / totalUsers * 100)));
+  html = html.replace(/\{\{UNLICENSED_PCT\}\}/g, String(Math.round(n('chat_users') / totalUsers * 100)));
+  html = html.replace(/\{\{AGENT_PCT_SCALED\}\}/g, String(Math.min(Math.round(n('agent_users') / totalUsers * 100 * 5), 100)));
+  html = html.replace(/\{\{LICENSED_USERS_FMT\}\}/g, fmtN(n('licensed_users')));
+  html = html.replace(/\{\{CHAT_USERS_FMT\}\}/g, fmtN(n('chat_users')));
+  html = html.replace(/\{\{AGENT_USERS_FMT\}\}/g, fmtN(n('agent_users')));
+
+  // ── Per-tier bands — licensed (Habit section) ──
+  html = html.replace(/\{\{LIC_BAND_1_5_PCT\}\}/g, String(data.licensed_band_1_5_pct || 0));
+  html = html.replace(/\{\{LIC_BAND_6_10_PCT\}\}/g, String(data.licensed_band_6_10_pct || 0));
+  html = html.replace(/\{\{LIC_BAND_11_15_PCT\}\}/g, String(data.licensed_band_11_15_pct || data.chat_band_11_15_pct || 0));
+  html = html.replace(/\{\{LIC_BAND_16_PLUS_PCT\}\}/g, String(data.licensed_band_16_plus_pct || data.chat_band_16_plus_pct || 0));
+  html = html.replace(/\{\{LIC_BAND_16_PLUS_PCT_SCALED\}\}/g, String(Math.min((data.licensed_band_16_plus_pct || 0) * 5, 100)));
+  // Per-tier bands — unlicensed (chat_band_* fields)
+  html = html.replace(/\{\{UNLIC_BAND_1_5_PCT\}\}/g, String(data.chat_band_1_5_pct || 0));
+  html = html.replace(/\{\{UNLIC_BAND_6_10_PCT\}\}/g, String(data.chat_band_6_10_pct || 0));
+  html = html.replace(/\{\{UNLIC_BAND_11_15_PCT\}\}/g, String(data.chat_band_11_15_pct || 0));
+  html = html.replace(/\{\{UNLIC_BAND_16_PLUS_PCT\}\}/g, String(data.chat_band_16_plus_pct || 0));
+  html = html.replace(/\{\{UNLIC_BAND_16_PLUS_PCT_SCALED\}\}/g, String(Math.min((data.chat_band_16_plus_pct || 0) * 5, 100)));
+
+  // ── Weekly engagement stats (Skill section) ──
+  html = safeSub(html, /\{\{WEEKLY_M365\}\}/g, data.weekly_m365 || '\u2014', 'weekly_m365');
+  html = safeSub(html, /\{\{WEEKLY_CHAT\}\}/g, data.weekly_chat || '\u2014', 'weekly_chat');
+  html = safeSub(html, /\{\{WEEKLY_AGENTS\}\}/g, data.weekly_agents || '\u2014', 'weekly_agents');
+  html = safeSub(html, /\{\{COMPLEX_SESSIONS_SKILL\}\}/g, data.complex_sessions || '\u2014', 'complex_sessions_skill');
+
+  // ── Time savings bars (Value section) ──
+  const totalSaved = timeSavedRealised + timeSavedUnrealised;
+  const realisedPct = totalSaved > 0 ? Math.round(timeSavedRealised / totalSaved * 100) : 100;
+  html = html.replace(/\{\{REALISED_BAR_PCT\}\}/g, String(realisedPct));
+  html = html.replace(/\{\{UNREALISED_BAR_PCT\}\}/g, String(100 - realisedPct));
+
   // ── Agents ──
   html = html.replace(/\{\{TOTAL_AGENTS\}\}/g, String(data.total_agents || 0));
   html = html.replace(/\{\{MULTI_USER_AGENTS\}\}/g, String(data.multi_user_agents || 0));
@@ -659,6 +693,24 @@ function populateTemplate(template, insights) {
   }
   scorecardHtml += '</div>';
   html = html.replace(/\{\{MATURITY_SCORECARD_HTML\}\}/g, scorecardHtml);
+
+  // ── Next level narrative (Maturity section) ──
+  let nextLevelParts = [];
+  for (const [metricId, tier] of Object.entries(metricTiers)) {
+    if (tier === 'Foundation') {
+      const mDef = schema.metrics[metricId];
+      if (mDef) {
+        const rawVal = data[mDef.data_field];
+        const target = mDef.bands[0];
+        const unit = (mDef.unit || '').includes('%') ? '%' : '';
+        nextLevelParts.push('<strong>' + mDef.name + '</strong>: currently ' + (typeof rawVal === 'number' ? rawVal : '\u2014') + unit + ', needs ' + target + unit + ' for Expansion');
+      }
+    }
+  }
+  const nextLevelNarrative = nextLevelParts.length > 0
+    ? 'To move to the next pattern, focus on these Foundation-tier metrics: ' + nextLevelParts.join(' \u00B7 ')
+    : 'All metrics are at Expansion or above. To reach Frontier, push the Expansion metrics past their Frontier thresholds.';
+  html = html.replace(/\{\{NEXT_LEVEL_NARRATIVE\}\}/g, nextLevelNarrative);
 
   // ── Insight blocks ──
   for (const [key, value] of Object.entries(insights)) {

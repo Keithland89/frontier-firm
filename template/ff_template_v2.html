@@ -436,6 +436,29 @@ body{font-family:'Inter','Segoe UI Variable','Segoe UI',-apple-system,BlinkMacSy
       <div class="stat-card"><div class="stat-card-value"><span class="counter" data-target="{{AGENT_USERS}}">0</span></div><div class="stat-card-label">Agent Users</div></div>
     </div>
 
+    <!-- Per-tier user population -->
+    <div class="chart-card reveal reveal-d3" style="margin:1.5rem 0">
+      <div class="chart-card-title">User Population by Tier</div>
+      <div class="chart-card-sub">Total unique users across all access tiers</div>
+      <div class="band-stack">
+        <div class="band-row">
+          <div class="band-label" style="color:var(--brand)">Licensed M365</div>
+          <div class="band-track"><div class="band-fill" style="width:{{LICENSED_PCT}}%;background:var(--brand)"><span>{{LICENSED_USERS_FMT}}</span></div></div>
+          <div class="band-pct">{{LICENSED_PCT}}%</div>
+        </div>
+        <div class="band-row">
+          <div class="band-label" style="color:var(--purple)">Unlicensed Chat</div>
+          <div class="band-track"><div class="band-fill" style="width:{{UNLICENSED_PCT}}%;background:var(--purple)"><span>{{CHAT_USERS_FMT}}</span></div></div>
+          <div class="band-pct">{{UNLICENSED_PCT}}%</div>
+        </div>
+        <div class="band-row">
+          <div class="band-label" style="color:var(--teal)">Agent Users</div>
+          <div class="band-track"><div class="band-fill" style="width:{{AGENT_PCT_SCALED}}%;background:var(--teal)"><span>{{AGENT_USERS_FMT}}</span></div></div>
+          <div class="band-pct">{{AGENT_ADOPTION}}%</div>
+        </div>
+      </div>
+    </div>
+
     <div class="two-col reveal reveal-d4">
       <div class="chart-card">
         <div class="chart-card-title">Monthly User Trend</div>
@@ -509,6 +532,30 @@ body{font-family:'Inter','Segoe UI Variable','Segoe UI',-apple-system,BlinkMacSy
         <div class="stat-card"><div class="stat-card-value" style="color:var(--amber)">{{M365_RETENTION}}%</div><div class="stat-card-label">Retention Rate</div></div>
       </div>
     </div>
+
+    <!-- Per-tier active day comparison -->
+    <div class="two-col reveal reveal-d5" style="margin-top:1.5rem">
+      <div class="chart-card">
+        <div class="chart-card-title">Licensed Active Days</div>
+        <div class="chart-card-sub">How many days/month are licensed users engaging?</div>
+        <div class="band-stack">
+          <div class="band-row"><div class="band-label">1-5 days</div><div class="band-track"><div class="band-fill" style="width:{{LIC_BAND_1_5_PCT}}%;background:var(--brand)"></div></div><div class="band-pct">{{LIC_BAND_1_5_PCT}}%</div></div>
+          <div class="band-row"><div class="band-label">6-10 days</div><div class="band-track"><div class="band-fill" style="width:{{LIC_BAND_6_10_PCT}}%;background:var(--brand)"></div></div><div class="band-pct">{{LIC_BAND_6_10_PCT}}%</div></div>
+          <div class="band-row"><div class="band-label">11-15 days</div><div class="band-track"><div class="band-fill" style="width:{{LIC_BAND_11_15_PCT}}%;background:var(--brand)"></div></div><div class="band-pct">{{LIC_BAND_11_15_PCT}}%</div></div>
+          <div class="band-row"><div class="band-label">16+ days</div><div class="band-track"><div class="band-fill" style="width:{{LIC_BAND_16_PLUS_PCT_SCALED}}%;background:var(--brand)"></div></div><div class="band-pct">{{LIC_BAND_16_PLUS_PCT}}%</div></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Unlicensed Active Days</div>
+        <div class="chart-card-sub">How many days/month are unlicensed users engaging?</div>
+        <div class="band-stack">
+          <div class="band-row"><div class="band-label">1-5 days</div><div class="band-track"><div class="band-fill" style="width:{{UNLIC_BAND_1_5_PCT}}%;background:var(--purple)"></div></div><div class="band-pct">{{UNLIC_BAND_1_5_PCT}}%</div></div>
+          <div class="band-row"><div class="band-label">6-10 days</div><div class="band-track"><div class="band-fill" style="width:{{UNLIC_BAND_6_10_PCT}}%;background:var(--purple)"></div></div><div class="band-pct">{{UNLIC_BAND_6_10_PCT}}%</div></div>
+          <div class="band-row"><div class="band-label">11-15 days</div><div class="band-track"><div class="band-fill" style="width:{{UNLIC_BAND_11_15_PCT}}%;background:var(--purple)"></div></div><div class="band-pct">{{UNLIC_BAND_11_15_PCT}}%</div></div>
+          <div class="band-row"><div class="band-label">16+ days</div><div class="band-track"><div class="band-fill" style="width:{{UNLIC_BAND_16_PLUS_PCT_SCALED}}%;background:var(--purple)"></div></div><div class="band-pct">{{UNLIC_BAND_16_PLUS_PCT}}%</div></div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -549,6 +596,14 @@ body{font-family:'Inter','Segoe UI Variable','Segoe UI',-apple-system,BlinkMacSy
       <div class="chart-card-sub">{{TOTAL_AGENTS}} active agents, {{MULTI_USER_AGENTS}} used by multiple users</div>
       {{AGENT_TABLE_HTML}}
     </div>
+
+    <!-- Weekly engagement -->
+    <div class="stat-row reveal reveal-d5" style="margin-top:1.5rem">
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--brand)">{{WEEKLY_M365}}</div><div class="stat-card-label">Active Days/Week<br>(Licensed)</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--purple)">{{WEEKLY_CHAT}}</div><div class="stat-card-label">Sessions/Week<br>(Unlicensed Chat)</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--teal)">{{WEEKLY_AGENTS}}</div><div class="stat-card-label">Sessions/Week<br>(Agent Users)</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--green)">{{COMPLEX_SESSIONS_SKILL}}%</div><div class="stat-card-label">Multi-Turn<br>Sessions</div></div>
+    </div>
   </div>
 </section>
 
@@ -573,6 +628,22 @@ body{font-family:'Inter','Segoe UI Variable','Segoe UI',-apple-system,BlinkMacSy
 
     <div class="insight-callout reveal reveal-d4" style="--signal-accent:var(--color-value)">
       Licensed users average <strong>{{LICENSED_AVG_DAYS}} active days/month</strong> compared to <strong>{{UNLICENSED_AVG_DAYS}} days</strong> for unlicensed users — nearly <strong>{{DAYS_MULTIPLIER}}x the engagement depth</strong>. This gap demonstrates the value of a license: users don't just use Copilot more often, they build it into their daily routine. {{INACTIVE_LICENSES}} idle licenses can be immediately repurposed to high-engagement unlicensed users.
+    </div>
+
+    <!-- Time savings scenario -->
+    <div class="two-col reveal reveal-d4" style="margin-top:1.5rem">
+      <div class="stat-card" style="text-align:left;padding:1.5rem">
+        <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--green);margin-bottom:.75rem">Realised Value</div>
+        <div style="font-size:2rem;font-weight:900;color:var(--green)">~{{TIME_SAVED_REALISED}}K hrs/yr</div>
+        <div style="font-size:.78rem;color:var(--text-2);margin-top:.4rem">From {{LICENSED_USERS}} active licensed users</div>
+        <div style="margin-top:.75rem;height:8px;background:rgba(255,255,255,.06);border-radius:4px"><div style="height:100%;background:var(--green);border-radius:4px;width:{{REALISED_BAR_PCT}}%"></div></div>
+      </div>
+      <div class="stat-card" style="text-align:left;padding:1.5rem">
+        <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--red-soft);margin-bottom:.75rem">Unrealised Potential</div>
+        <div style="font-size:2rem;font-weight:900;color:var(--amber)">~{{TIME_SAVED_UNREALISED}}K hrs/yr</div>
+        <div style="font-size:.78rem;color:var(--text-2);margin-top:.4rem">From {{INACTIVE_LICENSES}} idle licenses to repurpose</div>
+        <div style="margin-top:.75rem;height:8px;background:rgba(255,255,255,.06);border-radius:4px"><div style="height:100%;background:var(--amber);border-radius:4px;width:{{UNREALISED_BAR_PCT}}%"></div></div>
+      </div>
     </div>
 
     <!-- License prioritisation -->
@@ -625,6 +696,12 @@ body{font-family:'Inter','Segoe UI Variable','Segoe UI',-apple-system,BlinkMacSy
     </div>
 
     <div class="insight-callout reveal reveal-d3" style="--signal-accent:var(--purple);background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.08);color:rgba(255,255,255,.7)">{{SPOTLIGHT_MATURITY}}</div>
+
+    <!-- What it takes to reach next level -->
+    <div class="chart-card reveal reveal-d3" style="margin:1.5rem 0;background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.06)">
+      <div class="chart-card-title" style="color:rgba(255,255,255,.7)">What it takes to reach the next level</div>
+      <div style="font-size:.82rem;color:rgba(255,255,255,.55);line-height:1.7">{{NEXT_LEVEL_NARRATIVE}}</div>
+    </div>
 
     <div class="gauges-row reveal reveal-d4">
       <!-- Reach gauge -->
