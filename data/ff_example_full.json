@@ -19,6 +19,7 @@
   "agent_retention": 85.2,
   "m365_enablement": 75.4,
   "license_coverage": 66.7,
+  "concentration_index": 50,
   "licensed_avg_days": 3.8,
   "unlicensed_avg_days": 3.2,
   "m365_breadth": 2.26,

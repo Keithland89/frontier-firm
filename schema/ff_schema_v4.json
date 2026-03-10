@@ -16,20 +16,20 @@
   },
 
   "pillars": {
-    "skill": {
-      "label": "Skill",
-      "question": "Are they going deep?",
-      "color_accent": "#0EA5E9"
+    "reach": {
+      "label": "Reach",
+      "question": "Is it spreading?",
+      "color_accent": "#10B981"
     },
     "consistency": {
       "label": "Consistency",
       "question": "Is it sticking?",
       "color_accent": "#F59E0B"
     },
-    "reach": {
-      "label": "Reach",
-      "question": "Is it spreading?",
-      "color_accent": "#10B981"
+    "skill": {
+      "label": "Skill",
+      "question": "Are they going deep?",
+      "color_accent": "#0EA5E9"
     }
   },
 
