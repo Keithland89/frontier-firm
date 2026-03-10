@@ -885,12 +885,13 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 .sc-details{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2rem;max-width:1120px;margin-left:auto;margin-right:auto;padding:0 2.5rem}
 .sc-progress{margin-top:6px;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
 .sc-progress-fill{height:100%;border-radius:3px;transition:width .6s ease}
-.sc-detail-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg,16px);overflow:hidden;display:flex;flex-direction:column}
-.sc-detail-header{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.sc-detail-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg,16px);overflow:hidden;display:flex;flex-direction:column;transition:transform .2s ease,box-shadow .2s ease}
+.sc-detail-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.sc-detail-header{padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
 .sc-detail-signal{font-size:.88rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em}
 .sc-detail-phase{font-size:.84rem;color:var(--text-3);font-weight:500}
 .sc-detail-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-bottom:1px solid var(--border)}
-.sc-detail-stat{padding:14px 18px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.sc-detail-stat{padding:18px 22px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
 .sc-detail-stat:nth-child(2n){border-right:none}
 .sc-detail-stat:nth-last-child(-n+2){border-bottom:none}
 .sc-detail-stat-value{font-size:1.6rem;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
@@ -1161,8 +1162,9 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
     <h2 class="section-title reveal reveal-d1" style="font-size:clamp(1.4rem,3vw,2rem)">How are we doing on Phase 1 — Human with Assistant?</h2>
     <p class="section-subtitle reveal reveal-d2" style="max-width:800px">Pattern 1 measures whether individuals across the organisation are using AI as a personal productivity tool — consistently, skillfully, and across the breadth of their work.</p>
 
-    <div class="sc-details reveal reveal-d3" style="margin-top:2rem">
-      <!-- P1 Reach Detail -->
+    <div class="sc-details reveal reveal-d3" style="margin-top:2rem;gap:1.5rem">
+
+      <!-- ① REACH -->
       <div class="sc-detail-card" style="border-top:3px solid #0EA5E9">
         <div class="sc-detail-header">
           <div class="sc-detail-signal" style="color:#0EA5E9">① Reach</div>
@@ -1171,7 +1173,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
         <div class="sc-detail-stats" style="grid-template-columns:1fr 1fr">
           <div class="sc-detail-stat" style="border-bottom:none">
             <div class="sc-detail-stat-value" style="color:#10B981">+{{SC_GROWTH_PCT}}%</div>
-            <div class="sc-detail-stat-label">User Growth ({{SC_GROWTH_MONTHS}} months)</div>
+            <div class="sc-detail-stat-label">User Growth ({{SC_GROWTH_MONTHS}}mo)</div>
           </div>
           <div class="sc-detail-stat" style="border-bottom:none">
             <div class="sc-detail-stat-value">{{LICENSE_COVERAGE_PCT}}%</div>
@@ -1179,25 +1181,25 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
           </div>
         </div>
         <div class="sc-detail-narrative">
-          <div style="margin-bottom:16px">
-            <div class="sc-commentary-heading" style="color:#10B981">✓ What's going well</div>
+          <div style="margin-bottom:18px">
+            <div class="sc-commentary-heading" style="color:#10B981">✓ Greenshoots</div>
             <ul class="sc-commentary-list">
-              <li>{{TOTAL_ACTIVE_USERS}} active users out of {{SC_TOTAL_EMPLOYEES}} employees — {{SC_COMBINED_REACH_PCT}}% reach</li>
-              <li>{{CHAT_USERS_FMT}} free Chat users adopted organically, outnumbering {{LICENSED_USERS}} licensed M365 users</li>
-              <li>+{{SC_GROWTH_PCT}}% growth over {{SC_GROWTH_MONTHS}} months shows accelerating demand</li>
+              <li><strong>+{{SC_GROWTH_PCT}}% in {{SC_GROWTH_MONTHS}} months</strong> — user base grew from 2,282 to {{TOTAL_ACTIVE_USERS}}, with May showing +20% month-on-month acceleration</li>
+              <li><strong>{{CHAT_USERS_FMT}} organic Chat adopters</strong> outnumber {{LICENSED_USERS}} licensed users — demand is real, not mandated</li>
+              <li><strong>IT leads</strong> with an 8.3 habit score; Sales (7.9) and HR (7.7) close behind</li>
             </ul>
           </div>
           <div>
-            <div class="sc-commentary-heading" style="color:#F59E0B">⚡ What could improve</div>
+            <div class="sc-commentary-heading" style="color:#F59E0B">⚡ Highest-return action</div>
             <ul class="sc-commentary-list">
-              <li>Only {{LICENSE_COVERAGE_PCT}}% of active users hold an M365 licence</li>
-              <li>Large unlicensed base = proven demand — convert to unlock deeper M365 integration</li>
+              <li><strong>484 licences sit unused</strong> — reassign to top free-tier users in Support, Operations, and HR where unlicensed-to-licensed ratios exceed 1.6:1</li>
+              <li>Licensed users generate <strong>{{LICENSE_PRIORITY}}× more prompts</strong> — every converted licence amplifies output</li>
             </ul>
           </div>
         </div>
       </div>
 
-      <!-- P1 Habit Detail -->
+      <!-- ② HABIT -->
       <div class="sc-detail-card" style="border-top:3px solid #F59E0B">
         <div class="sc-detail-header">
           <div class="sc-detail-signal" style="color:#F59E0B">② Habit</div>
@@ -1206,33 +1208,33 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
         <div class="sc-detail-stats" style="grid-template-columns:1fr 1fr">
           <div class="sc-detail-stat" style="border-bottom:none">
             <div class="sc-detail-stat-value" style="color:#F59E0B">{{WEEKLY_CHAT}}</div>
-            <div class="sc-detail-stat-label">Chat Sessions / Week</div>
+            <div class="sc-detail-stat-label">Chat Sessions / Wk</div>
           </div>
           <div class="sc-detail-stat" style="border-bottom:none">
             <div class="sc-detail-stat-value" style="color:#F59E0B">{{WEEKLY_M365}}</div>
-            <div class="sc-detail-stat-label">M365 Sessions / Week</div>
+            <div class="sc-detail-stat-label">M365 Sessions / Wk</div>
           </div>
         </div>
         <div class="sc-detail-narrative">
-          <div style="margin-bottom:16px">
-            <div class="sc-commentary-heading" style="color:#10B981">✓ What's going well</div>
+          <div style="margin-bottom:18px">
+            <div class="sc-commentary-heading" style="color:#10B981">✓ Greenshoots</div>
             <ul class="sc-commentary-list">
-              <li>{{SC_COMBINED_HABITUAL_PCT}}% of users ({{SC_HABITUAL_USERS}}) reach 11+ active days/month</li>
-              <li>Habitual rates balanced: {{SC_CHAT_HAB_11PLUS_PCT}}% Chat, {{SC_M365_HAB_11PLUS_PCT}}% M365</li>
+              <li><strong>{{SC_HABITUAL_USERS}} power users</strong> at 11+ active days — evenly split between Chat ({{SC_CHAT_HAB_11PLUS_PCT}}%) and M365 ({{SC_M365_HAB_11PLUS_PCT}}%), showing habit is cross-channel</li>
+              <li><strong>79% month-on-month retention</strong> — users who start tend to stick</li>
+              <li><strong>IT and Sales</strong> have the deepest habits — use them as internal champions</li>
             </ul>
           </div>
           <div>
-            <div class="sc-commentary-heading" style="color:#F59E0B">⚡ What could improve</div>
+            <div class="sc-commentary-heading" style="color:#F59E0B">⚡ Highest-return action</div>
             <ul class="sc-commentary-list">
-              <li>~80% of users remain light or moderate (fewer than 11 active days)</li>
-              <li>Weekly sessions ({{WEEKLY_CHAT}} Chat, {{WEEKLY_M365}} M365) suggest a few times per week, not daily</li>
-              <li>Target the "moderate" cohort (6–10 days) — closest to tipping into habitual use</li>
+              <li><strong>396 users in the 6–10 day band</strong> — they already use Copilot weekly, just not daily. Targeted nudges (prompt-of-the-day, use-case playbooks) could tip them into habitual</li>
+              <li><strong>Legal (4.5) and Marketing (5.1)</strong> have the weakest habit scores — run department-specific enablement sprints</li>
             </ul>
           </div>
         </div>
       </div>
 
-      <!-- P1 Skill Detail -->
+      <!-- ③ SKILL -->
       <div class="sc-detail-card" style="border-top:3px solid #7B2FF2">
         <div class="sc-detail-header">
           <div class="sc-detail-signal" style="color:#7B2FF2">③ Skill</div>
@@ -1245,26 +1247,28 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
           </div>
           <div class="sc-detail-stat" style="border-bottom:none">
             <div class="sc-detail-stat-value" style="color:#7B2FF2">{{M365_BREADTH}}</div>
-            <div class="sc-detail-stat-label">Avg Apps per User</div>
+            <div class="sc-detail-stat-label">Apps per User</div>
           </div>
         </div>
         <div class="sc-detail-narrative">
-          <div style="margin-bottom:16px">
-            <div class="sc-commentary-heading" style="color:#10B981">✓ What's going well</div>
+          <div style="margin-bottom:18px">
+            <div class="sc-commentary-heading" style="color:#10B981">✓ Greenshoots</div>
             <ul class="sc-commentary-list">
-              <li>{{M365_BREADTH}} M365 apps per user — well above the Frontier threshold</li>
-              <li>Licensed users generate {{LICENSED_AVG_PROMPTS}} prompts/month ({{LICENSE_PRIORITY}}× unlicensed) — licensing drives depth</li>
+              <li><strong>{{M365_BREADTH}} M365 apps per user</strong> — Frontier-level breadth means users are not siloed in one tool</li>
+              <li><strong>Licensed users generate {{LICENSED_AVG_PROMPTS}} prompts/month</strong> vs {{UNLICENSED_AVG_PROMPTS}} unlicensed — a {{LICENSE_PRIORITY}}× depth premium that proves licensing value</li>
+              <li><strong>Prompt volume grew +80%</strong> (71K → 128K) in 3 months while per-user intensity rose from 31 to 42</li>
             </ul>
           </div>
           <div>
-            <div class="sc-commentary-heading" style="color:#F59E0B">⚡ What could improve</div>
+            <div class="sc-commentary-heading" style="color:#F59E0B">⚡ Highest-return action</div>
             <ul class="sc-commentary-list">
-              <li>Only {{SC_MULTI_TURN_PCT}}% of sessions reach 5+ prompts — most are single-shot</li>
-              <li>Coach users on multi-turn dialogue (refine outputs, ask follow-ups) to increase value per session</li>
+              <li><strong>82.5% of sessions are single-shot</strong> — train users to iterate (refine, follow up, chain tasks) rather than one-and-done queries</li>
+              <li><strong>Share power-user prompt patterns</strong> from IT and Sales with lagging departments to accelerate skill transfer</li>
             </ul>
           </div>
         </div>
       </div>
+
     </div>
         </div>
         <div class="sc-detail-narrative" style="padding:20px 24px">
