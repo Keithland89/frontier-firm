@@ -1,6 +1,6 @@
 # Scorecard & Phase Detail Commentary Rules
 
-> These rules govern the "Greenshoots" and "Highest-return action" commentary in the Phase detail cards. Every insight must be data-driven, specific, and actionable.
+> These rules govern the McKinsey-style narrative commentary in the Phase detail cards. Every insight must be data-driven, specific, and actionable. Use flowing paragraphs (not bullet lists) with bold inline numbers.
 
 ## General Rules
 
@@ -69,4 +69,83 @@ unlicensed_avg_prompts   — avg prompts for unlicensed users
 m365_retention           — M365 month-over-month retention %
 chat_retention           — Chat month-over-month retention %
 band_6_10               — count of users in 6-10 active day band (from supplementary)
+```
+
+---
+
+## Phase 2 — Human-Agent Teams
+
+### Narrative Style
+
+Use McKinsey-style flowing paragraphs. Each card has two sections separated by a coloured divider:
+1. **Green divider** → What's working (wins, greenshoots, proof points)
+2. **Amber divider** → Where to act (biggest unlock, specific intervention)
+
+### Reach Card
+
+**Metrics:** Agent Active User % (`agent_adoption`), Orgs with Active Agents (`org_count`)
+
+**What's Working (green):**
+- State org-wide reach: all `org_count` orgs have agent users (if true)
+- Name **top 3 agents by user count** from `agent_table` or `_scorecard_metrics.agent_return_details`
+- Highlight agents with clear functional purposes (IT Service Agent, CRU QA Analyzer) — these signal real workflow embedding
+- Note return rates for top agents (100% = perfect stickiness)
+
+**Where to Act (amber):**
+- State the adoption gap: `agent_adoption`% is early-stage, `agent_users` out of `total_active_users`
+- Identify concentration risk: top 3 agents account for majority of usage
+- Name the long tail: `total_agents` agents exist but most have low adoption
+- Recommend promoting proven winners to untouched departments
+
+**Formula:** Agent Active Users % = `agent_users / total_active_users × 100`
+
+### Habit Card
+
+**Metrics:** Agent MoM Return Rate (`_scorecard_metrics.agent_mom_retention`), Agent Weekly Sessions (`agent_frequency`)
+
+**What's Working (green):**
+- State retention: `agent_mom_retained` of `agent_mom_prev` returned = `agent_mom_retention`%
+- Name **agents with highest return rates** from `agent_return_details` — focus on those with 100% return AND meaningful user counts (>5 users)
+- Link stickiness to functional value: agents that solve real problems retain perfectly
+
+**Where to Act (amber):**
+- State frequency gap: `agent_frequency` sessions/week = episodic, not habitual
+- State habitual gap: only `agent_habitual`% reach 11+ active days
+- Recommend embedding top agents into existing workflows as default starting points
+
+**Formula:** Agent MoM Return = `agent_mom_retained / agent_mom_prev × 100`
+
+### Skill Card
+
+**Metrics:** Agent Creators % (`agent_creators_pct`), Users with 3+ Agents (`_scorecard_metrics.pct_users_3plus_agents`)
+
+**What's Working (green):**
+- State multi-agent exploration: `pct_users_3plus_agents`% using 3+ agents shows curiosity
+- Name **purpose-built agents** with high intensity (sessions/user) — these signal sophisticated use
+- Look for agents that serve specific business processes (QA, compliance, SOP, PMO)
+
+**Where to Act (amber):**
+- State creator gap: only `agent_creators_pct`% are building agents
+- State usage concentration: `agent_band_1_5_pct`% of users stick to 1-5 agents
+- Recommend "agent builder sprint" targeting power users to grow creator cohort
+
+**Formula:** Agent Creators % = `agent_creators / total_active_users × 100`
+
+### P2 Data Dependencies
+
+```
+agent_adoption           — % of users engaging with agents
+agent_users              — count of agent users
+agent_frequency          — sessions per user per week
+agent_habitual           — % agent users with 11+ active days
+agent_creators_pct       — % users building agents
+org_count                — number of orgs with active agents
+agent_table[]            — array of {name, users, sessions, sessions_per_user}
+_scorecard_metrics.agent_mom_retention  — MoM retention %
+_scorecard_metrics.agent_mom_retained   — users who returned
+_scorecard_metrics.agent_mom_prev       — users in prior month
+_scorecard_metrics.agent_return_details[] — per-agent {name, totalUsers, repeatUsers, returnRate}
+_scorecard_metrics.pct_users_3plus_agents — % using 3+ agents
+_scorecard_metrics.total_agents_full    — total agent count
+agent_band_1_5_pct      — % users with 1-5 agents
 ```

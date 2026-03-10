@@ -1277,6 +1277,96 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
   </div>
 </section>
 
+
+<!-- PHASE 2 SEPARATOR & DETAIL SECTION -->
+<div style="max-width:1120px;margin:0 auto;padding:0 2.5rem">
+  <hr style="border:none;border-top:1px solid rgba(255,255,255,0.08);margin:2.5rem 0 0">
+</div>
+
+<section class="section" id="phase2-detail" style="background:var(--bg);padding:2rem 0 3rem">
+  <div class="section-inner" style="max-width:1120px">
+    <div class="section-label reveal" style="color:var(--copilot-purple)">Pattern 2 Deep Dive</div>
+    <h2 class="section-title reveal reveal-d1" style="font-size:clamp(1.4rem,3vw,2rem)">How are we doing on Phase 2 — Human-Agent Teams?</h2>
+    <p class="section-subtitle reveal reveal-d2" style="max-width:800px">Pattern 2 measures whether agents are being adopted, retained, and used with growing sophistication — the bridge between individual AI use and autonomous agent operations.</p>
+
+    <div class="sc-details reveal reveal-d3" style="margin-top:2rem;gap:1.5rem">
+
+      <!-- ① REACH -->
+      <div class="sc-detail-card" style="border-top:3px solid #0EA5E9">
+        <div class="sc-detail-header">
+          <div class="sc-detail-signal" style="color:#0EA5E9">① Reach</div>
+          <div class="sc-detail-phase">{{AGENT_ADOPTION}}% of users engaging with agents</div>
+        </div>
+        <div class="sc-detail-stats" style="grid-template-columns:1fr 1fr">
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#0EA5E9">{{AGENT_ADOPTION}}%</div>
+            <div class="sc-detail-stat-label">Agent Active Users</div>
+          </div>
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#0EA5E9">{{ORG_COUNT}}</div>
+            <div class="sc-detail-stat-label">Orgs with Active Agents</div>
+          </div>
+        </div>
+        <div class="sc-narrative">
+          <span class="divider divider--win"></span>
+          All <span class="num win">{{ORG_COUNT}} organisations</span> have active agent users — agent reach is org-wide, not siloed in IT. <strong>Visual Creator</strong> leads with <span class="num">99 users</span> and 100% return rate, making it the breakout agent by adoption. <strong>Researcher</strong> (21 users, 2,066 sessions) and <strong>Analyst</strong> (17 users) round out the top three. Functional agents like <strong>IT Service Agent</strong>, <strong>Secure Message Assistant</strong>, and <strong>CRU QA Analyzer</strong> show agents are solving real workflow problems, not just experimentation.
+          <span class="divider divider--gap"></span>
+          At <span class="num gap">{{AGENT_ADOPTION}}%</span>, agent reach is still early-stage — <span class="num">{{AGENT_USERS}}</span> users out of {{TOTAL_ACTIVE_USERS}}. The top 3 agents account for the majority of engagement, leaving <span class="num">{{SC_TOTAL_AGENTS_FULL}}</span> total agents with a long tail of low adoption. Focus on promoting the proven winners — Visual Creator and Researcher — to departments that haven't tried them yet.
+        </div>
+      </div>
+
+      <!-- ② HABIT -->
+      <div class="sc-detail-card" style="border-top:3px solid #F59E0B">
+        <div class="sc-detail-header">
+          <div class="sc-detail-signal" style="color:#F59E0B">② Habit</div>
+          <div class="sc-detail-phase">{{SC_AGENT_MOM_RETENTION}}% month-on-month retention</div>
+        </div>
+        <div class="sc-detail-stats" style="grid-template-columns:1fr 1fr">
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#F59E0B">{{SC_AGENT_MOM_RETENTION}}%</div>
+            <div class="sc-detail-stat-label">Agent MoM Return Rate</div>
+          </div>
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#F59E0B">{{AGENT_FREQUENCY}}</div>
+            <div class="sc-detail-stat-label">Agent Sessions / Week</div>
+          </div>
+        </div>
+        <div class="sc-narrative">
+          <span class="divider divider--win"></span>
+          Of <span class="num">89</span> agent users last month, <span class="num win">54 returned</span> — a <span class="num">{{SC_AGENT_MOM_RETENTION}}%</span> retention rate that exceeds typical early-stage benchmarks. The standout signal: agents with clear functional value — <strong>IT Service Agent</strong> (100% return, 71.3 sessions/user), <strong>Researcher</strong> (100% return, 98.4 sessions/user), and <strong>Secure Message Assistant</strong> (100% return) — all show near-perfect stickiness. When an agent solves a real problem, users come back.
+          <span class="divider divider--gap"></span>
+          Weekly session frequency of <span class="num gap">{{AGENT_FREQUENCY}}</span> per user reveals agents are used episodically, not yet woven into daily routines. Only <span class="num">{{AGENT_HABITUAL_PCT}}%</span> of agent users reach habitual status (11+ active days). The path forward: embed top agents into existing workflows — make Researcher the default starting point for analysis tasks and IT Service Agent the first stop for helpdesk queries.
+        </div>
+      </div>
+
+      <!-- ③ SKILL -->
+      <div class="sc-detail-card" style="border-top:3px solid #7B2FF2">
+        <div class="sc-detail-header">
+          <div class="sc-detail-signal" style="color:#7B2FF2">③ Skill</div>
+          <div class="sc-detail-phase">{{AGENT_CREATORS_PCT}}% building agents</div>
+        </div>
+        <div class="sc-detail-stats" style="grid-template-columns:1fr 1fr">
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#7B2FF2">{{AGENT_CREATORS_PCT}}%</div>
+            <div class="sc-detail-stat-label">Agent Creators</div>
+          </div>
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#7B2FF2">{{SC_PCT_USERS_3PLUS_AGENTS}}%</div>
+            <div class="sc-detail-stat-label">Users with 3+ Agents</div>
+          </div>
+        </div>
+        <div class="sc-narrative">
+          <span class="divider divider--win"></span>
+          <span class="num win">{{SC_PCT_USERS_3PLUS_AGENTS}}%</span> of agent users ({{SC_USERS_3PLUS_AGENTS}} people) have explored 3 or more agents, showing genuine curiosity rather than one-off trials. The agent portfolio itself demonstrates real sophistication — purpose-built agents like <strong>CRU QA Analyzer</strong> (70.3 sessions/user), <strong>Risk and Compliance Policy</strong> (48.8 sessions/user), and <strong>SOP Writing Assistant</strong> signal that teams are designing agents for specific business processes, not generic Q&A.
+          <span class="divider divider--gap"></span>
+          Only <span class="num gap">{{AGENT_CREATORS_PCT}}%</span> of users are building agents — the creator base needs to expand for Pattern 3 readiness. Most agent usage is concentrated in the top 5 agents, with <span class="num">87.1%</span> of users engaging with just 1–5 agents. Run an "agent builder sprint" targeting power users in IT and Sales to grow the creator cohort and diversify the agent portfolio beyond the current top performers.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_0}}</div><div class="pull-quote-source">Frontier Firm Assessment</div></div>
 
 
