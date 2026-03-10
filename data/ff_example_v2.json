@@ -2,18 +2,18 @@
   "version": 2,
   "customer_name": "FF Example",
   "analysis_period": "Sep 2025 – Dec 2025",
-  "total_active_users": 45167,
+  "total_active_users": 57066,
   "licensed_users": 38075,
-  "chat_users": 7092,
+  "chat_users": 18991,
   "agent_users": 4846,
-  "total_licensed_seats": 40000,
-  "inactive_licenses": 1925,
-  "m365_enablement": 95.2,
-  "agent_adoption": 10.7,
+  "total_licensed_seats": 50496,
+  "inactive_licenses": 12421,
+  "m365_enablement": 75.4,
+  "agent_adoption": 8.5,
   "embedded_user_rate": 16.5,
-  "m365_breadth": 9.77,
+  "m365_breadth": 2.26,
   "agent_breadth": 2.81,
-  "license_coverage": 84.3,
+  "license_coverage": 66.7,
   "m365_frequency": 1.0,
   "complex_sessions": 4.9,
   "agent_health": 85.2,
@@ -51,7 +51,6 @@
   "top_agent_names": ["Researcher", "Analyst", "Broadband Buddy", "Prompt Coach", "Investigador", "Summarizer Agent", "MVNO Remedy Notes", "MPN Checker"],
   "top_agent_sessions": [53.8, 43.5, 11.9, 3.8, 58.8, 5.9, 121.0, 136.3],
   "org_scatter_data": [
-    {"label": "(Blank)", "x": 6523, "y": 4.4, "r": 6523},
     {"label": "ZA", "x": 1542, "y": 5.5, "r": 1542},
     {"label": "VOIN", "x": 1362, "y": 37.9, "r": 1362},
     {"label": "VOEG", "x": 645, "y": 32.1, "r": 645},
@@ -73,6 +72,17 @@
       {"month": "Oct 2025", "licensed": 32006, "unlicensed": 12280, "agents": 2215},
       {"month": "Nov 2025", "licensed": 31587, "unlicensed": 12403, "agents": 2241},
       {"month": "Dec 2025", "licensed": 17502, "unlicensed": 5801, "agents": 775}
-    ]
+    ],
+    "app_interactions": {
+      "office_bizchat": {"interactions": 1139872, "pct": 43.2, "users": 32287},
+      "word": {"interactions": 626620, "pct": 23.8, "users": 28459},
+      "teams": {"interactions": 280926, "pct": 10.7, "users": 15684},
+      "edge": {"interactions": 218195, "pct": 8.3, "users": 12007},
+      "outlook": {"interactions": 205421, "pct": 7.8, "users": 19765},
+      "forms": {"interactions": 34812, "pct": 1.3, "users": 3461},
+      "powerpoint": {"interactions": 20643, "pct": 0.8, "users": 5410},
+      "excel": {"interactions": 17448, "pct": 0.7, "users": 4803},
+      "sharepoint": {"interactions": 8314, "pct": 0.3, "users": 1356}
+    }
   }
 }

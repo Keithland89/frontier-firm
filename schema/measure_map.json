@@ -215,9 +215,9 @@
   },
 
   "m365_breadth": {
-    "type": "scalar",
-    "measures": ["[Average Chat Active Days Per User]"],
-    "description": "Average number of chat active days per user (breadth of engagement)."
+    "type": "computed",
+    "dax": "EVALUATE ROW(\"v\", AVERAGEX(VALUES('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[AppHost]))))",
+    "description": "App Surface Breadth — avg distinct AppHost values per user from Chat + Agent Interactions (Audit Logs). This is the real app surface metric, NOT average active days."
   },
 
   "agent_breadth": {
@@ -556,13 +556,16 @@
 
   "_supplementary_metrics.app_interactions": {
     "type": "tabular",
-    "dax": "EVALUATE\nSUMMARIZECOLUMNS(\n  'Copilot Actions'[CopilotApp],\n  \"Interactions\", COUNT('Copilot Actions'[Action]),\n  \"Users\", DISTINCTCOUNT('Copilot Actions'[UserEmail])\n)\nORDER BY [Interactions] DESC",
+    "dax_variants": [
+      "EVALUATE SUMMARIZECOLUMNS('Copilot Actions'[CopilotApp], \"Interactions\", COUNT('Copilot Actions'[Action]), \"Users\", DISTINCTCOUNT('Copilot Actions'[UserEmail])) ORDER BY [Interactions] DESC",
+      "EVALUATE SUMMARIZECOLUMNS('Chat + Agent Interactions (Audit Logs)'[AppHost], \"Interactions\", COUNTROWS('Chat + Agent Interactions (Audit Logs)'), \"Users\", DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId])) ORDER BY [Interactions] DESC"
+    ],
     "columns": {
-      "CopilotApp": "key (lowercased, spaces replaced with underscores)",
-      "Interactions": "interactions",
-      "Users": "users"
+      "CopilotApp/AppHost": "key (lowercased, spaces replaced with underscores)",
+      "Interactions": "interactions (session count)",
+      "Users": "distinct users"
     },
-    "post_process": "Map to object keyed by normalised app name: {interactions, pct: round(interactions/total*100, 1), users}.",
-    "description": "Copilot usage breakdown by M365 application surface."
+    "post_process": "Map to object keyed by normalised app name: {interactions, pct: round(interactions/total*100, 1), users}. Try Copilot Actions table first, fallback to AppHost from Chat + Agent Interactions.",
+    "description": "Copilot usage breakdown by M365 application surface. Source: Copilot Actions[CopilotApp] or Chat + Agent Interactions[AppHost]."
   }
 }

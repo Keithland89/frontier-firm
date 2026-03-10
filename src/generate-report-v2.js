@@ -525,12 +525,14 @@ function populateTemplate(template, insights) {
   }
 
   // ── Chart data: Org scatter ──
-  // Scale bubble radius for visibility: r = max(sqrt(x) * 0.8, 4)
+  // Scale bubble radius for visibility, exclude blank org names
   let orgScatter = Array.isArray(data.org_scatter_data) ? data.org_scatter_data : [];
-  orgScatter = orgScatter.map(d => ({
-    label: d.label, x: d.x, y: d.y,
-    r: Math.max(Math.sqrt(d.x || 1) * 0.8, 4)
-  }));
+  orgScatter = orgScatter
+    .filter(d => d.label && d.label.trim() && d.label !== '(Blank)' && d.label !== '')
+    .map(d => ({
+      label: d.label, x: d.x, y: d.y,
+      r: Math.max(Math.sqrt(d.x || 1) * 0.8, 4)
+    }));
   html = html.replace(/\{\{ORG_SCATTER_JSON\}\}/g, safeJSON(orgScatter, 'org_scatter_data'));
 
   // ── Chart data: Retention trend ──
