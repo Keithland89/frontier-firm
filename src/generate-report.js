@@ -19,7 +19,8 @@ const path = require('path');
 // ============================================================
 // CONFIG
 // ============================================================
-const TEMPLATE_PATH = path.resolve(__dirname, '..', 'template', 'ff_template.html');
+const useV3 = process.argv.includes('--v3');
+const TEMPLATE_PATH = path.resolve(__dirname, '..', 'template', useV3 ? 'ff_template_v3.html' : 'ff_template.html');
 const SCHEMA_PATH = path.resolve(__dirname, '..', 'schema', 'ff_schema.json');
 
 // Parse CLI args

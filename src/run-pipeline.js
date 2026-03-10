@@ -26,6 +26,7 @@ let dataPath = args.find((a, i) => args[i - 1] === '--data');
 const outputDir = args.find((a, i) => args[i - 1] === '--output') || 'output/';
 const noAI = args.includes('--no-ai');
 const isV2 = args.includes('--v2');
+const isV3 = args.includes('--v3');
 
 if (!dataPath && !pbixName) {
   console.error('Usage: node run-pipeline.js --pbix "Customer Name" [--output dir] [--no-ai]');
@@ -83,9 +84,10 @@ if (!noAI) {
 
 // Gate 2: Generate report
 const generator = isV2 ? 'generate-report-v2.js' : 'generate-report.js';
+const genFlags = (noAI ? ' --no-ai' : '') + (isV3 ? ' --v3' : '');
 gates.push({
-  name: 'Gate 2: Generate Report' + (isV2 ? ' (v2)' : ''),
-  cmd: 'node src/' + generator + ' --data "' + dataPath + '" --output "' + outputDir + '"' + (noAI ? ' --no-ai' : '')
+  name: 'Gate 2: Generate Report' + (isV2 ? ' (v2)' : isV3 ? ' (v3)' : ''),
+  cmd: 'node src/' + generator + ' --data "' + dataPath + '" --output "' + outputDir + '"' + genFlags
 });
 
 // Gate 3: Validate HTML

@@ -62,8 +62,8 @@
     },
 
     "embedded_user_rate": {
-      "name": "Embedded User Rate",
-      "unit": "% embedded users",
+      "name": "Habitual User Rate",
+      "unit": "% habitual users",
       "bands": [15, 35],
       "band_labels": ["Foundation", "Expansion", "Frontier"],
       "signal": "habit",
