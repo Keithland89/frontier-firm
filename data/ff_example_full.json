@@ -56,6 +56,12 @@
   "license_priority": 2.3,
   "analysis_period": "Sep 2025 – Dec 2025",
   "_supplementary_metrics": {
+    "monthly_data": {
+      "sep_2025": {"users": 40791, "prompts": 0, "sessions": 0, "avg_prompts_per_user": 0, "licensed": 29994, "unlicensed": 10797},
+      "oct_2025": {"users": 44286, "prompts": 0, "sessions": 0, "avg_prompts_per_user": 0, "licensed": 32006, "unlicensed": 12280},
+      "nov_2025": {"users": 43990, "prompts": 0, "sessions": 0, "avg_prompts_per_user": 0, "licensed": 31587, "unlicensed": 12403},
+      "dec_2025": {"users": 23303, "prompts": 0, "sessions": 0, "avg_prompts_per_user": 0, "licensed": 17502, "unlicensed": 5801}
+    },
     "per_tier_monthly_users": [
       {
         "month": "2025-09",
