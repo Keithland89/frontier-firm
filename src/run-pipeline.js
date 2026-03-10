@@ -154,3 +154,11 @@ console.log('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\
 console.log('  ALL ' + passed + ' GATES PASSED \u2014 report is ready');
 console.log('  ' + path.resolve(reportPath));
 console.log('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550');
+
+// Open report in default browser
+const { exec } = require('child_process');
+const absReport = path.resolve(reportPath);
+const openCmd = process.platform === 'win32' ? 'start ""' : process.platform === 'darwin' ? 'open' : 'xdg-open';
+exec(openCmd + ' "' + absReport + '"', function(err) {
+  if (err) console.log('  (Could not auto-open browser: ' + err.message + ')');
+});

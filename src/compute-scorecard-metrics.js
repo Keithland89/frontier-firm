@@ -252,7 +252,41 @@ function computeDerivedOnly(data) {
     }
   }
 
+  // Agent growth metrics from per_tier_monthly_users
+  computeAgentGrowthFallback(data, scorecard);
+
   return scorecard;
+}
+
+// Compute agent growth from per_tier_monthly_users when PBIX measures aren't available
+function computeAgentGrowthFallback(data, scorecard) {
+  const ptm = data._supplementary_metrics && data._supplementary_metrics.per_tier_monthly_users;
+  if (!ptm || ptm.length < 2) return;
+
+  // Find last two complete months (skip partial final month)
+  let pi = ptm.length - 2, ci = ptm.length - 1;
+  const currTotal = ptm[ci].licensed + ptm[ci].unlicensed;
+  const prevTotal = ptm[pi].licensed + ptm[pi].unlicensed;
+  if (currTotal < prevTotal * 0.5 && ci > 1) { ci = pi; pi = pi - 1; }
+
+  if (!scorecard.agent_user_growth_pct && ptm[pi].agents > 0) {
+    scorecard.agent_user_growth_pct = Math.round((ptm[ci].agents - ptm[pi].agents) / ptm[pi].agents * 1000) / 10;
+    scorecard.agent_growth_period = ptm[pi].month + ' \u2013 ' + ptm[ci].month;
+    console.log('  Agent user growth (fallback): ' + ptm[pi].agents + ' -> ' + ptm[ci].agents + ' = +' + scorecard.agent_user_growth_pct + '% (' + scorecard.agent_growth_period + ')');
+  }
+
+  if (!scorecard.agent_sessions_mom_pct) {
+    const monthly = data._supplementary_metrics && data._supplementary_metrics.monthly_data;
+    if (monthly) {
+      const months = Object.keys(monthly);
+      let mpi = months.length - 2, mci = months.length - 1;
+      if (monthly[months[mci]].users < monthly[months[mpi]].users * 0.5 && mci > 1) { mci = mpi; mpi = mpi - 1; }
+      if (mpi >= 0 && monthly[months[mpi]].prompts > 0) {
+        scorecard.agent_sessions_mom_pct = Math.round((monthly[months[mci]].prompts - monthly[months[mpi]].prompts) / monthly[months[mpi]].prompts * 1000) / 10;
+        console.log('  Session growth (fallback): +' + scorecard.agent_sessions_mom_pct + '%');
+      }
+    }
+  }
 }
 
 async function main() {
@@ -488,6 +522,40 @@ RETURN ROW(
     scorecard.pct_1_5_agents = Math.round((100 - scorecard.pct_users_3plus_agents) * 10) / 10;
     console.log('\nDerived: Users with 1-5 agents: ' + scorecard.pct_1_5_agents + '%');
   }
+
+  // ── Query 6: Agent user growth & session growth from PBIX measures ──
+  console.log('\nQuery 6: Agent growth metrics...');
+  try {
+    const r = await runDax("EVALUATE ROW(\"v\", [Agent Sessions MoM %])");
+    const val = getScalar(r);
+    if (val !== null) {
+      // PBIX returns fraction (e.g. 0.094 for 9.4%) — convert to percentage
+      const pct = Math.abs(val) < 1 ? Math.round(val * 1000) / 10 : Math.round(val * 10) / 10;
+      scorecard.agent_sessions_mom_pct = pct;
+      console.log('  Agent Sessions MoM %: ' + scorecard.agent_sessions_mom_pct + '%');
+    }
+  } catch (e) {
+    console.log('  Agent Sessions MoM % error: ' + e.message.substring(0, 100));
+  }
+
+  try {
+    const r = await runDax("EVALUATE ROW(\"Current\", [UsersInteractingWithAgents], \"Prev\", [UsersInteractingWithAgents, Last Month])");
+    const row = r._rows && r._rows[0];
+    if (row) {
+      const curr = Number(row.Current) || 0;
+      const prev = Number(row.Prev) || 0;
+      if (prev > 0) {
+        scorecard.agent_user_growth_pct = Math.round((curr - prev) / prev * 1000) / 10;
+        scorecard.agent_growth_period = 'last two months';
+        console.log('  Agent user growth: ' + prev + ' -> ' + curr + ' = +' + scorecard.agent_user_growth_pct + '%');
+      }
+    }
+  } catch (e) {
+    console.log('  Agent user growth error: ' + e.message.substring(0, 100));
+  }
+
+  // Fallback: compute from per_tier_monthly_users if PBIX queries failed
+  computeAgentGrowthFallback(data, scorecard);
 
   // ── Save results ──
   console.log('\n=== Scorecard Metrics Summary ===');
