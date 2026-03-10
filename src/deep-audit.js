@@ -156,9 +156,31 @@ if (data.m365_frequency) addVal(Math.max(Math.round(data.m365_frequency * 2), 25
 if (data.agent_adoption) { addVal(Math.round(data.agent_adoption * 2)); addVal(data.agent_adoption * 2); }
 if (data.m365_breadth) addVal(Math.max((data.m365_breadth || 3) + 2, 7));
 if (data.chat_users) addVal(Math.min(Math.round(data.chat_users * 0.13), 5000));
+// Scorecard metric values
+if (data._scorecard_metrics) {
+  Object.values(data._scorecard_metrics).forEach(function(v) {
+    if (typeof v === 'object' && v !== null) {
+      if (Array.isArray(v)) v.forEach(function(item) { if (typeof item === 'object') Object.values(item).forEach(addVal); else addVal(item); });
+      else Object.values(v).forEach(addVal);
+    } else addVal(v);
+  });
+}
 // Org scatter derived values (agent adoption %, etc.)
 if (Array.isArray(data.org_scatter_data)) {
   data.org_scatter_data.forEach(function(org) { addVal(org.x); addVal(org.y); addVal(org.r); });
+}
+// Monthly trend arrays
+if (Array.isArray(data.monthly_trend_users_arr)) {
+  data.monthly_trend_users_arr.forEach(addVal);
+}
+// Agent weekly sessions by org — includes computed ratios between depts
+if (data._scorecard_metrics && data._scorecard_metrics.agent_weekly_sessions_by_org) {
+  var wsVals = Object.values(data._scorecard_metrics.agent_weekly_sessions_by_org);
+  wsVals.forEach(addVal);
+  if (wsVals.length >= 2) {
+    var wsMax = Math.max.apply(null, wsVals), wsMin = Math.min.apply(null, wsVals);
+    addVal(Math.round(wsMax / wsMin * 10) / 10);
+  }
 }
 // License priority org values + derived ratios
 if (supp && supp.license_priority_orgs) {

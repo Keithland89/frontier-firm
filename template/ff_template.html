@@ -83,10 +83,10 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 .nav.visible{transform:translateY(0)}
 .nav-inner{max-width:1600px;margin:0 auto;display:flex;align-items:center;padding:0 1rem;height:46px;gap:.4rem}
 .nav-brand{display:flex;align-items:center;gap:.4rem;font-weight:800;font-size:.65rem;color:var(--brand);text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
-.nav-links{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;flex:1;justify-content:center}
+.nav-links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1;justify-content:center}
 .nav-links::-webkit-scrollbar{display:none}
-.nav-link{padding:.3rem .45rem;font-size:.58rem;font-weight:600;color:var(--text-3);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;transition:all .3s;text-transform:uppercase;letter-spacing:.02em}
-.nav-link:hover,.nav-link.active{color:var(--brand);border-bottom-color:var(--brand)}
+.nav-link{padding:.5rem .9rem;font-size:.72rem;font-weight:600;color:var(--text-3);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;transition:all .3s;text-transform:uppercase;letter-spacing:.06em;border-radius:6px}
+.nav-link:hover{color:var(--brand);background:rgba(59,130,246,0.06)}.nav-link.active{color:#fff;background:var(--brand);border-bottom-color:transparent;border-radius:6px}
 .theme-toggle{width:42px;height:22px;border-radius:11px;background:var(--toggle-bg);border:none;cursor:pointer;position:relative;transition:background .3s}
 .theme-toggle::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .3s}
 [data-theme="dark"] .theme-toggle{background:var(--brand)}
@@ -97,7 +97,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
    ═══════════════════════════════════════════════════════════ */
 .section{position:relative;overflow:hidden}
 .section-inner{max-width:1120px;margin:0 auto;padding:4rem 2.5rem}
-.section-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--brand);margin-bottom:.6rem;display:inline-flex;align-items:center;gap:.35rem}
+.section-label{font-size:.77rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--brand);margin-bottom:.6rem;display:inline-flex;align-items:center;gap:.35rem}
 .section-label::before{content:'';width:4px;height:4px;border-radius:50%;background:currentColor}
 .section-title{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;line-height:1.2;margin-bottom:.6rem;color:var(--text);letter-spacing:-.01em}
 .section-subtitle{font-size:.95rem;color:var(--text-2);max-width:600px;line-height:1.65;font-weight:400}
@@ -137,7 +137,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 .theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
 .theme-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent,var(--brand));border-radius:0 12px 12px 0;padding:1.5rem;position:relative;transition:transform .3s,box-shadow .3s}
 .theme-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.05)}
-.theme-card-label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent,var(--brand));margin-bottom:.4rem}
+.theme-card-label{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent,var(--brand));margin-bottom:.4rem}
 .theme-card h3{font-size:.88rem;font-weight:600;color:var(--text);margin-bottom:.4rem;line-height:1.3}
 .theme-card p{font-size:.78rem;color:var(--text-2);line-height:1.55}
 .theme-card-stat{margin-top:.6rem;font-size:1.3rem;font-weight:800;color:var(--accent,var(--brand));font-variant-numeric:tabular-nums}
@@ -159,9 +159,9 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 .gauge-track{fill:none;stroke:rgba(255,255,255,.07);stroke-width:10}
 .gauge-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1.6s cubic-bezier(.16,1,.3,1)}
 .gauge-value{font-size:1.8rem;font-weight:800;fill:#fff;text-anchor:middle}
-.gauge-sublabel{font-size:.6rem;fill:rgba(255,255,255,.35);text-anchor:middle;text-transform:uppercase;letter-spacing:.08em}
+.gauge-sublabel{font-size:.74rem;fill:rgba(255,255,255,.35);text-anchor:middle;text-transform:uppercase;letter-spacing:.08em}
 .gauge-card h3{font-size:1rem;font-weight:700;margin-bottom:.5rem}
-.gauge-status{display:inline-block;padding:.2rem .6rem;border-radius:100px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.75rem}
+.gauge-status{display:inline-block;padding:.2rem .6rem;border-radius:100px;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.75rem}
 .status-expansion{background:rgba(123,47,242,.12);color:var(--purple)}
 .status-foundation{background:rgba(34,100,229,.12);color:var(--brand)}
 .gauge-metrics{text-align:left;font-size:.78rem;color:rgba(255,255,255,.6);line-height:1.6}
@@ -188,7 +188,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 .insight-callout::before{content:'💡';position:absolute;left:.7rem;top:.7rem;font-size:.85rem}
 [data-theme="dark"] .insight-callout{background:linear-gradient(135deg,rgba(34,100,229,.06),rgba(123,47,242,.06));border-color:rgba(34,100,229,.12)}
 [data-theme="dark"] .insight-box{background:rgba(255,255,255,.02)}
-.insight-box-eyebrow{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent,var(--teal));margin-bottom:.3rem}
+.insight-box-eyebrow{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent,var(--teal));margin-bottom:.3rem}
 .insight-box strong{color:var(--text);font-weight:700}
 
 /* ═══════════════════════════════════════════════════════════
@@ -248,8 +248,8 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 .metric-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem;border-left:3px solid var(--tier-color,var(--border));transition:transform .2s,box-shadow .2s}
 .metric-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.06)}
 .metric-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem}
-.metric-card-id{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3)}
-.metric-tier-badge{padding:.15rem .45rem;border-radius:100px;font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#fff}
+.metric-card-id{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3)}
+.metric-tier-badge{padding:.15rem .45rem;border-radius:100px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#fff}
 .tier-1{background:var(--tier-1)}.tier-2{background:var(--tier-2)}.tier-3{background:var(--tier-3)}.tier-4{background:var(--tier-4)}
 .metric-card-name{font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:.3rem;line-height:1.3}
 .metric-card-value{font-size:1.3rem;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
@@ -852,6 +852,84 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 #habit.signal-section{border-left:6px solid #F59E0B !important;box-shadow:inset 6px 0 20px -6px rgba(245,158,11,.2) !important}
 #skill.signal-section{border-left:6px solid #7B2FF2 !important;box-shadow:inset 6px 0 20px -6px rgba(123,47,242,.2) !important}
 #value.signal-section{border-left:6px solid #10B981 !important;box-shadow:inset 6px 0 20px -6px rgba(16,185,129,.2) !important}
+
+/* ═══════════════════════════════════════════════════════════
+   MATURITY SCORECARD
+   ═══════════════════════════════════════════════════════════ */
+.scorecard{max-width:1120px;margin:0 auto;padding:0 2.5rem}
+.scorecard-title{font-size:clamp(1.2rem,2.5vw,1.6rem);font-weight:700;color:var(--text);text-align:center;margin-bottom:.35rem}
+.scorecard-subtitle{font-size:.85rem;color:var(--text-2);text-align:center;margin-bottom:2rem;max-width:640px;margin-left:auto;margin-right:auto;line-height:1.5}
+.scorecard-grid{display:grid;grid-template-columns:180px repeat(3,1fr);gap:0;border:1px solid var(--border);border-radius:var(--radius-lg,16px);overflow:hidden;background:var(--surface)}
+.sc-header{background:var(--surface);padding:14px 16px;display:flex;align-items:center;gap:8px;border-bottom:2px solid var(--border);font-size:.88rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-2)}
+.sc-header-corner{background:var(--surface);padding:14px 16px;border-bottom:2px solid var(--border);font-size:.84rem;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center}
+.sc-header .sc-num{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:#fff;flex-shrink:0}
+.sc-row-label{padding:16px 16px;display:flex;flex-direction:column;gap:4px;border-right:1px solid var(--border)}
+.sc-row-label .sc-phase{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.sc-row-label .sc-phase-name{font-size:.82rem;font-weight:700;color:var(--text);line-height:1.3}
+.sc-row-label .sc-phase-desc{font-size:.84rem;color:var(--text-3);line-height:1.4;margin-top:2px}
+.sc-cell{padding:16px;display:flex;flex-direction:column;justify-content:center;border-top:1px solid var(--border);border-right:1px solid var(--border);position:relative}
+.sc-cell:last-child{border-right:none}
+.sc-row-label{border-top:1px solid var(--border)}
+.sc-cell .sc-metric-name{font-size:.84rem;font-weight:600;color:var(--text-2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.sc-cell .sc-metric-value{font-size:1.35rem;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.sc-cell .sc-metric-note{font-size:.77rem;color:var(--text-3);margin-top:3px;line-height:1.3}
+.sc-cell.sc-active{background:rgba(123,47,242,.04)}
+.sc-cell.sc-active .sc-metric-value{color:var(--copilot-purple)}
+.sc-active-row .sc-row-label{background:rgba(123,47,242,.04)}
+.sc-you-badge{position:absolute;top:6px;right:8px;font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);background:rgba(123,47,242,.1);padding:2px 7px;border-radius:100px}
+.sc-row-badge{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;font-weight:700;color:#fff;background:var(--copilot-purple);padding:2px 8px;border-radius:100px;margin-top:4px;width:fit-content}
+@media(max-width:768px){.scorecard-grid{grid-template-columns:120px repeat(3,1fr)}.sc-cell .sc-metric-value{font-size:1.05rem}.sc-row-label .sc-phase-desc{display:none}}
+@media print{.scorecard-grid{break-inside:avoid}}
+
+/* ── Scorecard Detail Cards ── */
+.sc-details{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2rem;max-width:1120px;margin-left:auto;margin-right:auto;padding:0 2.5rem}
+.sc-progress{margin-top:6px;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
+.sc-progress-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.sc-detail-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg,16px);overflow:hidden;display:flex;flex-direction:column;transition:transform .2s ease,box-shadow .2s ease}
+.sc-detail-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.sc-detail-header{padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.sc-detail-signal{font-size:.88rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em}
+.sc-detail-phase{font-size:.84rem;color:var(--text-3);font-weight:500}
+.sc-detail-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-bottom:1px solid var(--border)}
+.sc-detail-stat{padding:18px 22px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.sc-detail-stat:nth-child(2n){border-right:none}
+.sc-detail-stat:nth-last-child(-n+2){border-bottom:none}
+.sc-detail-stat-value{font-size:1.6rem;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.sc-detail-stat-label{font-size:.82rem;color:var(--text-3);margin-top:4px;line-height:1.4}
+.sc-detail-narrative{padding:22px 26px;font-size:1rem;color:var(--text-2);line-height:1.75;margin:0;flex:1}
+.sc-commentary-heading{font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.sc-commentary-list{margin:0;padding-left:1.2em;font-size:.95rem;color:var(--text-2);line-height:1.85;list-style:disc}
+.sc-commentary-list li{margin-bottom:4px}
+@media(max-width:768px){.sc-details{grid-template-columns:1fr}.sc-detail-stat-value{font-size:1rem}}
+@media print{.sc-details{break-inside:avoid}}
+
+/* Side-by-side commentary panels */
+.sc-commentary-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:20px 24px}
+.sc-commentary-panel{border-radius:10px;padding:18px 20px}
+.sc-commentary-panel--win{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15)}
+.sc-commentary-panel--act{background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15)}
+.sc-commentary-panel-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:.82rem;font-weight:700;letter-spacing:0.04em}
+.sc-commentary-panel--win .sc-commentary-panel-header{color:#10B981}
+.sc-commentary-panel--act .sc-commentary-panel-header{color:#F59E0B}
+.sc-commentary-panel-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
+.sc-commentary-panel--win .sc-commentary-panel-icon{background:rgba(16,185,129,0.15);color:#10B981}
+.sc-commentary-panel--act .sc-commentary-panel-icon{background:rgba(245,158,11,0.15);color:#F59E0B}
+.sc-commentary-panel p{font-size:.92rem;line-height:1.65;color:#94a3b8;margin:0 0 10px 0}
+.sc-commentary-panel p:last-child{margin-bottom:0}
+.sc-commentary-panel strong{color:#f0f4fc;font-weight:600}
+.sc-commentary-panel .sc-highlight{display:inline;padding:1px 6px;border-radius:4px;font-weight:700;font-variant-numeric:tabular-nums}
+.sc-commentary-panel--win .sc-highlight{background:rgba(16,185,129,0.12);color:#34d399}
+.sc-commentary-panel--act .sc-highlight{background:rgba(245,158,11,0.12);color:#fbbf24}
+
+/* McKinsey narrative style */
+.sc-narrative{padding:20px 24px;font-size:.95rem;line-height:1.75;color:#94a3b8}
+.sc-narrative strong{color:#f0f4fc;font-weight:600}
+.sc-narrative .num{font-weight:700;font-variant-numeric:tabular-nums;color:#f0f4fc}
+.sc-narrative .win{color:#34d399}
+.sc-narrative .gap{color:#fbbf24}
+.sc-narrative .divider{display:block;width:40px;height:2px;margin:14px 0;border-radius:1px}
+.sc-narrative .divider--win{background:rgba(16,185,129,.4)}
+.sc-narrative .divider--gap{background:rgba(245,158,11,.4)}
 </style>
 </head>
 <body>
@@ -869,15 +947,22 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       Frontier Firm Assessment
     </div>
     <div class="nav-links">
-      <a href="#overview" class="nav-link active" data-section="overview">Overview</a>
-      <a href="#framework" class="nav-link" data-section="framework">Framework</a>
-      <a href="#summary" class="nav-link" data-section="summary">Summary</a>
+      <a href="#framework" class="nav-link active" data-section="framework">Framework</a>
+      <a href="#maturity-scorecard" class="nav-link" data-section="maturity-scorecard">Scorecard</a>
+
+      <a href="#phase1-detail" class="nav-link" data-section="phase1-detail">Pattern 1</a>
+      <a href="#phase2-detail" class="nav-link" data-section="phase2-detail">Pattern 2</a>
+      <!-- Phase 3 deep-dive section to be added -->
+      <!-- <a href="#phase3-detail" class="nav-link" data-section="phase3-detail">Phase 3</a> -->
+      <!-- Commented out: original signal/maturity tabs
+      <a href="#overview" class="nav-link" data-section="overview">Overview</a>
       <a href="#reach" class="nav-link" data-section="reach">Reach</a>
       <a href="#habit" class="nav-link" data-section="habit">Habit</a>
       <a href="#skill" class="nav-link" data-section="skill">Skill</a>
       <a href="#value" class="nav-link" data-section="value">Value</a>
       <a href="#maturity" class="nav-link" data-section="maturity">Maturity</a>
       <a href="#actions" class="nav-link" data-section="actions">Actions</a>
+      -->
     </div>
     
   </div>
@@ -902,32 +987,34 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 </section>
 
 
+
+
 <section class="section" id="framework" style="background:var(--bg)">
   <div class="section-inner">
     <div class="section-label reveal">Frontier Firm Framework</div>
     <h2 class="section-title reveal reveal-d1">What is a Frontier Firm?</h2>
     <p class="section-subtitle reveal reveal-d2">A Frontier Firm is an organisation where humans and AI agents work together as teams on live workflows — not just individuals using AI as a personal tool. Microsoft defines three phases of this transformation.</p>
 
-    <p style="font-size:.72rem;color:var(--text-3);margin:.75rem 0 1.5rem;font-style:italic" class="reveal reveal-d3">Click each phase card to explore what it looks like in practice.</p>
+    <p style="font-size:.86rem;color:var(--text-3);margin:.75rem 0 1.5rem;font-style:italic" class="reveal reveal-d3">Click each phase card to explore what it looks like in practice.</p>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:.5rem" class="reveal reveal-d3">
 <!-- Phase 1 flip card -->
-      <div class="flip-card" role="button" aria-label="Phase 1: Foundation — click to explore">
+      <div class="flip-card" role="button" aria-label="Pattern 1: Foundation — click to explore">
         <div class="flip-card-inner">
           <div class="flip-card-front" style="border-top:3px solid var(--brand)">
             <div style="width:40px;height:40px;border-radius:50%;background:rgba(34,100,229,.1);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;color:var(--brand);font-weight:800;font-size:1rem;margin-bottom:.75rem">1</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.3rem">Phase 1 · Foundation</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.3rem">Pattern 1 · Foundation</div>
             <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human with Assistant</div>
-            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">Copilot augments individual work. Employees use AI to draft, summarise and research — but it's a personal tool, not yet part of shared team workflows.</p>
-            <div class="flip-card-hint" style="color:var(--brand)">Explore Phase 1 <span>→</span></div>
+            <p style="font-size:.88rem;color:var(--text-2);line-height:1.55;margin:0">Copilot augments individual work. Employees use AI to draft, summarise and research — but it's a personal tool, not yet part of shared team workflows.</p>
+            <div class="flip-card-hint" style="color:var(--brand)">Explore Pattern 1 <span>→</span></div>
           </div>
           <div class="flip-card-back" style="border-top:3px solid var(--brand);background:rgba(34,100,229,.03)">
-            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.75rem">Phase 1 · Foundation</div>
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.75rem">Pattern 1 · Foundation</div>
             <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
             <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Copilot is deployed but usage varies widely — heavy users sit alongside those who rarely open it</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>AI helps with individual tasks — drafting emails, summarising meetings, one-off searches</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>No consistent team-level routines or delegated workflows yet</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Agents exist but are mostly personal or unused beyond their creator</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Copilot is deployed but usage varies widely — heavy users sit alongside those who rarely open it</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>AI helps with individual tasks — drafting emails, summarising meetings, one-off searches</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>No consistent team-level routines or delegated workflows yet</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Agents exist but are mostly personal or unused beyond their creator</div>
             </div>
             <div class="flip-card-hint" style="color:var(--brand)">← Flip back</div>
           </div>
@@ -935,23 +1022,23 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       </div>
 
       <!-- Phase 2 flip card -->
-      <div class="flip-card" role="button" aria-label="Phase 2: Expansion — click to explore">
+      <div class="flip-card" role="button" aria-label="Pattern 2: Expansion — click to explore">
         <div class="flip-card-inner">
           <div class="flip-card-front" style="border-top:3px solid var(--copilot-purple)">
             <div style="width:40px;height:40px;border-radius:50%;background:rgba(123,47,242,.1);border:2px solid var(--copilot-purple);display:flex;align-items:center;justify-content:center;color:var(--copilot-purple);font-weight:800;font-size:1rem;margin-bottom:.75rem">2</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.3rem">Phase 2 · Expansion</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.3rem">Pattern 2 · Expansion</div>
             <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human-Agent Teams</div>
-            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">Teams delegate tasks to AI agents embedded in real workflows. Human-agent collaboration becomes a repeating pattern — not a one-off experiment.</p>
-            <div class="flip-card-hint" style="color:var(--copilot-purple)">Explore Phase 2 <span>→</span></div>
+            <p style="font-size:.88rem;color:var(--text-2);line-height:1.55;margin:0">Teams delegate tasks to AI agents embedded in real workflows. Human-agent collaboration becomes a repeating pattern — not a one-off experiment.</p>
+            <div class="flip-card-hint" style="color:var(--copilot-purple)">Explore Pattern 2 <span>→</span></div>
           </div>
           <div class="flip-card-back" style="border-top:3px solid var(--copilot-purple);background:rgba(123,47,242,.03)">
-            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.75rem">Phase 2 · Expansion</div>
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.75rem">Pattern 2 · Expansion</div>
             <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
             <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Specific teams have agents embedded in daily workflows — not just experimenting</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Humans delegate defined tasks — research, triage, note-taking — to agents on a routine basis</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Some agents are shared across teams with high multi-session, high-return usage</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Habits are forming but not yet consistent across the full workforce</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Specific teams have agents embedded in daily workflows — not just experimenting</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Humans delegate defined tasks — research, triage, note-taking — to agents on a routine basis</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Some agents are shared across teams with high multi-session, high-return usage</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Habits are forming but not yet consistent across the full workforce</div>
             </div>
             <div class="flip-card-hint" style="color:var(--copilot-purple)">← Flip back</div>
           </div>
@@ -959,23 +1046,23 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       </div>
 
       <!-- Phase 3 flip card -->
-      <div class="flip-card" role="button" aria-label="Phase 3: Frontier — click to explore">
+      <div class="flip-card" role="button" aria-label="Pattern 3: Frontier — click to explore">
         <div class="flip-card-inner">
           <div class="flip-card-front" style="border-top:3px solid var(--copilot-green)">
             <div style="width:40px;height:40px;border-radius:50%;background:rgba(16,185,129,.1);border:2px solid var(--copilot-green);display:flex;align-items:center;justify-content:center;color:var(--copilot-green);font-weight:800;font-size:1rem;margin-bottom:.75rem">3</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.3rem">Phase 3 · Frontier</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.3rem">Pattern 3 · Frontier</div>
             <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human-Led, Agent-Operated</div>
-            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">AI agents run enterprise workflows end-to-end. Humans set direction and govern outcomes — agents execute. AI is embedded in how the organisation operates, not just how individuals work.</p>
-            <div class="flip-card-hint" style="color:var(--copilot-green)">Explore Phase 3 <span>→</span></div>
+            <p style="font-size:.88rem;color:var(--text-2);line-height:1.55;margin:0">AI agents run enterprise workflows end-to-end. Humans set direction and govern outcomes — agents execute. AI is embedded in how the organisation operates, not just how individuals work.</p>
+            <div class="flip-card-hint" style="color:var(--copilot-green)">Explore Pattern 3 <span>→</span></div>
           </div>
           <div class="flip-card-back" style="border-top:3px solid var(--copilot-green);background:rgba(16,185,129,.03)">
-            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.75rem">Phase 3 · Frontier</div>
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.75rem">Pattern 3 · Frontier</div>
             <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
             <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Agents execute complete workflows — onboarding, incident response, reporting — with minimal human intervention per step</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>A governed agent catalogue spans all major business functions with active Keep/Review/Retire cycles</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>70%+ of licensed users are active; most interact with 3+ agents across multiple workflows</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Humans focus on strategy, exception-handling, and governance — not execution</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Agents execute complete workflows — onboarding, incident response, reporting — with minimal human intervention per step</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>A governed agent catalogue spans all major business functions with active Keep/Review/Retire cycles</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>{{P3_FRONTIER_ACTIVE_THRESHOLD}}%+ of licensed users are active; most interact with 3+ agents across multiple workflows</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Humans focus on strategy, exception-handling, and governance — not execution</div>
             </div>
             <div class="flip-card-hint" style="color:var(--copilot-green)">← Flip back</div>
           </div>
@@ -994,26 +1081,301 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2.5rem 0 0" class="reveal reveal-d3">
 
       <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid #0EA5E9;border-top:3px solid #0EA5E9;border-radius:0 0 12px 12px;padding:1.5rem;position:relative;overflow:hidden"><div style="position:absolute;top:0;left:0;width:80px;height:100%;background:linear-gradient(90deg,rgba(14,165,233,.06),transparent);pointer-events:none"></div>
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#0EA5E9;margin-bottom:.5rem">Spread it across the org</div>
+        <div style="font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#0EA5E9;margin-bottom:.5rem">Spread it across the org</div>
         <div style="font-size:1rem;font-weight:800;color:var(--text);font-family:'Outfit',sans-serif;margin-bottom:.75rem">Reach</div>
-        <p style="font-size:.76rem;color:var(--text-2);line-height:1.65;margin:0">A Frontier Firm is not defined by a few power users — it’s defined by AI becoming a capability everyone relies on. This signal measures whether AI reaches across roles, teams, and functions.</p>
+        <p style="font-size:.88rem;color:var(--text-2);line-height:1.65;margin:0">A Frontier Firm is not defined by a few power users — it’s defined by AI becoming a capability everyone relies on. This signal measures whether AI reaches across roles, teams, and functions.</p>
       </div>
 
       <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid #F59E0B;border-top:3px solid #F59E0B;border-radius:0 0 12px 12px;padding:1.5rem;position:relative;overflow:hidden"><div style="position:absolute;top:0;left:0;width:80px;height:100%;background:linear-gradient(90deg,rgba(245,158,11,.06),transparent);pointer-events:none"></div>
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#F59E0B;margin-bottom:.5rem">Turn use into routine</div>
+        <div style="font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#F59E0B;margin-bottom:.5rem">Turn use into routine</div>
         <div style="font-size:1rem;font-weight:800;color:var(--text);font-family:'Outfit',sans-serif;margin-bottom:.75rem">Habit</div>
-        <p style="font-size:.76rem;color:var(--text-2);line-height:1.65;margin:0">Occasional use doesn’t transform an organisation. Frontier Firms build AI into the daily rhythm of work. This signal measures whether people are converting from experimenters into habitual users.</p>
+        <p style="font-size:.88rem;color:var(--text-2);line-height:1.65;margin:0">Occasional use doesn’t transform an organisation. Frontier Firms build AI into the daily rhythm of work. This signal measures whether people are converting from experimenters into habitual users.</p>
       </div>
 
       <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid #7B2FF2;border-top:3px solid #7B2FF2;border-radius:0 0 12px 12px;padding:1.5rem;position:relative;overflow:hidden"><div style="position:absolute;top:0;left:0;width:80px;height:100%;background:linear-gradient(90deg,rgba(123,47,242,.06),transparent);pointer-events:none"></div>
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#7B2FF2;margin-bottom:.5rem">Push past the basics</div>
+        <div style="font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#7B2FF2;margin-bottom:.5rem">Push past the basics</div>
         <div style="font-size:1rem;font-weight:800;color:var(--text);font-family:'Outfit',sans-serif;margin-bottom:.75rem">Skill</div>
-        <p style="font-size:.76rem;color:var(--text-2);line-height:1.65;margin:0">Early AI use is narrow and assistive. Advancing organisations move into sophisticated territory — directing agents, building multi-step workflows, using AI as a collaborator, not just a shortcut.</p>
+        <p style="font-size:.88rem;color:var(--text-2);line-height:1.65;margin:0">Early AI use is narrow and assistive. Advancing organisations move into sophisticated territory — directing agents, building multi-step workflows, using AI as a collaborator, not just a shortcut.</p>
       </div>
 
     </div>
   </div>
 </section>
+
+<!-- MATURITY SCORECARD -->
+<section class="section" id="maturity-scorecard" style="background:var(--bg);padding:3rem 0 1.5rem">
+  <div class="scorecard">
+    <div class="section-label reveal" style="text-align:center;justify-content:center">Frontier Maturity Scorecard</div>
+    <h2 class="scorecard-title reveal reveal-d1">Where {{CUSTOMER_NAME}} Stands Today</h2>
+    <p class="scorecard-subtitle reveal reveal-d2">Three signals — Reach, Habit and Skill — measured across three stages of AI maturity. {{CUSTOMER_NAME}} is currently at <strong>Pattern {{PATTERN_NUMBER}}</strong>.</p>
+
+    <div class="scorecard-grid reveal reveal-d3">
+      <!-- Header row -->
+      <div class="sc-header-corner">Measurement →</div>
+      <div class="sc-header"><span class="sc-num" style="background:#0EA5E9">1</span> Reach</div>
+      <div class="sc-header"><span class="sc-num" style="background:#F59E0B">2</span> Habit</div>
+      <div class="sc-header"><span class="sc-num" style="background:#7B2FF2">3</span> Skill</div>
+
+      <!-- Pattern 1: Foundation -->
+      <div class="sc-row-label">
+        <div class="sc-phase" style="color:var(--brand)">Pattern 1</div>
+        <div class="sc-phase-name">Human with Assistant</div>
+        <div class="sc-phase-desc">Sustained, repeated individual usage over time</div>
+      </div>
+      <div class="sc-cell">
+        <div class="sc-metric-name">Copilot Reach</div>
+        <div class="sc-metric-value">{{SC_COMBINED_REACH_PCT}}%</div>
+        <div class="sc-metric-note">Total Copilot users / total employees</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{SC_COMBINED_REACH_PCT}}%;background:#0EA5E9"></div></div>
+      </div>
+      <div class="sc-cell">
+        <div class="sc-metric-name">Habitual Users</div>
+        <div class="sc-metric-value">{{SC_COMBINED_HABITUAL_PCT}}%</div>
+        <div class="sc-metric-note">Users with 11+ active days/month</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{SC_COMBINED_HABITUAL_PCT}}%;background:#F59E0B"></div></div>
+      </div>
+      <div class="sc-cell">
+        <div class="sc-metric-name">Deep Interactions</div>
+        <div class="sc-metric-value">{{SC_MULTI_TURN_PCT}}%</div>
+        <div class="sc-metric-note">Sessions with 5+ prompts</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{SC_MULTI_TURN_PCT}}%;background:#7B2FF2"></div></div>
+      </div>
+
+      <!-- Pattern 2: Expansion (active row for customer) -->
+      <div class="sc-row-label sc-active-row">
+        <div class="sc-phase" style="color:var(--copilot-purple)">Pattern 2</div>
+        <div class="sc-phase-name">Human-Agent Teams</div>
+        <div class="sc-phase-desc">Effective use, moving to agent-supported workflows</div>
+        <div class="sc-row-badge">◆ You are here</div>
+      </div>
+      <div class="sc-cell sc-active">
+        <div class="sc-metric-name">Agent Active Users</div>
+        <div class="sc-metric-value">{{AGENT_ADOPTION}}%</div>
+        <div class="sc-metric-note">{{AGENT_USERS}} users across {{SC_TOTAL_AGENTS_FULL}} agents</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{AGENT_ADOPTION}}%;background:#0EA5E9"></div></div>
+      </div>
+      <div class="sc-cell sc-active">
+        <div class="sc-metric-name">Agent MoM Retention</div>
+        <div class="sc-metric-value">{{SC_AGENT_MOM_RETENTION}}%</div>
+        <div class="sc-metric-note">Agent users who return next month</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{SC_AGENT_MOM_RETENTION}}%;background:#F59E0B"></div></div>
+      </div>
+      <div class="sc-cell sc-active">
+        <div class="sc-metric-name">Users with 3+ Agents</div>
+        <div class="sc-metric-value">{{SC_PCT_USERS_3PLUS_AGENTS}}%</div>
+        <div class="sc-metric-note">{{SC_USERS_3PLUS_AGENTS}} users exploring multiple agents</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{SC_PCT_USERS_3PLUS_AGENTS}}%;background:#7B2FF2"></div></div>
+      </div>
+
+      <!-- Pattern 3: Frontier -->
+      <div class="sc-row-label">
+        <div class="sc-phase" style="color:var(--copilot-green)">Pattern 3</div>
+        <div class="sc-phase-name">Human-led, Agent-operated</div>
+        <div class="sc-phase-desc">Agents embedded in org workflows at scale</div>
+      </div>
+      <div class="sc-cell">
+        <div class="sc-metric-name">Agents Active</div>
+        <div class="sc-metric-value">{{AGENT_ADOPTION}}%</div>
+        <div class="sc-metric-note">% of users engaging with agents</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{AGENT_ADOPTION}}%;background:#0EA5E9"></div></div>
+      </div>
+      <div class="sc-cell">
+        <div class="sc-metric-name">Agent Habitual Users</div>
+        <div class="sc-metric-value">{{AGENT_HABITUAL_PCT}}%</div>
+        <div class="sc-metric-note">Agent users with 11+ active days</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{AGENT_HABITUAL_PCT}}%;background:#F59E0B"></div></div>
+      </div>
+      <div class="sc-cell">
+        <div class="sc-metric-name">Agents 5+ Users</div>
+        <div class="sc-metric-value">{{SC_PCT_AGENTS_5PLUS_USERS}}%</div>
+        <div class="sc-metric-note">Agents with broad team adoption</div>
+        <div class="sc-progress"><div class="sc-progress-fill" style="width:{{SC_PCT_AGENTS_5PLUS_USERS}}%;background:#7B2FF2"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE 1 SEPARATOR & DETAIL SECTION -->
+<div style="max-width:1120px;margin:0 auto;padding:0 2.5rem">
+  <hr style="border:none;border-top:1px solid var(--border);margin:0">
+</div>
+
+<section class="section" id="phase1-detail" style="background:var(--bg);padding:2.5rem 0 3rem">
+  <div class="section-inner" style="max-width:1120px">
+    <div class="section-label reveal" style="color:var(--brand)">Pattern 1 Deep Dive</div>
+    <h2 class="section-title reveal reveal-d1" style="font-size:clamp(1.4rem,3vw,2rem)">How are we doing on Pattern 1 — Human with Assistant?</h2>
+    <p class="section-subtitle reveal reveal-d2" style="max-width:800px">Pattern 1 measures whether individuals across the organisation are using AI as a personal productivity tool — consistently, skillfully, and across the breadth of their work.</p>
+
+    <div class="sc-details reveal reveal-d3" style="margin-top:2rem;gap:1.5rem">
+
+      <!-- ① REACH -->
+      <div class="sc-detail-card" style="border-top:3px solid #0EA5E9">
+        <div class="sc-detail-header">
+          <div class="sc-detail-signal" style="color:#0EA5E9">① Reach</div>
+          <div class="sc-detail-phase">{{SC_COMBINED_REACH_PCT}}% of employees</div>
+        </div>
+        <div class="sc-detail-stats" style="grid-template-columns:1fr 1fr">
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#10B981">+{{SC_GROWTH_PCT}}%</div>
+            <div class="sc-detail-stat-label">User Growth ({{SC_GROWTH_MONTHS}}mo)</div>
+          </div>
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value">{{LICENSE_COVERAGE_PCT}}%</div>
+            <div class="sc-detail-stat-label">Licensed</div>
+          </div>
+        </div>
+        <div class="sc-narrative">
+          <span class="divider divider--win"></span>
+          The user base grew <span class="num win">+{{SC_GROWTH_PCT}}%</span> in {{SC_GROWTH_MONTHS}} months — from {{P1_BASELINE_USERS}} to <span class="num">{{TOTAL_ACTIVE_USERS}}</span> users — with {{P1_LATEST_MONTH}} accelerating at +{{P1_LATEST_MOM_GROWTH}}% month-on-month. Critically, <strong>{{CHAT_USERS_FMT}} organic Chat adopters</strong> outnumber <span class="num">{{LICENSED_USERS}}</span> licensed users, signalling that demand is real, not mandated. {{P1_TOP_ORGS_REACH}} are leading the charge.
+          <span class="divider divider--gap"></span>
+          The biggest unlock sits in <strong>{{INACTIVE_LICENSES}} unused licences</strong>. Reassigning them to top free-tier users in underserved departments would immediately expand depth. Licensed users already generate <span class="num gap">{{LICENSE_PRIORITY}}×</span> more prompts, so every conversion directly amplifies output.
+        </div>
+      </div>
+
+      <!-- ② HABIT -->
+      <div class="sc-detail-card" style="border-top:3px solid #F59E0B">
+        <div class="sc-detail-header">
+          <div class="sc-detail-signal" style="color:#F59E0B">② Habit</div>
+          <div class="sc-detail-phase">{{SC_COMBINED_HABITUAL_PCT}}% habitual (11+ days)</div>
+        </div>
+        <div class="sc-detail-stats" style="grid-template-columns:1fr 1fr">
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#F59E0B">{{WEEKLY_CHAT}}</div>
+            <div class="sc-detail-stat-label">Chat Sessions / Wk</div>
+          </div>
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#F59E0B">{{WEEKLY_M365}}</div>
+            <div class="sc-detail-stat-label">M365 Sessions / Wk</div>
+          </div>
+        </div>
+        <div class="sc-narrative">
+          <span class="divider divider--win"></span>
+          <span class="num win">{{SC_HABITUAL_USERS}}</span> users have crossed the 11+ active-day threshold, split evenly between Chat (<span class="num">{{SC_CHAT_HAB_11PLUS_PCT}}%</span>) and M365 (<span class="num">{{SC_M365_HAB_11PLUS_PCT}}%</span>) — proving habit is forming across channels, not siloed. Month-on-month retention sits at a solid <strong>{{M365_RETENTION}}%</strong>, meaning users who start tend to stick. {{P1_TOP_ORGS_HABIT}} show the deepest habits and should be leveraged as internal champions.
+          <span class="divider divider--gap"></span>
+          The clearest conversion opportunity is the <span class="num gap">{{BAND_6_10}} users in the 6–10 day band</span>. They already use Copilot weekly — targeted nudges like prompt-of-the-day or department playbooks could tip them into habitual use. Meanwhile, {{P1_BOTTOM_ORGS_HABIT}} trail significantly — department-specific enablement sprints would have the highest impact here.
+        </div>
+      </div>
+
+      <!-- ③ SKILL -->
+      <div class="sc-detail-card" style="border-top:3px solid #7B2FF2">
+        <div class="sc-detail-header">
+          <div class="sc-detail-signal" style="color:#7B2FF2">③ Skill</div>
+          <div class="sc-detail-phase">{{SC_MULTI_TURN_PCT}}% deep interactions</div>
+        </div>
+        <div class="sc-detail-stats" style="grid-template-columns:1fr 1fr">
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#7B2FF2">{{SC_MULTI_TURN_PCT}}%</div>
+            <div class="sc-detail-stat-label">Deep Sessions (5+ prompts)</div>
+          </div>
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#7B2FF2">{{M365_BREADTH}}</div>
+            <div class="sc-detail-stat-label">Apps per User</div>
+          </div>
+        </div>
+        <div class="sc-narrative">
+          <span class="divider divider--win"></span>
+          Users engage with <span class="num win">{{M365_BREADTH}} M365 apps</span> on average — Frontier-level breadth that shows AI is woven across the full suite, not confined to one tool. Licensed users generate <span class="num">{{LICENSED_AVG_PROMPTS}}</span> prompts per month versus <span class="num">{{UNLICENSED_AVG_PROMPTS}}</span> for unlicensed — a <strong>{{LICENSE_PRIORITY}}× depth premium</strong> that validates the licence investment. Overall prompt volume grew <strong>+{{P1_PROMPT_GROWTH_PCT}}%</strong> in {{SC_GROWTH_MONTHS}} months while per-user intensity rose from {{P1_INTENSITY_START}} to {{P1_INTENSITY_END}}.
+          <span class="divider divider--gap"></span>
+          The gap is depth: <span class="num gap">{{SC_SINGLE_SHOT_PCT}}%</span> of sessions are still single-shot. Training users to iterate — refine outputs, ask follow-ups, chain tasks — would materially increase value per session. Sharing power-user prompt patterns from {{P1_TOP_ORGS_SKILL}} with lagging departments is the fastest route to accelerating skill transfer org-wide.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- PHASE 2 SEPARATOR & DETAIL SECTION -->
+<div style="max-width:1120px;margin:0 auto;padding:0 2.5rem">
+  <hr style="border:none;border-top:1px solid rgba(255,255,255,0.08);margin:2.5rem 0 0">
+</div>
+
+<section class="section" id="phase2-detail" style="background:var(--bg);padding:2rem 0 3rem">
+  <div class="section-inner" style="max-width:1120px">
+    <div class="section-label reveal" style="color:var(--copilot-purple)">Pattern 2 Deep Dive</div>
+    <h2 class="section-title reveal reveal-d1" style="font-size:clamp(1.4rem,3vw,2rem)">How are we doing on Pattern 2 — Human-Agent Teams?</h2>
+    <p class="section-subtitle reveal reveal-d2" style="max-width:800px">Pattern 2 measures whether agents are being adopted, retained, and used with growing sophistication — the bridge between individual AI use and autonomous agent operations.</p>
+
+    <div class="sc-details reveal reveal-d3" style="margin-top:2rem;gap:1.5rem">
+
+      <!-- ① REACH -->
+      <div class="sc-detail-card" style="border-top:3px solid #0EA5E9">
+        <div class="sc-detail-header">
+          <div class="sc-detail-signal" style="color:#0EA5E9">① Reach</div>
+          <div class="sc-detail-phase">{{AGENT_ADOPTION}}% of users engaging with agents</div>
+        </div>
+        <div class="sc-detail-stats" style="grid-template-columns:1fr 1fr">
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#0EA5E9">{{AGENT_ADOPTION}}%</div>
+            <div class="sc-detail-stat-label">Agent Active Users</div>
+          </div>
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#10B981">+{{AGENT_USER_GROWTH_PCT}}%</div>
+            <div class="sc-detail-stat-label">User Growth (MoM)</div>
+          </div>
+        </div>
+        <div class="sc-narrative">
+          <span class="divider divider--win"></span>
+          Agent users grew <span class="num win">+{{AGENT_USER_GROWTH_PCT}}%</span> month-on-month ({{P2_PREV_AGENT_USERS}} → {{AGENT_USERS}} users, {{P2_GROWTH_PERIOD}}) with all <span class="num">{{ORG_COUNT}} organisations</span> showing active agent users — reach is org-wide, not siloed in IT. <strong>{{P2_TOP_AGENT_1_NAME}}</strong> leads with <span class="num">{{P2_TOP_AGENT_1_USERS}} users</span> and {{P2_TOP_AGENT_1_RETURN}}% return rate, making it the breakout agent. <strong>{{P2_TOP_AGENT_2_NAME}}</strong> ({{P2_TOP_AGENT_2_USERS}} users) and <strong>{{P2_TOP_AGENT_3_NAME}}</strong> ({{P2_TOP_AGENT_3_USERS}} users) round out the top three. {{P2_FUNCTIONAL_AGENTS_NOTE}}
+          <span class="divider divider--gap"></span>
+          At <span class="num gap">{{AGENT_ADOPTION}}%</span>, agent reach is still early-stage — <span class="num">{{AGENT_USERS}}</span> users out of {{TOTAL_ACTIVE_USERS}}. The top 3 agents account for the majority of engagement, leaving <span class="num">{{SC_TOTAL_AGENTS_FULL}}</span> total agents with a long tail of low adoption. Focus on promoting the proven winners — {{P2_TOP_AGENT_1_NAME}} and {{P2_TOP_AGENT_2_NAME}} — to departments that haven't tried them yet.
+        </div>
+      </div>
+
+      <!-- ② HABIT -->
+      <div class="sc-detail-card" style="border-top:3px solid #F59E0B">
+        <div class="sc-detail-header">
+          <div class="sc-detail-signal" style="color:#F59E0B">② Habit</div>
+          <div class="sc-detail-phase">{{SC_AGENT_MOM_RETENTION}}% month-on-month retention</div>
+        </div>
+        <div class="sc-detail-stats" style="grid-template-columns:1fr 1fr">
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#F59E0B">{{SC_AGENT_MOM_RETENTION}}%</div>
+            <div class="sc-detail-stat-label">Agent MoM Return Rate</div>
+          </div>
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#10B981">+{{AGENT_SESSIONS_MOM_PCT}}%</div>
+            <div class="sc-detail-stat-label">Session Growth (MoM)</div>
+          </div>
+        </div>
+        <div class="sc-narrative">
+          <span class="divider divider--win"></span>
+          Agent sessions are growing at <span class="num win">+{{AGENT_SESSIONS_MOM_PCT}}%</span> month-on-month — usage is accelerating, not plateauing. Of <span class="num">{{P2_PREV_AGENT_USERS}}</span> agent users last month, <span class="num win">{{P2_RETAINED_AGENT_USERS}} returned</span> — a <span class="num">{{SC_AGENT_MOM_RETENTION}}%</span> retention rate that exceeds typical early-stage benchmarks. Agents with clear functional value — {{P2_STICKY_AGENTS_NOTE}} — show near-perfect stickiness. When an agent solves a real problem, users come back.
+          <span class="divider divider--gap"></span>
+          Despite strong session growth, usage varies sharply by department: {{P2_DEPT_SESSIONS_NOTE}}. Only <span class="num gap">{{AGENT_HABITUAL_PCT}}%</span> of agent users reach habitual status (11+ active days). The path forward: embed top agents into existing workflows — make {{P2_TOP_AGENT_2_NAME}} the default starting point for analysis tasks and {{P2_TOP_STICKY_AGENT}} the first stop for routine queries.
+        </div>
+      </div>
+
+      <!-- ③ SKILL -->
+      <div class="sc-detail-card" style="border-top:3px solid #7B2FF2">
+        <div class="sc-detail-header">
+          <div class="sc-detail-signal" style="color:#7B2FF2">③ Skill</div>
+          <div class="sc-detail-phase">{{AGENT_CREATORS_PCT}}% building agents</div>
+        </div>
+        <div class="sc-detail-stats" style="grid-template-columns:1fr 1fr">
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#7B2FF2">{{AGENT_CREATORS_PCT}}%</div>
+            <div class="sc-detail-stat-label">Agent Creators</div>
+          </div>
+          <div class="sc-detail-stat" style="border-bottom:none">
+            <div class="sc-detail-stat-value" style="color:#7B2FF2">{{SC_PCT_USERS_3PLUS_AGENTS}}%</div>
+            <div class="sc-detail-stat-label">Users with 3+ Agents</div>
+          </div>
+        </div>
+        <div class="sc-narrative">
+          <span class="divider divider--win"></span>
+          <span class="num win">{{SC_PCT_USERS_3PLUS_AGENTS}}%</span> of agent users ({{SC_USERS_3PLUS_AGENTS}} people) have explored 3 or more agents, showing genuine curiosity rather than one-off trials. The agent portfolio itself demonstrates real sophistication — {{P2_SPECIALIST_AGENTS_NOTE}} signal that teams are designing agents for specific business processes, not generic Q&A.
+          <span class="divider divider--gap"></span>
+          Only <span class="num gap">{{AGENT_CREATORS_PCT}}%</span> of users are building agents — the creator base needs to expand for Pattern 3 readiness. Most agent usage is concentrated in the top 5 agents, with <span class="num">{{P2_PCT_1_5_AGENTS}}%</span> of users engaging with just 1–5 agents. Run an "agent builder sprint" targeting power users in {{P2_TARGET_DEPTS}} to grow the creator cohort and diversify the agent portfolio beyond the current top performers.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- BEGIN HIDDEN: Sections below Phase 2 -->
+<div style="display:none!important" aria-hidden="true">
 <div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_0}}</div><div class="pull-quote-source">Frontier Firm Assessment</div></div>
 
 
@@ -1027,21 +1389,21 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
         <div class="theme-card-label" style="color:#0EA5E9">Reach: Strong</div>
         <div class="theme-card-verdict">{{CUSTOMER_NAME}}: {{TOTAL_ACTIVE_USERS}} users deployed, {{M365_RETENTION}}% come back every month</div>
         <h3 style="font-size:.82rem;font-weight:500;color:var(--text-2);margin-bottom:0">The rollout has landed</h3>
-        <div class="theme-card-body"><div style="flex:1;font-size:.75rem;color:var(--text-2);line-height:1.5">{{EXEC_SUMMARY_GOOD}}</div></div>
+        <div class="theme-card-body"><div style="flex:1;font-size:.88rem;color:var(--text-2);line-height:1.5">{{EXEC_SUMMARY_GOOD}}</div></div>
         <div class="theme-card-sentiment sentiment-strong">&#10003; Strong foundation</div>
       </div>
       <div class="theme-card reveal reveal-d2" style="--accent:#F59E0B">
         <div class="theme-card-label" style="color:#F59E0B">Habit: The bottleneck</div>
         <div class="theme-card-verdict">Only {{M365_FREQUENCY}}% use it daily, most stick to {{M365_BREADTH}} apps</div>
         <h3 style="font-size:.82rem;font-weight:500;color:var(--text-2);margin-bottom:0">Usage is wide but shallow</h3>
-        <div class="theme-card-body"><div style="flex:1;font-size:.75rem;color:var(--text-2);line-height:1.5">{{EXEC_SUMMARY_GAP}}</div></div>
+        <div class="theme-card-body"><div style="flex:1;font-size:.88rem;color:var(--text-2);line-height:1.5">{{EXEC_SUMMARY_GAP}}</div></div>
         <div class="theme-card-sentiment sentiment-caution">&#9888; Depth opportunity</div>
       </div>
       <div class="theme-card reveal reveal-d3" style="--accent:#10B981">
         <div class="theme-card-label" style="color:#10B981">Skill + Value: The lever</div>
         <div class="theme-card-verdict">{{TIME_SAVED_UNREALISED}} hours/year on the table + {{BAND_6_10_FMT}} users one nudge away</div>
         <h3 style="font-size:.82rem;font-weight:500;color:var(--text-2);margin-bottom:0">Clear paths to double the impact</h3>
-        <div class="theme-card-body"><div style="flex:1;font-size:.75rem;color:var(--text-2);line-height:1.5">{{EXEC_SUMMARY_OPP}}</div></div>
+        <div class="theme-card-body"><div style="flex:1;font-size:.88rem;color:var(--text-2);line-height:1.5">{{EXEC_SUMMARY_OPP}}</div></div>
         <div class="theme-card-sentiment sentiment-strong">&#10003; Actionable levers</div>
       </div>
     </div>
@@ -1150,7 +1512,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <div class="slide-label">Retention Strength</div>
       <div class="retention-grid reveal reveal-d1" style="background:var(--section-dark);border-radius:16px;padding:2rem;color:#fff;border:1px solid rgba(245,158,11,.15)">
         <div>
-          <div class="retention-bar-container"><div class="retention-bar-label"><span>Licensed M365 Copilot</span><span>{{M365_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{M365_RETENTION}}" style="width:0;background:linear-gradient(90deg,#2264E5,#4A8AFF)"></div><div class="retention-threshold" style="left:50%"><span class="retention-threshold-label">50%</span></div><div class="retention-threshold" style="left:70%"><span class="retention-threshold-label">70%</span></div><div class="retention-threshold" style="left:85%"><span class="retention-threshold-label">85%</span></div></div></div>
+          <div class="retention-bar-container"><div class="retention-bar-label"><span>Licensed M365 Copilot</span><span>{{M365_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{M365_RETENTION}}" style="width:0;background:linear-gradient(90deg,#2264E5,#4A8AFF)"></div><div class="retention-threshold" style="left:{{RETENTION_BAND_1}}%"><span class="retention-threshold-label">{{RETENTION_BAND_1}}%</span></div><div class="retention-threshold" style="left:{{RETENTION_BAND_2}}%"><span class="retention-threshold-label">{{RETENTION_BAND_2}}%</span></div><div class="retention-threshold" style="left:{{RETENTION_BAND_3}}%"><span class="retention-threshold-label">{{RETENTION_BAND_3}}%</span></div></div></div>
           <div class="retention-bar-container"><div class="retention-bar-label"><span>Unlicensed Chat</span><span>{{CHAT_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{CHAT_RETENTION}}" style="width:0;background:linear-gradient(90deg,#7B2FF2,#9B5FFF)"></div></div></div>
           <div class="retention-bar-container"><div class="retention-bar-label"><span>Agent Users</span><span>{{AGENT_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{AGENT_RETENTION}}" style="width:0;background:linear-gradient(90deg,#0EA5E9,#38BDF8)"></div></div></div>
           <div style="padding:.75rem 1rem;background:rgba(245,158,11,.06);border-left:3px solid #F59E0B;border-radius:0 8px 8px 0;margin-top:1rem;font-size:.75rem;color:rgba(255,255,255,.6);line-height:1.5">{{RETENTION_CORRECTION_NOTE}}</div>
@@ -1228,7 +1590,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:2rem" class="reveal reveal-d1">
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center">
         <div style="font-size:2rem;font-weight:900;color:var(--brand)">{{M365_BREADTH}}</div>
-        <div style="font-size:.75rem;color:var(--text-2)">apps/user of <strong>27</strong> available</div>
+        <div style="font-size:.75rem;color:var(--text-2)">apps/user of <strong>{{M365_TOTAL_APPS}}</strong> available</div>
         <span style="display:inline-block;padding:.15rem .5rem;border-radius:100px;font-size:.6rem;font-weight:600;background:rgba(34,100,229,.1);color:var(--brand);border:1px solid rgba(34,100,229,.2);margin-top:.4rem">M365 Copilot</span>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center">
@@ -1401,24 +1763,24 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
     <h2 class="section-title reveal reveal-d1">{{TITLE_MATURITY}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_MATURITY}}</p>
 
-    <p style="font-size:.72rem;color:var(--text-3);margin:.75rem 0 1rem;font-style:italic" class="reveal reveal-d3"><p style="font-size:.72rem;color:var(--text-3);margin:.75rem 0 1rem;font-style:italic" class="reveal reveal-d3">Click each pattern to see what it looks like in practice.</p><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:.5rem" class="reveal reveal-d3">{{PHASE_1_WRAPPER_OPEN}}<!-- Phase 1 flip card -->
-      <div class="flip-card" role="button" aria-label="Phase 1: Foundation — click to explore">
+    <p style="font-size:.86rem;color:var(--text-3);margin:.75rem 0 1rem;font-style:italic" class="reveal reveal-d3"><p style="font-size:.86rem;color:var(--text-3);margin:.75rem 0 1rem;font-style:italic" class="reveal reveal-d3">Click each pattern to see what it looks like in practice.</p><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:.5rem" class="reveal reveal-d3">{{PHASE_1_WRAPPER_OPEN}}<!-- Phase 1 flip card -->
+      <div class="flip-card" role="button" aria-label="Pattern 1: Foundation — click to explore">
         <div class="flip-card-inner">
           <div class="flip-card-front" style="border-top:3px solid var(--brand)">
             <div style="width:40px;height:40px;border-radius:50%;background:rgba(34,100,229,.1);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;color:var(--brand);font-weight:800;font-size:1rem;margin-bottom:.75rem">1</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.3rem">Phase 1 · Foundation</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.3rem">Pattern 1 · Foundation</div>
             <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human with Assistant</div>
-            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">Copilot augments individual work. Employees use AI to draft, summarise and research — but it's a personal tool, not yet part of shared team workflows.</p>
-            <div class="flip-card-hint" style="color:var(--brand)">Explore Phase 1 <span>→</span></div>
+            <p style="font-size:.88rem;color:var(--text-2);line-height:1.55;margin:0">Copilot augments individual work. Employees use AI to draft, summarise and research — but it's a personal tool, not yet part of shared team workflows.</p>
+            <div class="flip-card-hint" style="color:var(--brand)">Explore Pattern 1 <span>→</span></div>
           </div>
           <div class="flip-card-back" style="border-top:3px solid var(--brand);background:rgba(34,100,229,.03)">
-            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.75rem">Phase 1 · Foundation</div>
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.75rem">Pattern 1 · Foundation</div>
             <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
             <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Copilot is deployed but usage varies widely — heavy users sit alongside those who rarely open it</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>AI helps with individual tasks — drafting emails, summarising meetings, one-off searches</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>No consistent team-level routines or delegated workflows yet</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Agents exist but are mostly personal or unused beyond their creator</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Copilot is deployed but usage varies widely — heavy users sit alongside those who rarely open it</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>AI helps with individual tasks — drafting emails, summarising meetings, one-off searches</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>No consistent team-level routines or delegated workflows yet</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Agents exist but are mostly personal or unused beyond their creator</div>
             </div>
             <div class="flip-card-hint" style="color:var(--brand)">← Flip back</div>
           </div>
@@ -1426,23 +1788,23 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       </div>
 
       </div>{{PHASE_2_WRAPPER_OPEN}}<!-- Phase 2 flip card -->
-      <div class="flip-card" role="button" aria-label="Phase 2: Expansion — click to explore">
+      <div class="flip-card" role="button" aria-label="Pattern 2: Expansion — click to explore">
         <div class="flip-card-inner">
           <div class="flip-card-front" style="border-top:3px solid var(--copilot-purple){{PHASE_2_HIGHLIGHT}}">
             <div style="width:40px;height:40px;border-radius:50%;background:rgba(123,47,242,.1);border:2px solid var(--copilot-purple);display:flex;align-items:center;justify-content:center;color:var(--copilot-purple);font-weight:800;font-size:1rem;margin-bottom:.75rem">2</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.3rem">Phase 2 · Expansion</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.3rem">Pattern 2 · Expansion</div>
             <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human-Agent Teams</div>
-            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">Teams delegate tasks to AI agents embedded in real workflows. Human-agent collaboration becomes a repeating pattern — not a one-off experiment.</p>
-            <div class="flip-card-hint" style="color:var(--copilot-purple)">Explore Phase 2 <span>→</span></div>
+            <p style="font-size:.88rem;color:var(--text-2);line-height:1.55;margin:0">Teams delegate tasks to AI agents embedded in real workflows. Human-agent collaboration becomes a repeating pattern — not a one-off experiment.</p>
+            <div class="flip-card-hint" style="color:var(--copilot-purple)">Explore Pattern 2 <span>→</span></div>
           </div>
           <div class="flip-card-back" style="border-top:3px solid var(--copilot-purple);background:rgba(123,47,242,.03)">
-            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.75rem">Phase 2 · Expansion</div>
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.75rem">Pattern 2 · Expansion</div>
             <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
             <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Specific teams have agents embedded in daily workflows — not just experimenting</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Humans delegate defined tasks — research, triage, note-taking — to agents on a routine basis</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Some agents are shared across teams with high multi-session, high-return usage</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Habits are forming but not yet consistent across the full workforce</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Specific teams have agents embedded in daily workflows — not just experimenting</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Humans delegate defined tasks — research, triage, note-taking — to agents on a routine basis</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Some agents are shared across teams with high multi-session, high-return usage</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Habits are forming but not yet consistent across the full workforce</div>
             </div>
             <div class="flip-card-hint" style="color:var(--copilot-purple)">← Flip back</div>
           </div>
@@ -1450,23 +1812,23 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       </div>
 
       </div>{{PHASE_3_WRAPPER_OPEN}}<!-- Phase 3 flip card -->
-      <div class="flip-card" role="button" aria-label="Phase 3: Frontier — click to explore">
+      <div class="flip-card" role="button" aria-label="Pattern 3: Frontier — click to explore">
         <div class="flip-card-inner">
           <div class="flip-card-front" style="border-top:3px solid var(--copilot-green)">
             <div style="width:40px;height:40px;border-radius:50%;background:rgba(16,185,129,.1);border:2px solid var(--copilot-green);display:flex;align-items:center;justify-content:center;color:var(--copilot-green);font-weight:800;font-size:1rem;margin-bottom:.75rem">3</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.3rem">Phase 3 · Frontier</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.3rem">Pattern 3 · Frontier</div>
             <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human-Led, Agent-Operated</div>
-            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">AI agents run enterprise workflows end-to-end. Humans set direction and govern outcomes — agents execute. AI is embedded in how the organisation operates, not just how individuals work.</p>
-            <div class="flip-card-hint" style="color:var(--copilot-green)">Explore Phase 3 <span>→</span></div>
+            <p style="font-size:.88rem;color:var(--text-2);line-height:1.55;margin:0">AI agents run enterprise workflows end-to-end. Humans set direction and govern outcomes — agents execute. AI is embedded in how the organisation operates, not just how individuals work.</p>
+            <div class="flip-card-hint" style="color:var(--copilot-green)">Explore Pattern 3 <span>→</span></div>
           </div>
           <div class="flip-card-back" style="border-top:3px solid var(--copilot-green);background:rgba(16,185,129,.03)">
-            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.75rem">Phase 3 · Frontier</div>
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.75rem">Pattern 3 · Frontier</div>
             <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
             <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Agents execute complete workflows — onboarding, incident response, reporting — with minimal human intervention per step</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>A governed agent catalogue spans all major business functions with active Keep/Review/Retire cycles</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>70%+ of licensed users are active; most interact with 3+ agents across multiple workflows</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Humans focus on strategy, exception-handling, and governance — not execution</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Agents execute complete workflows — onboarding, incident response, reporting — with minimal human intervention per step</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>A governed agent catalogue spans all major business functions with active Keep/Review/Retire cycles</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>{{P3_FRONTIER_ACTIVE_THRESHOLD}}%+ of licensed users are active; most interact with 3+ agents across multiple workflows</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Humans focus on strategy, exception-handling, and governance — not execution</div>
             </div>
             <div class="flip-card-hint" style="color:var(--copilot-green)">← Flip back</div>
           </div>
@@ -1554,6 +1916,8 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
     </div>
   </div>
 </section>
+</div>
+<!-- END HIDDEN: Sections below Phase 2 -->
 
 <footer class="footer">
   <div class="footer-inner">

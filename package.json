@@ -4,6 +4,7 @@
   "description": "Frontier Firm Assessment — AI adoption maturity report generator",
   "main": "src/generate-report.js",
   "scripts": {
+    "frontier": "node src/frontier.js",
     "report": "node src/run-pipeline.js",
     "report-v2": "node src/run-pipeline.js --v2",
     "report:sample": "node src/run-pipeline.js --data data/sample_contoso.json --output output/ --no-ai",

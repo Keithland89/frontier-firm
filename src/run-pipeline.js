@@ -72,6 +72,12 @@ gates.push({
   cmd: 'node src/validate-data.js --data "' + dataPath + '"' + (isV2 ? ' --v2' : '')
 });
 
+// Gate 1.25: Compute scorecard metrics
+gates.push({
+  name: 'Gate 1.25: Compute Scorecard Metrics',
+  cmd: 'node src/compute-scorecard-metrics.js --data "' + dataPath + '"'
+});
+
 // Gate 1.5: Generate insights (skip if --no-ai)
 if (!noAI) {
   gates.push({
@@ -148,3 +154,11 @@ console.log('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\
 console.log('  ALL ' + passed + ' GATES PASSED \u2014 report is ready');
 console.log('  ' + path.resolve(reportPath));
 console.log('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550');
+
+// Open report in default browser
+const { exec } = require('child_process');
+const absReport = path.resolve(reportPath);
+const openCmd = process.platform === 'win32' ? 'start ""' : process.platform === 'darwin' ? 'open' : 'xdg-open';
+exec(openCmd + ' "' + absReport + '"', function(err) {
+  if (err) console.log('  (Could not auto-open browser: ' + err.message + ')');
+});

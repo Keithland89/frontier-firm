@@ -624,6 +624,11 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = safeSub(html, /\{\{AGENT_CREATORS_PCT\}\}/g, data.agent_creators_pct, 'agent_creators_pct');
   html = safeSub(html, /\{\{LICENSE_COVERAGE_PCT\}\}/g, data.license_coverage, 'license_coverage');
   html = safeSub(html, /\{\{AGENT_HABITUAL_PCT\}\}/g, data.agent_habitual, 'agent_habitual');
+  html = safeSub(html, /\{\{AGENT_WEEKLY_SESSIONS\}\}/g, data.agent_weekly_sessions || data.weekly_agents, 'agent_weekly_sessions');
+  html = safeSub(html, /\{\{AGENT_SESSIONS_MOM_PCT\}\}/g,
+    (data._scorecard_metrics && data._scorecard_metrics.agent_sessions_mom_pct) || 'N/A', 'agent_sessions_mom_pct');
+  html = safeSub(html, /\{\{AGENT_USER_GROWTH_PCT\}\}/g,
+    (data._scorecard_metrics && data._scorecard_metrics.agent_user_growth_pct) || 'N/A', 'agent_user_growth_pct');
   html = safeSub(html, /\{\{COHORT_CHURN_DELTA\}\}/g,
     typeof data.m365_retention === 'number' && typeof data.chat_retention === 'number'
       ? Math.round(data.m365_retention - data.chat_retention) + 'pp' : 'not_available', 'cohort_churn_delta');
@@ -778,6 +783,125 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{AGENTS_SINGLE_USER\}\}/g, fmtN((data.total_agents || 0) - (data.multi_user_agents || 0)));
   html = html.replace(/\{\{AGENTS_10_PLUS\}\}/g, String(data.agents_10_plus || Math.round((data.multi_user_agents || 0) * 0.3)));
   html = html.replace(/\{\{AGENT_MULTI_SESSIONS\}\}/g, 'N/A');
+
+  // ── Scorecard Metrics ──
+  const sc = data._scorecard_metrics || {};
+  html = html.replace(/\{\{SC_FREE_CHAT_ACTIVE_PCT\}\}/g, String(sc.free_chat_active_pct || 'N/A'));
+  html = html.replace(/\{\{SC_TOTAL_EMPLOYEES\}\}/g, String(sc.total_employees || 'N/A'));
+  html = html.replace(/\{\{SC_PCT_AGENTS_RETURN_50\}\}/g, String(sc.pct_agents_return_50 || 'N/A'));
+  html = html.replace(/\{\{SC_PCT_USERS_3PLUS_AGENTS\}\}/g, String(sc.pct_users_3plus_agents || 'N/A'));
+  html = html.replace(/\{\{SC_USERS_3PLUS_AGENTS\}\}/g, String(sc.users_3plus_agents || 'N/A'));
+  html = html.replace(/\{\{SC_PCT_AGENTS_5PLUS_USERS\}\}/g, String(sc.pct_agents_5plus_users || 'N/A'));
+  html = html.replace(/\{\{SC_TOTAL_AGENTS_FULL\}\}/g,
+    String(data.total_agents || (sc.agent_return_details ? sc.agent_return_details.length : 0)));
+  html = html.replace(/\{\{SC_COMBINED_REACH_PCT\}\}/g, String(sc.combined_reach_pct || 'N/A'));
+  html = html.replace(/\{\{SC_AGENT_MOM_RETENTION\}\}/g, String(sc.agent_mom_retention || 'N/A'));
+  html = html.replace(/\{\{SC_COMBINED_HABITUAL_PCT\}\}/g, String(sc.combined_habitual_pct || 'N/A'));
+  html = html.replace(/\{\{SC_HABITUAL_USERS\}\}/g, String(sc.habitual_users || 'N/A'));
+  html = html.replace(/\{\{SC_GROWTH_PCT\}\}/g, String(sc.growth_pct || 'N/A'));
+  html = html.replace(/\{\{SC_GROWTH_MONTHS\}\}/g, String(sc.growth_months || 'N/A'));
+  html = html.replace(/\{\{SC_MULTI_TURN_PCT\}\}/g, String(sc.multi_turn_pct || 'N/A'));
+  html = html.replace(/\{\{SC_TOTAL_EMPLOYEES\}\}/g,
+    sc.total_employees ? sc.total_employees.toLocaleString() : 'N/A');
+  html = html.replace(/\{\{SC_M365_HAB_11PLUS_PCT\}\}/g, String(sc.m365_hab_11plus_pct || 'N/A'));
+  html = html.replace(/\{\{SC_M365_HAB_11PLUS\}\}/g, String(sc.m365_hab_11plus || 'N/A'));
+  html = html.replace(/\{\{SC_M365_HAB_TOTAL\}\}/g, String(sc.m365_hab_total || 'N/A'));
+  html = html.replace(/\{\{SC_CHAT_HAB_11PLUS_PCT\}\}/g, String(sc.chat_hab_11plus_pct || 'N/A'));
+  html = html.replace(/\{\{SC_M365_HAB_11_15\}\}/g, String(sc.m365_hab_11_15 || 'N/A'));
+  html = html.replace(/\{\{SC_M365_HAB_16_PLUS\}\}/g, String(sc.m365_hab_16_plus || 'N/A'));
+
+  // ── Narrative Placeholders (Pattern 1 + Pattern 2 deep-dive) ──
+  // These make the narrative sections fully data-driven / portable
+
+  // -- Pattern 1: Reach --
+  var monthlyUsers = data.monthly_trend_users_arr || [];
+  var baselineUsers = monthlyUsers.length >= 2 ? fmtN(monthlyUsers[0]) : String(data.total_active_users || 'N/A');
+  html = html.replace(/\{\{P1_BASELINE_USERS\}\}/g, baselineUsers);
+  html = html.replace(/\{\{P1_LATEST_MONTH\}\}/g, String(sc.latest_month_name || data.analysis_month || 'last month'));
+  html = html.replace(/\{\{P1_LATEST_MOM_GROWTH\}\}/g, String(sc.latest_mom_growth_pct || sc.growth_pct || 'N/A'));
+  html = html.replace(/\{\{INACTIVE_LICENSES\}\}/g, fmtN(data.inactive_licenses || 0));
+
+  // Org-based narratives (top/bottom performers)
+  html = html.replace(/\{\{P1_TOP_ORGS_REACH\}\}/g, String(sc.p1_top_orgs_reach || 'The leading departments'));
+  html = html.replace(/\{\{P1_TOP_ORGS_HABIT\}\}/g, String(sc.p1_top_orgs_habit || 'The leading departments'));
+  html = html.replace(/\{\{P1_BOTTOM_ORGS_HABIT\}\}/g, String(sc.p1_bottom_orgs_habit || 'the trailing departments'));
+
+  // -- Pattern 1: Habit --
+  html = html.replace(/\{\{M365_RETENTION\}\}/g, String(data.m365_retention || 'N/A'));
+  html = html.replace(/\{\{BAND_6_10\}\}/g, fmtN(data.band_6_10 || 0));
+
+  // -- Pattern 1: Skill --
+  html = html.replace(/\{\{P1_PROMPT_GROWTH_PCT\}\}/g, String(sc.prompt_growth_pct || 'N/A'));
+  html = html.replace(/\{\{P1_INTENSITY_START\}\}/g, String(sc.intensity_start || 'N/A'));
+  html = html.replace(/\{\{P1_INTENSITY_END\}\}/g, String(sc.intensity_end || 'N/A'));
+  html = html.replace(/\{\{SC_SINGLE_SHOT_PCT\}\}/g, String(sc.single_shot_pct || 'N/A'));
+  html = html.replace(/\{\{P1_TOP_ORGS_SKILL\}\}/g, String(sc.p1_top_orgs_skill || 'top-performing departments'));
+
+  // -- Pattern 2: Reach --
+  html = html.replace(/\{\{P2_PREV_AGENT_USERS\}\}/g, String(sc.agent_mom_prev || 'N/A'));
+  html = html.replace(/\{\{P2_GROWTH_PERIOD\}\}/g, String(sc.agent_growth_period || 'last two months'));
+
+  // Agent leaderboard (top 3)
+  var agents = sc.agent_return_details || [];
+  var a1 = agents[0] || {}, a2 = agents[1] || {}, a3 = agents[2] || {};
+  html = html.replace(/\{\{P2_TOP_AGENT_1_NAME\}\}/g, String(a1.name || 'Top Agent'));
+  html = html.replace(/\{\{P2_TOP_AGENT_1_USERS\}\}/g, String(a1.totalUsers || 'N/A'));
+  html = html.replace(/\{\{P2_TOP_AGENT_1_RETURN\}\}/g, String(a1.returnRate || 'N/A'));
+  html = html.replace(/\{\{P2_TOP_AGENT_2_NAME\}\}/g, String(a2.name || 'Second Agent'));
+  html = html.replace(/\{\{P2_TOP_AGENT_2_USERS\}\}/g, String(a2.totalUsers || 'N/A'));
+  html = html.replace(/\{\{P2_TOP_AGENT_3_NAME\}\}/g, String(a3.name || 'Third Agent'));
+  html = html.replace(/\{\{P2_TOP_AGENT_3_USERS\}\}/g, String(a3.totalUsers || 'N/A'));
+
+  // Functional agents note (auto-generated from agents beyond top 3)
+  var funcAgents = agents.slice(3, 8).filter(function(a) { return a.totalUsers >= 3; });
+  var funcNote = funcAgents.length > 0
+    ? 'Functional agents like <strong>' + funcAgents.map(function(a) { return a.name; }).slice(0, 3).join('</strong>, <strong>') + '</strong> show agents are solving real workflow problems, not just experimentation.'
+    : 'Agents are starting to move beyond experimentation into functional use cases.';
+  html = html.replace(/\{\{P2_FUNCTIONAL_AGENTS_NOTE\}\}/g, funcNote);
+
+  // -- Pattern 2: Habit --
+  html = html.replace(/\{\{P2_RETAINED_AGENT_USERS\}\}/g, String(sc.agent_mom_retained || 'N/A'));
+
+  // Sticky agents note (agents with high return rate and meaningful user base)
+  var stickyAgents = agents.filter(function(a) { return a.returnRate >= 90 && a.totalUsers >= 5; }).slice(0, 3);
+  var stickyNote = stickyAgents.length > 0
+    ? stickyAgents.map(function(a) { return '<strong>' + a.name + '</strong> (' + a.returnRate + '% return)'; }).join(', ')
+    : 'top-returning agents';
+  html = html.replace(/\{\{P2_STICKY_AGENTS_NOTE\}\}/g, stickyNote);
+
+  // Top sticky agent for recommendation
+  var topSticky = stickyAgents.find(function(a) { return a !== agents[0] && a !== agents[1]; }) || agents[4] || a2;
+  html = html.replace(/\{\{P2_TOP_STICKY_AGENT\}\}/g, String((topSticky && topSticky.name) || a2.name || 'top agent'));
+
+  // Dept sessions note (from weekly sessions by org)
+  var wsByOrg = sc.agent_weekly_sessions_by_org || {};
+  var orgEntries = Object.entries(wsByOrg).sort(function(a, b) { return b[1] - a[1]; });
+  if (orgEntries.length >= 3) {
+    var deptTop = orgEntries[0], deptBot1 = orgEntries[orgEntries.length - 1], deptBot2 = orgEntries[orgEntries.length - 2];
+    var deptRatio = Math.round(deptTop[1] / deptBot1[1] * 10) / 10;
+    var deptNote = '<strong>' + deptTop[0] + '</strong> leads at ' + deptTop[1] + ' weekly sessions per user \u2014 nearly ' + deptRatio + '\u00d7 <strong>' + deptBot1[0] + '</strong> (' + deptBot1[1] + ') and <strong>' + deptBot2[0] + '</strong> (' + deptBot2[1] + ')';
+    html = html.replace(/\{\{P2_DEPT_SESSIONS_NOTE\}\}/g, deptNote);
+  } else {
+    html = html.replace(/\{\{P2_DEPT_SESSIONS_NOTE\}\}/g, 'usage varies by department');
+  }
+
+  // -- Pattern 2: Skill --
+  var specialistAgents = agents.filter(function(a) { return a.totalUsers >= 3 && (a.totalSessions || 0) > 0; })
+    .map(function(a) { return { name: a.name, spu: Math.round(10 * (a.totalSessions || 0) / a.totalUsers) / 10, users: a.totalUsers }; })
+    .sort(function(a, b) { return b.spu - a.spu; })
+    .slice(0, 3);
+  var specNote = specialistAgents.length > 0
+    ? 'purpose-built agents like <strong>' + specialistAgents.map(function(a) { return a.name + '</strong> (' + a.spu + ' sessions/user)'; }).join(', <strong>')
+    : 'purpose-built agents with high session depth';
+  html = html.replace(/\{\{P2_SPECIALIST_AGENTS_NOTE\}\}/g, specNote);
+
+  const pct15agents = sc.pct_1_5_agents || Math.round((100 - (sc.pct_users_3plus_agents || 0)) * 10) / 10;
+  if (!sc.pct_1_5_agents) sc.pct_1_5_agents = pct15agents;
+  html = html.replace(/\{\{P2_PCT_1_5_AGENTS\}\}/g, String(pct15agents));
+
+  // Target depts for agent builder sprint (top 2 org by agent usage)
+  var targetDepts = orgEntries.slice(0, 2).map(function(e) { return e[0]; }).join(' and ') || 'leading departments';
+  html = html.replace(/\{\{P2_TARGET_DEPTS\}\}/g, targetDepts);
 
   // Agent quality insight — data-driven
   html = html.replace(/\{\{AGENT_QUALITY_INSIGHT\}\}/g,
@@ -956,6 +1080,19 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   // Retention correction note
   html = html.replace(/\{\{RETENTION_CORRECTION_NOTE\}\}/g,
     'These rates use <strong style="color:#fff">' + retMonths.from + '-' + retMonths.to + '</strong> (most recent complete months). The ' + data.m365_retention + '% licensed retention is a <strong style="color:#fff">' + (data.m365_retention >= 85 ? 'Frontier-tier' : data.m365_retention >= 70 ? 'Expansion-tier' : 'Foundation-tier') + ' signal</strong>.');
+
+  // Retention chart bands from schema (use single-month metric that matches the chart display)
+  const retBands = (schema.metrics.m365_retention || {}).bands || [0.5, 0.7, 0.85];
+  html = html.replace(/\{\{RETENTION_BAND_1\}\}/g, String(Math.round(retBands[0] * 100)));
+  html = html.replace(/\{\{RETENTION_BAND_2\}\}/g, String(Math.round(retBands[1] * 100)));
+  html = html.replace(/\{\{RETENTION_BAND_3\}\}/g, String(Math.round(retBands[2] * 100)));
+
+  // M365 total apps (breadth denominator)
+  html = html.replace(/\{\{M365_TOTAL_APPS\}\}/g, String(data.m365_total_apps || schema.constants && schema.constants.m365_total_apps || 27));
+
+  // Pattern 3 Frontier active threshold (from m365_enablement Frontier band)
+  const enableBands = (schema.metrics.m365_enablement || {}).bands || [0.40, 0.70, 0.90];
+  html = html.replace(/\{\{P3_FRONTIER_ACTIVE_THRESHOLD\}\}/g, String(Math.round(enableBands[2] * 100)));
 
   // Monthly active users trend — from monthly_data
   const monthlyData = data._supplementary_metrics && data._supplementary_metrics.monthly_data;
