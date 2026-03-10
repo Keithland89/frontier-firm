@@ -1069,7 +1069,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
 
   // Retention correction note
   html = html.replace(/\{\{RETENTION_CORRECTION_NOTE\}\}/g,
-    'These rates use <strong style="color:#fff">' + retMonths.from + '-' + retMonths.to + '</strong> (most recent complete months). The ' + data.m365_retention + '% licensed retention is a <strong style="color:#fff">' + (data.m365_retention >= 85 ? 'Frontier-tier' : data.m365_retention >= 70 ? 'Expansion-tier' : 'Foundation-tier') + ' signal</strong>.');
+    'Average MoM retention across complete months (excluding partial current month). The ' + data.m365_retention + '% average retention is a <strong style="color:#fff">' + (data.m365_retention >= 85 ? 'Frontier-tier' : data.m365_retention >= 70 ? 'Expansion-tier' : 'Foundation-tier') + ' signal</strong>.');
 
   // Monthly active users trend — from monthly_data
   const monthlyData = data._supplementary_metrics && data._supplementary_metrics.monthly_data;
