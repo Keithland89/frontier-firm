@@ -48,6 +48,8 @@ try {
 }
 
 const schema = JSON.parse(fs.readFileSync(SCHEMA_PATH, 'utf8'));
+const schemaV2Path = path.resolve(__dirname, '..', 'schema', 'ff_schema_v2.json');
+const schemaV2 = fs.existsSync(schemaV2Path) ? JSON.parse(fs.readFileSync(schemaV2Path, 'utf8')) : null;
 const data = JSON.parse(fs.readFileSync(path.resolve(dataArg), 'utf8'));
 console.log(`Loaded data for: ${data.customer_name}`);
 
@@ -146,6 +148,58 @@ const gauges = {
   skill: data.skill_gauge || gaugeMap[signalTiers.skill],
   value: data.value_gauge || gaugeMap[signalTiers.value],
 };
+
+// ============================================================
+// V2 SCORING — 11 metrics, 3 signals, no Value
+// ============================================================
+function scoreTierV2(value, bands) {
+  if (value >= bands[1]) return 'Frontier';
+  if (value >= bands[0]) return 'Expansion';
+  return 'Foundation';
+}
+
+let metricTiersV2 = {};
+let signalTiersV2 = {};
+let patternV2 = null;
+
+if (schemaV2) {
+  // Score each v2 metric
+  for (const [metricId, mDef] of Object.entries(schemaV2.metrics)) {
+    const rawVal = data[mDef.data_field];
+    if (typeof rawVal !== 'number') { metricTiersV2[metricId] = 'Foundation'; continue; }
+    metricTiersV2[metricId] = scoreTierV2(rawVal, mDef.bands);
+  }
+
+  // Score v2 signals
+  function scoreSignalV2(signalName) {
+    const signal = schemaV2.signals[signalName];
+    const tiers = signal.metrics.map(function(m) { return metricTiersV2[m] || 'Foundation'; });
+    const n = tiers.length;
+    const frontierCount = tiers.filter(function(t) { return t === 'Frontier'; }).length;
+    const foundationCount = tiers.filter(function(t) { return t === 'Foundation'; }).length;
+    const atExpansionPlus = n - foundationCount;
+    if (frontierCount >= Math.ceil(n / 2) && foundationCount === 0) return 'Frontier';
+    if (atExpansionPlus > n / 2 && foundationCount <= 1) return 'Expansion';
+    return 'Foundation';
+  }
+
+  signalTiersV2 = {
+    reach: scoreSignalV2('reach'),
+    habit: scoreSignalV2('habit'),
+    skill: scoreSignalV2('skill')
+  };
+
+  // V2 pattern
+  var v2Tiers = Object.values(signalTiersV2);
+  var v2Foundation = v2Tiers.filter(function(t) { return t === 'Foundation'; }).length;
+  var v2Frontier = v2Tiers.filter(function(t) { return t === 'Frontier'; }).length;
+  if (v2Foundation > 0) patternV2 = { number: 1, name: 'Foundation' };
+  else if (v2Frontier >= 2) patternV2 = { number: 3, name: 'Frontier' };
+  else patternV2 = { number: 2, name: 'Expansion' };
+
+  console.log('V2 Signal tiers:', signalTiersV2);
+  console.log('V2 Pattern:', patternV2.number, '(' + patternV2.name + ')');
+}
 
 // ============================================================
 // CALCULATE DERIVED METRICS
@@ -818,6 +872,52 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     html = html.replace(new RegExp('\\{\\{' + tag + '_TIER_COLOR\\}\\}', 'g'), tierColor(info.tier));
     html = html.replace(new RegExp('\\{\\{' + tag + '_TIER_CLASS\\}\\}', 'g'), tierClass(info.tier));
     html = html.replace(new RegExp('\\{\\{' + tag + '_TIER_NAME\\}\\}', 'g'), info.tier);
+  }
+
+  // ── V2 Scorecard: 11 metrics, 3 signals, flip cards ──
+  if (schemaV2 && patternV2) {
+    var v2Html = '<div style="margin-top:2rem">';
+    for (var _sigKey of Object.keys(schemaV2.signals)) {
+      var _sigDef = schemaV2.signals[_sigKey];
+      var sigMetrics = _sigDef.metrics;
+      var colCount = sigMetrics.length;
+      var hex = _sigDef.color;
+      var r2 = parseInt(hex.slice(1,3),16), g2 = parseInt(hex.slice(3,5),16), b2 = parseInt(hex.slice(5,7),16);
+      v2Html += '<div style="margin-bottom:1.5rem">';
+      v2Html += '<div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:' + hex + ';margin-bottom:.75rem">' + _sigDef.label + ' <span style="font-weight:400;opacity:.6">' + _sigDef.question + '</span></div>';
+      v2Html += '<div style="display:grid;grid-template-columns:repeat(' + colCount + ',1fr);gap:.75rem">';
+      for (var _mId of sigMetrics) {
+        var _mDef = schemaV2.metrics[_mId];
+        var _tier = metricTiersV2[_mId] || 'Foundation';
+        var _tierClass = 'tier-' + _tier.toLowerCase();
+        var _rawVal = data[_mDef.data_field];
+        var _displayVal = typeof _rawVal === 'number' ? (Number.isInteger(_rawVal) ? String(_rawVal) : String(Math.round(_rawVal * 10) / 10)) : '\u2014';
+        var _unit = (_mDef.unit || '').replace(/%.*/, '%').replace(/apps.*/, '').replace(/agents.*/, '');
+        var _bands = _mDef.bands || [];
+        var _bandText = _bands.length >= 2 ? _bands[0] + (_unit.includes('%') ? '%' : '') + ' Expansion, ' + _bands[1] + (_unit.includes('%') ? '%' : '') + ' Frontier' : '';
+        // Flip card with definition on back
+        v2Html += '<div class="flip-card" style="height:120px;cursor:pointer" onclick="this.classList.toggle(\'flipped\')">';
+        v2Html += '<div class="flip-card-inner">';
+        // Front — value + tier
+        v2Html += '<div class="flip-card-front" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid ' + hex + '">';
+        v2Html += '<div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:' + hex + ';margin-bottom:.3rem">' + _mDef.name + '</div>';
+        v2Html += '<div style="font-size:1.2rem;font-weight:900;color:#fff">' + _displayVal + (_unit.includes('%') ? '%' : '') + '</div>';
+        v2Html += '<span class="hero-metric-tier ' + _tierClass + '" style="margin-top:.4rem">' + _tier + '</span>';
+        v2Html += '</div>';
+        // Back — definition + thresholds
+        v2Html += '<div class="flip-card-back" style="background:rgba(' + r2 + ',' + g2 + ',' + b2 + ',.06);border:1px solid rgba(' + r2 + ',' + g2 + ',' + b2 + ',.15);border-radius:10px;padding:.8rem;text-align:center;border-top:3px solid ' + hex + '">';
+        v2Html += '<div style="font-size:.55rem;font-weight:700;color:' + hex + ';text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem">' + _mDef.name + '</div>';
+        v2Html += '<div style="font-size:.62rem;color:rgba(255,255,255,.65);line-height:1.5">' + (_mDef.description || '') + '</div>';
+        if (_bandText) v2Html += '<div style="font-size:.55rem;color:rgba(255,255,255,.4);margin-top:.3rem">' + _bandText + '</div>';
+        v2Html += '</div>';
+        v2Html += '</div></div>';
+      }
+      v2Html += '</div></div>';
+    }
+    v2Html += '</div>';
+    html = html.replace(/\{\{V2_SCORECARD_HTML\}\}/g, v2Html);
+  } else {
+    html = html.replace(/\{\{V2_SCORECARD_HTML\}\}/g, '');
   }
 
   // Org scatter chart data — transform to Chart.js bubble dataset format

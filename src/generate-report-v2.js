@@ -447,6 +447,7 @@ function populateTemplate(template, insights) {
 
   // ── Retention ──
   html = safeSub(html, /\{\{M365_RETENTION\}\}/g, data.m365_retention, 'm365_retention');
+  html = html.replace(/\{\{M365_RETENTION_INT\}\}/g, String(typeof data.m365_retention === 'number' ? Math.round(data.m365_retention) : 0));
   html = safeSub(html, /\{\{RETAINED_USERS\}\}/g, data.retained_users, 'retained_users');
   html = safeSub(html, /\{\{CHURNED_USERS\}\}/g, data.churned_users, 'churned_users');
 

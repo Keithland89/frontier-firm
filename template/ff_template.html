@@ -847,6 +847,12 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 .flip-card-hint{margin-top:auto;padding-top:.85rem;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:.3rem;opacity:.4;transition:opacity .2s}
 .flip-card:hover .flip-card-hint{opacity:.9}
 
+/* V2 scorecard tier badges */
+.hero-metric-tier{display:inline-block;margin-top:.5rem;padding:.15rem .55rem;border-radius:100px;font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.tier-foundation{background:rgba(34,100,229,.15);color:#2264E5}
+.tier-expansion{background:rgba(123,47,242,.15);color:#7B2FF2}
+.tier-frontier{background:rgba(16,185,129,.15);color:#10B981}
+
 /* Force signal section borders */
 #reach.signal-section{border-left:6px solid #0EA5E9 !important;box-shadow:inset 6px 0 20px -6px rgba(14,165,233,.2) !important}
 #habit.signal-section{border-left:6px solid #F59E0B !important;box-shadow:inset 6px 0 20px -6px rgba(245,158,11,.2) !important}
@@ -1497,8 +1503,15 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <div class="spotlight-body">{{SPOTLIGHT_MATURITY}}</div>
     </div>
 
+    <!-- V2 Scorecard: 11 metrics across 3 signals (Reach, Habit, Skill) -->
+    <div class="reveal reveal-d6" style="margin-top:1.5rem">
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);margin-bottom:.25rem">Simplified Scorecard — 11 Metrics &middot; 3 Signals</div>
+      <p style="font-size:.65rem;color:rgba(255,255,255,.35);margin:0 0 .5rem;font-style:italic">Click any card to see the definition and thresholds.</p>
+      {{V2_SCORECARD_HTML}}
+    </div>
+
     <div class="detail-toggle-bar reveal" onclick="this.classList.toggle('open');document.getElementById('maturityDetail').classList.toggle('open')">
-      <span>View full 16-metric scorecard</span>
+      <span>View full 16-metric detail scorecard</span>
       <span class="arr">&#9660;</span>
     </div>
     <div class="detail-section" id="maturityDetail">
