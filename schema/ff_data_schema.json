@@ -68,7 +68,13 @@
     "radar_skill",
     "org_scatter_data",
     "retained_users",
-    "churned_users"
+    "churned_users",
+    "concentration_index",
+    "agent_habitual_rate",
+    "org_penetration_pct",
+    "embedded_user_rate",
+    "licensed_avg_days",
+    "unlicensed_avg_days"
   ],
   "properties": {
     "customer_name": { "type": "string", "minLength": 1 },

@@ -270,9 +270,9 @@ if (schemaV4) {
 
   // Overall pattern = weaker lane
   const v4Lanes = Object.values(v4LaneTiers);
-  if (v4Lanes.includes('P1')) { pattern.number = 1; pattern.name = 'P1'; }
-  else if (v4Lanes.every(t => t === 'P3')) { pattern.number = 3; pattern.name = 'P3'; }
-  else { pattern.number = 2; pattern.name = 'P2'; }
+  if (v4Lanes.includes('P1')) { pattern.number = 1; pattern.name = 'Foundation'; }
+  else if (v4Lanes.every(t => t === 'P3')) { pattern.number = 3; pattern.name = 'Frontier'; }
+  else { pattern.number = 2; pattern.name = 'Expansion'; }
 
   // Recalculate gauges
   const gMap = { 'P1': 30, 'P2': 65, 'P3': 90 };
@@ -331,10 +331,11 @@ let dominantPatternLabel = 'P1';
 if (profileStatusOrder[patternProfile.p2] > profileStatusOrder[patternProfile.p1]) dominantPatternLabel = 'P2';
 if (profileStatusOrder[patternProfile.p3] > profileStatusOrder[patternProfile.p2] && profileStatusOrder[patternProfile.p3] > profileStatusOrder[patternProfile.p1]) dominantPatternLabel = 'P3';
 
-// Build human-readable profile string: "Primarily P1, P2 nascent, P3 absent"
+// Build human-readable profile string: "Foundation primary  ·  Expansion nascent  ·  Frontier absent"
+const patternLabels = { p1: 'Foundation', p2: 'Expansion', p3: 'Frontier' };
 const profileParts = [];
 ['p1', 'p2', 'p3'].forEach(function(p) {
-  const label = p.toUpperCase();
+  const label = patternLabels[p];
   const status = patternProfile[p];
   if (status === 'Primary') profileParts.push(label + ' primary');
   else if (status === 'Nascent') profileParts.push(label + ' nascent');
@@ -359,25 +360,25 @@ const breadthVal = _n('m365_breadth', 0);
 
 // Determine dominant pattern narrative from P1/P2/P3 profile
 if (patternProfile.p3 === 'Primary') {
-  cultureStage = 'P3 Primary'; cultureStageNum = 4;
+  cultureStage = 'Frontier Primary'; cultureStageNum = 4;
   cultureHeadline = 'Agents are running real work \u2014 the question is governance';
   cultureDesc = 'This organisation has crossed the agent inflection point. Human-agent teams are active across multiple functions \u2014 agents don\u2019t just assist, they execute. Employees are becoming "agent bosses," orchestrating outcomes by directing autonomous agents. The question is no longer "should we use AI?" \u2014 it\u2019s "why isn\u2019t AI handling this?"';
   cultureRedFlag = 'The risk is over-automation without oversight. Agents running substantial workflows need review cadences, escalation protocols, and governance frameworks. Speed without judgment isn\u2019t maturity \u2014 it\u2019s risk.';
   cultureAction = 'Structure teams as human-agent units with clear roles. Build continuous feedback loops between humans and agents. Embed AI competency in hiring and governance.';
 } else if (patternProfile.p2 === 'Primary' || (patternProfile.p2 === 'Nascent' && patternProfile.p1 === 'Primary')) {
-  cultureStage = 'P1\u2192P2 Transition'; cultureStageNum = 3;
+  cultureStage = 'Foundation\u2192Expansion Transition'; cultureStageNum = 3;
   cultureHeadline = 'AI is landing \u2014 but it hasn\u2019t changed how people work yet';
   cultureDesc = 'People are using Copilot as a personal assistant \u2014 drafting, summarising, researching. Some teams are starting to delegate to agents. But for most of the organisation, AI is still something people reach for when they remember, not something they depend on. The question is shifting from "AI helps me do my job" to "we work differently because of AI" \u2014 but most haven\u2019t made that jump yet.';
   cultureRedFlag = 'This is the hardest transition on the maturity ladder. AI assistants require you to learn a tool. AI agents require something fundamentally different: trusting a colleague. Most organisations haven\u2019t built the norms for that \u2014 when to delegate, how to review, what "good enough" looks like from a machine.';
   cultureAction = 'Redesign workflows around human-AI collaboration. Establish agent trust norms \u2014 delegation playbooks, review cadences, shared handoff protocols. Gartner recommends at least 30% of AI budget goes to change management. Most organisations spend less than 5%.';
 } else if (patternProfile.p1 === 'Primary' || patternProfile.p1 === 'Nascent') {
-  cultureStage = 'P1 Dominant'; cultureStageNum = 2;
+  cultureStage = 'Foundation Dominant'; cultureStageNum = 2;
   cultureHeadline = 'Copilot is deployed \u2014 but the culture hasn\u2019t shifted yet';
   cultureDesc = 'Champions have emerged \u2014 a group of enthusiasts who use Copilot intensively and see real value. But adoption is siloed. The superusers make the averages look healthier than reality, while the silent majority haven\u2019t found their entry point. Microsoft data shows 78% of employees bring their own AI tools to work \u2014 the demand is there, but the organisation hasn\u2019t channelled it into shared ways of working.';
   cultureRedFlag = 'The adoption paradox: usage goes up, but organisational capability stays flat. The tools are deployed, the dashboards show growing activity \u2014 and yet the organisation isn\u2019t fundamentally working any differently. If the top 10% of users account for 60%+ of activity, you\u2019re not scaling \u2014 you\u2019re dependent on a handful of enthusiasts.';
   cultureAction = 'Find and empower your champions. Fund quick wins that show value in real workflows. Build peer-to-peer sharing \u2014 the knowledge that lives in superusers needs to get out to everyone else. Make AI use visible through manager modeling and team rituals.';
 } else {
-  cultureStage = 'Pre-P1'; cultureStageNum = 1;
+  cultureStage = 'Pre-Foundation'; cultureStageNum = 1;
   cultureHeadline = 'AI is talked about, but not yet part of how people work';
   cultureDesc = 'Leadership mentions AI in strategy decks. A few pilots exist, usually tucked away in IT or an innovation team. Employees bounce between excitement and anxiety. AI is someone else\u2019s project \u2014 not yet part of the daily rhythm of how work gets done.';
   cultureRedFlag = 'MIT\u2019s 2025 research found that 95% of AI pilots never make it past the pilot stage. S&P Global reported that 42% of companies scrapped most of their AI initiatives in 2025, up from 17% a year earlier. The danger isn\u2019t being early \u2014 it\u2019s not knowing you\u2019re stuck.';
@@ -533,6 +534,51 @@ function generateTemplateInsights(data, signalTiers, pattern) {
   if (d.embedded_user_rate === undefined) d.embedded_user_rate = 'not_available';
   if (d.licensed_avg_days === undefined) d.licensed_avg_days = 'not_available';
   if (d.unlicensed_avg_days === undefined) d.unlicensed_avg_days = 'not_available';
+  // Agent adoption: derive if missing
+  if ((d.agent_adoption === 'not_available' || d.agent_adoption === undefined) && typeof d.agent_users === 'number' && typeof d.total_active_users === 'number' && d.total_active_users > 0) {
+    d.agent_adoption = Math.round(d.agent_users / d.total_active_users * 1000) / 10;
+  }
+  // Agent habitual rate: field name alias (some extractions use agent_habitual, schema expects agent_habitual_rate)
+  if ((d.agent_habitual_rate === undefined || d.agent_habitual_rate === 'not_available') && typeof d.agent_habitual === 'number') {
+    d.agent_habitual_rate = d.agent_habitual >= 1 ? d.agent_habitual : Math.round(d.agent_habitual * 1000) / 10;
+  }
+  if (d.agent_habitual_rate === undefined) d.agent_habitual_rate = 'not_available';
+  // Concentration index: compute from org_scatter_data if not already set
+  if ((d.concentration_index === undefined || d.concentration_index === 'not_available') && Array.isArray(d.org_scatter_data) && d.org_scatter_data.length >= 2) {
+    var usages = d.org_scatter_data.map(function(o) { return o.x || 0; }).sort(function(a, b) { return a - b; });
+    var median = usages[Math.floor(usages.length / 2)];
+    d.concentration_index = Math.round(usages.filter(function(u) { return u >= median; }).length / usages.length * 100);
+  }
+  // Agent retention: leave as not_available if no agent-specific data — NEVER proxy from m365_retention (different population)
+  if (d.agent_retention === undefined) d.agent_retention = 'not_available';
+  // Agent health = agent return rate (same concept, same population) — derive from agent_retention if extracted
+  if ((d.agent_health === undefined || d.agent_health === 'not_available') && typeof d.agent_retention === 'number') {
+    d.agent_health = d.agent_retention;
+  }
+  if (d.agent_health === undefined) d.agent_health = 'not_available';
+  // Licensed band percentages: derive from per-tier band data (Licensed tier, latest month)
+  // NEVER copy from band_*_pct — those are Chat (unlicensed) population bands
+  if (d.licensed_band_1_5_pct === undefined) {
+    var perTierBands = d._supplementary_metrics && d._supplementary_metrics.per_tier_active_day_bands;
+    if (Array.isArray(perTierBands) && perTierBands.length > 0) {
+      // Find the latest month's Licensed tier entry
+      var licensedBands = perTierBands.filter(function(b) { return b.tier === 'Licensed'; });
+      if (licensedBands.length > 0) {
+        var latest = licensedBands[licensedBands.length - 1]; // sorted by month in extraction
+        d.licensed_band_1_5_pct = latest.band_1_5_pct;
+        d.licensed_band_6_10_pct = latest.band_6_10_pct;
+        d.licensed_band_11_15_pct = latest.band_11_15_pct;
+        d.licensed_band_16_plus_pct = latest.band_16_plus_pct;
+      }
+    }
+    // If still missing, mark as not_available — do NOT copy from Chat bands
+    if (d.licensed_band_1_5_pct === undefined) {
+      d.licensed_band_1_5_pct = 'not_available';
+      d.licensed_band_6_10_pct = 'not_available';
+      d.licensed_band_11_15_pct = 'not_available';
+      d.licensed_band_16_plus_pct = 'not_available';
+    }
+  }
   data = d;
   const fmt = n => typeof n === 'number' ? n.toLocaleString() : n;
 
@@ -724,7 +770,7 @@ function buildMetricDetail(data, schema) {
     CROSS_ORG_BREADTH: { definition: "# / % active organisations or functions using AI", scored_field: "OrgsWithAgentUsers", unit: "# orgs with agent users" },
     LICENSE_PRIORITISATION: { definition: "Engagement premium -- licensed vs unlicensed", scored_field: "LicensePriority", unit: "engagement multiplier" },
     AGENT_HEALTH: { definition: "Agent portfolio quality -- high impact vs dormant vs active", scored_field: "AgentReturnRate", unit: "% return rate" },
-    COMPLEX_SESSIONS: { definition: "% sessions with 2+ prompts -- signals multi-turn, purposeful AI engagement", scored_field: "Licensed_ComplexSessionRate", unit: "% complex sessions" },
+    COMPLEX_SESSIONS: { definition: "Average prompts per conversation thread — higher values indicate deeper, multi-turn engagement", scored_field: "AveragePromptsPerSession", unit: "avg prompts/session" },
   };
 
   const fieldMap = {
@@ -889,11 +935,12 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = safeSub(html, /\{\{LICENSE_COVERAGE\}\}/g, data.license_coverage, 'license_coverage');
   html = safeSub(html, /\{\{ORG_PENETRATION_PCT\}\}/g, data.org_penetration_pct, 'org_penetration_pct');
   html = safeSub(html, /\{\{EMBEDDED_USER_RATE\}\}/g, data.embedded_user_rate, 'embedded_user_rate');
-  html = safeSub(html, /\{\{AGENT_HABITUAL_PCT\}\}/g, data.agent_habitual_rate || data.agent_habitual || 0, 'agent_habitual_pct');
+  html = safeSub(html, /\{\{AGENT_HABITUAL_PCT\}\}/g, typeof data.agent_habitual_rate === 'number' ? data.agent_habitual_rate : (typeof data.agent_habitual === 'number' ? data.agent_habitual : 'not_available'), 'agent_habitual_pct');
   html = safeSub(html, /\{\{COHORT_CHURN_DELTA\}\}/g,
     typeof data.m365_retention === 'number' && typeof data.chat_retention === 'number'
       ? Math.round(data.m365_retention - data.chat_retention) + 'pp' : 'not_available', 'cohort_churn_delta');
-  html = html.replace(/\{\{M365_RETENTION_3MO\}\}/g, String(data.m365_retention_3mo_avg || data.m365_retention));
+  // 3-month avg retention — NEVER fall back to single-month (different metric)
+  html = html.replace(/\{\{M365_RETENTION_3MO\}\}/g, String(typeof data.m365_retention_3mo_avg === 'number' ? data.m365_retention_3mo_avg : '—'));
 
   // Chart-level insight callouts
   const growthPct = data._supplementary_metrics && data._supplementary_metrics.user_growth_5_month_pct;
@@ -921,12 +968,21 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   }
   html = html.replace(/\{\{TAKEAWAY_WEEKLY_TREND\}\}/g, weeklyTrendTakeaway || '');
 
-  // Retention
+  // Retention — guard against not_available values
+  var retM365 = typeof data.m365_retention === 'number' ? data.m365_retention : null;
+  var retAgent = typeof data.agent_retention === 'number' ? data.agent_retention : null;
+  var retChat = typeof data.chat_retention === 'number' ? data.chat_retention : null;
   html = html.replace(/\{\{TAKEAWAY_RETENTION\}\}/g,
     '<div style="display:flex;flex-direction:column;gap:.4rem;font-size:.72rem;color:var(--text-2);line-height:1.5">' +
-    '<div><strong style="color:#007fff">Licensed retention: ' + n('m365_retention') + '%</strong> — ' + (n('m365_retention') >= 85 ? 'world-class, above the P3 threshold' : n('m365_retention') >= 75 ? 'healthy but below the P3 bar of 93%' : 'below the P2 threshold — a risk signal') + '</div>' +
-    '<div><strong style="color:#8477FB">Agent retention: ' + n('agent_retention') + '%</strong> — ' + (n('agent_retention') >= 80 ? 'agents that people come back to are agents worth keeping' : 'agents need higher stickiness before scaling') + '</div>' +
-    '<div><strong style="color:var(--amber)">The gap</strong>: ' + Math.abs(Math.round(n('m365_retention') - n('chat_retention'))) + 'pp between licensed and unlicensed retention — licensing drives stickiness</div>' +
+    (retM365 !== null
+      ? '<div><strong style="color:#007fff">Licensed retention: ' + retM365 + '%</strong> — ' + (retM365 >= 85 ? 'world-class, above the P3 threshold' : retM365 >= 75 ? 'healthy but below the P3 bar of 93%' : 'below the P2 threshold — a risk signal') + '</div>'
+      : '<div><strong style="color:#007fff">Licensed retention:</strong> not available in this dataset</div>') +
+    (retAgent !== null
+      ? '<div><strong style="color:#8477FB">Agent retention: ' + retAgent + '%</strong> — ' + (retAgent >= 80 ? 'agents that people come back to are agents worth keeping' : 'agents need higher stickiness before scaling') + '</div>'
+      : '<div><strong style="color:#8477FB">Agent retention:</strong> not available in this dataset</div>') +
+    (retM365 !== null && retChat !== null
+      ? '<div><strong style="color:var(--amber)">The gap</strong>: ' + Math.abs(Math.round(retM365 - retChat)) + 'pp between licensed and unlicensed retention — licensing drives stickiness</div>'
+      : '') +
     '</div>');
 
   // App surface
@@ -1050,6 +1106,9 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = safeSub(html, /\{\{AGENTS_RETIRE\}\}/g, data.agents_retire, 'agents_retire');
   html = html.replace(/\{\{TOP_AGENT_SESSIONS\}\}/g, safeJSON(data.top_agent_sessions, 'top_agent_sessions'));
   html = html.replace(/\{\{TOP_AGENT_NAMES_JSON\}\}/g, safeJSON(data.top_agent_names, 'top_agent_names'));
+  // Total sessions per agent (for leaderboard chart — ranked by reach × depth)
+  const topAgentTotalSessions = (Array.isArray(data.agent_table) ? data.agent_table : []).slice(0, 8).map(a => a.sessions || 0);
+  html = html.replace(/\{\{TOP_AGENT_TOTAL_SESSIONS\}\}/g, JSON.stringify(topAgentTotalSessions));
 
   // Radar charts
   html = html.replace(/\{\{RADAR_REACH\}\}/g, safeJSON(data.radar_reach, 'radar_reach'));
@@ -1129,8 +1188,8 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   const tierCssClass = t => 'tier-' + (t === 'P3' ? 'fr' : t === 'P2' ? 'e' : 'f');
   const tierColor = t => t === 'P3' ? 'var(--tier-4)' : t === 'P2' ? 'var(--tier-3)' : 'var(--tier-2)';
   const tierHexColor = t => t === 'P3' ? '#0D9488' : t === 'P2' ? '#D270F0' : '#94A3B8';
-  const tierLabel = t => t === 'P3' ? 'P3: Human-led, Agent-operated' : t === 'P2' ? 'P2: Human-Agent Teams' : 'P1: Human with Assistant';
-  const tierLabelShort = t => t === 'P3' ? 'Pattern 3' : t === 'P2' ? 'Pattern 2' : 'Pattern 1';
+  const tierLabel = t => t === 'P3' ? 'Frontier: Human-led, Agent-operated' : t === 'P2' ? 'Expansion: Human-Agent Teams' : 'Foundation: Human with Assistant';
+  const tierLabelShort = t => t === 'P3' ? 'Frontier' : t === 'P2' ? 'Expansion' : 'Foundation';
   html = html.replace(/\{\{REACH_TIER\}\}/g, tierLabel(signalTiers.reach));
   html = html.replace(/\{\{HABIT_TIER\}\}/g, tierLabel(signalTiers.habit));
   html = html.replace(/\{\{SKILL_TIER\}\}/g, tierLabel(signalTiers.skill));
@@ -1163,9 +1222,9 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{PHASE_2_HIGHLIGHT\}\}/g,
     pattern.number === 2 ? ';box-shadow:0 0 0 2px #8477FB,0 8px 32px rgba(123,47,242,.25)' : '');
 
-  // Agent-specific metrics
-  html = html.replace(/\{\{AGENT_HABITUAL_RATE\}\}/g, String(data.agent_habitual_rate || data.m365_frequency || 0));
-  html = html.replace(/\{\{AGENT_SESSIONS_PER_USER\}\}/g, String(data.agent_sessions_per_user || data.agent_intensity || 0));
+  // Agent-specific metrics — NEVER proxy from m365_frequency (different population)
+  html = html.replace(/\{\{AGENT_HABITUAL_RATE\}\}/g, String(typeof data.agent_habitual_rate === 'number' ? data.agent_habitual_rate : '—'));
+  html = html.replace(/\{\{AGENT_SESSIONS_PER_USER\}\}/g, String(typeof data.agent_sessions_per_user === 'number' ? data.agent_sessions_per_user : (typeof data.agent_intensity === 'number' ? data.agent_intensity : '—')));
 
   // Agent governance formatted
   html = html.replace(/\{\{AGENTS_KEEP_FMT\}\}/g, fmtN(data.agents_keep || 0));
@@ -1236,7 +1295,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   if (schemaV4) {
     var v4TierBg = function(t) { return t === 'P3' ? 'rgba(16,185,129,.15)' : t === 'P2' ? 'rgba(245,158,11,.15)' : 'rgba(100,116,139,.12)'; };
     var v4TierColor = function(t) { return t === 'P3' ? '#0D9488' : t === 'P2' ? '#D270F0' : '#94A3B8'; };
-    var v4TierLabel = function(t) { return t === 'P3' ? 'Pattern 3' : t === 'P2' ? 'Pattern 2' : 'Pattern 1'; };
+    var v4TierLabel = function(t) { return t === 'P3' ? 'Frontier' : t === 'P2' ? 'Expansion' : 'Foundation'; };
     var pillarKeys = Object.keys(schemaV4.pillars);
     var laneKeys = Object.keys(schemaV4.lanes);
 
@@ -1424,9 +1483,9 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
         glossaryHtml += `<div class="glossary-card-desc">${m.description}</div>`;
         glossaryHtml += `<div class="glossary-card-meta">`;
         glossaryHtml += `<span class="glossary-card-pillar" style="color:${pillarColors[m.pillar]}">${pillarIcons[m.pillar] || ''} ${pillarLabels[m.pillar]}</span>`;
-        glossaryHtml += `<span class="glossary-band glossary-band-p1">P1 &lt; ${m.bands[0]}${m.unit === '%' ? '%' : ''}</span>`;
-        glossaryHtml += `<span class="glossary-band glossary-band-p2">P2 ${m.bands[0]}–${m.bands[1]}${m.unit === '%' ? '%' : ''}</span>`;
-        glossaryHtml += `<span class="glossary-band glossary-band-p3">P3 &gt; ${m.bands[1]}${m.unit === '%' ? '%' : ''}</span>`;
+        glossaryHtml += `<span class="glossary-band glossary-band-p1">Foundation &lt; ${m.bands[0]}${m.unit === '%' ? '%' : ''}</span>`;
+        glossaryHtml += `<span class="glossary-band glossary-band-p2">Expansion ${m.bands[0]}–${m.bands[1]}${m.unit === '%' ? '%' : ''}</span>`;
+        glossaryHtml += `<span class="glossary-band glossary-band-p3">Frontier &gt; ${m.bands[1]}${m.unit === '%' ? '%' : ''}</span>`;
         glossaryHtml += `</div>`;
         glossaryHtml += `<div class="glossary-card-value">${valDisplay}</div>`;
         glossaryHtml += `</div>`;
@@ -1452,12 +1511,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   });
   html = html.replace(/\{\{ORG_SCATTER_DATA\}\}/g, safeJSON(scatterDatasets, 'org_scatter_data'));
 
-  // Concentration Index — % of orgs above median usage
-  if (orgScatter.length >= 2 && !data.concentration_index) {
-    var usages = orgScatter.map(function(o) { return o.x || 0; }).sort(function(a, b) { return a - b; });
-    var median = usages[Math.floor(usages.length / 2)];
-    data.concentration_index = Math.round(usages.filter(function(u) { return u >= median; }).length / usages.length * 100);
-  }
+  // Concentration Index — already computed in derived-data phase above; no duplicate needed here
 
   // Per-org Frontier Firm maturity — composite score across available signals
   // Combines: Reach (user count as % of total), Habit (relative scale), Skill (agent adoption %)
@@ -1500,7 +1554,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     });
   }
   var orgPatternJSON = JSON.stringify({
-    labels: ['Pattern 1 · Assistant', 'Pattern 2 · Agent Teams', 'Pattern 3 · Agent-Operated'],
+    labels: ['Foundation · Assistant', 'Expansion · Agent Teams', 'Frontier · Agent-Operated'],
     keys: ['P1', 'P2', 'P3'],
     counts: [orgPatternCounts.P1, orgPatternCounts.P2, orgPatternCounts.P3],
     total: orgScatter.length,
@@ -1509,8 +1563,8 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{ORG_PATTERN_DISTRIBUTION_JSON\}\}/g, orgPatternJSON);
 
   // Dominant org pattern
-  var dominantOrgPattern = orgPatternCounts.P1 >= orgPatternCounts.P2 && orgPatternCounts.P1 >= orgPatternCounts.P3 ? 'P1 · Human with Assistant'
-    : orgPatternCounts.P2 >= orgPatternCounts.P3 ? 'P2 · Human-Agent Teams' : 'P3 · Agent-Operated';
+  var dominantOrgPattern = orgPatternCounts.P1 >= orgPatternCounts.P2 && orgPatternCounts.P1 >= orgPatternCounts.P3 ? 'Foundation · Human with Assistant'
+    : orgPatternCounts.P2 >= orgPatternCounts.P3 ? 'Expansion · Human-Agent Teams' : 'Frontier · Agent-Operated';
   html = html.replace(/\{\{DOMINANT_ORG_PATTERN\}\}/g, dominantOrgPattern);
   html = html.replace(/\{\{ORG_FOUNDATION_COUNT\}\}/g, String(orgPatternCounts.P1));
   html = html.replace(/\{\{ORG_EXPANSION_COUNT\}\}/g, String(orgPatternCounts.P2));
@@ -1567,7 +1621,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       '<div style="padding:1.5rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;text-align:center"><p style="font-size:.82rem;color:rgba(255,255,255,.5);margin:0">Per-organisation license priority data not yet loaded. Run the GHCP extraction to populate this table.</p></div>');
   }
 
-  // Agent leaderboard rows — generated from top_agent_names + top_agent_sessions
+  // Agent leaderboard rows — ranked by total sessions (reach × depth)
   const agentColors = [
     'linear-gradient(90deg,var(--brand),var(--amber))',
     'linear-gradient(90deg,var(--purple),#C040C8)',
@@ -1575,14 +1629,19 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     'linear-gradient(90deg,var(--lime),#8A9600)',
     'linear-gradient(90deg,#FECB00,var(--amber))',
   ];
-  const names = data.top_agent_names || [];
-  const sessions = data.top_agent_sessions || [];
+  const agentArr = Array.isArray(data.agent_table) ? data.agent_table : [];
+  const names = data.top_agent_names || agentArr.slice(0, 8).map(a => a.name);
+  // Use total sessions for the bar chart (not sessions_per_user)
+  const totalSessions = agentArr.slice(0, 8).map(a => a.sessions || 0);
+  const agentUsers = agentArr.slice(0, 8).map(a => a.users || 0);
+  const sessions = totalSessions.length > 0 ? totalSessions : (data.top_agent_sessions || []);
   const maxSess = Math.max(...sessions, 1);
   let leaderRows = '';
   for (let i = 0; i < Math.min(names.length, 5); i++) {
     const pct = Math.round((sessions[i] || 0) / maxSess * 100);
     const bg = agentColors[i % agentColors.length];
-    leaderRows += '<div class="top-agent-row"><span class="top-agent-name">' + names[i] + '</span><div class="top-agent-track"><div class="top-agent-fill" data-width="' + pct + '" style="width:0;background:' + bg + '"><span>' + (sessions[i] || 0) + '</span></div></div><span class="top-agent-count">' + (sessions[i] || 0) + '</span></div>\n';
+    const userLabel = agentUsers[i] ? ' · ' + fmt(agentUsers[i]) + ' users' : '';
+    leaderRows += '<div class="top-agent-row"><span class="top-agent-name">' + names[i] + '<span style="font-size:.55rem;color:var(--text-3);font-weight:400;margin-left:.4rem">' + userLabel + '</span></span><div class="top-agent-track"><div class="top-agent-fill" data-width="' + pct + '" style="width:0;background:' + bg + '"><span>' + fmt(sessions[i] || 0) + '</span></div></div><span class="top-agent-count">' + fmt(sessions[i] || 0) + '</span></div>\n';
   }
   html = html.replace(/\{\{AGENT_LEADERBOARD_ROWS\}\}/g, leaderRows);
 
@@ -1595,9 +1654,9 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
 
   // Agent table rows — prefer agent_table array (has full data), fallback to top_agent_* arrays
   let tableRows = '';
-  const agentArr = Array.isArray(data.agent_table) ? data.agent_table : [];
-  if (agentArr.length > 0) {
-    agentArr.slice(0, 10).forEach(function(row) {
+  const agentTableArr = Array.isArray(data.agent_table) ? data.agent_table : [];
+  if (agentTableArr.length > 0) {
+    agentTableArr.slice(0, 10).forEach(function(row) {
       const sessPerUser = row.sessions_per_user || (row.users > 0 ? Math.round(row.sessions / row.users * 10) / 10 : 0);
       tableRows += '<tr style="border-bottom:1px solid var(--border)">' +
         '<td style="padding:.55rem .4rem;font-weight:600;color:var(--text)">' + (row.name || '—') + '</td>' +
@@ -2030,9 +2089,15 @@ function validateReport(html, data, customerName) {
   }
 
   // 7. Check for stale numeric values from Contoso template
+  // Build set of actual customer values so we don't false-positive on matching numbers
+  const customerNums = new Set();
+  for (const key of ['licensed_users', 'chat_users', 'agent_users', 'total_licensed_seats', 'total_active_users']) {
+    const v = data[key];
+    if (v && v !== 'not_available') customerNums.add(Number(v).toLocaleString());
+  }
   const staleValues = ['32,104', '27,496', '50,496', '38,075'];
   for (const val of staleValues) {
-    if (html.includes(val)) {
+    if (html.includes(val) && !customerNums.has(val)) {
       warnings.push('Found potentially stale value "' + val + '" from Contoso template');
     }
   }

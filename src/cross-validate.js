@@ -237,16 +237,13 @@ async function runChecks(pbiConnected) {
   // 5. licensed_users vs PBIX
   if (pbiConnected) {
     try {
+      // licensed_users = ALL-TIME cumulative, so compare against unfiltered scalar
       const licResult = await runDax(
-        "EVALUATE SUMMARIZECOLUMNS('Calendar'[Year-Month], \"Lic\", [NoOfActiveChatUsers (Licensed)]) ORDER BY 'Calendar'[Year-Month] DESC"
+        "EVALUATE ROW(\"Lic\", [NoOfActiveChatUsers (Licensed)])"
       );
-      const rows = (licResult._rows || []).filter(r => {
-        const ym = r['Year-Month'] || '';
-        return ym !== '' && ym !== 'Total';
-      });
-      if (rows.length >= 2) {
-        // First row is most recent (possibly partial), second row is most recent complete month
-        const pbiVal = Number(rows[1].Lic || rows[1][Object.keys(rows[1]).find(k => k !== 'Year-Month')] || 0);
+      const rows = licResult._rows || [];
+      if (rows.length >= 1) {
+        const pbiVal = Number(rows[0].Lic || rows[0][Object.keys(rows[0])[0]] || 0);
         const jsonVal = num(data.licensed_users);
         if (jsonVal !== null) {
           const diff = diffPct(pbiVal, jsonVal);
@@ -359,13 +356,14 @@ async function runChecks(pbiConnected) {
       const lastMonth = months[months.length - 1];
       const lastUsers = num(monthlyData[lastMonth] && monthlyData[lastMonth].users);
       if (lastUsers !== null && total !== null) {
-        const diff = diffPct(total, lastUsers);
-        if (diff <= 10) {
+        // total_active_users is ALL-TIME cumulative, so last month should be <= total
+        if (lastUsers <= total) {
           results.push(pass('monthly trend alignment',
-            'last month (' + lastMonth + '): ' + fmt(lastUsers) + ' vs total: ' + fmt(total) + ', diff: ' + diff.toFixed(1) + '%'));
+            'last month (' + lastMonth + '): ' + fmt(lastUsers) + ' \u2264 all-time total: ' + fmt(total)));
         } else {
+          const diff = diffPct(total, lastUsers);
           results.push(fail('monthly trend alignment',
-            'last month (' + lastMonth + '): ' + fmt(lastUsers) + ' vs total: ' + fmt(total),
+            'last month (' + lastMonth + '): ' + fmt(lastUsers) + ' > all-time total: ' + fmt(total),
             total, lastUsers, diff));
         }
       } else {

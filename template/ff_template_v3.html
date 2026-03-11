@@ -921,6 +921,21 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 .pull-quote-strip::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(123,47,242,.06),rgba(34,100,229,.06),rgba(14,165,233,.06),rgba(16,185,129,.06));pointer-events:none}
 
 /* ═══════════════════════════════════════════════════════════
+   FRAMEWORK SECTION — Pattern cards + dimension cards
+   ═══════════════════════════════════════════════════════════ */
+.framework-details{margin-top:1.5rem}
+.framework-details summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:.5rem;padding:.65rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;transition:all .2s}
+.framework-details summary:hover{border-color:var(--brand);background:rgba(72,123,250,.02)}
+.framework-details summary::-webkit-details-marker{display:none}
+.framework-details summary::marker{display:none}
+.framework-details .chevron{display:inline-block;transition:transform .25s;font-size:.55rem;color:var(--text-3)}
+.framework-details[open] .chevron{transform:rotate(180deg)}
+.framework-details .fw-summary-text{font-size:.78rem;font-weight:600;color:var(--brand)}
+.framework-details .fw-summary-sub{font-size:.65rem;color:var(--text-3);margin-left:auto}
+.framework-details[open]>div{animation:matrixReveal .6s cubic-bezier(.16,1,.3,1)}
+@keyframes matrixReveal{from{opacity:0;transform:translateY(-12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* ═══════════════════════════════════════════════════════════
    METRIC GLOSSARY
    ═══════════════════════════════════════════════════════════ */
 .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:.75rem;margin-top:1.5rem}
@@ -969,6 +984,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
     <div class="nav-links">
       <a href="#overview" class="nav-link active" data-section="overview">Overview</a>
       <a href="#summary" class="nav-link" data-section="summary">Summary</a>
+      <a href="#framework" class="nav-link" data-section="framework">Framework</a>
       <a href="#maturity" class="nav-link" data-section="maturity">Maturity</a>
       <a href="#reach" class="nav-link" data-section="reach">Reach</a>
       <a href="#habit" class="nav-link" data-section="habit">Habit</a>
@@ -1033,65 +1049,136 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
   <div class="hero-scroll"><span>Scroll to explore</span><div class="scroll-arrow"></div></div>
 </section>
 
-
-<div class="copilot-divider"><div class="copilot-divider-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M11.29 3.81c.38-1.08 1.9-1.08 2.28 0l1.73 4.9a1.2 1.2 0 00.76.76l4.9 1.73c1.08.38 1.08 1.9 0 2.28l-4.9 1.73a1.2 1.2 0 00-.76.76l-1.73 4.9c-.38 1.08-1.9 1.08-2.28 0l-1.73-4.9a1.2 1.2 0 00-.76-.76l-4.9-1.73c-1.08-.38-1.08-1.9 0-2.28l4.9-1.73a1.2 1.2 0 00.76-.76l1.73-4.9z" fill="url(#cpDiv1)"/><defs><linearGradient id="cpDiv1" x1="3" y1="3" x2="20" y2="20"><stop offset="0%" stop-color="#8477FB"/><stop offset="100%" stop-color="#007fff"/></linearGradient></defs></svg></div></div>
-
-<section class="section" id="summary" style="background:var(--bg)">
+<!-- FRONTIER FIRM FRAMEWORK -->
+<section class="section" id="framework" style="background:var(--bg)">
   <div class="section-inner">
     <div class="section-label reveal">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:.2rem"><path d="M11.29 5.81c.38-1.08 1.9-1.08 2.28 0l.86 2.45a1.2 1.2 0 00.76.76l2.45.86c1.08.38 1.08 1.9 0 2.28l-2.45.86a1.2 1.2 0 00-.76.76l-.86 2.45c-.38 1.08-1.9 1.08-2.28 0l-.86-2.45a1.2 1.2 0 00-.76-.76l-2.45-.86c-1.08-.38-1.08-1.9 0-2.28l2.45-.86a1.2 1.2 0 00.76-.76l.86-2.45z" fill="var(--brand)"/></svg>
-      Executive Summary
+      Frontier Firm Framework
     </div>
-    <h2 class="section-title reveal reveal-d1">The headlines</h2>
-    <p class="section-subtitle reveal reveal-d2">{{CULTURE_DESC}}</p>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem">
-      <div class="theme-card reveal reveal-d1" style="--accent:#0D9488;border-top:3px solid #0D9488;border-left:none;border-radius:.75rem">
-        <div class="theme-card-label" style="color:#0D9488">What's working</div>
-        <div class="theme-card-body"><div style="flex:1;font-size:.82rem;color:var(--text-2);line-height:1.65">{{EXEC_SUMMARY_GOOD}}</div></div>
+    <h2 class="section-title reveal reveal-d1">What is a Frontier Firm?</h2>
+    <p class="section-subtitle reveal reveal-d2">A Frontier Firm is an organisation where humans and AI agents work together as teams on live workflows — not just individuals using AI as a personal tool. Microsoft defines three patterns of this transformation, each representing a fundamentally different relationship between people and AI.</p>
+    <p style="font-size:.72rem;color:var(--text-3);margin:.75rem 0 1.5rem;font-style:italic" class="reveal reveal-d3">Click each pattern card to explore what it looks like in practice.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:.5rem" class="reveal reveal-d4">
+
+      <!-- Pattern 1 flip card -->
+      <div class="flip-card" role="button" aria-label="Pattern 1: Human with Assistant">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="border-top:3px solid var(--brand)">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(72,123,250,.1);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;color:var(--brand);font-weight:800;font-size:1rem;margin-bottom:.75rem">1</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.3rem">Pattern 1 · Human with Assistant</div>
+            <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">AI as a personal tool</div>
+            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">Copilot augments individual work. Employees use AI to draft, summarise and research — but it's a personal tool, not yet part of shared team workflows.</p>
+            <div class="flip-card-hint" style="color:var(--brand)">Explore Pattern 1 <span>→</span></div>
+          </div>
+          <div class="flip-card-back" style="border-top:3px solid var(--brand);background:rgba(72,123,250,.03)">
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.75rem">Pattern 1 · Human with Assistant</div>
+            <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
+            <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Copilot is deployed but usage varies widely — heavy users sit alongside those who rarely open it</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>AI helps with individual tasks — drafting emails, summarising meetings, one-off searches</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>No consistent team-level routines or delegated workflows yet</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Agents exist but are mostly personal or unused beyond their creator</div>
+            </div>
+            <div class="flip-card-hint" style="color:var(--brand)">← Flip back</div>
+          </div>
+        </div>
       </div>
-      <div class="theme-card reveal reveal-d2" style="--accent:#D270F0;border-top:3px solid #D270F0;border-left:none;border-radius:.75rem">
-        <div class="theme-card-label" style="color:#D270F0">The gap</div>
-        <div class="theme-card-body"><div style="flex:1;font-size:.82rem;color:var(--text-2);line-height:1.65">{{EXEC_SUMMARY_GAP}}</div></div>
+
+      <!-- Pattern 2 flip card -->
+      <div class="flip-card" role="button" aria-label="Pattern 2: Human-Agent Teams">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="border-top:3px solid var(--copilot-purple)">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(132,119,251,.1);border:2px solid var(--copilot-purple);display:flex;align-items:center;justify-content:center;color:var(--copilot-purple);font-weight:800;font-size:1rem;margin-bottom:.75rem">2</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.3rem">Pattern 2 · Human-Agent Teams</div>
+            <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">AI as a team member</div>
+            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">Teams delegate tasks to AI agents embedded in real workflows. Human-agent collaboration becomes a repeating pattern — not a one-off experiment.</p>
+            <div class="flip-card-hint" style="color:var(--copilot-purple)">Explore Pattern 2 <span>→</span></div>
+          </div>
+          <div class="flip-card-back" style="border-top:3px solid var(--copilot-purple);background:rgba(132,119,251,.03)">
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.75rem">Pattern 2 · Human-Agent Teams</div>
+            <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
+            <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Specific teams have agents embedded in daily workflows — not just experimenting</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Humans delegate defined tasks — research, triage, note-taking — to agents on a routine basis</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Some agents are shared across teams with high multi-session, high-return usage</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Habits are forming but not yet consistent across the full workforce</div>
+            </div>
+            <div class="flip-card-hint" style="color:var(--copilot-purple)">← Flip back</div>
+          </div>
+        </div>
       </div>
-      <div class="theme-card reveal reveal-d3" style="--accent:#007fff;border-top:3px solid #007fff;border-left:none;border-radius:.75rem">
-        <div class="theme-card-label" style="color:#007fff">The opportunity</div>
-        <div class="theme-card-body"><div style="flex:1;font-size:.82rem;color:var(--text-2);line-height:1.65">{{EXEC_SUMMARY_OPP}}</div></div>
+
+      <!-- Pattern 3 flip card -->
+      <div class="flip-card" role="button" aria-label="Pattern 3: Human-Led, Agent-Operated">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="border-top:3px solid var(--copilot-green)">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(13,148,136,.1);border:2px solid var(--copilot-green);display:flex;align-items:center;justify-content:center;color:var(--copilot-green);font-weight:800;font-size:1rem;margin-bottom:.75rem">3</div>
+            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.3rem">Pattern 3 · Human-Led, Agent-Operated</div>
+            <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">AI running the workflow</div>
+            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">AI agents run enterprise workflows end-to-end. Humans set direction and govern outcomes — agents execute. AI is embedded in how the organisation operates.</p>
+            <div class="flip-card-hint" style="color:var(--copilot-green)">Explore Pattern 3 <span>→</span></div>
+          </div>
+          <div class="flip-card-back" style="border-top:3px solid var(--copilot-green);background:rgba(13,148,136,.03)">
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.75rem">Pattern 3 · Human-Led, Agent-Operated</div>
+            <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
+            <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Agents execute complete workflows — onboarding, incident response, reporting — with minimal human intervention</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>A governed agent catalogue spans all major business functions with active Keep/Review/Retire cycles</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>70%+ of licensed users are active; most interact with 3+ agents across multiple workflows</div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Humans focus on strategy, exception-handling, and governance — not execution</div>
+            </div>
+            <div class="flip-card-hint" style="color:var(--copilot-green)">← Flip back</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Reach / Habit / Skill dimensions -->
+    <div style="margin-top:3.5rem;padding-top:3rem;border-top:1px solid var(--border)" class="reveal">
+      <div style="text-align:center;margin-bottom:2rem">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--brand);margin-bottom:.5rem">How progress is measured</div>
+        <h3 style="font-size:1.3rem;font-weight:700;color:var(--text);letter-spacing:-.01em;margin-bottom:.5rem">Three signals. Every pattern, every organisation.</h3>
+        <p style="font-size:.88rem;color:var(--text-2);max-width:560px;margin:0 auto;line-height:1.65">Progress across all three patterns is tracked through three behavioural signals. No single signal is enough — a Frontier Firm needs all three moving together.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem">
+        <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #0891B2;border-radius:0 0 1.25rem 1.25rem;padding:1.75rem">
+          <div style="font-size:1.25rem;font-weight:800;color:#0891B2;font-family:'Outfit','DM Sans',sans-serif;margin-bottom:.2rem">Reach</div>
+          <div style="font-size:.75rem;font-weight:500;color:var(--text-3);margin-bottom:1rem;font-style:italic">Is AI spreading?</div>
+          <p style="font-size:.8rem;color:var(--text-2);line-height:1.7;margin:0 0 1.1rem">How widely AI is being used across the organisation — across roles, teams, and functions — not just by a small group of early adopters.</p>
+          <div style="padding:.75rem 1rem;background:rgba(8,145,178,.05);border:1px solid rgba(8,145,178,.12);border-radius:.75rem">
+            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#0891B2;margin-bottom:.3rem">Why it matters</div>
+            <p style="font-size:.75rem;color:var(--text-2);line-height:1.6;margin:0">You can't become a Frontier Firm if AI only lives in one team. Reach must grow before habit and skill can scale. Concentrated adoption is fragile — shared capability is durable.</p>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #D270F0;border-radius:0 0 1.25rem 1.25rem;padding:1.75rem">
+          <div style="font-size:1.25rem;font-weight:800;color:#D270F0;font-family:'Outfit','DM Sans',sans-serif;margin-bottom:.2rem">Habit</div>
+          <div style="font-size:.75rem;font-weight:500;color:var(--text-3);margin-bottom:1rem;font-style:italic">Is it sticking?</div>
+          <p style="font-size:.8rem;color:var(--text-2);line-height:1.7;margin:0 0 1.1rem">Whether people are using AI consistently — as part of their daily working rhythm — rather than occasionally or only when prompted by a campaign.</p>
+          <div style="padding:.75rem 1rem;background:rgba(210,112,240,.05);border:1px solid rgba(210,112,240,.12);border-radius:.75rem">
+            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#D270F0;margin-bottom:.3rem">Why it matters</div>
+            <p style="font-size:.75rem;color:var(--text-2);line-height:1.6;margin:0">The difference between trying AI and transforming with it comes down to habit. Without daily use, organisations stay in permanent experimentation mode and never capture the productivity gains that define Frontier Firms.</p>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #8477FB;border-radius:0 0 1.25rem 1.25rem;padding:1.75rem">
+          <div style="font-size:1.25rem;font-weight:800;color:#8477FB;font-family:'Outfit','DM Sans',sans-serif;margin-bottom:.2rem">Skill</div>
+          <div style="font-size:.75rem;font-weight:500;color:var(--text-3);margin-bottom:1rem;font-style:italic">Building proficiency?</div>
+          <p style="font-size:.8rem;color:var(--text-2);line-height:1.7;margin:0 0 1.1rem">How sophisticated AI use is becoming — moving from basic assistive tasks to directing agents, building multi-step workflows, and using AI across multiple surfaces.</p>
+          <div style="padding:.75rem 1rem;background:rgba(132,119,251,.05);border:1px solid rgba(132,119,251,.12);border-radius:.75rem">
+            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8477FB;margin-bottom:.3rem">Why it matters</div>
+            <p style="font-size:.75rem;color:var(--text-2);line-height:1.6;margin:0">Breadth and consistency alone don't make a Frontier Firm. Organisations advance by deepening capability — getting people to delegate meaningful work to AI rather than use it as a search engine.</p>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</section>
 
-<div class="copilot-divider"><div class="copilot-divider-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M11.29 3.81c.38-1.08 1.9-1.08 2.28 0l1.73 4.9a1.2 1.2 0 00.76.76l4.9 1.73c1.08.38 1.08 1.9 0 2.28l-4.9 1.73a1.2 1.2 0 00-.76.76l-1.73 4.9c-.38 1.08-1.9 1.08-2.28 0l-1.73-4.9a1.2 1.2 0 00-.76-.76l-4.9-1.73c-1.08-.38-1.08-1.9 0-2.28l4.9-1.73a1.2 1.2 0 00.76-.76l1.73-4.9z" fill="url(#cpDiv2)"/><defs><linearGradient id="cpDiv2" x1="3" y1="3" x2="20" y2="20"><stop offset="0%" stop-color="#007fff"/><stop offset="100%" stop-color="#0891B2"/></linearGradient></defs></svg></div></div>
-
-<section class="section" id="maturity" style="background:var(--bg)">
-  <div class="section-inner">
-    <div class="section-label reveal">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:.2rem"><path d="M11.29 5.81c.38-1.08 1.9-1.08 2.28 0l.86 2.45a1.2 1.2 0 00.76.76l2.45.86c1.08.38 1.08 1.9 0 2.28l-2.45.86a1.2 1.2 0 00-.76.76l-.86 2.45c-.38 1.08-1.9 1.08-2.28 0l-.86-2.45a1.2 1.2 0 00-.76-.76l-2.45-.86c-1.08-.38-1.08-1.9 0-2.28l2.45-.86a1.2 1.2 0 00.76-.76l.86-2.45z" fill="var(--brand)"/></svg>
-      Frontier Firm Maturity
-    </div>
-    <h2 class="section-title reveal reveal-d1">{{TITLE_MATURITY}}</h2>
-
-    <!-- The Story -->
-    <div class="reveal reveal-d3" style="margin-top:2.5rem;max-width:800px">
-      <div style="background:linear-gradient(135deg,rgba(123,47,242,.04),rgba(34,100,229,.04));border:1px solid rgba(123,47,242,.12);border-radius:12px;padding:2rem;border-left:4px solid #8477FB">
-        <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#8477FB;margin-bottom:.75rem">The Story Behind the Numbers</div>
-        <p style="font-size:.92rem;color:var(--text);line-height:1.7;margin:0 0 1rem">{{CULTURE_DESC}}</p>
-        <p style="font-size:.82rem;color:var(--text-2);line-height:1.65;margin:0 0 1rem">The data that follows explores three questions: <strong style="color:var(--text)">Is AI spreading?</strong> (Reach), <strong style="color:var(--text)">Is it becoming a habit?</strong> (Habit), and <strong style="color:var(--text)">Are they building proficiency?</strong> (Skill). Each question is assessed across both the M365 Copilot and Agents lanes.</p>
-        <p style="font-size:.82rem;color:var(--text-2);line-height:1.65;margin:0"><strong style="color:var(--amber)">{{CULTURE_RED_FLAG}}</strong></p>
-      </div>
-    </div>
-
-    <!-- removed Pattern Distribution bar — org-level detail is in the Agent Maturity section later -->
-
-    <!-- Signal navigation links -->
-    <div style="display:flex;gap:1.5rem;margin:1.5rem 0;justify-content:center" class="reveal reveal-d4">
-      <a href="#reach" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(14,165,233,.3);color:#0891B2;background:rgba(14,165,233,.06);transition:all .3s">Reach →</a>
-      <a href="#habit" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(245,158,11,.3);color:#D270F0;background:rgba(245,158,11,.06);transition:all .3s">Habit →</a>
-      <a href="#skill" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(123,47,242,.3);color:#8477FB;background:rgba(123,47,242,.06);transition:all .3s">Skill →</a>
-    </div>
-
-    <!-- Frontier Firm Framework — expandable 3×3 matrix -->
-    <div class="reveal reveal-d4" style="margin-top:1rem">
+    <!-- Measuring Frontier Firm Maturity — expandable 3×3 matrix (below the framework) -->
+    <div class="reveal" style="margin-top:2rem">
       <button class="dive-deeper-btn" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:rgba(255,255,255,.3);border-color:rgba(255,255,255,.1);font-size:.65rem">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:.3rem"><path d="M11.29 5.81c.38-1.08 1.9-1.08 2.28 0l.86 2.45a1.2 1.2 0 00.76.76l2.45.86c1.08.38 1.08 1.9 0 2.28l-2.45.86a1.2 1.2 0 00-.76.76l-.86 2.45c-.38 1.08-1.9 1.08-2.28 0l-.86-2.45a1.2 1.2 0 00-.76-.76l-2.45-.86c-1.08-.38-1.08-1.9 0-2.28l2.45-.86a1.2 1.2 0 00.76-.76l.86-2.45z" fill="rgba(255,255,255,.4)"/></svg>
         Measuring Frontier Firm Maturity Through Behaviour <span class="dd-arrow">+</span>
@@ -1174,9 +1261,68 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 
           </div><!-- /matrix grid -->
 
-          <p style="text-align:center;font-size:.6rem;color:var(--text-3);font-style:italic;margin:.75rem 0 .5rem">These patterns coexist across different teams — an organisation can exhibit P2 in some teams while remaining P1 in others.</p>
+          <p style="text-align:center;font-size:.6rem;color:var(--text-3);font-style:italic;margin:.75rem 0 .5rem">These patterns coexist across different teams — an organisation can exhibit Expansion in some teams while remaining Foundation in others.</p>
         </div>
       </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="copilot-divider"><div class="copilot-divider-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M11.29 3.81c.38-1.08 1.9-1.08 2.28 0l1.73 4.9a1.2 1.2 0 00.76.76l4.9 1.73c1.08.38 1.08 1.9 0 2.28l-4.9 1.73a1.2 1.2 0 00-.76.76l-1.73 4.9c-.38 1.08-1.9 1.08-2.28 0l-1.73-4.9a1.2 1.2 0 00-.76-.76l-4.9-1.73c-1.08-.38-1.08-1.9 0-2.28l4.9-1.73a1.2 1.2 0 00.76-.76l1.73-4.9z" fill="url(#cpDiv1)"/><defs><linearGradient id="cpDiv1" x1="3" y1="3" x2="20" y2="20"><stop offset="0%" stop-color="#8477FB"/><stop offset="100%" stop-color="#007fff"/></linearGradient></defs></svg></div></div>
+
+<section class="section" id="summary" style="background:var(--bg)">
+  <div class="section-inner">
+    <div class="section-label reveal">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:.2rem"><path d="M11.29 5.81c.38-1.08 1.9-1.08 2.28 0l.86 2.45a1.2 1.2 0 00.76.76l2.45.86c1.08.38 1.08 1.9 0 2.28l-2.45.86a1.2 1.2 0 00-.76.76l-.86 2.45c-.38 1.08-1.9 1.08-2.28 0l-.86-2.45a1.2 1.2 0 00-.76-.76l-2.45-.86c-1.08-.38-1.08-1.9 0-2.28l2.45-.86a1.2 1.2 0 00.76-.76l.86-2.45z" fill="var(--brand)"/></svg>
+      Executive Summary
+    </div>
+    <h2 class="section-title reveal reveal-d1">The headlines</h2>
+    <p class="section-subtitle reveal reveal-d2">{{CULTURE_DESC}}</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem">
+      <div class="theme-card reveal reveal-d1" style="--accent:#0D9488;border-top:3px solid #0D9488;border-left:none;border-radius:.75rem">
+        <div class="theme-card-label" style="color:#0D9488">What's working</div>
+        <div class="theme-card-body"><div style="flex:1;font-size:.82rem;color:var(--text-2);line-height:1.65">{{EXEC_SUMMARY_GOOD}}</div></div>
+      </div>
+      <div class="theme-card reveal reveal-d2" style="--accent:#D270F0;border-top:3px solid #D270F0;border-left:none;border-radius:.75rem">
+        <div class="theme-card-label" style="color:#D270F0">The gap</div>
+        <div class="theme-card-body"><div style="flex:1;font-size:.82rem;color:var(--text-2);line-height:1.65">{{EXEC_SUMMARY_GAP}}</div></div>
+      </div>
+      <div class="theme-card reveal reveal-d3" style="--accent:#007fff;border-top:3px solid #007fff;border-left:none;border-radius:.75rem">
+        <div class="theme-card-label" style="color:#007fff">The opportunity</div>
+        <div class="theme-card-body"><div style="flex:1;font-size:.82rem;color:var(--text-2);line-height:1.65">{{EXEC_SUMMARY_OPP}}</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="copilot-divider"><div class="copilot-divider-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M11.29 3.81c.38-1.08 1.9-1.08 2.28 0l1.73 4.9a1.2 1.2 0 00.76.76l4.9 1.73c1.08.38 1.08 1.9 0 2.28l-4.9 1.73a1.2 1.2 0 00-.76.76l-1.73 4.9c-.38 1.08-1.9 1.08-2.28 0l-1.73-4.9a1.2 1.2 0 00-.76-.76l-4.9-1.73c-1.08-.38-1.08-1.9 0-2.28l4.9-1.73a1.2 1.2 0 00.76-.76l1.73-4.9z" fill="url(#cpDiv2)"/><defs><linearGradient id="cpDiv2" x1="3" y1="3" x2="20" y2="20"><stop offset="0%" stop-color="#007fff"/><stop offset="100%" stop-color="#0891B2"/></linearGradient></defs></svg></div></div>
+
+<section class="section" id="maturity" style="background:var(--bg)">
+  <div class="section-inner">
+    <div class="section-label reveal">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:.2rem"><path d="M11.29 5.81c.38-1.08 1.9-1.08 2.28 0l.86 2.45a1.2 1.2 0 00.76.76l2.45.86c1.08.38 1.08 1.9 0 2.28l-2.45.86a1.2 1.2 0 00-.76.76l-.86 2.45c-.38 1.08-1.9 1.08-2.28 0l-.86-2.45a1.2 1.2 0 00-.76-.76l-2.45-.86c-1.08-.38-1.08-1.9 0-2.28l2.45-.86a1.2 1.2 0 00.76-.76l.86-2.45z" fill="var(--brand)"/></svg>
+      Frontier Firm Maturity
+    </div>
+    <h2 class="section-title reveal reveal-d1">{{TITLE_MATURITY}}</h2>
+
+    <!-- The Story -->
+    <div class="reveal reveal-d3" style="margin-top:2.5rem;max-width:800px">
+      <div style="background:linear-gradient(135deg,rgba(123,47,242,.04),rgba(34,100,229,.04));border:1px solid rgba(123,47,242,.12);border-radius:12px;padding:2rem;border-left:4px solid #8477FB">
+        <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#8477FB;margin-bottom:.75rem">The Story Behind the Numbers</div>
+        <p style="font-size:.92rem;color:var(--text);line-height:1.7;margin:0 0 1rem">{{CULTURE_DESC}}</p>
+        <p style="font-size:.82rem;color:var(--text-2);line-height:1.65;margin:0 0 1rem">The data that follows explores three questions: <strong style="color:var(--text)">Is AI spreading?</strong> (Reach), <strong style="color:var(--text)">Is it becoming a habit?</strong> (Habit), and <strong style="color:var(--text)">Are they building proficiency?</strong> (Skill). Each question is assessed across both the M365 Copilot and Agents lanes.</p>
+        <p style="font-size:.82rem;color:var(--text-2);line-height:1.65;margin:0"><strong style="color:var(--amber)">{{CULTURE_RED_FLAG}}</strong></p>
+      </div>
+    </div>
+
+    <!-- removed Pattern Distribution bar — org-level detail is in the Agent Maturity section later -->
+
+    <!-- Signal navigation links -->
+    <div style="display:flex;gap:1.5rem;margin:1.5rem 0;justify-content:center" class="reveal reveal-d4">
+      <a href="#reach" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(14,165,233,.3);color:#0891B2;background:rgba(14,165,233,.06);transition:all .3s">Reach →</a>
+      <a href="#habit" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(245,158,11,.3);color:#D270F0;background:rgba(245,158,11,.06);transition:all .3s">Habit →</a>
+      <a href="#skill" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(123,47,242,.3);color:#8477FB;background:rgba(123,47,242,.06);transition:all .3s">Skill →</a>
     </div>
 
     <!-- Dominant Pattern — single org-wide verdict -->
@@ -1207,7 +1353,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       </button>
       <div class="deep-dive-content">
         <div style="max-width:900px;margin:1rem auto 0">
-          <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:1rem;line-height:1.6">Each metric is scored into three tiers: <span class="glossary-band glossary-band-p1">P1 Foundation</span> <span class="glossary-band glossary-band-p2">P2 Expansion</span> <span class="glossary-band glossary-band-p3">P3 Frontier</span>. A pillar's tier equals its weakest metric. A lane's tier equals its weakest pillar. The overall pattern equals the weaker lane.</p>
+          <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:1rem;line-height:1.6">Each metric is scored into three tiers: <span class="glossary-band glossary-band-p1">Foundation</span> <span class="glossary-band glossary-band-p2">Expansion</span> <span class="glossary-band glossary-band-p3">Frontier</span>. A pillar's tier equals its weakest metric. A lane's tier equals its weakest pillar. The overall pattern equals the weaker lane.</p>
           {{METRIC_GLOSSARY_HTML}}
         </div>
       </div>
@@ -1431,9 +1577,9 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
     <h2 class="section-title reveal reveal-d1">{{TITLE_SKILL}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_SKILL}}</p>
     <div class="headline-stat reveal reveal-d2" style="--signal-accent:#0891B2">
-      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;background:rgba(14,165,233,.12);color:#0891B2;border:1px solid rgba(14,165,233,.2)">Hero Metric · Multi-Turn Rate</span></div>
-      <div class="headline-stat-value">{{COMPLEX_SESSIONS}}%</div>
-      <div class="headline-stat-label">of sessions involve complex multi-turn work — app breadth is {{M365_BREADTH}} out of 27 available surfaces</div>
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;background:rgba(14,165,233,.12);color:#0891B2;border:1px solid rgba(14,165,233,.2)">Hero Metric · Avg Prompts per Session</span></div>
+      <div class="headline-stat-value">{{COMPLEX_SESSIONS}}</div>
+      <div class="headline-stat-label">average prompts per conversation — measuring how deep users go in each session across {{M365_BREADTH}} app surfaces</div>
       <span class="headline-stat-tier {{SKILL_TIER_CLASS}}" style="background:rgba(123,47,242,.1);color:#8477FB;border:1px solid rgba(123,47,242,.15)">{{SKILL_TIER}}</span>
     </div>
     <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#8477FB">Dive deeper into Skill <span class="dd-arrow">+</span></button>
@@ -1467,7 +1613,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <div class="chart-card" style="border-left:4px solid #8477FB">
         <div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8477FB;margin-bottom:.4rem">Agents</div>
         <div class="chart-card-title">Agent Leaderboard</div>
-        <div class="chart-card-sub">Top agents by sessions per user</div>
+        <div class="chart-card-sub">Top agents by total sessions — ranked by reach and depth</div>
         <div style="position:relative;height:280px"><canvas id="chartAgentBar"></canvas></div>
       </div>
     </div>
@@ -1498,7 +1644,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 <section class="section" id="pattern-map" style="background:var(--section-dark);color:#fff">
   <div class="section-inner">
     <div class="section-label reveal" style="color:rgba(255,255,255,.4)">Frontier Firm Maturity by Organisation</div>
-    <div class="signal-question reveal" style="color:rgba(255,255,255,.35)">How far has each part of the business progressed from individual AI (P1) to agent-operated work (P3)?</div>
+    <div class="signal-question reveal" style="color:rgba(255,255,255,.35)">How far has each part of the business progressed from individual AI (Foundation) to agent-operated work (Frontier)?</div>
     <h2 class="section-title reveal reveal-d1" style="color:#fff">{{ORG_COUNT}} organisations on the Frontier Firm journey</h2>
     <p class="section-subtitle reveal reveal-d2" style="color:rgba(255,255,255,.5)">Each org scored across Reach (user scale), Habit (relative deployment), and Skill (agent adoption) to produce a composite Frontier Firm maturity score. Bars show the breakdown; score out of 100.</p>
     <div class="reveal reveal-d3" style="margin-top:2rem">
@@ -1882,7 +2028,7 @@ document.querySelectorAll('.metric-card[data-metric-id]').forEach(card => {
 
   const colors={P1:'#007fff',P2:'#8477FB',P3:'#0D9488'};
   const bg={P1:'rgba(34,100,229,',P2:'rgba(123,47,242,',P3:'rgba(16,185,129,'};
-  const labels={P1:'P1 · Human with Assistant',P2:'P2 · Human-Agent Teams',P3:'P3 · Agent-Operated'};
+  const labels={P1:'Foundation · Human with Assistant',P2:'Expansion · Human-Agent Teams',P3:'Frontier · Agent-Operated'};
   var counts={P1:0,P2:0,P3:0};
   _opd.orgs.forEach(function(o){counts[o.pattern]++;});
 
@@ -1946,9 +2092,9 @@ if(document.getElementById('chartAppSurface')){
 new Chart(document.getElementById('chartAppSurface'),{type:'bar',data:{labels:[{{APP_SURFACE_LABELS}}],datasets:[{data:[{{APP_SURFACE_DATA}}],backgroundColor:['rgba(123,47,242,.7)','rgba(34,100,229,.7)','rgba(14,165,233,.7)','rgba(16,185,129,.7)','rgba(245,158,11,.7)','rgba(249,115,22,.7)','rgba(239,68,68,.5)','rgba(100,116,139,.5)','rgba(100,116,139,.4)','rgba(100,116,139,.3)'],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},datalabels:{display:false}},scales:{x:{ticks:{callback:v=>v+'%',color:cTickSub},grid:{color:cGrid}},y:{grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}}}}});
 }
 
-/* Chart: Agent Leaderboard Bar */
+/* Chart: Agent Leaderboard Bar — ranked by total sessions */
 if(document.getElementById('chartAgentBar')){
-new Chart(document.getElementById('chartAgentBar'),{type:'bar',data:{labels:JSON.parse('{{TOP_AGENT_NAMES_JSON}}'),datasets:[{data:{{TOP_AGENT_SESSIONS}},backgroundColor:'rgba(14,165,233,.6)',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},datalabels:{display:false}},scales:{x:{title:{display:true,text:'Sessions per User',font:{size:10},color:cTick},grid:{color:cGrid},ticks:{color:cTickSub}},y:{grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}}}}});
+new Chart(document.getElementById('chartAgentBar'),{type:'bar',data:{labels:JSON.parse('{{TOP_AGENT_NAMES_JSON}}'),datasets:[{data:{{TOP_AGENT_TOTAL_SESSIONS}},backgroundColor:'rgba(14,165,233,.6)',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},datalabels:{display:false}},scales:{x:{title:{display:true,text:'Total Sessions',font:{size:10},color:cTick},grid:{color:cGrid},ticks:{color:cTickSub,callback:function(v){return v>=1000?(v/1000).toFixed(0)+'k':v}}},y:{grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}}}}});
 }
 
 /* Pillar Radar Charts — Copilot vs Agents per pillar */

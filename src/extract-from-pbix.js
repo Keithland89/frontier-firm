@@ -321,18 +321,36 @@ async function main() {
   // ============================================================
   console.log('\n=== Phase 4: Extract Tabular Fields ===');
 
-  // --- Agent Table ---
+  // --- Agent Table (with Agent Type from Agents 365 join) ---
   const agentTableConfig = measureMap['agent_table'];
   if (agentTableConfig && agentTableConfig.type === 'tabular') {
     try {
-      const agentResult = await runDax(agentTableConfig.dax);
+      // Try primary DAX with Agents 365 join for Agent Type Combined
+      let agentResult;
+      try {
+        agentResult = await runDax(agentTableConfig.dax);
+      } catch(e) {
+        // Fallback: no join, just agent names
+        if (agentTableConfig.dax_fallback) {
+          console.log('  agent_table: join failed, trying fallback DAX');
+          agentResult = await runDax(agentTableConfig.dax_fallback);
+        } else throw e;
+      }
       const agents = (agentResult._rows || []).filter(r => r.AgentName && r.AgentName !== '');
       data.agent_table = agents.map(r => {
         const sessions = Number(r.Sessions) || 0;
         const users = Number(r.Users) || 0;
+        // Get type from the joined Agent Type Combined column
+        let type = r['Agent Type Combined'] || '';
+        if (!type || type === '') type = 'Unknown';
+        // Simplify type names
+        if (type.includes('Agent Builder')) type = 'Agent Builder';
+        else if (type.includes('SharePoint')) type = 'SharePoint Agent';
+        else if (type.includes('Copilot Studio')) type = 'Copilot Studio';
+        else if (type === 'FirstParty') type = 'Microsoft (1P)';
         return {
           name: r.AgentName,
-          type: 'Store Agent (1P/3P)',
+          type,
           users,
           sessions,
           sessions_per_user: users > 0 ? Math.round(sessions / users * 10) / 10 : sessions
@@ -340,50 +358,13 @@ async function main() {
       });
       data.top_agent_names = data.agent_table.slice(0, 8).map(a => a.name);
       data.top_agent_sessions = data.agent_table.slice(0, 8).map(a => a.sessions_per_user);
-      console.log('  agent_table: ' + data.agent_table.length + ' agents');
+      console.log('  agent_table: ' + data.agent_table.length + ' agents (types from Agents 365 join)');
     } catch (e) {
       console.log('  agent_table: error - ' + e.message.substring(0, 150));
       set('agent_table', null);
       set('top_agent_names', null);
       set('top_agent_sessions', null);
     }
-  }
-
-  // --- Enrich agent_table with types from Agents 365 ---
-  if (data.agent_table && data.agent_table.length > 0) {
-    try {
-      const typesResult = await runDax(`
-        EVALUATE
-        SUMMARIZECOLUMNS(
-          'Agents 365'[Title ID],
-          'Agents 365'[Agent Type Combined],
-          'Agents 365'[Created in]
-        )
-      `);
-      if (typesResult._rows) {
-        // Build a type map — try matching agent names to Title IDs
-        const typeMap = {};
-        typesResult._rows.forEach(r => {
-          const title = r['Title ID'] || '';
-          const type = r['Agent Type Combined'] || r['Created in'] || '';
-          // Simplify type names
-          let shortType = type;
-          if (type.includes('Agent Builder')) shortType = 'Agent Builder';
-          else if (type.includes('SharePoint')) shortType = 'SharePoint';
-          else if (type.includes('Copilot Studio')) shortType = 'Copilot Studio';
-          else if (type.includes('Microsoft')) shortType = 'Store Agent (1P)';
-          typeMap[title] = shortType;
-        });
-        // For now just set a default based on Created in distribution
-        // The agent names from interactions don't directly map to Title IDs
-        // Use the most common type as default
-        const typeCounts = {};
-        Object.values(typeMap).forEach(t => { typeCounts[t] = (typeCounts[t]||0) + 1; });
-        const defaultType = Object.entries(typeCounts).sort((a,b) => b[1]-a[1])[0]?.[0] || 'Unknown';
-        data.agent_table.forEach(a => { if (a.type === 'Store Agent (1P/3P)') a.type = defaultType; });
-        console.log('  Agent types enriched (default: ' + defaultType + ')');
-      }
-    } catch(e) { console.log('  Agent type enrichment failed: ' + e.message.substring(0, 80)); }
   }
 
   // --- Org Scatter Data ---
@@ -501,13 +482,22 @@ async function main() {
   const appConfig = measureMap['_supplementary_metrics.app_interactions'];
   if (appConfig && appConfig.type === 'tabular') {
     try {
-      const appResult = await runDax(appConfig.dax);
-      const rows = appResult._rows || [];
+      // Try each DAX variant (CopilotApp first, then AppHost fallback)
+      const appQueries = appConfig.dax_variants || (appConfig.dax ? [appConfig.dax] : []);
+      let appResult;
+      for (const q of appQueries) {
+        try {
+          appResult = await runDax(q);
+          if (appResult && appResult._rows && appResult._rows.length > 0) break;
+        } catch (_e) { /* try next variant */ }
+      }
+      const rows = (appResult && appResult._rows) || [];
       const appMap = {};
       let totalInteractions = 0;
 
       rows.forEach(r => {
-        const app = (r.CopilotApp || r['Copilot Actions[CopilotApp]'] || '').toLowerCase().replace(/\s+/g, '_');
+        // Handle both CopilotApp and AppHost column names
+        const app = (r.CopilotApp || r['Copilot Actions[CopilotApp]'] || r.AppHost || r['Chat + Agent Interactions (Audit Logs)[AppHost]'] || '').toLowerCase().replace(/\s+/g, '_');
         if (!app) return;
         const interactions = Number(r.Interactions) || 0;
         totalInteractions += interactions;
@@ -522,6 +512,36 @@ async function main() {
       console.log('  app_interactions: ' + Object.keys(appMap).length + ' app surfaces');
     } catch (e) {
       console.log('  app_interactions: error - ' + e.message.substring(0, 150));
+    }
+  }
+
+  // --- Weekly Trend ---
+  const weeklyConfig = measureMap['weekly_trend'];
+  if (weeklyConfig && weeklyConfig.type === 'tabular') {
+    try {
+      const weeklyQueries = weeklyConfig.dax_variants || (weeklyConfig.dax ? [weeklyConfig.dax] : []);
+      let weeklyResult;
+      for (const q of weeklyQueries) {
+        try {
+          weeklyResult = await runDax(q);
+          if (weeklyResult && weeklyResult._rows && weeklyResult._rows.length > 0) break;
+        } catch (_e) { /* try next variant */ }
+      }
+      const rows = (weeklyResult && weeklyResult._rows) || [];
+      if (rows.length > 0) {
+        data.weekly_trend = rows.map(r => {
+          const week = r.WeekStart || r['Chat + Agent Interactions (Audit Logs)[WeekStart]'] || '';
+          return {
+            week: week,
+            m365: Number(r.Licensed) || 0,
+            chat: Number(r.Unlicensed) || 0,
+            agents: Number(r.AgentUsers) || 0
+          };
+        }).sort((a, b) => new Date(a.week) - new Date(b.week));
+        console.log('  weekly_trend: ' + data.weekly_trend.length + ' weeks');
+      }
+    } catch (e) {
+      console.log('  weekly_trend: error - ' + e.message.substring(0, 150));
     }
   }
 
@@ -674,10 +694,15 @@ async function main() {
       continue;
     }
 
-    // --- org_count (from org scatter data) ---
+    // --- org_count (SKIP — already set from full org list in Phase 4, not limited to 15 scatter points) ---
     if (field === 'org_count') {
-      data[field] = Array.isArray(data.org_scatter_data) ? data.org_scatter_data.length : 0;
-      console.log('  ' + field + ': ' + data[field] + ' orgs');
+      // org_count was set at Phase 4 line 412-413 from orgs.length (ALL orgs, not top 15)
+      // Do NOT overwrite with org_scatter_data.length which is capped at 15
+      if (typeof data[field] === 'number' && data[field] > 0) {
+        console.log('  ' + field + ': keeping Phase 4 value = ' + data[field] + ' orgs');
+      } else {
+        console.log('  ' + field + ': not available (no scalar or scatter data)');
+      }
       continue;
     }
 
@@ -807,6 +832,21 @@ async function main() {
     }
   }
 
+  // agent_retention: fallback DAX (agent-specific INTERSECT from Chat + Agent Interactions)
+  if (data.agent_retention === 'not_available') {
+    const agentRetConfig = measureMap['agent_retention'];
+    if (agentRetConfig && agentRetConfig.fallback_dax) {
+      try {
+        const agentRetResult = await runDax(agentRetConfig.fallback_dax);
+        if (agentRetResult._rows && agentRetResult._rows.length > 0) {
+          const pct = Number(agentRetResult._rows[0].RetentionPct);
+          data.agent_retention = isNaN(pct) ? 'not_available' : Math.round(pct * 1000) / 10;
+          console.log('  agent_retention: fallback DAX = ' + data.agent_retention + '%');
+        }
+      } catch (e) { console.log('  agent_retention fallback failed: ' + e.message.substring(0, 80)); }
+    }
+  }
+
   // agent_creators_pct: fallback (DISTINCTCOUNT / total_active_users)
   if (data.agent_creators_pct === 'not_available') {
     const creatorsConfig = measureMap['agent_creators_pct'];
@@ -836,9 +876,10 @@ async function main() {
         const prevUsers = s.monthly_data[prev].users;
         const currUsers = s.monthly_data[curr].users;
         const isLast = (i === months.length - 1);
-        const retPct = typeof data.m365_retention === 'number' ? data.m365_retention / 100 : 0.8;
-        const retained = isLast ? data.retained_users : Math.round(prevUsers * retPct);
-        const churned = isLast ? data.churned_users : prevUsers - retained;
+        const retPct = typeof data.m365_retention === 'number' ? data.m365_retention / 100 : null;
+        // If no retention data, skip estimation for non-last months — don't fabricate numbers
+        const retained = isLast ? data.retained_users : (retPct !== null ? Math.round(prevUsers * retPct) : null);
+        const churned = isLast ? data.churned_users : (retained !== null ? prevUsers - retained : null);
         const newUsers = currUsers - retained;
         cohorts[prev + '_to_' + curr] = {
           prev: prevUsers,
@@ -918,11 +959,11 @@ async function main() {
   // licensed_avg_days: average active days per month (licensed)
   if (data.licensed_avg_days === 'not_available' || data.licensed_avg_days === undefined) {
     try {
-      const r = await runDax(`EVALUATE ROW("v", AVERAGE('ActiveDaysSummary'[ChatActiveDays]))`);
+      const r = await runDax(`EVALUATE ROW("v", AVERAGEX(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[LicenseStatus] = "M365 Copilot Licensed"), 'ActiveDaysSummary'[ChatActiveDays]))`);
       if (r._rows && r._rows.length > 0) {
         const v = Number(r._rows[0].v);
         data.licensed_avg_days = isNaN(v) ? 'not_available' : Math.round(v * 10) / 10;
-        console.log('  licensed_avg_days: fallback = ' + data.licensed_avg_days);
+        console.log('  licensed_avg_days: fallback (Licensed filter) = ' + data.licensed_avg_days);
       }
     } catch(e) { console.log('  licensed_avg_days fallback failed: ' + e.message.substring(0, 80)); }
   }
@@ -974,14 +1015,69 @@ async function main() {
     } catch(e) { console.log('  embedded_user_rate fallback failed: ' + e.message.substring(0, 80)); }
   }
 
-  // org_penetration_pct: % of orgs with both licensed + agent users
+  // concentration_index: % of orgs with usage above the median
+  if (data.concentration_index === 'not_available' || data.concentration_index === undefined) {
+    const ciConfig = measureMap['concentration_index'];
+    const ciQueries = ciConfig && ciConfig.fallback_dax_variants ? ciConfig.fallback_dax_variants : [];
+    for (const q of ciQueries) {
+      try {
+        const ciResult = await runDax(q);
+        if (ciResult._rows && ciResult._rows.length > 0) {
+          const v = Number(ciResult._rows[0].v || ciResult._rows[0][Object.keys(ciResult._rows[0])[0]]);
+          if (!isNaN(v)) {
+            data.concentration_index = Math.round(v * 1000) / 10;
+            console.log('  concentration_index: DAX = ' + data.concentration_index + '%');
+            break;
+          }
+        }
+      } catch(e) { /* try next variant */ }
+    }
+  }
+
+  // agent_habitual_rate: % of agent users with 6+ active days per month
+  if (data.agent_habitual_rate === 'not_available' || data.agent_habitual_rate === undefined) {
+    const ahConfig = measureMap['agent_habitual_rate'];
+    const ahQueries = ahConfig && ahConfig.fallback_dax_variants ? ahConfig.fallback_dax_variants : [];
+    for (const q of ahQueries) {
+      try {
+        const ahResult = await runDax(q);
+        if (ahResult._rows && ahResult._rows.length > 0) {
+          const v = Number(ahResult._rows[0].v || ahResult._rows[0][Object.keys(ahResult._rows[0])[0]]);
+          if (!isNaN(v)) {
+            data.agent_habitual_rate = Math.round(v * 1000) / 10;
+            console.log('  agent_habitual_rate: DAX = ' + data.agent_habitual_rate + '%');
+            break;
+          }
+        }
+      } catch(e) { /* try next variant */ }
+    }
+  }
+
+  // org_penetration_pct: % of orgs with BOTH licensed Copilot AND agent users
   if (data.org_penetration_pct === 'not_available' || data.org_penetration_pct === undefined) {
-    if (Array.isArray(data.org_scatter_data) && data.org_scatter_data.length > 0) {
-      // Derive from org_scatter_data: orgs where both x (Copilot users) > 0 and agent users exist
+    const opConfig = measureMap['org_penetration_pct'];
+    const opQueries = opConfig && opConfig.fallback_dax_variants ? opConfig.fallback_dax_variants : (opConfig && opConfig.fallback_dax ? [opConfig.fallback_dax] : []);
+    let opDone = false;
+    for (const q of opQueries) {
+      try {
+        const opResult = await runDax(q);
+        if (opResult._rows && opResult._rows.length > 0) {
+          const v = Number(opResult._rows[0].v || opResult._rows[0][Object.keys(opResult._rows[0])[0]]);
+          if (!isNaN(v)) {
+            data.org_penetration_pct = Math.round(v * 1000) / 10;
+            console.log('  org_penetration_pct: DAX (AND logic) = ' + data.org_penetration_pct + '%');
+            opDone = true;
+            break;
+          }
+        }
+      } catch(e) { /* try next variant */ }
+    }
+    // Fallback: derive from org_scatter_data if DAX failed
+    if (!opDone && Array.isArray(data.org_scatter_data) && data.org_scatter_data.length > 0) {
       const totalOrgs = data.org_scatter_data.length;
-      const withBoth = data.org_scatter_data.filter(o => o.x > 0 && (o.agents > 0 || o.r > 5)).length;
+      const withBoth = data.org_scatter_data.filter(o => o.x > 0 && o.y > 0).length;
       data.org_penetration_pct = totalOrgs > 0 ? Math.round(withBoth / totalOrgs * 1000) / 10 : 'not_available';
-      console.log('  org_penetration_pct: derived from scatter = ' + data.org_penetration_pct + '%');
+      console.log('  org_penetration_pct: derived from scatter (fallback) = ' + data.org_penetration_pct + '%');
     }
   }
 

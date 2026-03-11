@@ -136,25 +136,26 @@
 
   "m365_retention": {
     "type": "scalar",
-    "measures": ["[Agent Return Rate]", "[Avg Agent Return Rate %]"],
+    "measures": ["[Licensed User Return Rate]", "[M365 Copilot Return Rate]", "[Licensed MoM Retention Rate]"],
     "transform": "toPct",
-    "fallback_dax": "EVALUATE\nVAR LastMonth = MAXX('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart])\nVAR PrevMonth = MAXX(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart] < LastMonth), 'ActiveDaysSummary'[MonthStart])\nVAR UsersLast = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = LastMonth)\nVAR UsersPrev = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = PrevMonth)\nRETURN ROW(\"RetentionPct\", DIVIDE(COUNTROWS(INTERSECT(UsersLast, UsersPrev)), COUNTROWS(UsersPrev), 0))",
-    "description": "Month-over-month user retention rate. Primary: Agent Return Rate measure. Fallback: ActiveDaysSummary INTERSECT computation."
+    "fallback_dax": "EVALUATE\nVAR LastMonth = MAXX('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart])\nVAR PrevMonth = MAXX(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart] < LastMonth), 'ActiveDaysSummary'[MonthStart])\nVAR UsersLast = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = LastMonth, 'ActiveDaysSummary'[LicenseStatus] = \"M365 Copilot Licensed\")\nVAR UsersPrev = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = PrevMonth, 'ActiveDaysSummary'[LicenseStatus] = \"M365 Copilot Licensed\")\nRETURN ROW(\"RetentionPct\", DIVIDE(COUNTROWS(INTERSECT(UsersLast, UsersPrev)), COUNTROWS(UsersPrev), 0))",
+    "description": "Month-over-month LICENSED user retention rate. Primary: Licensed-specific return rate measures. Fallback: ActiveDaysSummary INTERSECT filtered to M365 Copilot Licensed users only. NEVER use Agent Return Rate here — that measures a different population."
   },
 
   "chat_retention": {
     "type": "scalar",
-    "measures": ["[Satisfaction Rate]"],
+    "measures": ["[Unlicensed User Return Rate]", "[Chat User Return Rate]", "[Unlicensed MoM Retention Rate]"],
     "transform": "toPct",
     "fallback_dax": "EVALUATE\nVAR LastMonth = MAXX('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart])\nVAR PrevMonth = MAXX(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart] < LastMonth), 'ActiveDaysSummary'[MonthStart])\nVAR UsersLast = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = LastMonth, 'ActiveDaysSummary'[LicenseStatus] = \"Unlicensed\")\nVAR UsersPrev = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = PrevMonth, 'ActiveDaysSummary'[LicenseStatus] = \"Unlicensed\")\nRETURN ROW(\"RetPct\", DIVIDE(COUNTROWS(INTERSECT(UsersLast, UsersPrev)), COUNTROWS(UsersPrev), 0))",
-    "description": "Chat (unlicensed) user retention. Primary: Satisfaction Rate measure. Fallback: per-tier ActiveDaysSummary INTERSECT."
+    "description": "Chat (unlicensed) user MoM retention. Primary: Unlicensed-specific return rate measures. Fallback: ActiveDaysSummary INTERSECT filtered to Unlicensed. NEVER use Satisfaction Rate — that measures customer satisfaction, not retention."
   },
 
   "agent_retention": {
     "type": "scalar",
     "measures": ["[Agent Return Rate]", "[Avg Agent Return Rate %]"],
     "transform": "toPct",
-    "description": "Agent user return rate month-over-month."
+    "fallback_dax": "EVALUATE\nVAR LastMonth = MAXX('Chat + Agent Interactions (Audit Logs)', 'Chat + Agent Interactions (Audit Logs)'[MonthStart])\nVAR PrevMonth = MAXX(FILTER('Chat + Agent Interactions (Audit Logs)', 'Chat + Agent Interactions (Audit Logs)'[MonthStart] < LastMonth), 'Chat + Agent Interactions (Audit Logs)'[MonthStart])\nVAR AgentUsersLast = CALCULATETABLE(DISTINCT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), 'Chat + Agent Interactions (Audit Logs)'[MonthStart] = LastMonth, NOT(ISBLANK('Chat + Agent Interactions (Audit Logs)'[AgentName])))\nVAR AgentUsersPrev = CALCULATETABLE(DISTINCT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), 'Chat + Agent Interactions (Audit Logs)'[MonthStart] = PrevMonth, NOT(ISBLANK('Chat + Agent Interactions (Audit Logs)'[AgentName])))\nRETURN ROW(\"RetentionPct\", DIVIDE(COUNTROWS(INTERSECT(AgentUsersLast, AgentUsersPrev)), COUNTROWS(AgentUsersPrev), 0))",
+    "description": "Agent user return rate month-over-month. Measures specifically whether AGENT users come back — NOT all M365 users. Fallback: INTERSECT on Chat + Agent Interactions filtered to rows with AgentName."
   },
 
   "m365_intensity": {
@@ -266,12 +267,37 @@
     "description": "Habitual agent users — same measure as agent_frequency (16+ or 20+ active day rate)."
   },
 
+  "concentration_index": {
+    "type": "scalar",
+    "measures": [],
+    "fallback_dax_variants": [
+      "EVALUATE VAR OrgUsers = ADDCOLUMNS(VALUES('Chat + Agent Org Data'[Organization]), \"Users\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]))) VAR MedianUsers = MEDIANX(OrgUsers, [Users]) RETURN ROW(\"v\", DIVIDE(COUNTROWS(FILTER(OrgUsers, [Users] >= MedianUsers)), COUNTROWS(OrgUsers), 0))",
+      "EVALUATE VAR OrgUsers = ADDCOLUMNS(VALUES('Chat + Agent Org Data'[Organization]), \"Users\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]))) VAR MedianUsers = MEDIANX(OrgUsers, [Users]) RETURN ROW(\"v\", DIVIDE(COUNTROWS(FILTER(OrgUsers, [Users] > MedianUsers)), COUNTROWS(OrgUsers), 0))"
+    ],
+    "transform": "toPct",
+    "description": "Concentration index — % of orgs with usage above the median. Measures whether AI is spreading or concentrated in a few orgs."
+  },
+
+  "agent_habitual_rate": {
+    "type": "scalar",
+    "measures": [],
+    "fallback_dax_variants": [
+      "EVALUATE ROW(\"v\", DIVIDE(COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[AgentActiveDays] >= 6)), COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[AgentActiveDays] > 0)), 0))",
+      "EVALUATE VAR LastMonth = MAXX('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart]) RETURN ROW(\"v\", DIVIDE(COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart] = LastMonth && 'ActiveDaysSummary'[AgentActiveDays] >= 6)), COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[MonthStart] = LastMonth && 'ActiveDaysSummary'[AgentActiveDays] > 0)), 0))"
+    ],
+    "transform": "toPct",
+    "description": "Agent habitual rate — % of agent user-months with 6+ active days from ActiveDaysSummary."
+  },
+
   "org_penetration_pct": {
     "type": "scalar",
     "measures": [],
-    "fallback_dax": "EVALUATE ROW(\"v\", DIVIDE(COUNTROWS(FILTER(SUMMARIZECOLUMNS('Chat + Agent Org Data'[Organization], \"HasLicensed\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), 'Copilot Licensed'[Has license] = \"Yes\"), \"HasAgent\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), NOT(ISBLANK('Chat + Agent Interactions (Audit Logs)'[AgentId])))), [HasLicensed] > 0 && [HasAgent] > 0), DISTINCTCOUNT('Chat + Agent Org Data'[Organization])))",
+    "fallback_dax_variants": [
+      "EVALUATE VAR OrgTable = ADDCOLUMNS(VALUES('Chat + Agent Org Data'[Organization]), \"HasLicensed\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), 'Chat + Agent Interactions (Audit Logs)'[License Status] = \"M365 Copilot Licensed\"), \"HasAgent\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), NOT(ISBLANK('Chat + Agent Interactions (Audit Logs)'[AgentName])))) RETURN ROW(\"v\", DIVIDE(COUNTROWS(FILTER(OrgTable, [HasLicensed] > 0 && [HasAgent] > 0)), COUNTROWS(VALUES('Chat + Agent Org Data'[Organization])), 0))",
+      "EVALUATE VAR OrgTable = ADDCOLUMNS(VALUES('Chat + Agent Org Data'[Organization]), \"HasLicensed\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), 'Chat + Agent Interactions (Audit Logs)'[LicenseStatus] = \"Licensed\"), \"HasAgent\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), NOT(ISBLANK('Chat + Agent Interactions (Audit Logs)'[AgentName])))) RETURN ROW(\"v\", DIVIDE(COUNTROWS(FILTER(OrgTable, [HasLicensed] > 0 && [HasAgent] > 0)), COUNTROWS(VALUES('Chat + Agent Org Data'[Organization])), 0))"
+    ],
     "transform": "toPct",
-    "description": "Org penetration — % of orgs with BOTH licensed Copilot users AND agent users present."
+    "description": "Org penetration — % of orgs with BOTH regular licensed Copilot users AND agent users. Uses [License Status] from audit logs."
   },
 
   "embedded_user_rate": {
@@ -352,6 +378,38 @@
     "formula": "round(band_16_plus / (band_1_5 + band_6_10 + band_11_15 + band_16_plus) * 100, 1)",
     "depends_on": ["band_1_5", "band_6_10", "band_11_15", "band_16_plus"],
     "description": "Percentage of users in the 16+ active day band."
+  },
+
+  "licensed_band_1_5_pct": {
+    "type": "scalar",
+    "measures": ["[Licensed Users 1-5 Active Day Rate Last Month]"],
+    "transform": "toPct",
+    "fallback_dax": "EVALUATE ROW(\"v\", DIVIDE(COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[LicenseStatus] = \"M365 Copilot Licensed\" && 'ActiveDaysSummary'[ChatActiveDays] >= 1 && 'ActiveDaysSummary'[ChatActiveDays] <= 5)), COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[LicenseStatus] = \"M365 Copilot Licensed\" && 'ActiveDaysSummary'[ChatActiveDays] >= 1)), 0))",
+    "description": "Licensed M365 Copilot: % of users with 1-5 active days last month."
+  },
+
+  "licensed_band_6_10_pct": {
+    "type": "scalar",
+    "measures": ["[Licensed Users 6-10 Active Day Rate Last Month]"],
+    "transform": "toPct",
+    "fallback_dax": "EVALUATE ROW(\"v\", DIVIDE(COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[LicenseStatus] = \"M365 Copilot Licensed\" && 'ActiveDaysSummary'[ChatActiveDays] >= 6 && 'ActiveDaysSummary'[ChatActiveDays] <= 10)), COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[LicenseStatus] = \"M365 Copilot Licensed\" && 'ActiveDaysSummary'[ChatActiveDays] >= 1)), 0))",
+    "description": "Licensed M365 Copilot: % of users with 6-10 active days last month."
+  },
+
+  "licensed_band_11_15_pct": {
+    "type": "scalar",
+    "measures": ["[Licensed Users 11-15 Active Day Rate Last Month]"],
+    "transform": "toPct",
+    "fallback_dax": "EVALUATE ROW(\"v\", DIVIDE(COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[LicenseStatus] = \"M365 Copilot Licensed\" && 'ActiveDaysSummary'[ChatActiveDays] >= 11 && 'ActiveDaysSummary'[ChatActiveDays] <= 15)), COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[LicenseStatus] = \"M365 Copilot Licensed\" && 'ActiveDaysSummary'[ChatActiveDays] >= 1)), 0))",
+    "description": "Licensed M365 Copilot: % of users with 11-15 active days last month."
+  },
+
+  "licensed_band_16_plus_pct": {
+    "type": "scalar",
+    "measures": ["[Licensed Users 16+ Active Day Rate Last Month]"],
+    "transform": "toPct",
+    "fallback_dax": "EVALUATE ROW(\"v\", DIVIDE(COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[LicenseStatus] = \"M365 Copilot Licensed\" && 'ActiveDaysSummary'[ChatActiveDays] >= 16)), COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[LicenseStatus] = \"M365 Copilot Licensed\" && 'ActiveDaysSummary'[ChatActiveDays] >= 1)), 0))",
+    "description": "Licensed M365 Copilot: % of users with 16+ active days last month."
   },
 
   "chat_band_1_5_pct": {
@@ -454,14 +512,16 @@
 
   "agent_table": {
     "type": "tabular",
-    "dax": "EVALUATE\nTOPN(15,\n  SUMMARIZECOLUMNS(\n    'Chat + Agent Interactions (Audit Logs)'[AgentName],\n    \"Sessions\", COUNTROWS('Chat + Agent Interactions (Audit Logs)'),\n    \"Users\", DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId])\n  ),\n  [Sessions], DESC\n)\nORDER BY [Sessions] DESC",
+    "dax": "EVALUATE\nTOPN(15,\n  SUMMARIZECOLUMNS(\n    'Chat + Agent Interactions (Audit Logs)'[AgentName],\n    'Agents 365'[Agent Type Combined],\n    \"Sessions\", COUNTROWS('Chat + Agent Interactions (Audit Logs)'),\n    \"Users\", DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId])\n  ),\n  [Sessions], DESC\n)\nORDER BY [Sessions] DESC",
+    "dax_fallback": "EVALUATE\nTOPN(15,\n  SUMMARIZECOLUMNS(\n    'Chat + Agent Interactions (Audit Logs)'[AgentName],\n    \"Sessions\", COUNTROWS('Chat + Agent Interactions (Audit Logs)'),\n    \"Users\", DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId])\n  ),\n  [Sessions], DESC\n)\nORDER BY [Sessions] DESC",
     "columns": {
       "AgentName": "name",
+      "Agent Type Combined": "agent type from Agents 365",
       "Sessions": "sessions",
       "Users": "distinct users interacting with this agent"
     },
-    "post_process": "Filter out blank AgentName rows. Map to {name, type: 'Store Agent (1P/3P)', users: Users, sessions, sessions_per_user: round(sessions/users, 1)}.",
-    "description": "Top 15 agents by session count from audit logs, with distinct user counts."
+    "post_process": "Filter out blank AgentName rows. Map to {name, type: Agent Type Combined or 'Unknown', users: Users, sessions, sessions_per_user: round(sessions/users, 1)}.",
+    "description": "Top 15 agents by session count from audit logs, joined to Agents 365 for Agent Type Combined."
   },
 
   "top_agent_names": {
@@ -597,5 +657,21 @@
     },
     "post_process": "Map to object keyed by normalised app name: {interactions, pct: round(interactions/total*100, 1), users}. Try Copilot Actions table first, fallback to AppHost from Chat + Agent Interactions.",
     "description": "Copilot usage breakdown by M365 application surface. Source: Copilot Actions[CopilotApp] or Chat + Agent Interactions[AppHost]."
+  },
+
+  "weekly_trend": {
+    "type": "tabular",
+    "dax_variants": [
+      "EVALUATE SUMMARIZECOLUMNS('Chat + Agent Interactions (Audit Logs)'[WeekStart], \"Licensed\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), 'Chat + Agent Interactions (Audit Logs)'[License Status] = \"M365 Copilot Licensed\"), \"Unlicensed\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), 'Chat + Agent Interactions (Audit Logs)'[License Status] = \"Unlicensed\"), \"AgentUsers\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), NOT(ISBLANK('Chat + Agent Interactions (Audit Logs)'[AgentName])))) ORDER BY 'Chat + Agent Interactions (Audit Logs)'[WeekStart] ASC",
+      "EVALUATE SUMMARIZECOLUMNS('Chat + Agent Interactions (Audit Logs)'[WeekStart], \"Licensed\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), 'Chat + Agent Interactions (Audit Logs)'[LicenseStatus] = \"Licensed\"), \"Unlicensed\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), 'Chat + Agent Interactions (Audit Logs)'[LicenseStatus] = \"Unlicensed\"), \"AgentUsers\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), NOT(ISBLANK('Chat + Agent Interactions (Audit Logs)'[AgentName])))) ORDER BY 'Chat + Agent Interactions (Audit Logs)'[WeekStart] ASC",
+      "EVALUATE SUMMARIZECOLUMNS('ActiveDaysSummary'[WeekStart], \"Licensed\", CALCULATE(DISTINCTCOUNT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[LicenseStatus] = \"M365 Copilot Licensed\"), \"Unlicensed\", CALCULATE(DISTINCTCOUNT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[LicenseStatus] = \"Unlicensed\"), \"AgentUsers\", 0) ORDER BY 'ActiveDaysSummary'[WeekStart] ASC"
+    ],
+    "columns": {
+      "WeekStart": "week start date (ISO)",
+      "Licensed": "distinct licensed users that week",
+      "Unlicensed": "distinct unlicensed users that week",
+      "AgentUsers": "distinct users who interacted with agents that week"
+    },
+    "description": "Weekly user activity trend broken down by license tier and agent usage. Primary source: Chat + Agent Interactions (Audit Logs)[WeekStart] with [License Status] column."
   }
 }
