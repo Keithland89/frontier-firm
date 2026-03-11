@@ -864,33 +864,51 @@ async function main() {
     }
   }
 
-  // retention_cohorts: compute from monthly_data + retained/churned users
+  // retention_cohorts + retention_per_month: real per-month-pair INTERSECT from ActiveDaysSummary
   const s = data._supplementary_metrics || {};
-  if (data.retained_users && data.churned_users && s.monthly_data) {
-    const months = Object.keys(s.monthly_data);
-    if (months.length >= 2) {
-      const cohorts = {};
-      for (let i = 1; i < months.length; i++) {
-        const prev = months[i - 1];
-        const curr = months[i];
-        const prevUsers = s.monthly_data[prev].users;
-        const currUsers = s.monthly_data[curr].users;
-        const isLast = (i === months.length - 1);
-        const retPct = typeof data.m365_retention === 'number' ? data.m365_retention / 100 : null;
-        // If no retention data, skip estimation for non-last months — don't fabricate numbers
-        const retained = isLast ? data.retained_users : (retPct !== null ? Math.round(prevUsers * retPct) : null);
-        const churned = isLast ? data.churned_users : (retained !== null ? prevUsers - retained : null);
-        const newUsers = currUsers - retained;
-        cohorts[prev + '_to_' + curr] = {
-          prev: prevUsers,
-          retained,
-          new: Math.max(0, newUsers),
-          churned,
-          retention_pct: prevUsers > 0 ? Math.round(retained / prevUsers * 1000) / 10 : 0
-        };
-      }
+  // Get distinct months from ActiveDaysSummary
+  let adsMonths = [];
+  try {
+    const monthResult = await runDax("EVALUATE DISTINCT('ActiveDaysSummary'[MonthStart]) ORDER BY 'ActiveDaysSummary'[MonthStart] ASC");
+    adsMonths = (monthResult._rows || []).map(r => r.MonthStart || Object.values(r)[0]).filter(Boolean);
+  } catch(e) { /* no months */ }
+
+  if (adsMonths.length >= 2) {
+    const cohorts = {};
+    const retPerMonth = [];
+    const parseMonth = d => {
+      const m = (d || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if (m) { const dt = new Date(Number(m[3]), Number(m[2])-1, Number(m[1])); return dt.toLocaleDateString('en-GB', {month:'short', year:'numeric'}); }
+      return d.substring(0, 8);
+    };
+    for (let i = 0; i < adsMonths.length - 1; i++) {
+      const prevMonth = adsMonths[i];
+      const currMonth = adsMonths[i + 1];
+      try {
+        const r = await runDax(
+          "EVALUATE VAR UsersPrev = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = DATE(" +
+          prevMonth.replace(/(\d{1,2})\/(\d{1,2})\/(\d{4}).*/, '$3,$2,$1') +
+          ")) VAR UsersCurr = CALCULATETABLE(DISTINCT('ActiveDaysSummary'[Audit_UserId]), 'ActiveDaysSummary'[MonthStart] = DATE(" +
+          currMonth.replace(/(\d{1,2})\/(\d{1,2})\/(\d{4}).*/, '$3,$2,$1') +
+          ")) RETURN ROW(\"Prev\", COUNTROWS(UsersPrev), \"Retained\", COUNTROWS(INTERSECT(UsersPrev, UsersCurr)), \"Curr\", COUNTROWS(UsersCurr))"
+        );
+        const row = (r._rows || [])[0];
+        if (row) {
+          const prev = Number(row.Prev) || 0;
+          const retained = Number(row.Retained) || 0;
+          const pct = prev > 0 ? Math.round(retained / prev * 1000) / 10 : 0;
+          const fromLabel = parseMonth(prevMonth).toLowerCase().replace(' ', '_');
+          const toLabel = parseMonth(currMonth).toLowerCase().replace(' ', '_');
+          cohorts[fromLabel + '_to_' + toLabel] = { prev, retained, churned: prev - retained, new: 0, retention_pct: pct };
+          retPerMonth.push(pct);
+        }
+      } catch(e) { /* skip this pair */ }
+    }
+    if (retPerMonth.length > 0) {
       s.retention_cohorts = cohorts;
-      console.log('  retention_cohorts: ' + Object.keys(cohorts).length + ' transitions');
+      s.retention_per_month = retPerMonth;
+      console.log('  retention_cohorts: ' + retPerMonth.length + ' transitions (INTERSECT)');
+      console.log('  retention_per_month:', retPerMonth.join('%, ') + '%');
     }
   }
 
