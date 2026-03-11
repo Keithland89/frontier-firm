@@ -2031,7 +2031,8 @@ document.querySelectorAll('.metric-card[data-metric-id]').forEach(card => {
   const bg={P1:'rgba(34,100,229,',P2:'rgba(123,47,242,',P3:'rgba(16,185,129,'};
   const labels={P1:'Pattern 1 · Human with Assistant',P2:'Pattern 2 · Human-Agent Teams',P3:'Pattern 3 · Agent-Operated'};
   var counts={P1:0,P2:0,P3:0};
-  _opd.orgs.forEach(function(o){counts[o.pattern]++;});
+  var patternMap={'Foundation':'P1','Expansion':'P2','Frontier':'P3','P1':'P1','P2':'P2','P3':'P3'};
+  _opd.orgs.forEach(function(o){if(!o.isOverall){var k=patternMap[o.pattern]||'P1';counts[k]++;}});
 
   /* Proportion bar */
   ['P1','P2','P3'].forEach(function(p){
@@ -2047,31 +2048,36 @@ document.querySelectorAll('.metric-card[data-metric-id]').forEach(card => {
   var sorted=_opd.orgs.slice().sort(function(a,b){return (b.composite||0)-(a.composite||0);});
 
   /* Composite score bars */
-  sorted.forEach(function(org){
-    var pat=org.pattern;
+  sorted.forEach(function(org,idx){
+    var pat=patternMap[org.pattern]||'P1';
     var score=org.composite||0;
     var barPct=Math.max(2,score);
+    var isOv=org.isOverall;
     var row=document.createElement('div');
-    row.style.cssText='display:grid;grid-template-columns:80px 1fr 35px;gap:.5rem;align-items:center;padding:.3rem 0';
+    row.style.cssText='display:grid;grid-template-columns:80px 1fr 35px;gap:.5rem;align-items:center;padding:'+(isOv?'.5rem 0':'.3rem 0')+(isOv?';border-bottom:2px solid rgba(255,255,255,.1);margin-bottom:.4rem;padding-bottom:.6rem':'');
 
     /* Mini breakdown tooltip */
     var tooltip=org.label+' — Composite: '+score+'/100';
     if(org.scores){tooltip+=' (Reach:'+org.scores.reach+' Habit:'+org.scores.habit+' Skill:'+org.scores.skill+')';}
-    tooltip+=' — '+org.users.toLocaleString()+' users, '+org.agentPct+'% agent adoption';
+    tooltip+=' — '+(org.users||0).toLocaleString()+' users, '+(org.agentPct||0)+'% agent adoption';
 
     /* Stacked bar showing Reach/Habit/Skill contribution */
     var r=org.scores?org.scores.reach:0,h=org.scores?org.scores.habit:0,s=org.scores?org.scores.skill:0;
     var total=Math.max(r+h+s,1);
 
-    row.innerHTML='<div style="font-size:.62rem;font-weight:700;color:rgba(255,255,255,.75);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+tooltip+'">'+org.label+'</div>'+
-      '<div style="height:24px;background:rgba(255,255,255,.03);border-radius:4px;position:relative;overflow:hidden;display:flex" title="'+tooltip+'">'+
-        '<div style="width:'+Math.round(r/total*barPct)+'%;height:100%;background:rgba(16,185,129,.4)"></div>'+
-        '<div style="width:'+Math.round(h/total*barPct)+'%;height:100%;background:rgba(245,158,11,.4)"></div>'+
-        '<div style="width:'+Math.round(s/total*barPct)+'%;height:100%;background:rgba(14,165,233,.4)"></div>'+
+    var labelStyle=isOv?'font-size:.7rem;font-weight:900;color:#fff':'font-size:.62rem;font-weight:700;color:rgba(255,255,255,.75)';
+    var barH=isOv?'30px':'24px';
+    var scoreStyle=isOv?'font-size:.72rem;font-weight:900;color:#fff':'font-size:.6rem;font-weight:800;color:'+colors[pat];
+
+    row.innerHTML='<div style="'+labelStyle+';text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+tooltip+'">'+org.label+'</div>'+
+      '<div style="height:'+barH+';background:rgba(255,255,255,.03);border-radius:4px;position:relative;overflow:hidden;display:flex'+(isOv?';border:1px solid rgba(255,255,255,.1)':'')+'" title="'+tooltip+'">'+
+        '<div style="width:'+Math.round(r/total*barPct)+'%;height:100%;background:rgba(16,185,129,'+(isOv?'.6':'.4')+')"></div>'+
+        '<div style="width:'+Math.round(h/total*barPct)+'%;height:100%;background:rgba(245,158,11,'+(isOv?'.6':'.4')+')"></div>'+
+        '<div style="width:'+Math.round(s/total*barPct)+'%;height:100%;background:rgba(14,165,233,'+(isOv?'.6':'.4')+')"></div>'+
         '<div style="position:absolute;left:30%;top:0;bottom:0;width:1px;background:rgba(255,255,255,.08)" title="Pattern 2 threshold"></div>'+
         '<div style="position:absolute;left:60%;top:0;bottom:0;width:1px;background:rgba(255,255,255,.08)" title="Pattern 3 threshold"></div>'+
       '</div>'+
-      '<div style="font-size:.6rem;font-weight:800;color:'+colors[pat]+';text-align:right">'+score+'</div>';
+      '<div style="'+scoreStyle+';text-align:right">'+score+'</div>';
 
     barsContainer.appendChild(row);
   });

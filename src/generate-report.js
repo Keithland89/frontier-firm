@@ -1570,6 +1570,23 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       });
     });
   }
+  // Add org-wide overall bar at the top
+  if (orgPatternList.length > 0) {
+    var overallReach = Math.min(100, Math.round(_n('m365_enablement', 0)));
+    var overallHabit = Math.min(100, Math.round((_n('embedded_user_rate', 0) / 40) * 100)); // 40% = frontier threshold
+    var overallSkill = Math.min(100, Math.round((_n('agent_adoption', 0) / 30) * 100)); // 30% = frontier threshold
+    var overallComposite = Math.round(overallReach * 0.33 + overallHabit * 0.33 + overallSkill * 0.34);
+    var overallPattern = overallComposite >= 60 ? 'Frontier' : overallComposite >= 30 ? 'Expansion' : 'Foundation';
+    orgPatternList.unshift({
+      label: 'OVERALL',
+      pattern: overallPattern,
+      agentPct: _n('agent_adoption', 0),
+      users: n('total_active_users', 0),
+      composite: overallComposite,
+      scores: { reach: overallReach, habit: overallHabit, skill: overallSkill },
+      isOverall: true
+    });
+  }
   var orgPatternJSON = JSON.stringify({
     labels: ['Pattern 1 · Assistant', 'Pattern 2 · Agent Teams', 'Pattern 3 · Agent-Operated'],
     keys: ['Foundation', 'Expansion', 'Frontier'],
