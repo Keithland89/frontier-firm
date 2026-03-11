@@ -576,7 +576,7 @@ function generateTemplateInsights(data, signalTiers, pattern) {
     ORG_INTENSITY_COMPARISON: 'The top organisations aren\u2019t just using AI more \u2014 they\u2019re using it differently. Study what the leaders do that the laggards don\u2019t, and make that the playbook.',
     ORG_AGENT_INSIGHT: '<strong>Agent adoption tells the real story of cultural readiness.</strong> Leading orgs show ' + (safe(data.agent_adoption, 0) * 2) + '% adoption \u2014 double the tenant average of ' + safe(data.agent_adoption, 0) + '%. These aren\u2019t just early adopters; they\u2019re the organisations where the culture has shifted enough to trust AI as a colleague, not just a tool. They\u2019re your proof of concept for the rest of the business.',
     GEO_PATTERN_INSIGHT: '<strong>Top organisations lead on both licensed intensity and agent adoption</strong>, while the bottom quartile averages below the engagement threshold. Targeted enablement for lagging organisations would lift the overall habit score.',
-    AGENT_HABIT_SIGNAL: 'Agent users average <strong>' + (data.agent_frequency || 'low') + ' sessions/user/week</strong> — below the habitual threshold. The gap between interest and routine is the conversion opportunity. See the <a href="#proficiency" style="color:#7B2FF2;text-decoration:underline">Skill Set</a> section for agent portfolio depth analysis.',
+    AGENT_HABIT_SIGNAL: 'Agent users average <strong>' + (data.agent_frequency || 'low') + ' sessions/user/week</strong> — below the habitual threshold. The gap between interest and routine is the conversion opportunity. See the <a href="#proficiency" style="color:#8477FB;text-decoration:underline">Skill Set</a> section for agent portfolio depth analysis.',
     ORG_DEPTH_INSIGHT: '<strong>Leading organisations show strongest agent adoption and session depth</strong> — suggesting pockets where human-agent collaboration is genuinely embedded. By contrast, large orgs with high M365 Copilot volume but narrow agent breadth indicate Pattern 1 dominance.',
     VALUE_LICENSING_INSIGHT: '<strong>' + fmt(data.chat_users) + ' unlicensed Chat users</strong> represent proven organic demand. Markets with the highest unlicensed-to-licensed ratios are high-potential licensing targets where demand is already strong.',
   };
@@ -619,7 +619,7 @@ function computeMetricTiers(data, schema) {
 // BUILD MINI_THRESHOLDS — data-driven for metric card bars
 // ============================================================
 function buildMiniThresholds(data, schema) {
-  const colors = ['#2264E5','#2264E5','#7B2FF2','#10B981'];
+  const colors = ['#007fff','#007fff','#8477FB','#0D9488'];
   const metrics = {
     M365_ENABLEMENT: { field: 'm365_enablement', pct: true },
     LICENSE_COVERAGE: { field: 'license_coverage', pct: true },
@@ -909,8 +909,8 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     var m365Growth = firstWeek.m365 > 0 ? Math.round((lastWeek.m365 - firstWeek.m365) / firstWeek.m365 * 100) : 0;
     var agentGrowth = firstWeek.agents > 0 ? Math.round((lastWeek.agents - firstWeek.agents) / firstWeek.agents * 100) : 0;
     weeklyTrendTakeaway = '<div style="display:flex;flex-direction:column;gap:.4rem;font-size:.72rem;color:var(--text-2);line-height:1.5">';
-    weeklyTrendTakeaway += '<div><strong style="color:#2264E5">M365 Copilot ' + (m365Growth >= 0 ? '+' : '') + m365Growth + '% growth</strong> over the period — from ' + fmt(firstWeek.m365) + ' to ' + fmt(lastWeek.m365) + ' weekly active users</div>';
-    weeklyTrendTakeaway += '<div><strong style="color:#F59E0B">Agent users ' + (agentGrowth >= 0 ? '+' : '') + agentGrowth + '% growth</strong> — from ' + fmt(firstWeek.agents) + ' to ' + fmt(lastWeek.agents) + ' per week</div>';
+    weeklyTrendTakeaway += '<div><strong style="color:#007fff">M365 Copilot ' + (m365Growth >= 0 ? '+' : '') + m365Growth + '% growth</strong> over the period — from ' + fmt(firstWeek.m365) + ' to ' + fmt(lastWeek.m365) + ' weekly active users</div>';
+    weeklyTrendTakeaway += '<div><strong style="color:#D270F0">Agent users ' + (agentGrowth >= 0 ? '+' : '') + agentGrowth + '% growth</strong> — from ' + fmt(firstWeek.agents) + ' to ' + fmt(lastWeek.agents) + ' per week</div>';
     if (lastWeek.m365 < peakWeek.m365 * 0.9) weeklyTrendTakeaway += '<div><strong style="color:#EF4444">Last week dipped ' + Math.round((1 - lastWeek.m365 / peakWeek.m365) * 100) + '% from peak</strong> — seasonal or a signal to watch?</div>';
     weeklyTrendTakeaway += '</div>';
   }
@@ -919,8 +919,8 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   // Retention
   html = html.replace(/\{\{TAKEAWAY_RETENTION\}\}/g,
     '<div style="display:flex;flex-direction:column;gap:.4rem;font-size:.72rem;color:var(--text-2);line-height:1.5">' +
-    '<div><strong style="color:#2264E5">Licensed retention: ' + n('m365_retention') + '%</strong> — ' + (n('m365_retention') >= 85 ? 'world-class, above the P3 threshold' : n('m365_retention') >= 75 ? 'healthy but below the P3 bar of 93%' : 'below the P2 threshold — a risk signal') + '</div>' +
-    '<div><strong style="color:#7B2FF2">Agent retention: ' + n('agent_retention') + '%</strong> — ' + (n('agent_retention') >= 80 ? 'agents that people come back to are agents worth keeping' : 'agents need higher stickiness before scaling') + '</div>' +
+    '<div><strong style="color:#007fff">Licensed retention: ' + n('m365_retention') + '%</strong> — ' + (n('m365_retention') >= 85 ? 'world-class, above the P3 threshold' : n('m365_retention') >= 75 ? 'healthy but below the P3 bar of 93%' : 'below the P2 threshold — a risk signal') + '</div>' +
+    '<div><strong style="color:#8477FB">Agent retention: ' + n('agent_retention') + '%</strong> — ' + (n('agent_retention') >= 80 ? 'agents that people come back to are agents worth keeping' : 'agents need higher stickiness before scaling') + '</div>' +
     '<div><strong style="color:var(--amber)">The gap</strong>: ' + Math.abs(Math.round(n('m365_retention') - n('chat_retention'))) + 'pp between licensed and unlicensed retention — licensing drives stickiness</div>' +
     '</div>');
 
@@ -928,7 +928,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{TAKEAWAY_APP_SURFACE\}\}/g,
     '<div style="display:flex;flex-direction:column;gap:.4rem;font-size:.72rem;color:var(--text-2);line-height:1.5">' +
     '<div><strong style="color:var(--text)">' + n('m365_breadth') + ' apps/user</strong> out of 27 available — ' + (n('m365_breadth') >= 5 ? 'good breadth, approaching P3 levels' : n('m365_breadth') >= 3 ? 'moderate breadth — room to expand beyond the core 2-3 apps' : 'narrow adoption concentrated in BizChat — the biggest proficiency gap') + '</div>' +
-    '<div><strong style="color:#7B2FF2">' + n('agent_breadth') + ' agents/user</strong> — ' + (n('agent_breadth') >= 2 ? 'users engaging with multiple agents signals genuine delegation' : 'most users interact with just one agent — discovery is the bottleneck') + '</div>' +
+    '<div><strong style="color:#8477FB">' + n('agent_breadth') + ' agents/user</strong> — ' + (n('agent_breadth') >= 2 ? 'users engaging with multiple agents signals genuine delegation' : 'most users interact with just one agent — discovery is the bottleneck') + '</div>' +
     '</div>');
 
   // Agent leaderboard
@@ -936,7 +936,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   var topAgentSess = (data.top_agent_sessions || [])[0] || 0;
   html = html.replace(/\{\{TAKEAWAY_AGENT_LEADERBOARD\}\}/g,
     '<div style="display:flex;flex-direction:column;gap:.4rem;font-size:.72rem;color:var(--text-2);line-height:1.5">' +
-    '<div><strong style="color:#10B981">' + topAgent + '</strong> leads with ' + topAgentSess + ' sessions/user — study what makes it stick</div>' +
+    '<div><strong style="color:#0D9488">' + topAgent + '</strong> leads with ' + topAgentSess + ' sessions/user — study what makes it stick</div>' +
     '<div><strong style="color:var(--text)">' + n('multi_user_agents') + ' multi-user agents</strong> out of ' + n('total_agents') + ' total — only ' + (n('total_agents') > 0 ? Math.round(n('multi_user_agents') / n('total_agents') * 100) : 0) + '% break through from creator to team use</div>' +
     '<div><strong style="color:var(--amber)">The pattern</strong>: purpose-built agents achieve higher stickiness than generic first-party ones</div>' +
     '</div>');
@@ -955,17 +955,17 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       // Big conversion opportunity — lots in 6-10 band
       keyInsightTitle = fmt(band610Count) + ' users are one nudge from habitual';
       keyInsightBody = '<strong>' + copilotConversion + '%</strong> of licensed M365 Copilot users sit in the <strong>6\u201310 active day</strong> band — engaged but not yet embedded. Converting 30% of this cohort would nearly double the habitual user base.';
-      keyInsightColor = '#10B981';
+      keyInsightColor = '#0D9488';
     } else if (copilotHabitual >= 25) {
       // Strong habit — celebrate it
       keyInsightTitle = copilotHabitual + '% are deeply habitual';
       keyInsightBody = '<strong>' + copilotHabitual + '%</strong> of licensed users hit <strong>11+ active days/month</strong> — this is a strong habit signal. Focus shifts from building habit to expanding breadth and agent adoption.';
-      keyInsightColor = '#10B981';
+      keyInsightColor = '#0D9488';
     } else {
       // Default — shallow engagement
       keyInsightTitle = lb15 + '% are in the shallow zone';
       keyInsightBody = '<strong>' + lb15 + '%</strong> of licensed M365 Copilot users engage <strong>1\u20135 active days/month</strong> — they are trying it but not building routine. The ' + fmt(band610Count) + ' users in the <strong>6\u201310 day</strong> bracket represent the fastest path to conversion.';
-      keyInsightColor = '#F59E0B';
+      keyInsightColor = '#D270F0';
     }
 
     var insightHtml = '';
@@ -980,21 +980,21 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     insightHtml += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">';
     // Copilot bands
     insightHtml += '<div style="background:rgba(34,100,229,.04);border:1px solid rgba(34,100,229,.1);border-radius:8px;padding:.75rem">';
-    insightHtml += '<div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2264E5;margin-bottom:.5rem">M365 Copilot Bands</div>';
+    insightHtml += '<div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#007fff;margin-bottom:.5rem">M365 Copilot Bands</div>';
     insightHtml += '<div style="display:flex;flex-direction:column;gap:.3rem;font-size:.6rem;color:rgba(255,255,255,.5)">';
     insightHtml += '<div style="display:flex;justify-content:space-between"><span>1\u20135 days</span><span style="font-weight:700;color:rgba(255,255,255,.7)">' + lb15 + '%</span></div>';
-    insightHtml += '<div style="display:flex;justify-content:space-between"><span>6\u201310 days</span><span style="font-weight:700;color:#F59E0B">' + lb610 + '%</span></div>';
-    insightHtml += '<div style="display:flex;justify-content:space-between"><span>11\u201315 days</span><span style="font-weight:700;color:#10B981">' + lb1115 + '%</span></div>';
-    insightHtml += '<div style="display:flex;justify-content:space-between"><span>16+ days</span><span style="font-weight:700;color:#10B981">' + lb16p + '%</span></div>';
+    insightHtml += '<div style="display:flex;justify-content:space-between"><span>6\u201310 days</span><span style="font-weight:700;color:#D270F0">' + lb610 + '%</span></div>';
+    insightHtml += '<div style="display:flex;justify-content:space-between"><span>11\u201315 days</span><span style="font-weight:700;color:#0D9488">' + lb1115 + '%</span></div>';
+    insightHtml += '<div style="display:flex;justify-content:space-between"><span>16+ days</span><span style="font-weight:700;color:#0D9488">' + lb16p + '%</span></div>';
     insightHtml += '</div></div>';
     // Agent bands
     insightHtml += '<div style="background:rgba(123,47,242,.04);border:1px solid rgba(123,47,242,.1);border-radius:8px;padding:.75rem">';
-    insightHtml += '<div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#7B2FF2;margin-bottom:.5rem">Agent Bands</div>';
+    insightHtml += '<div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8477FB;margin-bottom:.5rem">Agent Bands</div>';
     insightHtml += '<div style="display:flex;flex-direction:column;gap:.3rem;font-size:.6rem;color:rgba(255,255,255,.5)">';
     insightHtml += '<div style="display:flex;justify-content:space-between"><span>1\u20135 days</span><span style="font-weight:700;color:rgba(255,255,255,.7)">' + ab15 + '%</span></div>';
-    insightHtml += '<div style="display:flex;justify-content:space-between"><span>6\u201310 days</span><span style="font-weight:700;color:#F59E0B">' + ab610 + '%</span></div>';
-    insightHtml += '<div style="display:flex;justify-content:space-between"><span>11\u201315 days</span><span style="font-weight:700;color:#10B981">' + ab1115 + '%</span></div>';
-    insightHtml += '<div style="display:flex;justify-content:space-between"><span>16+ days</span><span style="font-weight:700;color:#10B981">' + ab16p + '%</span></div>';
+    insightHtml += '<div style="display:flex;justify-content:space-between"><span>6\u201310 days</span><span style="font-weight:700;color:#D270F0">' + ab610 + '%</span></div>';
+    insightHtml += '<div style="display:flex;justify-content:space-between"><span>11\u201315 days</span><span style="font-weight:700;color:#0D9488">' + ab1115 + '%</span></div>';
+    insightHtml += '<div style="display:flex;justify-content:space-between"><span>16+ days</span><span style="font-weight:700;color:#0D9488">' + ab16p + '%</span></div>';
     insightHtml += '</div></div>';
     insightHtml += '</div>';
 
@@ -1097,6 +1097,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{CULTURE_RED_FLAG\}\}/g, cultureRedFlag);
   html = html.replace(/\{\{CULTURE_ACTION\}\}/g, cultureAction);
   html = html.replace(/\{\{CULTURE_HEADLINE\}\}/g, cultureHeadline);
+  html = html.replace(/\{\{NARRATIVE_HEADLINE\}\}/g, cultureHeadline);
   html = html.replace(/\{\{P1_STATUS\}\}/g, patternProfile.p1);
   html = html.replace(/\{\{P2_STATUS\}\}/g, patternProfile.p2);
   html = html.replace(/\{\{P3_STATUS\}\}/g, patternProfile.p3);
@@ -1110,11 +1111,12 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   const tierClass = t => t === 'P3' ? 'tier-4' : t === 'P2' ? 'tier-3' : 'tier-2';
   const tierCssClass = t => 'tier-' + (t === 'P3' ? 'fr' : t === 'P2' ? 'e' : 'f');
   const tierColor = t => t === 'P3' ? 'var(--tier-4)' : t === 'P2' ? 'var(--tier-3)' : 'var(--tier-2)';
-  const tierHexColor = t => t === 'P3' ? '#10B981' : t === 'P2' ? '#F59E0B' : '#94A3B8';
-  html = html.replace(/\{\{REACH_TIER\}\}/g, signalTiers.reach);
-  html = html.replace(/\{\{HABIT_TIER\}\}/g, signalTiers.habit);
-  html = html.replace(/\{\{SKILL_TIER\}\}/g, signalTiers.skill);
-  html = html.replace(/\{\{VALUE_TIER\}\}/g, signalTiers.value);
+  const tierHexColor = t => t === 'P3' ? '#0D9488' : t === 'P2' ? '#D270F0' : '#94A3B8';
+  const tierLabel = t => t === 'P3' ? 'Pattern 3' : t === 'P2' ? 'Pattern 2' : 'Pattern 1';
+  html = html.replace(/\{\{REACH_TIER\}\}/g, tierLabel(signalTiers.reach));
+  html = html.replace(/\{\{HABIT_TIER\}\}/g, tierLabel(signalTiers.habit));
+  html = html.replace(/\{\{SKILL_TIER\}\}/g, tierLabel(signalTiers.skill));
+  html = html.replace(/\{\{VALUE_TIER\}\}/g, tierLabel(signalTiers.value));
   html = html.replace(/\{\{REACH_TIER_CLASS\}\}/g, tierCssClass(signalTiers.reach));
   html = html.replace(/\{\{HABIT_TIER_CLASS\}\}/g, tierCssClass(signalTiers.habit));
   html = html.replace(/\{\{SKILL_TIER_CLASS\}\}/g, tierCssClass(signalTiers.skill));
@@ -1124,7 +1126,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{VALUE_TIER_CLASS\}\}/g, tierCssClass(signalTiers.value));
 
   // Phase wrapper for "★ Dominant Pattern" badge
-  const currentPatternBadge = '<div style="position:relative"><div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);z-index:10;background:#7B2FF2;color:#fff;padding:.2rem .7rem;border-radius:100px;font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;box-shadow:0 2px 8px rgba(123,47,242,.4)">★ Dominant Pattern</div>';
+  const currentPatternBadge = '<div style="position:relative"><div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);z-index:10;background:#8477FB;color:#fff;padding:.2rem .7rem;border-radius:100px;font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;box-shadow:0 2px 8px rgba(123,47,242,.4)">★ Dominant Pattern</div>';
   const dimWrapper = '<div style="opacity:.5">';
   const normalWrapper = '<div style="opacity:.7">';
   // Phase 1 wrapper: if pattern=1 show badge, otherwise dim
@@ -1138,7 +1140,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     pattern.number === 3 ? currentPatternBadge : dimWrapper);
   // Phase 2 card highlight (box-shadow) — only if pattern=2
   html = html.replace(/\{\{PHASE_2_HIGHLIGHT\}\}/g,
-    pattern.number === 2 ? ';box-shadow:0 0 0 2px #7B2FF2,0 8px 32px rgba(123,47,242,.25)' : '');
+    pattern.number === 2 ? ';box-shadow:0 0 0 2px #8477FB,0 8px 32px rgba(123,47,242,.25)' : '');
 
   // Agent-specific metrics
   html = html.replace(/\{\{AGENT_HABITUAL_RATE\}\}/g, String(data.agent_habitual_rate || data.m365_frequency || 0));
@@ -1212,7 +1214,8 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   // ── V4 Scorecard — individual metric flip cards ──
   if (schemaV4) {
     var v4TierBg = function(t) { return t === 'P3' ? 'rgba(16,185,129,.15)' : t === 'P2' ? 'rgba(245,158,11,.15)' : 'rgba(100,116,139,.12)'; };
-    var v4TierColor = function(t) { return t === 'P3' ? '#10B981' : t === 'P2' ? '#F59E0B' : '#94A3B8'; };
+    var v4TierColor = function(t) { return t === 'P3' ? '#0D9488' : t === 'P2' ? '#D270F0' : '#94A3B8'; };
+    var v4TierLabel = function(t) { return t === 'P3' ? 'Pattern 3' : t === 'P2' ? 'Pattern 2' : 'Pattern 1'; };
     var pillarKeys = Object.keys(schemaV4.pillars);
     var laneKeys = Object.keys(schemaV4.lanes);
 
@@ -1260,8 +1263,8 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       gridHtml += '<div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:.75rem">';
       gridHtml += '<div style="height:200px"><canvas id="' + chartId + '"></canvas></div>';
       gridHtml += '<div style="display:flex;justify-content:center;gap:1rem;margin-top:.4rem">';
-      gridHtml += '<span style="display:flex;align-items:center;gap:.3rem;font-size:.48rem;color:rgba(255,255,255,.4)"><span style="width:8px;height:3px;background:#2264E5;display:inline-block;border-radius:1px"></span>M365 Copilot</span>';
-      gridHtml += '<span style="display:flex;align-items:center;gap:.3rem;font-size:.48rem;color:rgba(255,255,255,.4)"><span style="width:8px;height:3px;background:#7B2FF2;display:inline-block;border-radius:1px"></span>Agents</span>';
+      gridHtml += '<span style="display:flex;align-items:center;gap:.3rem;font-size:.48rem;color:rgba(255,255,255,.4)"><span style="width:8px;height:3px;background:#007fff;display:inline-block;border-radius:1px"></span>M365 Copilot</span>';
+      gridHtml += '<span style="display:flex;align-items:center;gap:.3rem;font-size:.48rem;color:rgba(255,255,255,.4)"><span style="width:8px;height:3px;background:#8477FB;display:inline-block;border-radius:1px"></span>Agents</span>';
       gridHtml += '</div></div>';
 
       // Metric cards grid (2 columns for cards)
@@ -1292,7 +1295,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
         gridHtml += '<div class="flip-card-front" style="' + frontBg + ';padding:' + (isHero ? '.85rem 1rem' : '.65rem') + '">';
         gridHtml += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem">';
         gridHtml += '<span style="font-size:.42rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:' + laneColor + '">' + lane.label + (isHero ? ' \u00b7 HERO' : '') + '</span>';
-        gridHtml += '<span style="font-size:.38rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:' + v4TierBg(mTier) + ';color:' + v4TierColor(mTier) + ';border:1px solid ' + v4TierColor(mTier) + '33">' + mTier + '</span>';
+        gridHtml += '<span style="font-size:.38rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:' + v4TierBg(mTier) + ';color:' + v4TierColor(mTier) + ';border:1px solid ' + v4TierColor(mTier) + '33">' + v4TierLabel(mTier) + '</span>';
         gridHtml += '</div>';
         gridHtml += '<div style="font-size:' + heroSize + ';font-weight:900;color:' + (isHero ? '#fff' : v4TierColor(mTier)) + ';line-height:1;margin-bottom:.25rem">' + display + (mDef.unit === '%' ? '%' : '') + '</div>';
         gridHtml += '<div style="font-size:' + (isHero ? '.55rem' : '.48rem') + ';font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:rgba(255,255,255,' + (isHero ? '.6' : '.4') + ')">' + mDef.name + '</div>';
@@ -1308,10 +1311,10 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
           var valNorm = typeof val === 'number' ? Math.min(val / barMax * 100, 100) : 0;
           gridHtml += '<div style="position:relative;height:5px;background:rgba(255,255,255,.06);border-radius:3px;margin-bottom:.2rem">';
           gridHtml += '<div style="height:100%;width:' + valNorm + '%;background:' + v4TierColor(mTier) + ';border-radius:3px;opacity:.6"></div>';
-          gridHtml += '<div style="position:absolute;left:' + (mDef.bands[0] / barMax * 100) + '%;top:-1px;bottom:-1px;width:1px;background:#F59E0B"></div>';
-          gridHtml += '<div style="position:absolute;left:' + (mDef.bands[1] / barMax * 100) + '%;top:-1px;bottom:-1px;width:1px;background:#10B981"></div>';
+          gridHtml += '<div style="position:absolute;left:' + (mDef.bands[0] / barMax * 100) + '%;top:-1px;bottom:-1px;width:1px;background:#D270F0"></div>';
+          gridHtml += '<div style="position:absolute;left:' + (mDef.bands[1] / barMax * 100) + '%;top:-1px;bottom:-1px;width:1px;background:#0D9488"></div>';
           gridHtml += '</div>';
-          gridHtml += '<div style="display:flex;justify-content:space-between;font-size:.38rem;color:rgba(255,255,255,.3)"><span style="color:#F59E0B">' + mDef.bands[0] + u + '</span><span style="color:#10B981">' + mDef.bands[1] + u + '</span></div>';
+          gridHtml += '<div style="display:flex;justify-content:space-between;font-size:.38rem;color:rgba(255,255,255,.3)"><span style="color:#D270F0">' + mDef.bands[0] + u + '</span><span style="color:#0D9488">' + mDef.bands[1] + u + '</span></div>';
         }
         gridHtml += '</div>';
 
@@ -1358,6 +1361,60 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     html = html.replace(/\{\{V2_SCORECARD_HTML\}\}/g, '');
     html = html.replace(/\{\{V4_SCORECARD_HTML\}\}/g, '');
     html = html.replace(/\{\{PILLAR_RADAR_JSON\}\}/g, '{}');
+  }
+
+  // ── METRIC GLOSSARY ──────────────────────────────────────
+  if (schemaV4 && schemaV4.metrics) {
+    const laneColors = { copilot: '#007fff', agents: '#8477FB' };
+    const laneLabels = { copilot: 'M365 Copilot', agents: 'Agents' };
+    const pillarColors = { reach: '#0D9488', consistency: '#D270F0', skill: '#0891B2' };
+    const pillarLabels = { reach: 'Reach', consistency: 'Habit', skill: 'Skill' };
+    const pillarIcons = {
+      reach: '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>',
+      consistency: '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+      skill: '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>'
+    };
+
+    // Group by pillar for visual organisation
+    const byPillar = {};
+    for (const [id, m] of Object.entries(schemaV4.metrics)) {
+      if (!byPillar[m.pillar]) byPillar[m.pillar] = [];
+      byPillar[m.pillar].push({ id, ...m });
+    }
+
+    let glossaryHtml = '<div class="glossary-grid">';
+    const pillarOrder = ['reach', 'consistency', 'skill'];
+    for (const pillar of pillarOrder) {
+      const metrics = byPillar[pillar] || [];
+      for (const m of metrics) {
+        const laneColor = laneColors[m.lane] || '#007fff';
+        const laneBg = m.lane === 'agents' ? 'rgba(123,47,242,.1)' : 'rgba(34,100,229,.1)';
+        const laneBorder = m.lane === 'agents' ? 'rgba(123,47,242,.2)' : 'rgba(34,100,229,.2)';
+        const val = data[m.data_field];
+        const valDisplay = typeof val === 'number' ? (m.unit === '%' ? val + '%' : val.toFixed(1)) : '—';
+        const tier = v4Tiers[m.id] || 'P1';
+        const heroTag = m.hero ? '<span class="glossary-hero-badge">Hero</span>' : '';
+
+        glossaryHtml += `<div class="glossary-card" style="--gc-color:${laneColor}">`;
+        glossaryHtml += `<div class="glossary-card-head">`;
+        glossaryHtml += `<div class="glossary-card-name">${m.name}${heroTag}</div>`;
+        glossaryHtml += `<span class="glossary-card-lane" style="background:${laneBg};color:${laneColor};border:1px solid ${laneBorder}">${laneLabels[m.lane]}</span>`;
+        glossaryHtml += `</div>`;
+        glossaryHtml += `<div class="glossary-card-desc">${m.description}</div>`;
+        glossaryHtml += `<div class="glossary-card-meta">`;
+        glossaryHtml += `<span class="glossary-card-pillar" style="color:${pillarColors[m.pillar]}">${pillarIcons[m.pillar] || ''} ${pillarLabels[m.pillar]}</span>`;
+        glossaryHtml += `<span class="glossary-band glossary-band-p1">P1 &lt; ${m.bands[0]}${m.unit === '%' ? '%' : ''}</span>`;
+        glossaryHtml += `<span class="glossary-band glossary-band-p2">P2 ${m.bands[0]}–${m.bands[1]}${m.unit === '%' ? '%' : ''}</span>`;
+        glossaryHtml += `<span class="glossary-band glossary-band-p3">P3 &gt; ${m.bands[1]}${m.unit === '%' ? '%' : ''}</span>`;
+        glossaryHtml += `</div>`;
+        glossaryHtml += `<div class="glossary-card-value">${valDisplay}</div>`;
+        glossaryHtml += `</div>`;
+      }
+    }
+    glossaryHtml += '</div>';
+    html = html.replace(/\{\{METRIC_GLOSSARY_HTML\}\}/g, glossaryHtml);
+  } else {
+    html = html.replace(/\{\{METRIC_GLOSSARY_HTML\}\}/g, '');
   }
 
   // Org scatter chart data — transform to Chart.js bubble dataset format
@@ -1480,7 +1537,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       const ratioStr = typeof ratioVal === 'number' && ratioVal < 900 ? ratioVal.toFixed(1) + 'x' : '—';
       const total = licCount + unlicCount;
       const unlicPct = total > 0 ? Math.round(unlicCount / total * 100) : 0;
-      tbl += '<tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:.5rem .4rem;color:#fff;font-weight:600">' + org.org + '</td><td style="text-align:right;padding:.5rem .4rem;color:#0EA5E9">' + fmtN(unlicCount) + '</td><td style="text-align:right;padding:.5rem .4rem;color:#2264E5">' + fmtN(licCount) + '</td><td style="text-align:right;padding:.5rem .4rem;color:#F59E0B;font-weight:700">' + unlicPct + '%</td><td style="text-align:right;padding:.5rem .4rem;color:rgba(255,255,255,.7)">' + (org.unlicensed_median_sessions_weekly || '—') + '</td></tr>';
+      tbl += '<tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:.5rem .4rem;color:#fff;font-weight:600">' + org.org + '</td><td style="text-align:right;padding:.5rem .4rem;color:#0891B2">' + fmtN(unlicCount) + '</td><td style="text-align:right;padding:.5rem .4rem;color:#007fff">' + fmtN(licCount) + '</td><td style="text-align:right;padding:.5rem .4rem;color:#D270F0;font-weight:700">' + unlicPct + '%</td><td style="text-align:right;padding:.5rem .4rem;color:rgba(255,255,255,.7)">' + (org.unlicensed_median_sessions_weekly || '—') + '</td></tr>';
     });
     tbl += '</tbody></table></div>';
     html = html.replace(/\{\{LICENSE_PRIORITY_TABLE\}\}/g, tbl);
@@ -1761,7 +1818,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       var retPct = retPerMonth && retPerMonth[ri-1] ? retPerMonth[ri-1] : (typeof data.m365_retention === 'number' ? data.m365_retention : 0);
       retLabels.push(label);
       retValues.push(Math.round(retPct * 10) / 10);
-      retColors.push(retPct >= 85 ? "'#10B981'" : retPct >= 70 ? "'#F59E0B'" : "'#EF4444'");
+      retColors.push(retPct >= 85 ? "'#0D9488'" : retPct >= 70 ? "'#D270F0'" : "'#EF4444'");
     }
     html = html.replace(/\{\{RETENTION_MONTH_LABELS\}\}/g, JSON.stringify(retLabels));
     html = html.replace(/\{\{RETENTION_MONTH_VALUES\}\}/g, JSON.stringify(retValues));

@@ -5,12 +5,12 @@
   "lanes": {
     "copilot": {
       "label": "M365 Copilot",
-      "color": "#2264E5",
+      "color": "#007fff",
       "description": "Individual AI productivity — is Copilot becoming part of how people work?"
     },
     "agents": {
       "label": "Agents",
-      "color": "#7B2FF2",
+      "color": "#8477FB",
       "description": "Team-level AI — are agents embedded in real workflows?"
     }
   },
@@ -19,17 +19,17 @@
     "reach": {
       "label": "Reach",
       "question": "Is it spreading?",
-      "color_accent": "#10B981"
+      "color_accent": "#0D9488"
     },
     "consistency": {
       "label": "Habit",
       "question": "Is it sticking?",
-      "color_accent": "#F59E0B"
+      "color_accent": "#D270F0"
     },
     "skill": {
       "label": "Skill",
       "question": "Are they building proficiency?",
-      "color_accent": "#0EA5E9"
+      "color_accent": "#0891B2"
     }
   },
 
