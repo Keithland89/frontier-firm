@@ -1053,6 +1053,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
     <h2 class="section-title reveal reveal-d1">{{TITLE_REACH}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_REACH}}</p>
     <div class="headline-stat reveal reveal-d2" style="--signal-accent:#0EA5E9">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;background:rgba(14,165,233,.12);color:#0EA5E9;border:1px solid rgba(14,165,233,.2)">Hero Metric · License Activation</span></div>
       <div class="headline-stat-value">{{M365_ENABLEMENT}}%</div>
       <div class="headline-stat-label">of {{TOTAL_LICENSED_SEATS}} licensed seats are active across {{ORG_COUNT}} organisations</div>
       <span class="headline-stat-tier {{REACH_TIER_CLASS}}" style="background:rgba(14,165,233,.1);color:#0EA5E9;border:1px solid rgba(14,165,233,.15)">{{REACH_TIER}}</span>
@@ -1156,9 +1157,10 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
     <div class="signal-question reveal">{{M365_RETENTION_INT}}% come back month-over-month. But how deep does the habit run?</div>
     <h2 class="section-title reveal reveal-d1">{{TITLE_HABIT}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_HABIT}}</p>
-    <div class="headline-stat reveal reveal-d2">
-      <div class="headline-stat-value">{{M365_RETENTION}}%</div>
-      <div class="headline-stat-label">month-over-month retention — but only {{M365_FREQUENCY}}% are habitual (11+ active days)</div>
+    <div class="headline-stat reveal reveal-d2" style="--signal-accent:#F59E0B">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;background:rgba(245,158,11,.12);color:#F59E0B;border:1px solid rgba(245,158,11,.2)">Hero Metric · Habitual User Rate</span></div>
+      <div class="headline-stat-value">{{EMBEDDED_USER_RATE}}%</div>
+      <div class="headline-stat-label">of licensed users are habitual (6+ active days over 3 months) — MoM retention is {{M365_RETENTION}}%</div>
       <span class="headline-stat-tier {{HABIT_TIER_CLASS}}" style="background:rgba(245,158,11,.1);color:#F59E0B;border:1px solid rgba(245,158,11,.15)">{{HABIT_TIER}}</span>
     </div>
     <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#F59E0B">Dive deeper into Habit <span class="dd-arrow">+</span></button>
@@ -1239,9 +1241,10 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
     <div class="signal-question reveal">{{M365_BREADTH}} apps per user. {{AGENT_ADOPTION}}% agent adoption. Are people building proficiency — or still stuck in basic use?</div>
     <h2 class="section-title reveal reveal-d1">{{TITLE_SKILL}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_SKILL}}</p>
-    <div class="headline-stat reveal reveal-d2">
-      <div class="headline-stat-value">{{M365_BREADTH}}</div>
-      <div class="headline-stat-label">apps per user out of 27 available — with only {{COMPLEX_SESSIONS}}% of sessions involving complex multi-turn work</div>
+    <div class="headline-stat reveal reveal-d2" style="--signal-accent:#0EA5E9">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;background:rgba(14,165,233,.12);color:#0EA5E9;border:1px solid rgba(14,165,233,.2)">Hero Metric · Multi-Turn Rate</span></div>
+      <div class="headline-stat-value">{{COMPLEX_SESSIONS}}%</div>
+      <div class="headline-stat-label">of sessions involve complex multi-turn work — app breadth is {{M365_BREADTH}} out of 27 available surfaces</div>
       <span class="headline-stat-tier {{SKILL_TIER_CLASS}}" style="background:rgba(123,47,242,.1);color:#7B2FF2;border:1px solid rgba(123,47,242,.15)">{{SKILL_TIER}}</span>
     </div>
     <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#7B2FF2">Dive deeper into Skill <span class="dd-arrow">+</span></button>
