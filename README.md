@@ -2,97 +2,143 @@
 
 Generate AI adoption maturity reports from Microsoft 365 Copilot usage data.
 
-The **Frontier Firm Assessment** measures an organisation's AI adoption across four signals — **Reach**, **Habit**, **Skill**, and **Value** — and classifies their maturity into one of three patterns: **Foundation**, **Expansion**, or **Frontier**.
+The **Frontier Firm Assessment** measures an organisation's Microsoft Copilot maturity across **13 metrics**, **3 pillars** (Reach, Habit, Skill), and **2 lanes** (M365 Copilot, Agents) — classifying their maturity into **Pattern 1** (Human with Assistant), **Pattern 2** (Human-Agent Teams), or **Pattern 3** (Human-led, Agent-operated).
 
 ## Quick Start
 
+### Prerequisites
+- The **AI-in-One Dashboard PBIX** with your customer's data loaded
+- **Node.js** >= 18
+- This repo cloned
+
+### 3 Steps
+
+**1. Extract data and generate the report**
 ```bash
-# 1. Clone the repo
-git clone https://github.com/your-org/frontier-firm.git
-cd frontier-firm
+npm run report -- --pbix "Customer Name" --v3
+```
+This connects to your open PBIX, extracts all 65 fields via DAX, scores the 13 metrics, generates AI narrative, and outputs the HTML report.
 
-# 2. Generate the sample report
-node src/generate-report.js --data data/sample_contoso.json --output output/
+**2. Open the report**
+```
+output/customer_name_frontier_firm.html
+```
+Self-contained HTML — opens in any browser, no server needed.
 
-# 3. Open output/contoso_frontier_firm.html in a browser
+**3. (Optional) Apply customer branding**
+```bash
+node src/extract-brand.js --url https://customer-website.com --output data/brand_customer.json
+npm run report -- --data data/customer_name.json --v3 --brand data/brand_customer.json
 ```
 
-## Generate a Customer Report
+### That's it
+One command, one HTML file, under 2 minutes.
 
-### Option A: GitHub Copilot (recommended)
+---
 
-1. Open the customer's AI-in-One Dashboard PBIX in Power BI Desktop
-2. Open this repo in VS Code with GitHub Copilot (Agent mode)
+## Other Ways to Run
+
+### From pre-extracted data (skip PBIX)
+```bash
+node src/generate-report.js --data data/contoso.json --v3
+```
+
+### Without AI narrative
+```bash
+node src/generate-report.js --data data/contoso.json --v3 --no-ai
+```
+
+### With GitHub Copilot (Agent mode)
+1. Open the customer's PBIX in Power BI Desktop
+2. Open this repo in VS Code with GitHub Copilot
 3. Tell Copilot: **"Generate a Frontier Firm report for [Customer Name]"**
 
-Copilot reads `.github/copilot-instructions.md` automatically and orchestrates the full pipeline — extract data via PBI MCP, generate the HTML report, and validate.
-
-### Option B: Claude Code
-
+### With Claude Code
 1. Open the customer's PBIX in Power BI Desktop
 2. `cd frontier-firm && claude`
 3. **"Generate a Frontier Firm report for [Customer]"**
 
-Claude Code reads `CLAUDE.md` automatically. It will guide you through extraction (since PBI MCP requires GHCP) and handle generation + validation.
+## The Framework
 
-### Option C: Manual
+### 3 Pillars
 
-1. Extract data using the prompts in `prompts/01` through `prompts/05`
-2. Save as `data/{customer}.json` (use `data/sample_contoso.json` as reference)
-3. Run: `node src/generate-report.js --data data/{customer}.json --output output/`
-4. Validate: `node src/deep-audit.js --report output/{customer}_frontier_firm.html --data data/{customer}.json`
-5. Export PDF: `node src/export-pdf.js --input output/{customer}_frontier_firm.html`
+| Pillar | Question | What it measures |
+|--------|----------|-----------------|
+| **Reach** | Is AI spreading? | License activation, coverage, org penetration, agent adoption |
+| **Habit** | Is it sticking? | Habitual user rate, MoM retention, agent habitual rate |
+| **Skill** | Are they building proficiency? | App surface breadth, multi-turn rate, agent breadth |
 
-## Prerequisites
+### 3 Patterns
 
-- **Node.js** >= 18
-- **Power BI Desktop** with the AI-in-One Dashboard
-- **Power BI MCP** (for automated extraction via GitHub Copilot)
-- Optional: `ANTHROPIC_API_KEY` for AI-generated narrative insights
+| Pattern | Name | Description |
+|---------|------|-------------|
+| **Pattern 1** | Human with Assistant | Every employee has an AI assistant. Consistent weekly use replaces "try-and-see" spikes. |
+| **Pattern 2** | Human-Agent Teams | Agents join teams as digital colleagues. Repeatable team workflows emerge. |
+| **Pattern 3** | Human-led, Agent-operated | Humans set direction; agents execute business processes end-to-end. |
 
-## The Four Signals
+### 13 Metrics (2 Lanes × 3 Pillars)
 
-| Signal | Question | Key Metrics |
-|--------|----------|-------------|
-| **Reach** | How well is it represented? | License activation, adoption rates, org penetration |
-| **Habit** | Is it sticking? | Habitual usage (11+ days), retention, frequency |
-| **Skill** | Is it going deep? | App breadth, multi-turn sessions, agent health |
-| **Value** | Is it worth it? | Engagement premium, time savings, license ROI |
+| Metric | Lane | Pillar | Unit | P1→P2 | P2→P3 |
+|--------|------|--------|------|-------|-------|
+| License Activation | Copilot | Reach | % | 70 | 90 |
+| License Coverage | Copilot | Reach | % | 40 | 70 |
+| Concentration Index | Copilot | Reach | % | 50 | 80 |
+| Habitual User Rate | Copilot | Habit | % | 20 | 40 |
+| MoM Retention | Copilot | Habit | % | 80 | 93 |
+| App Surface Breadth | Copilot | Skill | apps/user | 4 | 7 |
+| Multi-Turn Rate | Copilot | Skill | % | 45 | 75 |
+| Agent Adoption | Agents | Reach | % | 12 | 30 |
+| Org Penetration | Agents | Reach | % | 30 | 60 |
+| Agent Habitual Rate | Agents | Habit | % | 8 | 20 |
+| Agent MoM Retention | Agents | Habit | % | 55 | 80 |
+| Agent Breadth | Agents | Skill | agents/user | 2 | 5 |
+| Agent Return Rate | Agents | Skill | % | 55 | 85 |
 
-## Three Maturity Patterns
+## Quality Pipeline (7 Gates)
 
-| Pattern | Description |
-|---------|-------------|
-| **Foundation** | Early adoption — licenses activated but usage is light and exploratory |
-| **Expansion** | Growing adoption — regular users emerging, habits forming across surfaces |
-| **Frontier** | Mature adoption — deep, habitual usage with measurable business value |
+| Gate | What happens |
+|------|-------------|
+| **0. Extract** | Map-driven DAX extraction from PBIX (65 fields) |
+| **0.5 Cross-validate** | Re-query PBIX, fail if >5% variance |
+| **1. Schema** | Validate all fields, catch impossible values |
+| **1.5 AI Insights** | Claude API generates narrative interpretation |
+| **2. Generate** | Populate HTML template with data and stories |
+| **3. HTML Check** | Verify no missing placeholders or broken charts |
+| **4. Visual Audit** | Headless browser check that charts render |
 
 ## Repo Structure
 
 ```
 frontier-firm/
-├── CLAUDE.md                     # Instructions for Claude Code
-├── .github/copilot-instructions.md  # Instructions for GitHub Copilot
-├── schema/ff_schema.json         # Metric definitions and scoring bands
-├── template/ff_template.html     # Templatised HTML report
+├── schema/
+│   ├── ff_schema_v4.json          # 13 metrics, bands, scoring rules
+│   └── measure_map.json           # PBIX measure → data field mapping
+├── template/
+│   ├── ff_template_v3.html        # Main report template (dark theme)
+│   └── ff_template_v3_slides.html # Presentation/slide mode
 ├── src/
-│   ├── generate-report.js        # Main generator: JSON → HTML
-│   ├── validate-report.js        # Report validation
-│   ├── deep-audit.js             # Number extraction and verification
-│   └── export-pdf.js             # Playwright PDF export
-├── prompts/                      # Numbered extraction prompts
+│   ├── generate-report.js         # Main generator: JSON → HTML
+│   ├── run-pipeline.js            # Full 7-gate pipeline
+│   ├── extract-brand.js           # Brand extraction from customer website
+│   ├── cross-validate.js          # Gate 0.5: PBIX cross-validation
+│   └── deep-audit.js              # Number extraction and verification
 ├── data/
-│   └── sample_contoso.json       # Anonymised sample data
-├── output/                       # Generated reports (gitignored)
-└── docs/                         # Framework, scoring, and data docs
+│   ├── ff_example_full.json       # Contoso example data (65 fields)
+│   ├── network_rail.json          # Real customer: Network Rail
+│   └── brand_*.json               # Extracted brand files
+├── output/                        # Generated reports
+└── docs/plans/                    # Design documents
 ```
 
-## Documentation
+## Optional: Customer Branding
 
-- [Framework](docs/FRAMEWORK.md) — the Frontier Firm maturity model
-- [Scoring](docs/SCORING.md) — how metrics map to tiers and patterns
-- [Data Dictionary](docs/DATA-DICTIONARY.md) — every field in the data JSON
-- [Customisation](docs/CUSTOMISATION.md) — adding metrics, adjusting bands
+The brand extractor fetches a customer's website and pulls colours, logo, and fonts:
+
+```bash
+node src/extract-brand.js --url https://customer.com --output data/brand_customer.json
+```
+
+Tested with: Barclays, Network Rail, Vodafone, Cappfinity.
 
 ## License
 
