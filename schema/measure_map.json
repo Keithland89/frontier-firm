@@ -266,6 +266,36 @@
     "description": "Habitual agent users — same measure as agent_frequency (16+ or 20+ active day rate)."
   },
 
+  "org_penetration_pct": {
+    "type": "scalar",
+    "measures": [],
+    "fallback_dax": "EVALUATE ROW(\"v\", DIVIDE(COUNTROWS(FILTER(SUMMARIZECOLUMNS('Chat + Agent Org Data'[Organization], \"HasLicensed\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), 'Copilot Licensed'[Has license] = \"Yes\"), \"HasAgent\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]), NOT(ISBLANK('Chat + Agent Interactions (Audit Logs)'[AgentId])))), [HasLicensed] > 0 && [HasAgent] > 0), DISTINCTCOUNT('Chat + Agent Org Data'[Organization])))",
+    "transform": "toPct",
+    "description": "Org penetration — % of orgs with BOTH licensed Copilot users AND agent users present."
+  },
+
+  "embedded_user_rate": {
+    "type": "scalar",
+    "measures": ["[Embedded User Rate]", "[Habitual User Rate (3mo)]"],
+    "fallback_dax": "EVALUATE ROW(\"v\", DIVIDE(COUNTROWS(FILTER(SUMMARIZECOLUMNS('ActiveDaysSummary'[Audit_UserId], \"AvgDays\", AVERAGE('ActiveDaysSummary'[ChatActiveDays]), \"MonthsActive\", COUNTROWS('ActiveDaysSummary')), [AvgDays] >= 6 && [MonthsActive] >= 2)), DISTINCTCOUNT('ActiveDaysSummary'[Audit_UserId])))",
+    "transform": "toPct",
+    "description": "Embedded user rate — % of users averaging 6+ active days/month AND present in at least 2 of the last 3 months."
+  },
+
+  "licensed_avg_days": {
+    "type": "scalar",
+    "measures": ["[Avg Active Days (Licensed)]"],
+    "fallback_dax": "EVALUATE ROW(\"v\", AVERAGEX(VALUES('ActiveDaysSummary'[Audit_UserId]), CALCULATE(AVERAGE('ActiveDaysSummary'[ChatActiveDays]), 'ActiveDaysSummary'[LicenseStatus] = \"Licensed\")))",
+    "description": "Average active days per month for licensed users."
+  },
+
+  "unlicensed_avg_days": {
+    "type": "scalar",
+    "measures": ["[Avg Active Days (Unlicensed)]"],
+    "fallback_dax": "EVALUATE ROW(\"v\", AVERAGEX(VALUES('ActiveDaysSummary'[Audit_UserId]), CALCULATE(AVERAGE('ActiveDaysSummary'[ChatActiveDays]), 'ActiveDaysSummary'[LicenseStatus] = \"Unlicensed\")))",
+    "description": "Average active days per month for unlicensed users."
+  },
+
   "band_1_5": {
     "type": "scalar",
     "measures": ["[1-5 Active Days, Last Month (Chat)]"],

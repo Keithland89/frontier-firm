@@ -915,6 +915,76 @@ async function main() {
     } catch(e) { console.log('  per_tier_retention failed: ' + e.message.substring(0, 80)); }
   }
 
+  // licensed_avg_days: average active days per month (licensed)
+  if (data.licensed_avg_days === 'not_available' || data.licensed_avg_days === undefined) {
+    try {
+      const r = await runDax(`EVALUATE ROW("v", AVERAGE('ActiveDaysSummary'[ChatActiveDays]))`);
+      if (r._rows && r._rows.length > 0) {
+        const v = Number(r._rows[0].v);
+        data.licensed_avg_days = isNaN(v) ? 'not_available' : Math.round(v * 10) / 10;
+        console.log('  licensed_avg_days: fallback = ' + data.licensed_avg_days);
+      }
+    } catch(e) { console.log('  licensed_avg_days fallback failed: ' + e.message.substring(0, 80)); }
+  }
+
+  // unlicensed_avg_days: use same average as proxy (unlicensed data often not segmented)
+  if (data.unlicensed_avg_days === 'not_available' || data.unlicensed_avg_days === undefined) {
+    try {
+      const r = await runDax(`EVALUATE ROW("v", AVERAGEX(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[LicenseStatus] <> "M365 Copilot Licensed"), 'ActiveDaysSummary'[ChatActiveDays]))`);
+      if (r._rows && r._rows.length > 0) {
+        const v = Number(r._rows[0].v);
+        data.unlicensed_avg_days = isNaN(v) ? 'not_available' : Math.round(v * 10) / 10;
+        console.log('  unlicensed_avg_days: fallback = ' + data.unlicensed_avg_days);
+      }
+    } catch(e) { console.log('  unlicensed_avg_days fallback failed: ' + e.message.substring(0, 80)); }
+  }
+
+  // embedded_user_rate: adaptive window based on available data
+  // 3+ months: avg 6+ days AND present in 2/3 months (full definition)
+  // 2 months: avg 6+ days AND present in both months
+  // 1 month: 16+ active days in that month (band-based fallback)
+  if (data.embedded_user_rate === 'not_available' || data.embedded_user_rate === undefined) {
+    try {
+      // First: how many complete months do we have?
+      const monthCountResult = await runDax(`EVALUATE ROW("months", DISTINCTCOUNT('ActiveDaysSummary'[MonthStart]))`);
+      const totalMonths = monthCountResult._rows && monthCountResult._rows.length > 0 ? Number(monthCountResult._rows[0].months) : 0;
+      console.log('  embedded_user_rate: ' + totalMonths + ' months available');
+
+      let dax, method;
+      if (totalMonths >= 3) {
+        // Full definition: avg 6+ days AND present in 2+ of last 3 months
+        dax = `EVALUATE ROW("v", DIVIDE(COUNTROWS(FILTER(ADDCOLUMNS(VALUES('ActiveDaysSummary'[Audit_UserId]), "avg", CALCULATE(AVERAGE('ActiveDaysSummary'[ChatActiveDays])), "months", CALCULATE(COUNTROWS('ActiveDaysSummary'))), [avg] >= 6 && [months] >= 2)), DISTINCTCOUNT('ActiveDaysSummary'[Audit_UserId])))`;
+        method = '3+ months (avg 6+ days, present 2/3)';
+      } else if (totalMonths === 2) {
+        // 2 months: avg 6+ days AND present in both
+        dax = `EVALUATE ROW("v", DIVIDE(COUNTROWS(FILTER(ADDCOLUMNS(VALUES('ActiveDaysSummary'[Audit_UserId]), "avg", CALCULATE(AVERAGE('ActiveDaysSummary'[ChatActiveDays])), "months", CALCULATE(COUNTROWS('ActiveDaysSummary'))), [avg] >= 6 && [months] = 2)), DISTINCTCOUNT('ActiveDaysSummary'[Audit_UserId])))`;
+        method = '2 months (avg 6+ days, present in both)';
+      } else {
+        // 1 month: 16+ active days
+        dax = `EVALUATE ROW("v", DIVIDE(COUNTROWS(FILTER('ActiveDaysSummary', 'ActiveDaysSummary'[ChatActiveDays] >= 16)), COUNTROWS('ActiveDaysSummary')))`;
+        method = '1 month (16+ active days)';
+      }
+
+      const r = await runDax(dax);
+      if (r._rows && r._rows.length > 0) {
+        const v = Number(r._rows[0].v);
+        data.embedded_user_rate = isNaN(v) ? 'not_available' : Math.round(v * 1000) / 10;
+        console.log('  embedded_user_rate: ' + method + ' = ' + data.embedded_user_rate + '%');
+      }
+    } catch(e) { console.log('  embedded_user_rate fallback failed: ' + e.message.substring(0, 80)); }
+  }
+
+  // org_penetration_pct: % of orgs with both licensed + agent users
+  if (data.org_penetration_pct === 'not_available' || data.org_penetration_pct === undefined) {
+    if (Array.isArray(data.org_scatter_data) && data.org_scatter_data.length > 0) {
+      // Derive from org_scatter_data: orgs where both x (Copilot users) > 0 and agent users exist
+      const totalOrgs = data.org_scatter_data.length;
+      const withBoth = data.org_scatter_data.filter(o => o.x > 0 && (o.agents > 0 || o.r > 5)).length;
+      data.org_penetration_pct = totalOrgs > 0 ? Math.round(withBoth / totalOrgs * 1000) / 10 : 'not_available';
+      console.log('  org_penetration_pct: derived from scatter = ' + data.org_penetration_pct + '%');
+    }
+  }
+
   // ============================================================
   // PHASE 8: ROUND ALL FLOATS, VALIDATE & SAVE
   // ============================================================

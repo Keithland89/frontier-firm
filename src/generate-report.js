@@ -528,6 +528,11 @@ function generateTemplateInsights(data, signalTiers, pattern) {
   d.band_1_5_pct = safe(d.band_1_5_pct, 0);
   d.band_6_10 = safe(d.band_6_10, 0);
   d.total_licensed_seats = safe(d.total_licensed_seats, 1);
+  // Auto-default fields that older PBIX templates may not have
+  if (d.org_penetration_pct === undefined) d.org_penetration_pct = 'not_available';
+  if (d.embedded_user_rate === undefined) d.embedded_user_rate = 'not_available';
+  if (d.licensed_avg_days === undefined) d.licensed_avg_days = 'not_available';
+  if (d.unlicensed_avg_days === undefined) d.unlicensed_avg_days = 'not_available';
   data = d;
   const fmt = n => typeof n === 'number' ? n.toLocaleString() : n;
 
