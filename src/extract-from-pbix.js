@@ -1015,22 +1015,22 @@ async function main() {
     } catch(e) { console.log('  embedded_user_rate fallback failed: ' + e.message.substring(0, 80)); }
   }
 
-  // concentration_index: % of orgs with usage above the median
+  // concentration_index: inverse normalised HHI — measures how evenly users spread across orgs
+  // HHI = sum of squared shares; normalised removes the N-dependent floor
+  // Result: 0% = all users in one org, 100% = perfectly even spread
   if (data.concentration_index === 'not_available' || data.concentration_index === undefined) {
-    const ciConfig = measureMap['concentration_index'];
-    const ciQueries = ciConfig && ciConfig.fallback_dax_variants ? ciConfig.fallback_dax_variants : [];
-    for (const q of ciQueries) {
-      try {
-        const ciResult = await runDax(q);
-        if (ciResult._rows && ciResult._rows.length > 0) {
-          const v = Number(ciResult._rows[0].v || ciResult._rows[0][Object.keys(ciResult._rows[0])[0]]);
-          if (!isNaN(v)) {
-            data.concentration_index = Math.round(v * 1000) / 10;
-            console.log('  concentration_index: DAX = ' + data.concentration_index + '%');
-            break;
-          }
-        }
-      } catch(e) { /* try next variant */ }
+    if (Array.isArray(data.org_scatter_data) && data.org_scatter_data.length >= 2) {
+      const orgs = data.org_scatter_data.filter(o => (o.x || 0) > 0);
+      const totalUsers = orgs.reduce((sum, o) => sum + (o.x || 0), 0);
+      const N = orgs.length;
+      if (totalUsers > 0 && N >= 2) {
+        const hhi = orgs.reduce((sum, o) => { const s = (o.x || 0) / totalUsers; return sum + s * s; }, 0);
+        const normHHI = (hhi - 1 / N) / (1 - 1 / N);
+        data.concentration_index = Math.round((1 - normHHI) * 1000) / 10;
+        const top3 = orgs.slice().sort((a, b) => (b.x || 0) - (a.x || 0)).slice(0, 3);
+        const top3Pct = Math.round(top3.reduce((s, o) => s + (o.x || 0), 0) / totalUsers * 100);
+        console.log('  concentration_index: usage spread = ' + data.concentration_index + '% (HHI=' + hhi.toFixed(3) + ', top 3 = ' + top3Pct + '% of users)');
+      }
     }
   }
 
@@ -1078,6 +1078,28 @@ async function main() {
       const withBoth = data.org_scatter_data.filter(o => o.x > 0 && o.y > 0).length;
       data.org_penetration_pct = totalOrgs > 0 ? Math.round(withBoth / totalOrgs * 1000) / 10 : 'not_available';
       console.log('  org_penetration_pct: derived from scatter (fallback) = ' + data.org_penetration_pct + '%');
+    }
+  }
+
+  // Generic fallback: try fallback_dax for any scalar field STILL not_available after all specific handlers
+  for (const [field, config] of Object.entries(measureMap)) {
+    if (field.startsWith('_') || field.startsWith('$')) continue;
+    if (config.type !== 'scalar') continue;
+    if (data[field] !== 'not_available' && data[field] !== undefined) continue;
+    const daxList = config.fallback_dax ? [config.fallback_dax] : (config.fallback_dax_variants || []);
+    if (daxList.length === 0) continue;
+    for (const q of daxList) {
+      try {
+        const fbResult = await runDax(q);
+        if (fbResult._rows && fbResult._rows.length > 0) {
+          const v = Number(fbResult._rows[0].v || fbResult._rows[0][Object.keys(fbResult._rows[0])[0]]);
+          if (!isNaN(v)) {
+            data[field] = config.transform === 'toPct' ? Math.round(v * 1000) / 10 : Math.round(v * 10) / 10;
+            console.log('  ' + field + ': generic fallback DAX = ' + data[field] + (config.transform === 'toPct' ? '%' : ''));
+            break;
+          }
+        }
+      } catch(e) { /* try next variant */ }
     }
   }
 

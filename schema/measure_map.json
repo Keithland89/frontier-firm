@@ -270,12 +270,8 @@
   "concentration_index": {
     "type": "scalar",
     "measures": [],
-    "fallback_dax_variants": [
-      "EVALUATE VAR OrgUsers = ADDCOLUMNS(VALUES('Chat + Agent Org Data'[Organization]), \"Users\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]))) VAR MedianUsers = MEDIANX(OrgUsers, [Users]) RETURN ROW(\"v\", DIVIDE(COUNTROWS(FILTER(OrgUsers, [Users] >= MedianUsers)), COUNTROWS(OrgUsers), 0))",
-      "EVALUATE VAR OrgUsers = ADDCOLUMNS(VALUES('Chat + Agent Org Data'[Organization]), \"Users\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Audit_UserId]))) VAR MedianUsers = MEDIANX(OrgUsers, [Users]) RETURN ROW(\"v\", DIVIDE(COUNTROWS(FILTER(OrgUsers, [Users] > MedianUsers)), COUNTROWS(OrgUsers), 0))"
-    ],
-    "transform": "toPct",
-    "description": "Concentration index — % of orgs with usage above the median. Measures whether AI is spreading or concentrated in a few orgs."
+    "derive_from": "org_scatter_data",
+    "description": "Concentration index (inverse top-3) — % of total users outside the top 3 orgs. High = evenly spread, low = concentrated in a few departments."
   },
 
   "agent_habitual_rate": {

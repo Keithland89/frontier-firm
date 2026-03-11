@@ -1762,8 +1762,16 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   if (Array.isArray(weeklyTrend) && weeklyTrend.length > 0) {
     const wtData = {
       labels: weeklyTrend.map(function(w) {
-        var d = new Date(w.week);
-        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+        // Parse DD/MM/YYYY HH:MM:SS or ISO formats
+        var raw = w.week || '';
+        var d;
+        var ukMatch = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+        if (ukMatch) {
+          d = new Date(Number(ukMatch[3]), Number(ukMatch[2]) - 1, Number(ukMatch[1]));
+        } else {
+          d = new Date(raw);
+        }
+        return isNaN(d.getTime()) ? raw.substring(0, 6) : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
       }),
       // Raw counts (for tooltip)
       m365_raw: weeklyTrend.map(function(w) { return w.m365 || 0; }),
