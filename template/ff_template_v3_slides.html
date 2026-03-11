@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{CUSTOMER_NAME}} — Frontier Firm Assessment</title>
+<style>
+  :root {
+    --bg: #0A0A1A;
+    --bg-card: rgba(255,255,255,.04);
+    --bg-card-hover: rgba(255,255,255,.07);
+    --brand: #2264E5;
+    --purple: #7B2FF2;
+    --teal: #0EA5E9;
+    --green: #10B981;
+    --amber: #F59E0B;
+    --text: #FFFFFF;
+    --text-muted: rgba(255,255,255,.55);
+    --text-dim: rgba(255,255,255,.35);
+    --border: rgba(255,255,255,.08);
+    --radius: 12px;
+    --slide-max: 1100px;
+    --font: 'Segoe UI Variable', 'Inter', -apple-system, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Slide Layout ── */
+  .slide {
+    height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide-inner {
+    max-width: var(--slide-max);
+    width: 100%;
+  }
+
+  .slide-label {
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--brand);
+    margin-bottom: .75rem;
+  }
+
+  .slide-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    letter-spacing: -.02em;
+  }
+
+  .slide-subtitle {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    max-width: 700px;
+    line-height: 1.6;
+  }
+
+  /* ── Cards ── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+  }
+
+  .kpi-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    text-align: center;
+    transition: background .2s;
+  }
+
+  .kpi-box:hover { background: var(--bg-card-hover); }
+
+  .kpi-value {
+    font-size: 2.4rem;
+    font-weight: 900;
+    letter-spacing: -.02em;
+    line-height: 1.1;
+  }
+
+  .kpi-label {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: .5rem;
+  }
+
+  .card-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .card-grid-2x2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    transition: background .2s;
+  }
+
+  .card:hover { background: var(--bg-card-hover); }
+
+  .card-tag {
+    font-size: .6rem;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: .5rem;
+  }
+
+  .card-tag.good { color: var(--green); }
+  .card-tag.gap  { color: var(--amber); }
+  .card-tag.opp  { color: var(--teal); }
+
+  .card-body {
+    font-size: .95rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+
+  .card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: .5rem;
+  }
+
+  /* ── Signal Slides ── */
+  .signal-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .headline-stat {
+    font-size: 5rem;
+    font-weight: 900;
+    letter-spacing: -.04em;
+    line-height: 1;
+  }
+
+  .headline-unit {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .signal-insight {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    border-left: 3px solid var(--border);
+    padding-left: 1.25rem;
+  }
+
+  /* ── Pillar Row ── */
+  .pillar-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+  }
+
+  .pillar-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .pillar-name {
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: .5rem;
+  }
+
+  .pillar-tier {
+    font-size: 1.6rem;
+    font-weight: 900;
+  }
+
+  /* ── Scorecard Inject ── */
+  .scorecard-wrapper {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  /* ── Org Map ── */
+  #slideProportionBar {
+    display: flex;
+    height: 48px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  #slideOrgBars {
+    max-height: 55vh;
+    overflow-y: auto;
+  }
+
+  /* ── License Slide ── */
+  .license-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .license-stat {
+    font-size: 3.2rem;
+    font-weight: 900;
+    letter-spacing: -.03em;
+  }
+
+  .license-label {
+    font-size: .85rem;
+    color: var(--text-muted);
+    margin-top: .25rem;
+  }
+
+  /* ── Recommendations ── */
+  .rec-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: background .2s;
+  }
+
+  .rec-card:hover { background: var(--bg-card-hover); }
+
+  .rec-num {
+    font-size: .65rem;
+    font-weight: 800;
+    color: var(--brand);
+    letter-spacing: .1em;
+    margin-bottom: .4rem;
+  }
+
+  .rec-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: .4rem;
+  }
+
+  .rec-desc {
+    font-size: .85rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ── Navigation ── */
+  .nav-dots {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: .5rem;
+    z-index: 100;
+    background: rgba(10,10,26,.85);
+    backdrop-filter: blur(12px);
+    padding: .5rem .75rem;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .nav-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    cursor: pointer;
+    transition: all .25s;
+    border: none;
+    padding: 0;
+  }
+
+  .nav-dot:hover { background: var(--text-muted); }
+  .nav-dot.active { background: var(--brand); transform: scale(1.3); }
+
+  .slide-counter {
+    position: fixed;
+    bottom: 2rem;
+    right: 2.5rem;
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: .06em;
+    z-index: 100;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Title Slide Branding ── */
+  .title-slide .slide-inner { text-align: center; }
+  .title-slide .slide-title { font-size: 3.4rem; }
+
+  .brand-mark {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--brand);
+    margin-bottom: 2rem;
+  }
+
+  /* ── Editable highlight ── */
+  [contenteditable="true"]:focus {
+    outline: 2px solid var(--brand);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  [contenteditable="true"]:hover {
+    outline: 1px dashed rgba(255,255,255,.15);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* ── Color Utilities ── */
+  .c-brand  { color: var(--brand); }
+  .c-purple { color: var(--purple); }
+  .c-teal   { color: var(--teal); }
+  .c-green  { color: var(--green); }
+  .c-amber  { color: var(--amber); }
+
+  /* ── Print ── */
+  @media print {
+    html { scroll-snap-type: none; overflow: visible; }
+    body { background: #000; }
+
+    .slide {
+      height: auto;
+      min-height: 100vh;
+      scroll-snap-align: none;
+      page-break-after: always;
+      break-after: page;
+      padding: 2rem;
+    }
+
+    .slide:last-child { page-break-after: avoid; }
+
+    .nav-dots, .slide-counter { display: none !important; }
+
+    [contenteditable="true"]:hover,
+    [contenteditable="true"]:focus { outline: none; }
+
+    #slideOrgBars { max-height: none; overflow: visible; }
+  }
+
+  @media (max-width: 768px) {
+    .slide { padding: 2rem 1.5rem; }
+    .slide-title { font-size: 2rem; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .card-grid-3 { grid-template-columns: 1fr; }
+    .card-grid-2x2 { grid-template-columns: 1fr; }
+    .signal-layout { grid-template-columns: 1fr; gap: 2rem; }
+    .headline-stat { font-size: 3.5rem; }
+    .pillar-row { grid-template-columns: 1fr; }
+    .license-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════
+     SLIDE 1 — TITLE
+     ════════════════════════════════════════════════════ -->
+<section class="slide title-slide" data-slide="0">
+  <div class="slide-inner">
+    <div class="brand-mark" contenteditable="true">Frontier Firm</div>
+    <h1 class="slide-title editable" contenteditable="true">{{CUSTOMER_NAME}}</h1>
+    <p class="slide-subtitle" style="margin: 0 auto 0 auto;" contenteditable="true">Copilot Maturity Assessment</p>
+
+    <div class="kpi-row">
+      <div class="kpi-box">
+        <div class="kpi-value c-brand editable" contenteditable="true">{{TOTAL_ACTIVE_USERS}}</div>
+        <div class="kpi-label">Active Users</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-value c-purple editable" contenteditable="true">{{LICENSED_USERS}}</div>
+        <div class="kpi-label">Licensed</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-value c-teal editable" contenteditable="true">{{CHAT_USERS}}</div>
+        <div class="kpi-label">Chat Users</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-value c-green editable" contenteditable="true">{{AGENT_USERS}}</div>
+        <div class="kpi-label">Agent Users</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     SLIDE 2 — EXECUTIVE SUMMARY
+     ════════════════════════════════════════════════════ -->
+<section class="slide" data-slide="1">
+  <div class="slide-inner">
+    <div class="slide-label">Executive Summary</div>
+    <h2 class="slide-title editable" contenteditable="true">Key Findings</h2>
+
+    <div class="card-grid-3">
+      <div class="card">
+        <div class="card-tag good">What is working</div>
+        <div class="card-body editable" contenteditable="true">{{EXEC_SUMMARY_GOOD}}</div>
+      </div>
+      <div class="card">
+        <div class="card-tag gap">Where the gap is</div>
+        <div class="card-body editable" contenteditable="true">{{EXEC_SUMMARY_GAP}}</div>
+      </div>
+      <div class="card">
+        <div class="card-tag opp">Opportunity</div>
+        <div class="card-body editable" contenteditable="true">{{EXEC_SUMMARY_OPP}}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     SLIDE 3 — MATURITY
+     ════════════════════════════════════════════════════ -->
+<section class="slide" data-slide="2">
+  <div class="slide-inner">
+    <div class="slide-label">Maturity</div>
+    <h2 class="slide-title editable" contenteditable="true">{{TITLE_MATURITY}}</h2>
+    <p class="slide-subtitle editable" contenteditable="true">{{SUBTITLE_MATURITY}}</p>
+
+    <div class="pillar-row">
+      <div class="pillar-card">
+        <div class="pillar-name">Reach</div>
+        <div class="pillar-tier c-brand editable" contenteditable="true">{{REACH_TIER}}</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-name">Habit</div>
+        <div class="pillar-tier c-purple editable" contenteditable="true">{{HABIT_TIER}}</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-name">Skill</div>
+        <div class="pillar-tier c-teal editable" contenteditable="true">{{SKILL_TIER}}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     SLIDE 4 — THE STORY
+     ════════════════════════════════════════════════════ -->
+<section class="slide" data-slide="3">
+  <div class="slide-inner">
+    <div class="slide-label">The Story</div>
+    <h2 class="slide-title editable" contenteditable="true">{{CULTURE_HEADLINE}}</h2>
+    <div style="max-width:800px;margin:1.5rem auto 0">
+      <p class="editable" contenteditable="true" style="font-size:.95rem;color:var(--text-muted);line-height:1.8;margin-bottom:1.5rem">{{CULTURE_DESC}}</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem">
+        <div style="text-align:center;padding:1rem;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);border-radius:var(--radius)">
+          <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green);margin-bottom:.3rem">Reach</div>
+          <div style="font-size:.7rem;color:var(--text-muted)" contenteditable="true">Is AI spreading?</div>
+        </div>
+        <div style="text-align:center;padding:1rem;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:var(--radius)">
+          <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--amber);margin-bottom:.3rem">Habit</div>
+          <div style="font-size:.7rem;color:var(--text-muted)" contenteditable="true">Is it becoming routine?</div>
+        </div>
+        <div style="text-align:center;padding:1rem;background:rgba(14,165,233,.06);border:1px solid rgba(14,165,233,.15);border-radius:var(--radius)">
+          <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin-bottom:.3rem">Skill</div>
+          <div style="font-size:.7rem;color:var(--text-muted)" contenteditable="true">Are they building proficiency?</div>
+        </div>
+      </div>
+      <div style="padding:1rem 1.25rem;background:rgba(245,158,11,.06);border-left:3px solid var(--amber);border-radius:0 var(--radius) var(--radius) 0">
+        <p class="editable" contenteditable="true" style="font-size:.8rem;color:var(--amber);line-height:1.6;font-weight:600">{{CULTURE_RED_FLAG}}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     SLIDE 5 — FRONTIER FIRM PATTERNS
+     ════════════════════════════════════════════════════ -->
+<section class="slide" data-slide="4">
+  <div class="slide-inner">
+    <div class="slide-label">Frontier Firm Patterns</div>
+    <h2 class="slide-title editable" contenteditable="true">Three patterns of human-AI teaming</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2rem">
+      <div style="padding:1.5rem;background:rgba(34,100,229,.05);border:1px solid rgba(34,100,229,.15);border-top:3px solid var(--brand);border-radius:var(--radius)">
+        <div style="font-size:2rem;font-weight:900;color:var(--brand);margin-bottom:.5rem">P1</div>
+        <div style="font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:.5rem" contenteditable="true">Human with Assistant</div>
+        <p style="font-size:.72rem;color:var(--text-muted);line-height:1.6" contenteditable="true">Every employee has an AI assistant that helps them work better and faster. AI supports individual work: drafting, summarising, researching — in the flow of work.</p>
+      </div>
+      <div style="padding:1.5rem;background:rgba(123,47,242,.05);border:1px solid rgba(123,47,242,.15);border-top:3px solid var(--purple);border-radius:var(--radius)">
+        <div style="font-size:2rem;font-weight:900;color:var(--purple);margin-bottom:.5rem">P2</div>
+        <div style="font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:.5rem" contenteditable="true">Human-Agent Teams</div>
+        <p style="font-size:.72rem;color:var(--text-muted);line-height:1.6" contenteditable="true">Agents join teams as digital colleagues, taking on specific tasks at human direction. Humans delegate; agents execute; humans steer and review.</p>
+      </div>
+      <div style="padding:1.5rem;background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.15);border-top:3px solid var(--green);border-radius:var(--radius)">
+        <div style="font-size:2rem;font-weight:900;color:var(--green);margin-bottom:.5rem">P3</div>
+        <div style="font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:.5rem" contenteditable="true">Agent-Operated</div>
+        <p style="font-size:.72rem;color:var(--text-muted);line-height:1.6" contenteditable="true">Humans set direction; agents execute business processes end-to-end. Substantial workflows run autonomously with oversight and governance.</p>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:.7rem;color:var(--text-dim);margin-top:1.25rem;font-style:italic" contenteditable="true">These patterns coexist across different teams — this is expected and legitimate.</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     SLIDE 6 — SCORECARD
+     ════════════════════════════════════════════════════ -->
+<section class="slide" data-slide="5">
+  <div class="slide-inner">
+    <div class="slide-label">Scorecard</div>
+    <h2 class="slide-title editable" contenteditable="true">Metric Scorecard</h2>
+
+    <div class="scorecard-wrapper">
+      {{V2_SCORECARD_HTML}}
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     SLIDE 7 — REACH
+     ════════════════════════════════════════════════════ -->
+<section class="slide" data-slide="6">
+  <div class="slide-inner">
+    <div class="slide-label" style="color:var(--green)">Reach · Is it spreading?</div>
+    <h2 class="slide-title editable" contenteditable="true">{{TITLE_REACH}}</h2>
+
+    <div class="signal-layout">
+      <div>
+        <div class="headline-stat c-brand editable" contenteditable="true">{{M365_ENABLEMENT}}<span class="headline-unit">%</span></div>
+        <p style="color:var(--text-muted); margin-top:.5rem; font-size:.75rem;">License activation</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:1rem">
+          <div style="padding:.6rem;background:rgba(34,100,229,.06);border-left:3px solid var(--brand);border-radius:4px">
+            <div style="font-size:.4rem;font-weight:700;text-transform:uppercase;color:var(--brand)">M365 Copilot</div>
+            <div style="font-size:.65rem;color:var(--text-muted)">Coverage: <strong style="color:var(--text)">{{LICENSE_COVERAGE}}%</strong></div>
+            <div style="font-size:.65rem;color:var(--text-muted)">Concentration: <strong style="color:var(--text)">{{LICENSE_COVERAGE}}%</strong></div>
+          </div>
+          <div style="padding:.6rem;background:rgba(123,47,242,.06);border-left:3px solid var(--purple);border-radius:4px">
+            <div style="font-size:.4rem;font-weight:700;text-transform:uppercase;color:var(--purple)">Agents</div>
+            <div style="font-size:.65rem;color:var(--text-muted)">Adoption: <strong style="color:var(--text)">{{AGENT_ADOPTION}}%</strong></div>
+            <div style="font-size:.65rem;color:var(--text-muted)">Org penetration: <strong style="color:var(--text)">{{ORG_PENETRATION_PCT}}%</strong></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="editable" contenteditable="true" style="font-size:.82rem;color:var(--text-muted);line-height:1.7">{{SUBTITLE_REACH}}</p>
+        <div style="margin-top:1rem;padding:.75rem 1rem;border-left:3px solid var(--green);border-radius:0 var(--radius) var(--radius) 0;background:rgba(16,185,129,.04)">
+          <div class="editable" contenteditable="true" style="font-size:.78rem;color:var(--text-muted);line-height:1.6">{{INSIGHT_REACH}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     SLIDE 8 — HABIT
+     ════════════════════════════════════════════════════ -->
+<section class="slide" data-slide="7">
+  <div class="slide-inner">
+    <div class="slide-label" style="color:var(--amber)">Habit · Is it sticking?</div>
+    <h2 class="slide-title editable" contenteditable="true">{{TITLE_HABIT}}</h2>
+
+    <div class="signal-layout">
+      <div>
+        <div class="headline-stat c-purple editable" contenteditable="true">{{M365_RETENTION}}<span class="headline-unit">%</span></div>
+        <p style="color:var(--text-muted); margin-top:.5rem; font-size:.75rem;">MoM retention</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:1rem">
+          <div style="padding:.6rem;background:rgba(34,100,229,.06);border-left:3px solid var(--brand);border-radius:4px">
+            <div style="font-size:.4rem;font-weight:700;text-transform:uppercase;color:var(--brand)">M365 Copilot</div>
+            <div style="font-size:.65rem;color:var(--text-muted)">Habitual: <strong style="color:var(--text)">{{EMBEDDED_USER_RATE}}%</strong></div>
+            <div style="font-size:.65rem;color:var(--text-muted)">Retention: <strong style="color:var(--text)">{{M365_RETENTION}}%</strong></div>
+          </div>
+          <div style="padding:.6rem;background:rgba(123,47,242,.06);border-left:3px solid var(--purple);border-radius:4px">
+            <div style="font-size:.4rem;font-weight:700;text-transform:uppercase;color:var(--purple)">Agents</div>
+            <div style="font-size:.65rem;color:var(--text-muted)">Habitual: <strong style="color:var(--text)">{{AGENT_HABITUAL_PCT}}%</strong></div>
+            <div style="font-size:.65rem;color:var(--text-muted)">Retention: <strong style="color:var(--text)">{{AGENT_RETENTION}}%</strong></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="editable" contenteditable="true" style="font-size:.82rem;color:var(--text-muted);line-height:1.7">{{SUBTITLE_HABIT}}</p>
+        <div style="margin-top:1rem;padding:.75rem 1rem;border-left:3px solid var(--amber);border-radius:0 var(--radius) var(--radius) 0;background:rgba(245,158,11,.04)">
+          <div class="editable" contenteditable="true" style="font-size:.78rem;color:var(--text-muted);line-height:1.6">{{INSIGHT_HABIT}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     SLIDE 9 — SKILL
+     ════════════════════════════════════════════════════ -->
+<section class="slide" data-slide="8">
+  <div class="slide-inner">
+    <div class="slide-label" style="color:var(--teal)">Skill · Are they building proficiency?</div>
+    <h2 class="slide-title editable" contenteditable="true">{{TITLE_SKILL}}</h2>
+
+    <div class="signal-layout">
+      <div>
+        <div class="headline-stat c-teal editable" contenteditable="true">{{M365_BREADTH}}<span class="headline-unit"> apps/user</span></div>
+        <p style="color:var(--text-muted); margin-top:.5rem; font-size:.75rem;">App surface breadth</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:1rem">
+          <div style="padding:.6rem;background:rgba(34,100,229,.06);border-left:3px solid var(--brand);border-radius:4px">
+            <div style="font-size:.4rem;font-weight:700;text-transform:uppercase;color:var(--brand)">M365 Copilot</div>
+            <div style="font-size:.65rem;color:var(--text-muted)">Breadth: <strong style="color:var(--text)">{{M365_BREADTH}} apps</strong></div>
+            <div style="font-size:.65rem;color:var(--text-muted)">Multi-turn: <strong style="color:var(--text)">{{COMPLEX_SESSIONS}}%</strong></div>
+          </div>
+          <div style="padding:.6rem;background:rgba(123,47,242,.06);border-left:3px solid var(--purple);border-radius:4px">
+            <div style="font-size:.4rem;font-weight:700;text-transform:uppercase;color:var(--purple)">Agents</div>
+            <div style="font-size:.65rem;color:var(--text-muted)">Breadth: <strong style="color:var(--text)">{{AGENT_BREADTH}} agents</strong></div>
+            <div style="font-size:.65rem;color:var(--text-muted)">Return rate: <strong style="color:var(--text)">{{AGENT_HEALTH}}%</strong></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="editable" contenteditable="true" style="font-size:.82rem;color:var(--text-muted);line-height:1.7">{{SUBTITLE_SKILL}}</p>
+        <div style="margin-top:1rem;padding:.75rem 1rem;border-left:3px solid var(--teal);border-radius:0 var(--radius) var(--radius) 0;background:rgba(14,165,233,.04)">
+          <div class="editable" contenteditable="true" style="font-size:.78rem;color:var(--text-muted);line-height:1.6">{{INSIGHT_SKILL}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     SLIDE 10 — ORG MAP
+     ════════════════════════════════════════════════════ -->
+<section class="slide" data-slide="9">
+  <div class="slide-inner">
+    <div class="slide-label">Organisation</div>
+    <h2 class="slide-title editable" contenteditable="true">Agent Maturity by Organisation</h2>
+
+    <div id="slideProportionBar"></div>
+    <div id="slideOrgBars"></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     SLIDE 11 — LICENSE / VALUE
+     ════════════════════════════════════════════════════ -->
+<section class="slide" data-slide="10">
+  <div class="slide-inner">
+    <div class="slide-label">Value</div>
+    <h2 class="slide-title editable" contenteditable="true">{{TITLE_VALUE}}</h2>
+
+    <div class="license-grid">
+      <div class="card" style="text-align:center;">
+        <div class="license-stat c-amber editable" contenteditable="true">{{INACTIVE_LICENSES_FMT}}</div>
+        <div class="license-label">Idle Licenses</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="license-stat c-green editable" contenteditable="true">{{CHAT_USERS_FMT}}</div>
+        <div class="license-label">Active Demand</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     SLIDE 12 — RECOMMENDATIONS
+     ════════════════════════════════════════════════════ -->
+<section class="slide" data-slide="11">
+  <div class="slide-inner">
+    <div class="slide-label">Next Steps</div>
+    <h2 class="slide-title editable" contenteditable="true">{{ACTIONS_TITLE}}</h2>
+
+    <div class="card-grid-2x2">
+      <div class="rec-card">
+        <div class="rec-num">01</div>
+        <div class="rec-title editable" contenteditable="true">{{REC_1_TITLE}}</div>
+        <div class="rec-desc editable" contenteditable="true">{{REC_1_DESC}}</div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-num">02</div>
+        <div class="rec-title editable" contenteditable="true">{{REC_2_TITLE}}</div>
+        <div class="rec-desc editable" contenteditable="true">{{REC_2_DESC}}</div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-num">03</div>
+        <div class="rec-title editable" contenteditable="true">{{REC_3_TITLE}}</div>
+        <div class="rec-desc editable" contenteditable="true">{{REC_3_DESC}}</div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-num">04</div>
+        <div class="rec-title editable" contenteditable="true">{{REC_4_TITLE}}</div>
+        <div class="rec-desc editable" contenteditable="true">{{REC_4_DESC}}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Navigation ── -->
+<nav class="nav-dots" id="navDots"></nav>
+<div class="slide-counter" id="slideCounter">1 / 12</div>
+
+<script>
+(function(){
+  /* ── Slide navigation ── */
+  var slides = document.querySelectorAll('.slide');
+  var total = slides.length;
+  var dotsEl = document.getElementById('navDots');
+  var counterEl = document.getElementById('slideCounter');
+  var current = 0;
+
+  /* Build dots */
+  for(var i = 0; i < total; i++){
+    var dot = document.createElement('button');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+    dot.dataset.idx = i;
+    dotsEl.appendChild(dot);
+  }
+
+  var dots = dotsEl.querySelectorAll('.nav-dot');
+
+  function goTo(idx){
+    if(idx < 0) idx = 0;
+    if(idx >= total) idx = total - 1;
+    current = idx;
+    slides[idx].scrollIntoView({ behavior: 'smooth' });
+    updateUI();
+  }
+
+  function updateUI(){
+    counterEl.textContent = (current + 1) + ' / ' + total;
+    dots.forEach(function(d, i){
+      d.classList.toggle('active', i === current);
+    });
+  }
+
+  /* Dot clicks */
+  dotsEl.addEventListener('click', function(e){
+    if(e.target.classList.contains('nav-dot')){
+      goTo(parseInt(e.target.dataset.idx, 10));
+    }
+  });
+
+  /* Arrow keys */
+  document.addEventListener('keydown', function(e){
+    /* Don't hijack arrows when editing text */
+    if(document.activeElement && document.activeElement.isContentEditable) return;
+
+    if(e.key === 'ArrowRight' || e.key === 'ArrowDown'){
+      e.preventDefault();
+      goTo(current + 1);
+    } else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp'){
+      e.preventDefault();
+      goTo(current - 1);
+    }
+  });
+
+  /* Scroll-based detection for counter sync */
+  var scrollTimer;
+  function onScroll(){
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(function(){
+      var vh = window.innerHeight;
+      for(var i = 0; i < slides.length; i++){
+        var rect = slides[i].getBoundingClientRect();
+        if(rect.top >= -vh/2 && rect.top < vh/2){
+          current = i;
+          updateUI();
+          break;
+        }
+      }
+    }, 80);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* ── Org Pattern Map ── */
+  var _opd = {{ORG_PATTERN_DISTRIBUTION_JSON}};
+  if(_opd && _opd.total && _opd.orgs && _opd.orgs.length){
+    var propBar = document.getElementById('slideProportionBar');
+    var barsContainer = document.getElementById('slideOrgBars');
+
+    var colors = {P1:'#2264E5', P2:'#7B2FF2', P3:'#10B981'};
+    var bg = {P1:'rgba(34,100,229,', P2:'rgba(123,47,242,', P3:'rgba(16,185,129,'};
+    var labels = {P1:'P1 \u00B7 Human with Assistant', P2:'P2 \u00B7 Human-Agent Teams', P3:'P3 \u00B7 Agent-Operated'};
+    var counts = {P1:0, P2:0, P3:0};
+    _opd.orgs.forEach(function(o){ counts[o.pattern]++; });
+
+    /* Proportion bar */
+    ['P1','P2','P3'].forEach(function(p){
+      var pct = _opd.total > 0 ? (counts[p] / _opd.total * 100) : 0;
+      if(pct <= 0) return;
+      var seg = document.createElement('div');
+      seg.style.cssText = 'flex:'+pct+';background:'+bg[p]+'.3);display:flex;align-items:center;justify-content:center;gap:.5rem;padding:0 .75rem;transition:flex 1s ease';
+      seg.innerHTML = '<span style="font-size:1.3rem;font-weight:900;color:#fff">'+Math.round(pct)+'%</span><span style="font-size:.55rem;font-weight:700;color:'+colors[p]+';text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">'+p+' ('+counts[p]+')</span>';
+      propBar.appendChild(seg);
+    });
+
+    /* Sort orgs by agent adoption descending */
+    var sorted = _opd.orgs.slice().sort(function(a,b){ return b.agentPct - a.agentPct; });
+    var maxPct = Math.max.apply(null, sorted.map(function(o){ return o.agentPct; })) || 1;
+
+    sorted.forEach(function(org){
+      var pat = org.pattern;
+      var barPct = Math.max(2, Math.round(org.agentPct / maxPct * 100));
+      var row = document.createElement('div');
+      row.style.cssText = 'display:grid;grid-template-columns:70px 1fr 45px;gap:.5rem;align-items:center;padding:.25rem 0';
+      row.innerHTML =
+        '<div style="font-size:.65rem;font-weight:700;color:rgba(255,255,255,.75);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+org.label+' \u2014 '+org.users.toLocaleString()+' users">'+org.label+'</div>'+
+        '<div style="height:22px;background:rgba(255,255,255,.03);border-radius:4px;position:relative;overflow:hidden">'+
+          '<div style="height:100%;width:'+barPct+'%;background:linear-gradient(90deg,'+bg[pat]+'.5),'+bg[pat]+'.25));border-radius:4px;transition:width 1s ease"></div>'+
+          '<div style="position:absolute;top:0;bottom:0;left:calc(5 / '+maxPct+' * 100%);width:1px;background:rgba(255,255,255,.1)" title="P2 threshold (5%)"></div>'+
+          '<div style="position:absolute;top:0;bottom:0;left:calc(25 / '+maxPct+' * 100%);width:1px;background:rgba(255,255,255,.1)" title="P3 threshold (25%)"></div>'+
+        '</div>'+
+        '<div style="font-size:.65rem;font-weight:800;color:'+colors[pat]+';text-align:right">'+org.agentPct+'%</div>';
+      barsContainer.appendChild(row);
+    });
+  }
+})();
+</script>
+</body>
+</html>

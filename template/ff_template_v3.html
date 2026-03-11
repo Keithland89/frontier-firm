@@ -846,12 +846,35 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 [data-theme="dark"] .flip-card:hover:not(.flipped) .flip-card-front{box-shadow:0 8px 32px rgba(0,0,0,.25)}
 .flip-card-hint{margin-top:auto;padding-top:.85rem;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:.3rem;opacity:.4;transition:opacity .2s}
 .flip-card:hover .flip-card-hint{opacity:.9}
+/* Scorecard grid flip cards */
+.scorecard-cell .flip-card-front,.scorecard-cell .flip-card-back{padding:1rem;border-radius:10px}
+.scorecard-cell .flip-card-hint{padding-top:.5rem;font-size:.5rem}
+.scorecard-cell.flipped{z-index:2}
+
+/* Deep-dive collapsible sections */
+.deep-dive-content{max-height:0;overflow:hidden;opacity:0;transition:max-height .6s cubic-bezier(.16,1,.3,1),opacity .4s ease}
+.deep-dive-content.expanded{max-height:5000px;opacity:1;overflow:visible}
+.dive-deeper-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;margin:1.25rem 0 .5rem;padding:.75rem 1.5rem;border:1px dashed var(--accent,rgba(255,255,255,.15));border-radius:10px;background:transparent;color:var(--accent,rgba(255,255,255,.5));font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:all .3s}
+.dive-deeper-btn:hover{background:rgba(255,255,255,.03);border-style:solid}
+.dive-deeper-btn.open{border-style:solid;background:rgba(255,255,255,.02)}
+.dive-deeper-btn.open .dd-arrow{transform:rotate(45deg)}
+.dd-arrow{font-size:1rem;font-weight:300;transition:transform .3s;line-height:1}
 
 /* V2 scorecard tier badges */
 .hero-metric-tier{display:inline-block;margin-top:.5rem;padding:.15rem .55rem;border-radius:100px;font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 .tier-foundation{background:rgba(34,100,229,.15);color:#2264E5}
 .tier-expansion{background:rgba(123,47,242,.15);color:#7B2FF2}
 .tier-frontier{background:rgba(16,185,129,.15);color:#10B981}
+
+/* Pattern Profile status badges */
+.pp-status{border:1px solid rgba(255,255,255,.1)}
+.pp-status-Primary{background:rgba(16,185,129,.15);color:#10B981;border-color:rgba(16,185,129,.25)}
+.pp-status-Nascent{background:rgba(245,158,11,.15);color:#F59E0B;border-color:rgba(245,158,11,.25)}
+.pp-status-Absent{background:rgba(100,116,139,.12);color:#94A3B8;border-color:rgba(100,116,139,.2)}
+.pattern-profile-card[data-status="Absent"]{opacity:.55}
+.pattern-profile-card[data-status="Absent"]:hover{opacity:.8}
+.pattern-profile-card{transition:opacity .3s,transform .3s}
+.pattern-profile-card:hover{transform:translateY(-2px)}
 
 /* Force signal section borders */
 #reach.signal-section{border-left:6px solid #0EA5E9 !important;box-shadow:inset 6px 0 20px -6px rgba(14,165,233,.2) !important}
@@ -863,10 +886,16 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 <body>
 
 <div class="scroll-progress" id="scrollProgress"></div>
-<button class="export-btn" onclick="exportToPDF()" id="exportBtn">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
-  Export PDF
-</button>
+<div style="position:fixed;bottom:2rem;right:2rem;z-index:1000;display:flex;gap:.5rem;flex-direction:column;align-items:flex-end">
+  <button class="export-btn" onclick="exportToPDF()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+    PDF
+  </button>
+  <button class="export-btn" onclick="toggleEditable()" id="editToggleBtn" style="background:rgba(123,47,242,.8)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    Edit
+  </button>
+</div>
 
 <nav class="nav" id="mainNav">
   <div class="nav-inner">
@@ -877,7 +906,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
     <div class="nav-links">
       <a href="#overview" class="nav-link active" data-section="overview">Overview</a>
       <a href="#summary" class="nav-link" data-section="summary">Summary</a>
-      <a href="#maturity" class="nav-link" data-section="maturity">Assessment</a>
+      <a href="#maturity" class="nav-link" data-section="maturity">Maturity</a>
       <a href="#reach" class="nav-link" data-section="reach">Reach</a>
       <a href="#habit" class="nav-link" data-section="habit">Habit</a>
       <a href="#skill" class="nav-link" data-section="skill">Skill</a>
@@ -911,7 +940,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
   <div class="section-inner">
     <div class="section-label reveal">Executive Summary</div>
     <h2 class="section-title reveal reveal-d1">The headlines</h2>
-    <p class="section-subtitle reveal reveal-d2">{{CUSTOMER_NAME}} is in <strong style="color:#A78BFA">{{PATTERN_LABEL}}</strong>. Here’s where they stand across the three signals.</p>
+    <p class="section-subtitle reveal reveal-d2">{{CULTURE_DESC}}</p>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem">
       <div class="theme-card reveal reveal-d1" style="--accent:#0EA5E9;border-top:3px solid #0EA5E9;border-left:none;border-radius:12px">
         <div class="theme-card-label" style="color:#0EA5E9">What's working</div>
@@ -931,112 +960,72 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 
 <section class="section" id="maturity" style="background:var(--bg)">
   <div class="section-inner">
-    <div class="section-label reveal">Maturity Assessment</div>
+    <div class="section-label reveal">Frontier Firm Maturity</div>
     <h2 class="section-title reveal reveal-d1">{{TITLE_MATURITY}}</h2>
-    <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_MATURITY}}</p>
 
-    <!-- Journey Pattern Cards -->
-    <p style="font-size:.72rem;color:var(--text-3);margin:2rem 0 1rem;font-style:italic" class="reveal reveal-d3">Click each pattern to see what it looks like in practice.</p><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:.5rem" class="reveal reveal-d3">{{PHASE_1_WRAPPER_OPEN}}<!-- Pattern 1 flip card -->
-      <div class="flip-card" role="button" aria-label="Pattern 1: Foundation — click to explore">
-        <div class="flip-card-inner">
-          <div class="flip-card-front" style="border-top:3px solid var(--brand)">
-            <div style="width:40px;height:40px;border-radius:50%;background:rgba(34,100,229,.1);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;color:var(--brand);font-weight:800;font-size:1rem;margin-bottom:.75rem">1</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.3rem">Pattern 1 · Foundation</div>
-            <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human with Assistant</div>
-            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">Copilot augments individual work. Employees use AI to draft, summarise and research — but it's a personal tool, not yet part of shared team workflows.</p>
-            <div class="flip-card-hint" style="color:var(--brand)">Explore Pattern 1 <span>→</span></div>
-          </div>
-          <div class="flip-card-back" style="border-top:3px solid var(--brand);background:rgba(34,100,229,.03)">
-            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.75rem">Pattern 1 · Foundation</div>
-            <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
-            <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Copilot is deployed but usage varies widely — heavy users sit alongside those who rarely open it</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>AI helps with individual tasks — drafting emails, summarising meetings, one-off searches</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>No consistent team-level routines or delegated workflows yet</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:.35rem"></span>Agents exist but are mostly personal or unused beyond their creator</div>
-            </div>
-            <div class="flip-card-hint" style="color:var(--brand)">← Flip back</div>
-          </div>
-        </div>
-      </div>
-
-      </div>{{PHASE_2_WRAPPER_OPEN}}<!-- Pattern 2 flip card -->
-      <div class="flip-card" role="button" aria-label="Pattern 2: Expansion — click to explore">
-        <div class="flip-card-inner">
-          <div class="flip-card-front" style="border-top:3px solid var(--copilot-purple){{PHASE_2_HIGHLIGHT}}">
-            <div style="width:40px;height:40px;border-radius:50%;background:rgba(123,47,242,.1);border:2px solid var(--copilot-purple);display:flex;align-items:center;justify-content:center;color:var(--copilot-purple);font-weight:800;font-size:1rem;margin-bottom:.75rem">2</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.3rem">Pattern 2 · Expansion</div>
-            <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human-Agent Teams</div>
-            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">Teams delegate tasks to AI agents embedded in real workflows. Human-agent collaboration becomes a repeating pattern — not a one-off experiment.</p>
-            <div class="flip-card-hint" style="color:var(--copilot-purple)">Explore Pattern 2 <span>→</span></div>
-          </div>
-          <div class="flip-card-back" style="border-top:3px solid var(--copilot-purple);background:rgba(123,47,242,.03)">
-            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-purple);margin-bottom:.75rem">Pattern 2 · Expansion</div>
-            <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
-            <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Specific teams have agents embedded in daily workflows — not just experimenting</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Humans delegate defined tasks — research, triage, note-taking — to agents on a routine basis</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Some agents are shared across teams with high multi-session, high-return usage</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-purple);flex-shrink:0;margin-top:.35rem"></span>Habits are forming but not yet consistent across the full workforce</div>
-            </div>
-            <div class="flip-card-hint" style="color:var(--copilot-purple)">← Flip back</div>
-          </div>
-        </div>
-      </div>
-
-      </div>{{PHASE_3_WRAPPER_OPEN}}<!-- Pattern 3 flip card -->
-      <div class="flip-card" role="button" aria-label="Pattern 3: Frontier — click to explore">
-        <div class="flip-card-inner">
-          <div class="flip-card-front" style="border-top:3px solid var(--copilot-green)">
-            <div style="width:40px;height:40px;border-radius:50%;background:rgba(16,185,129,.1);border:2px solid var(--copilot-green);display:flex;align-items:center;justify-content:center;color:var(--copilot-green);font-weight:800;font-size:1rem;margin-bottom:.75rem">3</div>
-            <div style="font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.3rem">Pattern 3 · Frontier</div>
-            <div style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Human-Led, Agent-Operated</div>
-            <p style="font-size:.75rem;color:var(--text-2);line-height:1.55;margin:0">AI agents run enterprise workflows end-to-end. Humans set direction and govern outcomes — agents execute. AI is embedded in how the organisation operates, not just how individuals work.</p>
-            <div class="flip-card-hint" style="color:var(--copilot-green)">Explore Pattern 3 <span>→</span></div>
-          </div>
-          <div class="flip-card-back" style="border-top:3px solid var(--copilot-green);background:rgba(16,185,129,.03)">
-            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--copilot-green);margin-bottom:.75rem">Pattern 3 · Frontier</div>
-            <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.9rem">What this looks like in practice</div>
-            <div style="display:flex;flex-direction:column;gap:.6rem;flex:1">
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Agents execute complete workflows — onboarding, incident response, reporting — with minimal human intervention per step</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>A governed agent catalogue spans all major business functions with active Keep/Review/Retire cycles</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>70%+ of licensed users are active; most interact with 3+ agents across multiple workflows</div>
-              <div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text-2);line-height:1.5"><span style="width:5px;height:5px;border-radius:50%;background:var(--copilot-green);flex-shrink:0;margin-top:.35rem"></span>Humans focus on strategy, exception-handling, and governance — not execution</div>
-            </div>
-            <div class="flip-card-hint" style="color:var(--copilot-green)">← Flip back</div>
-          </div>
-        </div>
-      </div></div></div>
-
-    <!-- Signal Assessment gauges -->
-    <div class="sub-panel reveal reveal-d4" style="margin-top:2rem">
-      <div class="sub-panel-title" style="--signal-accent:#7B2FF2">Signal Assessment</div>
-      <div style="display:grid;grid-template-columns:100px 1fr auto;gap:.6rem .75rem;align-items:center">
-        <div style="font-size:.75rem;font-weight:600;color:#0EA5E9">Reach</div>
-        <div style="height:10px;border-radius:5px;background:var(--border);overflow:hidden"><div class="signal-gauge-fill" data-width="{{REACH_GAUGE}}" style="width:0;height:100%;border-radius:5px;background:linear-gradient(90deg,#0EA5E9,#38BDF8)"></div></div>
-        <span class="signal-tier {{REACH_TIER_CLASS}}" style="font-size:.55rem">{{REACH_TIER}}</span>
-        <div style="font-size:.75rem;font-weight:600;color:#F59E0B">Habit</div>
-        <div style="height:10px;border-radius:5px;background:var(--border);overflow:hidden"><div class="signal-gauge-fill" data-width="{{HABIT_GAUGE}}" style="width:0;height:100%;border-radius:5px;background:linear-gradient(90deg,#F59E0B,#FBBF24)"></div></div>
-        <span class="signal-tier {{HABIT_TIER_CLASS}}" style="font-size:.55rem">{{HABIT_TIER}}</span>
-        <div style="font-size:.75rem;font-weight:600;color:#7B2FF2">Skill</div>
-        <div style="height:10px;border-radius:5px;background:var(--border);overflow:hidden"><div class="signal-gauge-fill" data-width="{{SKILL_GAUGE}}" style="width:0;height:100%;border-radius:5px;background:linear-gradient(90deg,#7B2FF2,#9B5FFF)"></div></div>
-        <span class="signal-tier {{SKILL_TIER_CLASS}}" style="font-size:.55rem">{{SKILL_TIER}}</span>
+    <!-- The Story -->
+    <div class="reveal reveal-d3" style="margin-top:2.5rem;max-width:800px">
+      <div style="background:linear-gradient(135deg,rgba(123,47,242,.04),rgba(34,100,229,.04));border:1px solid rgba(123,47,242,.12);border-radius:12px;padding:2rem;border-left:4px solid #7B2FF2">
+        <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#7B2FF2;margin-bottom:.75rem">The Story Behind the Numbers</div>
+        <p style="font-size:.92rem;color:var(--text);line-height:1.7;margin:0 0 1rem">{{CULTURE_DESC}}</p>
+        <p style="font-size:.82rem;color:var(--text-2);line-height:1.65;margin:0 0 1rem">The data that follows explores three questions: <strong style="color:var(--text)">Is AI spreading?</strong> (Reach), <strong style="color:var(--text)">Is it becoming a habit?</strong> (Habit), and <strong style="color:var(--text)">Are they building proficiency?</strong> (Skill). Each question is assessed across both the M365 Copilot and Agents lanes.</p>
+        <p style="font-size:.82rem;color:var(--text-2);line-height:1.65;margin:0"><strong style="color:var(--amber)">{{CULTURE_RED_FLAG}}</strong></p>
       </div>
     </div>
+
+    <!-- removed Pattern Distribution bar — org-level detail is in the Agent Maturity section later -->
 
     <!-- Signal navigation links -->
-    <p style="font-size:.68rem;color:var(--text-3);text-align:center;margin:1.5rem 0 .5rem;font-style:italic" class="reveal reveal-d4">Click a signal to explore the evidence</p>
-    <div style="display:flex;gap:1.5rem;margin:0 0 1.5rem;justify-content:center" class="reveal reveal-d4">
-      <a href="#reach" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(14,165,233,.3);color:#0EA5E9;background:rgba(14,165,233,.06);transition:all .3s">Reach: {{REACH_TIER}} →</a>
-      <a href="#habit" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(245,158,11,.3);color:#F59E0B;background:rgba(245,158,11,.06);transition:all .3s">Habit: {{HABIT_TIER}} →</a>
-      <a href="#skill" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(123,47,242,.3);color:#7B2FF2;background:rgba(123,47,242,.06);transition:all .3s">Skill: {{SKILL_TIER}} →</a>
+    <div style="display:flex;gap:1.5rem;margin:1.5rem 0;justify-content:center" class="reveal reveal-d4">
+      <a href="#reach" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(14,165,233,.3);color:#0EA5E9;background:rgba(14,165,233,.06);transition:all .3s">Reach →</a>
+      <a href="#habit" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(245,158,11,.3);color:#F59E0B;background:rgba(245,158,11,.06);transition:all .3s">Habit →</a>
+      <a href="#skill" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(123,47,242,.3);color:#7B2FF2;background:rgba(123,47,242,.06);transition:all .3s">Skill →</a>
     </div>
 
-    <!-- V4 Two Lanes Scorecard -->
-    <div class="reveal reveal-d6" style="margin-top:2rem">
+    <!-- Frontier Firm Framework — expandable -->
+    <div class="reveal reveal-d4" style="margin-top:1rem">
+      <button class="dive-deeper-btn" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:rgba(255,255,255,.3);border-color:rgba(255,255,255,.1);font-size:.65rem">The Frontier Firm Framework <span class="dd-arrow">+</span></button>
+      <div class="deep-dive-content">
+        <div style="max-width:800px;margin:1.5rem auto;padding:1.5rem;background:linear-gradient(135deg,rgba(34,100,229,.03),rgba(123,47,242,.03));border:1px solid rgba(255,255,255,.06);border-radius:12px">
+          <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--brand);margin-bottom:.75rem">About the Frontier Firm Framework</div>
+          <p style="font-size:.82rem;color:var(--text-2);line-height:1.7;margin:0 0 .75rem">Microsoft's <strong style="color:var(--text)">Frontier Firm</strong> research identifies organisations where AI has fundamentally changed how work gets done — not just what tools people use. These organisations see <strong style="color:var(--text)">3x higher ROI</strong> from AI, and <strong style="color:var(--text)">71% of their employees say their company is thriving</strong> compared with just 39% globally.</p>
+          <p style="font-size:.82rem;color:var(--text-2);line-height:1.7;margin:0 0 .75rem">The framework measures maturity across <strong style="color:var(--text)">three pillars</strong> — Reach (is AI spreading?), Habit (is it sticking?), and Skill (are people building proficiency?) — and identifies <strong style="color:var(--text)">three patterns</strong> of human-AI collaboration that coexist across different teams:</p>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding:1rem 0">
+          <div style="padding:1.25rem;background:rgba(34,100,229,.04);border:1px solid rgba(34,100,229,.12);border-top:3px solid #2264E5;border-radius:10px">
+            <div style="font-size:1.1rem;font-weight:900;color:#2264E5;margin-bottom:.4rem">Pattern 1</div>
+            <div style="font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:.5rem">Human with Assistant</div>
+            <p style="font-size:.7rem;color:var(--text-2);line-height:1.6;margin:0">Every employee has an AI assistant. AI supports individual work — drafting, summarising, researching — in the flow of work. The mental model is familiar: a better search bar, a faster first draft.</p>
+          </div>
+          <div style="padding:1.25rem;background:rgba(123,47,242,.04);border:1px solid rgba(123,47,242,.12);border-top:3px solid #7B2FF2;border-radius:10px">
+            <div style="font-size:1.1rem;font-weight:900;color:#7B2FF2;margin-bottom:.4rem">Pattern 2</div>
+            <div style="font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:.5rem">Human-Agent Teams</div>
+            <p style="font-size:.7rem;color:var(--text-2);line-height:1.6;margin:0">Agents join teams as digital colleagues. Humans delegate; agents execute; humans steer and review. This requires trusting a machine colleague — not just using a tool.</p>
+          </div>
+          <div style="padding:1.25rem;background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.12);border-top:3px solid #10B981;border-radius:10px">
+            <div style="font-size:1.1rem;font-weight:900;color:#10B981;margin-bottom:.4rem">Pattern 3</div>
+            <div style="font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:.5rem">Agent-Operated</div>
+            <p style="font-size:.7rem;color:var(--text-2);line-height:1.6;margin:0">Humans set direction; agents execute business processes end-to-end. Substantial workflows run autonomously with oversight, governance, and portfolio management.</p>
+          </div>
+        </div>
+        <p style="text-align:center;font-size:.65rem;color:var(--text-3);font-style:italic;margin:0 0 .5rem">These patterns coexist across different teams — an organisation can exhibit P2 in some teams while remaining P1 in others.</p>
+      </div>
+    </div>
+
+    <!-- Pillar Summary — the verdict in one line -->
+    <div class="reveal reveal-d5" style="margin-top:2rem;display:flex;justify-content:center;gap:2rem;padding:1.25rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">
+      <div style="text-align:center"><div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#10B981;margin-bottom:.3rem">Reach</div><div style="font-size:1.3rem;font-weight:900;color:{{REACH_TIER_COLOR}}">{{REACH_TIER}}</div></div>
+      <div style="width:1px;background:rgba(255,255,255,.08)"></div>
+      <div style="text-align:center"><div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#F59E0B;margin-bottom:.3rem">Habit</div><div style="font-size:1.3rem;font-weight:900;color:{{HABIT_TIER_COLOR}}">{{HABIT_TIER}}</div></div>
+      <div style="width:1px;background:rgba(255,255,255,.08)"></div>
+      <div style="text-align:center"><div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#0EA5E9;margin-bottom:.3rem">Skill</div><div style="font-size:1.3rem;font-weight:900;color:{{SKILL_TIER_COLOR}}">{{SKILL_TIER}}</div></div>
+    </div>
+
+    <!-- V4 Scorecard -->
+    <div class="reveal reveal-d6" style="margin-top:1.5rem">
       <div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:.75rem">
         <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5)">Scorecard</div>
-        <div style="font-size:.6rem;color:rgba(255,255,255,.3)">Click any cell to see the evidence</div>
+        <div style="font-size:.6rem;color:rgba(255,255,255,.3)">Click any card to see what it measures</div>
       </div>
       {{V2_SCORECARD_HTML}}
       <div style="display:flex;gap:1rem;margin-top:1.25rem;justify-content:center;flex-wrap:wrap">
@@ -1048,27 +1037,28 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 
     <div class="spotlight reveal reveal-d5" style="--signal-accent:#7B2FF2;margin-top:1.5rem">
       <div class="spotlight-icon">✨</div>
-      <div class="spotlight-title">The path from Pattern {{PATTERN_NUMBER}} to Pattern {{PATTERN_NEXT}}</div>
+      <div class="spotlight-title">What the data says about where to go next</div>
       <div class="spotlight-body">{{SPOTLIGHT_MATURITY}}</div>
     </div>
 
   </div>
 </section>
 
-<div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_0}}</div><div class="pull-quote-source">Now let's look at the evidence behind each signal</div></div>
-
-<hr class="section-rule">
+<div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_0}}</div><div class="pull-quote-source">Evidence follows: Reach → Habit → Skill</div></div>
 
 <section class="section signal-section" id="reach" style="background:var(--bg);--signal-accent:#0EA5E9">
   <div class="section-inner">
     <div class="section-label reveal">Reach</div><div class="signal-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Reach</div>
+    <div class="signal-question reveal">{{LICENSED_USERS_FMT}} licensed users. How many are actually showing up?</div>
     <h2 class="section-title reveal reveal-d1">{{TITLE_REACH}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_REACH}}</p>
-    <div class="headline-stat reveal reveal-d2">
+    <div class="headline-stat reveal reveal-d2" style="--signal-accent:#0EA5E9">
       <div class="headline-stat-value">{{M365_ENABLEMENT}}%</div>
       <div class="headline-stat-label">of {{TOTAL_LICENSED_SEATS}} licensed seats are active across {{ORG_COUNT}} organisations</div>
       <span class="headline-stat-tier {{REACH_TIER_CLASS}}" style="background:rgba(14,165,233,.1);color:#0EA5E9;border:1px solid rgba(14,165,233,.15)">{{REACH_TIER}}</span>
     </div>
+    <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#0EA5E9">Dive deeper into Reach <span class="dd-arrow">+</span></button>
+    <div class="deep-dive-content">
     <div class="tier-nav reveal reveal-d2">
       <button class="tier-nav-btn active" data-tier="all">Overall</button>
       <button class="tier-nav-btn" data-tier="m365">M365 Copilot</button>
@@ -1094,27 +1084,30 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <div class="so-what-text">{{INSIGHT_REACH}}</div>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1.5rem 0" class="reveal reveal-d3">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--teal)">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:.3rem">License Activation</div>
-        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{M365_ENABLEMENT}}%</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0" class="reveal reveal-d3">
+      <!-- Copilot lane -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;border-left:4px solid #2264E5">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2264E5;margin-bottom:.75rem">M365 Copilot</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">License Activation</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{M365_ENABLEMENT}}%</div></div>
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">License Coverage</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{LICENSE_COVERAGE}}%</div></div>
+        </div>
       </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--teal)">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:.3rem">Agent Adoption</div>
-        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{AGENT_ADOPTION}}%</div>
-      </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--teal)">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:.3rem">License Coverage</div>
-        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{LICENSE_COVERAGE}}%</div>
-      </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--teal)">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:.3rem">Org Penetration</div>
-        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{ORG_PENETRATION_PCT}}%</div>
+      <!-- Agents lane -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;border-left:4px solid #7B2FF2">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#7B2FF2;margin-bottom:.75rem">Agents</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Agent Adoption</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{AGENT_ADOPTION}}%</div></div>
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Org Penetration</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{ORG_PENETRATION_PCT}}%</div></div>
+        </div>
       </div>
     </div>
 
-    <!-- Monthly active users trend -->
-    <div class="chart-card reveal" style="margin-top:1.5rem"><div class="chart-card-title">Monthly Active Users — Growth Trend</div><div class="chart-card-sub">Total unique active users per month across the analysis period</div><div class="tier-toggle" data-chart="monthlyUsers"><button class="tier-nav-btn tier-chart-btn active" data-tier="all">All Users</button><button class="tier-nav-btn tier-chart-btn" data-tier="m365">M365 Copilot</button><button class="tier-nav-btn tier-chart-btn" data-tier="chat">Copilot Chat</button><button class="tier-nav-btn tier-chart-btn" data-tier="agents">Agents</button></div><div style="height:260px"><canvas id="chartMonthlyUsers"></canvas></div></div>
+    <!-- Weekly scorecard metrics trend -->
+    <div class="two-col reveal" style="margin-top:1.5rem;gap:1rem">
+      <div class="chart-card"><div class="chart-card-title">Weekly Activation &amp; Agent Adoption</div><div class="chart-card-sub">Scorecard metrics tracked week-by-week</div><div style="height:280px"><canvas id="chartWeeklyTrend"></canvas></div></div>
+      <div class="chart-card" style="display:flex;flex-direction:column;justify-content:center;padding:1.5rem"><div class="chart-card-title" style="margin-bottom:1rem">Key Takeaways</div>{{TAKEAWAY_WEEKLY_TREND}}</div>
+    </div>
     <div class="insight-callout reveal" style="margin-top:1rem">{{INSIGHT_MONTHLY_GROWTH}}</div>
 
     </div><!-- /tier-group overall --></div><!-- /slide-frame -->
@@ -1151,14 +1144,16 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <div class="insight-box insight-box--opportunity" style="--accent:var(--copilot-teal);margin-top:1rem"><div class="insight-box-eyebrow">Organisation Insight</div>{{ORG_AGENT_INSIGHT}}</div>
     </div>
     </div><!-- /tier-group agents -->
+    </div><!-- /deep-dive-content -->
   </div>
 </section>
 
-<div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_1}}</div><div class="pull-quote-source">Next: Habit</div></div>
+<!-- Bridge: Reach → Habit -->
 
 <section class="section signal-section" id="habit" style="--signal-accent:#F59E0B">
   <div class="section-inner">
     <div class="section-label reveal">Habit</div><div class="signal-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Habit</div>
+    <div class="signal-question reveal">{{M365_RETENTION_INT}}% come back month-over-month. But how deep does the habit run?</div>
     <h2 class="section-title reveal reveal-d1">{{TITLE_HABIT}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_HABIT}}</p>
     <div class="headline-stat reveal reveal-d2">
@@ -1166,6 +1161,8 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <div class="headline-stat-label">month-over-month retention — but only {{M365_FREQUENCY}}% are habitual (11+ active days)</div>
       <span class="headline-stat-tier {{HABIT_TIER_CLASS}}" style="background:rgba(245,158,11,.1);color:#F59E0B;border:1px solid rgba(245,158,11,.15)">{{HABIT_TIER}}</span>
     </div>
+    <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#F59E0B">Dive deeper into Habit <span class="dd-arrow">+</span></button>
+    <div class="deep-dive-content">
 
     <!-- Retention first — the headline signal -->
     <div class="slide-frame reveal" style="--signal-accent:#F59E0B;margin-top:1.5rem">
@@ -1189,21 +1186,22 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <div class="so-what-text">{{INSIGHT_HABIT}}</div>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0" class="reveal reveal-d3">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--amber)">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--amber);margin-bottom:.3rem">Habitual User Rate</div>
-        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{EMBEDDED_USER_RATE}}%</div>
-        <div style="font-size:.65rem;color:var(--text-3)">6+ active days over 3 months</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0" class="reveal reveal-d3">
+      <!-- Copilot lane -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;border-left:4px solid #2264E5">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2264E5;margin-bottom:.75rem">M365 Copilot</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Habitual User Rate</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{EMBEDDED_USER_RATE}}%</div><div style="font-size:.55rem;color:var(--text-3)">6+ days over 3 months</div></div>
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">MoM Retention</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{M365_RETENTION}}%</div><div style="font-size:.55rem;color:var(--text-3)">across complete months</div></div>
+        </div>
       </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--amber)">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--amber);margin-bottom:.3rem">Avg MoM Retention</div>
-        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{M365_RETENTION}}%</div>
-        <div style="font-size:.65rem;color:var(--text-3)">across complete months</div>
-      </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--amber)">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--amber);margin-bottom:.3rem">Agent Habitual Rate</div>
-        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{AGENT_HABITUAL_PCT}}%</div>
-        <div style="font-size:.65rem;color:var(--text-3)">agent users with 6+ days</div>
+      <!-- Agents lane -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;border-left:4px solid #7B2FF2">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#7B2FF2;margin-bottom:.75rem">Agents</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Agent Habitual Rate</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{AGENT_HABITUAL_PCT}}%</div><div style="font-size:.55rem;color:var(--text-3)">agent users with 6+ days</div></div>
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Agent Retention</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{AGENT_RETENTION}}%</div><div style="font-size:.55rem;color:var(--text-3)">MoM agent retention</div></div>
+        </div>
       </div>
     </div>
 
@@ -1216,10 +1214,8 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
           <div class="chart-card-sub">% of users in each active day band — averaged across all complete months</div>
           <div style="height:280px"><canvas id="chartHabitTiers"></canvas></div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:1rem">
-          <div class="stat-callout" style="--accent:#2264E5"><div class="stat-callout-val">{{BAND_11_15_PCT}}%</div><div class="stat-callout-label">licensed M365 Copilot users are habitual (11+ days/month)</div></div>
-          <div class="stat-callout" style="--accent:#7B2FF2"><div class="stat-callout-val">{{AGENT_HABITUAL_PCT}}%</div><div class="stat-callout-label">agent users are habitual — almost all usage is experimental</div></div>
-          <div class="stat-callout" style="--accent:#10B981"><div class="stat-callout-val">{{BAND_6_10_FMT}}</div><div class="stat-callout-label">users in the 6–10 day bracket — one nudge from habitual</div></div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          {{HABIT_KEY_INSIGHT_HTML}}
         </div>
       </div>
     </div>
@@ -1231,14 +1227,16 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
     </div>
 
     <div class="insight-box reveal" style="--accent:var(--amber);margin-top:1.5rem"><div class="insight-box-eyebrow" style="color:var(--amber)">Geographic Pattern</div>{{GEO_PATTERN_INSIGHT}}</div>
+    </div><!-- /deep-dive-content -->
   </div>
 </section>
 
-<div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_2}}</div><div class="pull-quote-source">Next: Skill</div></div>
+<!-- Bridge: Habit → Skill -->
 
 <section class="section signal-section" id="skill" style="background:var(--bg);--signal-accent:#7B2FF2">
   <div class="section-inner">
     <div class="section-label reveal">Skill</div><div class="signal-badge"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Skill</div>
+    <div class="signal-question reveal">{{M365_BREADTH}} apps per user. {{AGENT_ADOPTION}}% agent adoption. Are people building proficiency — or still stuck in basic use?</div>
     <h2 class="section-title reveal reveal-d1">{{TITLE_SKILL}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_SKILL}}</p>
     <div class="headline-stat reveal reveal-d2">
@@ -1246,40 +1244,44 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <div class="headline-stat-label">apps per user out of 27 available — with only {{COMPLEX_SESSIONS}}% of sessions involving complex multi-turn work</div>
       <span class="headline-stat-tier {{SKILL_TIER_CLASS}}" style="background:rgba(123,47,242,.1);color:#7B2FF2;border:1px solid rgba(123,47,242,.15)">{{SKILL_TIER}}</span>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1.5rem 0" class="reveal reveal-d3">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--purple)">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--purple);margin-bottom:.3rem">App Surface Breadth</div>
-        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{M365_BREADTH}}</div>
-        <div style="font-size:.65rem;color:var(--text-3)">apps/user</div>
+    <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#7B2FF2">Dive deeper into Skill <span class="dd-arrow">+</span></button>
+    <div class="deep-dive-content">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0" class="reveal reveal-d3">
+      <!-- Copilot lane -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;border-left:4px solid #2264E5">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2264E5;margin-bottom:.75rem">M365 Copilot</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">App Surface Breadth</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{M365_BREADTH}}</div><div style="font-size:.55rem;color:var(--text-3)">apps/user</div></div>
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Multi-Turn Sessions</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{COMPLEX_SESSIONS}}%</div><div style="font-size:.55rem;color:var(--text-3)">complex rate</div></div>
+        </div>
       </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--purple)">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--purple);margin-bottom:.3rem">Agent Breadth</div>
-        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{AGENT_BREADTH}}</div>
-        <div style="font-size:.65rem;color:var(--text-3)">agents/user</div>
-      </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--purple)">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--purple);margin-bottom:.3rem">Multi-Turn Sessions</div>
-        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{COMPLEX_SESSIONS}}%</div>
-        <div style="font-size:.65rem;color:var(--text-3)">multi-turn</div>
-      </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--purple)">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--purple);margin-bottom:.3rem">Agent Return Rate</div>
-        <div style="font-size:1.5rem;font-weight:900;color:var(--text)">{{AGENT_HEALTH}}%</div>
-        <div style="font-size:.65rem;color:var(--text-3)">multi-user agents</div>
+      <!-- Agents lane -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;border-left:4px solid #7B2FF2">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#7B2FF2;margin-bottom:.75rem">Agents</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Agent Breadth</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{AGENT_BREADTH}}</div><div style="font-size:.55rem;color:var(--text-3)">agents/user</div></div>
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Agent Return Rate</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{AGENT_HEALTH}}%</div><div style="font-size:.55rem;color:var(--text-3)">multi-user agents</div></div>
+        </div>
       </div>
     </div>
 
-    <div class="two-col reveal reveal-d2" style="margin-bottom:1.5rem">
-      <div class="chart-card">
+    <div class="two-col reveal reveal-d2" style="margin-bottom:1rem">
+      <div class="chart-card" style="border-left:4px solid #2264E5">
+        <div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2264E5;margin-bottom:.4rem">M365 Copilot</div>
         <div class="chart-card-title">App Surface Distribution</div>
         <div class="chart-card-sub">Copilot usage by M365 application</div>
         <div style="position:relative;height:280px"><canvas id="chartAppSurface"></canvas></div>
       </div>
-      <div class="chart-card">
+      <div class="chart-card" style="border-left:4px solid #7B2FF2">
+        <div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#7B2FF2;margin-bottom:.4rem">Agents</div>
         <div class="chart-card-title">Agent Leaderboard</div>
         <div class="chart-card-sub">Top agents by sessions per user</div>
         <div style="position:relative;height:280px"><canvas id="chartAgentBar"></canvas></div>
       </div>
+    </div>
+    <div class="two-col reveal" style="margin-bottom:1.5rem;gap:1rem">
+      <div class="chart-card" style="padding:1.25rem"><div class="chart-card-title" style="margin-bottom:.75rem">Key Takeaways · App Surface</div>{{TAKEAWAY_APP_SURFACE}}</div>
+      <div class="chart-card" style="padding:1.25rem"><div class="chart-card-title" style="margin-bottom:.75rem">Key Takeaways · Agent Portfolio</div>{{TAKEAWAY_AGENT_LEADERBOARD}}</div>
     </div>
 
     <!-- Agent table (consolidated into Skill) -->
@@ -1297,27 +1299,62 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
     <div class="so-what reveal" style="--signal-accent:#7B2FF2">
       <div class="so-what-text">{{INSIGHT_SKILL}}</div>
     </div>
+    </div><!-- /deep-dive-content -->
 </section>
 
-<div class="pull-quote-strip"><div class="pull-quote-text">{{PULLQUOTE_3}}</div><div class="pull-quote-source">Next: License Intelligence</div></div>
+<!-- Org Pattern Map — synthesis after all evidence -->
+<section class="section" id="pattern-map" style="background:var(--section-dark);color:#fff">
+  <div class="section-inner">
+    <div class="section-label reveal" style="color:rgba(255,255,255,.4)">Agent Maturity by Organisation</div>
+    <div class="signal-question reveal" style="color:rgba(255,255,255,.35)">How far has each part of the business progressed from individual AI (P1) to agent-operated work (P3)?</div>
+    <h2 class="section-title reveal reveal-d1" style="color:#fff">{{ORG_COUNT}} organisations on the Frontier Firm journey</h2>
+    <p class="section-subtitle reveal reveal-d2" style="color:rgba(255,255,255,.5)">Classified by agent adoption rate — the gateway metric for pattern progression. Full scorecard metrics (Reach, Habit, Skill) are assessed at the tenant level above.</p>
+    <div class="reveal reveal-d3" style="margin-top:2rem">
+      <!-- Proportion summary -->
+      <div style="display:flex;height:52px;border-radius:10px;overflow:hidden;margin-bottom:1.5rem" id="patternProportionBar"></div>
+      <!-- All orgs on one axis -->
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.5rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.35)">Agent adoption % by organisation</div>
+          <div style="display:flex;gap:1rem">
+            <span style="display:flex;align-items:center;gap:.3rem;font-size:.5rem;color:rgba(255,255,255,.35)"><span style="width:8px;height:8px;border-radius:2px;background:#2264E5;display:inline-block"></span>P1 &lt;5%</span>
+            <span style="display:flex;align-items:center;gap:.3rem;font-size:.5rem;color:rgba(255,255,255,.35)"><span style="width:8px;height:8px;border-radius:2px;background:#7B2FF2;display:inline-block"></span>P2 5-25%</span>
+            <span style="display:flex;align-items:center;gap:.3rem;font-size:.5rem;color:rgba(255,255,255,.35)"><span style="width:8px;height:8px;border-radius:2px;background:#10B981;display:inline-block"></span>P3 &gt;25%</span>
+          </div>
+        </div>
+        <div id="orgPatternBars"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="pull-quote-strip"><div class="pull-quote-text">The data points to a clear set of priorities. Here are the highest-leverage moves available today.</div><div class="pull-quote-source">Next: License Intelligence &amp; Recommendations</div></div>
 
 <section class="section" id="value" style="background:var(--section-dark);color:#fff">
   <div class="section-inner">
     <div class="section-label reveal" style="color:rgba(255,255,255,.4)">License Intelligence</div>
+    <div class="signal-question reveal" style="color:rgba(255,255,255,.35)">What does this mean in time, money, and prioritisation?</div>
     <h2 class="section-title reveal reveal-d1" style="color:#fff">{{TITLE_VALUE}}</h2>
     <p class="section-subtitle reveal reveal-d2" style="color:rgba(255,255,255,.5)">{{SUBTITLE_VALUE}}</p>
 
     <!-- Beat 1: The Waste -->
-    <div class="headline-stat reveal reveal-d2" style="margin-top:2rem">
-      <div class="headline-stat-value" style="color:var(--red-soft)">{{INACTIVE_LICENSES_FMT}}</div>
+    <div class="headline-stat reveal reveal-d2" style="margin-top:2rem;--signal-accent:#EF4444">
+      <div class="headline-stat-value">{{INACTIVE_LICENSES_FMT}}</div>
       <div class="headline-stat-label" style="color:rgba(255,255,255,.6)">licenses show zero activity across the analysis period — idle spend that could be reallocated to where demand already exists</div>
     </div>
 
-    <!-- Beat 2: Depth Gap -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2rem 0" class="reveal reveal-d3">
-      <div class="stat-callout" style="--accent:var(--brand);background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06)"><div class="stat-callout-val" style="color:var(--brand)">{{LICENSED_AVG_DAYS}}</div><div class="stat-callout-label" style="color:rgba(255,255,255,.5)">avg active days/month<br><strong style="color:#fff">Licensed users</strong></div></div>
-      <div class="stat-callout" style="--accent:var(--purple);background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06)"><div class="stat-callout-val" style="color:var(--purple)">{{UNLICENSED_AVG_DAYS}}</div><div class="stat-callout-label" style="color:rgba(255,255,255,.5)">avg active days/month<br><strong style="color:#fff">Unlicensed users</strong></div></div>
-      <div class="stat-callout" style="--accent:var(--teal);background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06)"><div class="stat-callout-val" style="color:var(--teal)">{{CHAT_USERS_FMT}}</div><div class="stat-callout-label" style="color:rgba(255,255,255,.5)">unlicensed users<br><strong style="color:#fff">showing organic demand</strong></div></div>
+    <!-- Beat 2: Depth Gap — 2-lane layout -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:2rem 0" class="reveal reveal-d3">
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1.25rem;border-left:4px solid #2264E5">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2264E5;margin-bottom:.5rem">M365 Copilot</div>
+        <div style="font-size:2rem;font-weight:900;color:#2264E5">{{LICENSED_AVG_DAYS}}</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.5)">avg active days/month · licensed users</div>
+      </div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:1.25rem;border-left:4px solid #10B981">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#10B981;margin-bottom:.5rem">Organic Demand</div>
+        <div style="font-size:2rem;font-weight:900;color:#10B981">{{CHAT_USERS_FMT}}</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.5)">unlicensed users showing demand · {{UNLICENSED_AVG_DAYS}} days/month avg</div>
+      </div>
     </div>
 
     <!-- Beat 3: Where to Reallocate -->
@@ -1340,12 +1377,14 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 <section class="section" id="actions" style="background:var(--bg)">
   <div class="section-inner">
     <div class="section-label reveal">Recommendations</div>
+    <div class="signal-question reveal">Four moves to close the gap between where you are and where the data says you could be.</div>
     <h2 class="section-title reveal reveal-d1">{{ACTIONS_TITLE}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{ACTIONS_SUBTITLE}}</p>
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:2rem" class="reveal reveal-d3">
       <div class="rec-card"><div class="rec-header"><span class="rec-num" style="background:#F59E0B">1</span><span class="rec-priority priority-high">High Priority</span></div><h3>{{REC_1_TITLE}} <span style="display:inline-block;padding:.1rem .4rem;border-radius:100px;font-size:.5rem;font-weight:600;background:rgba(245,158,11,.1);color:#F59E0B;border:1px solid rgba(245,158,11,.2);vertical-align:middle">Habit</span></h3><p>{{REC_1_DESC}}</p><div class="rec-kpi">{{REC_1_KPI}}</div></div>
       <div class="rec-card"><div class="rec-header"><span class="rec-num" style="background:#7B2FF2">2</span><span class="rec-priority priority-high">High Priority</span></div><h3>{{REC_2_TITLE}} <span style="display:inline-block;padding:.1rem .4rem;border-radius:100px;font-size:.5rem;font-weight:600;background:rgba(123,47,242,.1);color:#7B2FF2;border:1px solid rgba(123,47,242,.2);vertical-align:middle">Skill</span></h3><p>{{REC_2_DESC}}</p><div class="rec-kpi">{{REC_2_KPI}}</div></div>
       <div class="rec-card"><div class="rec-header"><span class="rec-num" style="background:#0EA5E9">3</span><span class="rec-priority priority-med">Medium Priority</span></div><h3>{{REC_3_TITLE}} <span style="display:inline-block;padding:.1rem .4rem;border-radius:100px;font-size:.5rem;font-weight:600;background:rgba(14,165,233,.1);color:#0EA5E9;border:1px solid rgba(14,165,233,.2);vertical-align:middle">Reach</span></h3><p>{{REC_3_DESC}}</p><div class="rec-kpi">{{REC_3_KPI}}</div></div>
+      <div class="rec-card"><div class="rec-header"><span class="rec-num" style="background:#10B981">4</span><span class="rec-priority priority-med">Medium Priority</span></div><h3>{{REC_4_TITLE}} <span style="display:inline-block;padding:.1rem .4rem;border-radius:100px;font-size:.5rem;font-weight:600;background:rgba(16,185,129,.1);color:#10B981;border:1px solid rgba(16,185,129,.2);vertical-align:middle">Agents</span></h3><p>{{REC_4_DESC}}</p><div class="rec-kpi">{{REC_4_KPI}}</div></div>
     </div>
   </div>
 </section>
@@ -1442,16 +1481,33 @@ window.toggleInsight=function(btn){btn.classList.toggle('open');btn.nextElementS
 /* ── Scroll Progress Bar ─────────────────────────────────── */
 window.addEventListener('scroll',()=>{const st=document.documentElement.scrollTop;const sh=document.documentElement.scrollHeight-window.innerHeight;const p=sh>0?(st/sh)*100:0;document.getElementById('scrollProgress').style.width=p+'%'});
 
-/* ── Tier Nav Scroll Behavior ────────────────────────────── */
+/* ── Tier Nav Toggle — show/hide tier groups ─────────────── */
 document.querySelectorAll('.tier-nav-btn:not(.tier-chart-btn)').forEach(btn=>{
   btn.addEventListener('click',function(){
     const section=this.closest('.section');
     section.querySelectorAll('.tier-nav-btn:not(.tier-chart-btn)').forEach(b=>b.classList.remove('active'));
     this.classList.add('active');
     const tier=this.dataset.tier;
+    /* Hide all tier-groups in this section, then show only the selected one */
+    section.querySelectorAll('.tier-group').forEach(g=>{
+      g.style.display='none';
+    });
     const target=section.querySelector('.tier-group[data-tier-content="'+tier+'"]');
-    if(target){const navH=document.querySelector('.nav').offsetHeight||60;const y=target.getBoundingClientRect().top+window.pageYOffset-navH-16;window.scrollTo({top:y,behavior:'smooth'})}
+    if(target){
+      target.style.display='block';
+      const navH=document.querySelector('.nav').offsetHeight||60;
+      const y=target.getBoundingClientRect().top+window.pageYOffset-navH-16;
+      window.scrollTo({top:y,behavior:'smooth'});
+    }
   });
+});
+/* Default: show only 'all' tier-groups on page load */
+document.querySelectorAll('.signal-section').forEach(sec=>{
+  const allGroup=sec.querySelector('.tier-group[data-tier-content="all"]');
+  if(allGroup){
+    sec.querySelectorAll('.tier-group').forEach(g=>{g.style.display='none';});
+    allGroup.style.display='block';
+  }
 });
 
 /* ── Chart.js Setup ──────────────────────────────────────── */
@@ -1471,33 +1527,39 @@ Chart.defaults.color=cTick;
 Chart.defaults.plugins.legend.labels.color=cLegend;
 
 /* Chart: User Tiers */
-new Chart(document.getElementById('chartTiers'),{type:'bar',data:{labels:['Licensed M365 Copilot','Unlicensed Chat','Agent Users'],datasets:[{data:[{{LICENSED_USERS}},{{CHAT_USERS}},{{AGENT_USERS}}],backgroundColor:['#2264E5','#7B2FF2','#0EA5E9'],borderRadius:4,barThickness:48}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:cLabel,font:{weight:700,size:13},formatter:v=>v.toLocaleString()}},scales:{x:{grid:{color:cGrid},ticks:{color:cTickSub,font:{size:11}}},y:{grid:{display:false},ticks:{color:cTick,font:{size:12,weight:600}}}}}});
+if(document.getElementById('chartTiers'))new Chart(document.getElementById('chartTiers'),{type:'bar',data:{labels:['Licensed M365 Copilot','Unlicensed Chat','Agent Users'],datasets:[{data:[{{LICENSED_USERS}},{{CHAT_USERS}},{{AGENT_USERS}}],backgroundColor:['#2264E5','#7B2FF2','#0EA5E9'],borderRadius:4,barThickness:48}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:cLabel,font:{weight:700,size:13},formatter:v=>v.toLocaleString()}},scales:{x:{grid:{color:cGrid},ticks:{color:cTickSub,font:{size:11}}},y:{grid:{display:false},ticks:{color:cTick,font:{size:12,weight:600}}}}}});
 
 /* Chart: Engagement Depth */
-new Chart(document.getElementById('chartEngagement'),{type:'bar',data:{labels:['Licensed M365','Unlicensed Chat','Agents'],datasets:[{label:'Avg Sessions per User',data:[{{LICENSED_AVG_PROMPTS}},{{UNLICENSED_AVG_PROMPTS}},{{AGENT_INTENSITY}}],backgroundColor:['rgba(34,100,229,.75)','rgba(123,47,242,.75)','rgba(14,165,233,.75)'],borderRadius:4,barThickness:36}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:cTick,font:{weight:700,size:12},formatter:v=>v.toFixed(1)}},scales:{y:{beginAtZero:true,grid:{color:cGrid},ticks:{color:cTickSub}},x:{grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}}}}});
+if(document.getElementById('chartEngagement'))new Chart(document.getElementById('chartEngagement'),{type:'bar',data:{labels:['Licensed M365','Unlicensed Chat','Agents'],datasets:[{label:'Avg Sessions per User',data:[{{LICENSED_AVG_PROMPTS}},{{UNLICENSED_AVG_PROMPTS}},{{AGENT_INTENSITY}}],backgroundColor:['rgba(34,100,229,.75)','rgba(123,47,242,.75)','rgba(14,165,233,.75)'],borderRadius:4,barThickness:36}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:cTick,font:{weight:700,size:12},formatter:v=>v.toFixed(1)}},scales:{y:{beginAtZero:true,grid:{color:cGrid},ticks:{color:cTickSub}},x:{grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}}}}});
 
 /* Chart: Weekly Intensity */
-new Chart(document.getElementById('chartWeekly'),{type:'bar',data:{labels:['M365 Sessions/Wk','Chat Sessions/Wk','Agent Sessions/Wk'],datasets:[{data:[{{WEEKLY_M365}},{{WEEKLY_CHAT}},{{WEEKLY_AGENTS}}],backgroundColor:['rgba(34,100,229,.6)','rgba(123,47,242,.6)','rgba(14,165,233,.6)'],borderRadius:4,barThickness:36}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:cTick,font:{weight:700,size:12},formatter:v=>v.toFixed(2)}},scales:{y:{beginAtZero:true,grid:{color:cGrid},ticks:{color:cTickSub}},x:{grid:{display:false},ticks:{color:cTick,font:{size:10,weight:500}}}}}});
+if(document.getElementById('chartWeekly')){new Chart(document.getElementById('chartWeekly'),{type:'bar',data:{labels:['M365 Sessions/Wk','Chat Sessions/Wk','Agent Sessions/Wk'],datasets:[{data:[{{WEEKLY_M365}},{{WEEKLY_CHAT}},{{WEEKLY_AGENTS}}],backgroundColor:['rgba(34,100,229,.6)','rgba(123,47,242,.6)','rgba(14,165,233,.6)'],borderRadius:4,barThickness:36}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:cTick,font:{weight:700,size:12},formatter:v=>v.toFixed(2)}},scales:{y:{beginAtZero:true,grid:{color:cGrid},ticks:{color:cTickSub}},x:{grid:{display:false},ticks:{color:cTick,font:{size:10,weight:500}}}}}});}
 
 /* Chart: Monthly Active Users Trend */
-let chartMonthlyUsersInst;
-if(document.getElementById('chartMonthlyUsers')){
-chartMonthlyUsersInst=new Chart(document.getElementById('chartMonthlyUsers'),{type:'line',data:{labels:{{MONTHLY_LABELS_JSON}},datasets:[{label:'Monthly Active Users',data:{{MONTHLY_USERS_JSON}},borderColor:'#F59E0B',backgroundColor:'rgba(245,158,11,.08)',fill:true,tension:.3,pointRadius:5,pointBackgroundColor:'#F59E0B',pointBorderColor:'#fff',pointBorderWidth:2,borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{usePointStyle:true,pointStyle:'circle',padding:16,font:{size:10,weight:500},color:cLegend}},datalabels:{display:false}},scales:{y:{beginAtZero:false,grid:{color:cGrid},ticks:{color:cTickSub,callback:v=>v>=1000?(v/1000).toFixed(v%1000?1:0)+'K':v},title:{display:true,text:'Active Users',color:cTick,font:{size:10}}},x:{grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}}}}});
+/* Chart: Weekly Active Users Trend (from PBIX WeekStart) */
+if(document.getElementById('chartWeeklyTrend')){
+  const _wt={{WEEKLY_TREND_JSON}};
+  if(_wt&&_wt.labels&&_wt.labels.length>0){
+    new Chart(document.getElementById('chartWeeklyTrend'),{type:'line',data:{labels:_wt.labels,datasets:[
+      {label:'Activation Rate (% of seats)',data:_wt.activation,borderColor:'#2264E5',backgroundColor:'rgba(34,100,229,.1)',fill:true,tension:.3,pointRadius:4,pointBackgroundColor:'#2264E5',pointBorderColor:'#fff',pointBorderWidth:1.5,borderWidth:3,yAxisID:'y'},
+      {label:'Agent Adoption (% of M365 users)',data:_wt.agent_adoption,borderColor:'#7B2FF2',backgroundColor:'rgba(123,47,242,.08)',fill:true,tension:.3,pointRadius:4,pointBackgroundColor:'#7B2FF2',pointBorderColor:'#fff',pointBorderWidth:1.5,borderWidth:3,borderDash:[6,3],yAxisID:'y2'}
+    ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{usePointStyle:true,pointStyle:'circle',padding:14,font:{size:10,weight:500},color:cLegend}},datalabels:{display:false},tooltip:{callbacks:{label:function(ctx){var raw=ctx.datasetIndex===0?_wt.m365_raw[ctx.dataIndex]:_wt.agents_raw[ctx.dataIndex];return ctx.dataset.label+': '+ctx.formattedValue+'% ('+raw.toLocaleString()+' users)'}}}},scales:{y:{position:'left',beginAtZero:false,grid:{color:cGrid},ticks:{color:'#2264E5',callback:v=>v+'%',font:{size:10,weight:600}},title:{display:true,text:'Activation %',color:'#2264E5',font:{size:10,weight:600}}},y2:{position:'right',beginAtZero:true,grid:{drawOnChartArea:false},ticks:{color:'#7B2FF2',callback:v=>v+'%',font:{size:10,weight:600}},title:{display:true,text:'Agent Adoption %',color:'#7B2FF2',font:{size:10,weight:600}}},x:{grid:{display:false},ticks:{color:cTick,font:{size:9,weight:500},maxRotation:45}}}}});
+  }
 }
 
 /* Chart: Habit Formation — Monthly Trend per Tier */
 /* Chart: Monthly Users by Tier (Habit section) */
 if(document.getElementById('chartHabitTiers')){
-new Chart(document.getElementById('chartHabitTiers'),{type:'bar',data:{labels:['Licensed M365','Unlicensed Chat','Agent Users'],datasets:[
-  {label:'1-5 Active Days',data:[{{LIC_BAND_1_5_PCT}},{{CHAT_BAND_1_5_PCT}},{{AGENT_BAND_1_5_PCT}}],backgroundColor:'rgba(123,47,242,.5)',borderRadius:0},
-  {label:'6-10 Active Days',data:[{{LIC_BAND_6_10_PCT}},{{CHAT_BAND_6_10_PCT}},{{AGENT_BAND_6_10_PCT}}],backgroundColor:'rgba(34,100,229,.6)',borderRadius:0},
-  {label:'11-15 Active Days',data:[{{LIC_BAND_11_15_PCT}},{{CHAT_BAND_11_15_PCT}},{{AGENT_BAND_11_15_PCT}}],backgroundColor:'rgba(14,165,233,.7)',borderRadius:0},
-  {label:'16+ Active Days',data:[{{LIC_BAND_16_PLUS_PCT}},{{CHAT_BAND_16_PLUS_PCT}},{{AGENT_BAND_16_PLUS_PCT}}],backgroundColor:'rgba(16,185,129,.8)',borderRadius:{topLeft:4,topRight:4,bottomLeft:0,bottomRight:0}}
-]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{usePointStyle:true,pointStyle:'circle',padding:12,font:{size:10,weight:500},color:cLegend}},datalabels:{display:ctx=>ctx.dataset.data[ctx.dataIndex]>=3,color:'#fff',font:{weight:700,size:11},formatter:v=>v+'%'}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}},y:{stacked:true,max:100,grid:{color:cGrid},ticks:{color:cTickSub,callback:v=>v+'%'}}}}});
+new Chart(document.getElementById('chartHabitTiers'),{type:'bar',data:{labels:['M365 Copilot','Copilot Chat','Agents'],datasets:[
+  {label:'1-5 Active Days',data:[{{LIC_BAND_1_5_PCT}},{{CHAT_BAND_1_5_PCT}},{{AGENT_BAND_1_5_PCT}}],backgroundColor:['rgba(34,100,229,.25)','rgba(16,185,129,.25)','rgba(123,47,242,.25)'],borderRadius:0},
+  {label:'6-10 Active Days',data:[{{LIC_BAND_6_10_PCT}},{{CHAT_BAND_6_10_PCT}},{{AGENT_BAND_6_10_PCT}}],backgroundColor:['rgba(34,100,229,.5)','rgba(16,185,129,.5)','rgba(123,47,242,.5)'],borderRadius:0},
+  {label:'11-15 Active Days',data:[{{LIC_BAND_11_15_PCT}},{{CHAT_BAND_11_15_PCT}},{{AGENT_BAND_11_15_PCT}}],backgroundColor:['rgba(34,100,229,.75)','rgba(16,185,129,.75)','rgba(123,47,242,.75)'],borderRadius:0},
+  {label:'16+ Active Days',data:[{{LIC_BAND_16_PLUS_PCT}},{{CHAT_BAND_16_PLUS_PCT}},{{AGENT_BAND_16_PLUS_PCT}}],backgroundColor:['rgba(34,100,229,1)','rgba(16,185,129,1)','rgba(123,47,242,1)'],borderRadius:{topLeft:4,topRight:4,bottomLeft:0,bottomRight:0}}
+]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{usePointStyle:true,pointStyle:'circle',padding:12,font:{size:10,weight:500},color:cLegend}},datalabels:{display:ctx=>ctx.dataset.data[ctx.dataIndex]>=3,color:'#fff',font:{weight:700,size:11},formatter:v=>v+'%'}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:function(ctx){return['#2264E5','#10B981','#7B2FF2'][ctx.index]||cTick},font:{size:11,weight:700}}},y:{stacked:true,max:100,grid:{color:cGrid},ticks:{color:cTickSub,callback:v=>v+'%'}}}}});
 }
 
 /* Chart: Agent Health */
-new Chart(document.getElementById('chartAgentHealth'),{type:'doughnut',data:{labels:['High-Impact (Keep)','Under Review','Dormant (Retire)'],datasets:[{data:[{{AGENTS_KEEP}},{{AGENTS_REVIEW}},{{AGENTS_RETIRE}}],backgroundColor:['#2264E5','#7B2FF2','rgba(148,163,184,.25)'],borderWidth:2,borderColor:'var(--surface)',hoverBorderColor:'#fff',hoverOffset:6,hoverBackgroundColor:['#4A8AFF','#9B5FFF','rgba(148,163,184,.45)']}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(15,23,42,.92)',titleFont:{size:12,weight:600},bodyFont:{size:11},cornerRadius:8,padding:10},datalabels:{color:(ctx)=>ctx.dataIndex===2?'var(--text-3)':'#fff',font:{weight:700,size:12},formatter:(v,ctx)=>{const t=ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b);return Math.round(v/t*100)+'%'}}}}});
+if(document.getElementById('chartAgentHealth'))new Chart(document.getElementById('chartAgentHealth'),{type:'doughnut',data:{labels:['High-Impact (Keep)','Under Review','Dormant (Retire)'],datasets:[{data:[{{AGENTS_KEEP}},{{AGENTS_REVIEW}},{{AGENTS_RETIRE}}],backgroundColor:['#2264E5','#7B2FF2','rgba(148,163,184,.25)'],borderWidth:2,borderColor:'var(--surface)',hoverBorderColor:'#fff',hoverOffset:6,hoverBackgroundColor:['#4A8AFF','#9B5FFF','rgba(148,163,184,.45)']}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(15,23,42,.92)',titleFont:{size:12,weight:600},bodyFont:{size:11},cornerRadius:8,padding:10},datalabels:{color:(ctx)=>ctx.dataIndex===2?'var(--text-3)':'#fff',font:{weight:700,size:12},formatter:(v,ctx)=>{const t=ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b);return Math.round(v/t*100)+'%'}}}}});
 
 /* Chart: Agent Sessions per User (Deep Dive) */
 if(document.getElementById('chartAgentSessions')){
@@ -1505,7 +1567,7 @@ new Chart(document.getElementById('chartAgentSessions'),{type:'bar',data:{labels
 }
 
 /* Chart: MoM Retention per month pair (bar chart) */
-new Chart(document.getElementById('chartRetention'),{type:'bar',data:{labels:{{RETENTION_MONTH_LABELS}},datasets:[{label:'MoM Retention %',data:{{RETENTION_MONTH_VALUES}},backgroundColor:{{RETENTION_MONTH_COLORS}},borderRadius:6,barThickness:40}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,color:'#fff',font:{weight:700,size:14},anchor:'center',formatter:v=>v+'%'}},scales:{y:{min:0,max:100,grid:{color:cGrid},ticks:{color:cTickSub,callback:v=>v+'%'}},x:{grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}}}}});
+if(document.getElementById('chartRetention'))new Chart(document.getElementById('chartRetention'),{type:'bar',data:{labels:{{RETENTION_MONTH_LABELS}},datasets:[{label:'MoM Retention %',data:{{RETENTION_MONTH_VALUES}},backgroundColor:{{RETENTION_MONTH_COLORS}},borderRadius:6,barThickness:40}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,color:'#fff',font:{weight:700,size:14},anchor:'center',formatter:v=>v+'%'}},scales:{y:{min:0,max:100,grid:{color:cGrid},ticks:{color:cTickSub,callback:v=>v+'%'}},x:{grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}}}}});
 
 
 /* Chart: License ROI (canvas removed in License Intelligence redesign) */
@@ -1524,25 +1586,6 @@ document.querySelectorAll('.tier-toggle').forEach(container=>{
       this.classList.add('active');
       const tier=this.dataset.tier;
       const chartTarget=container.dataset.chart;
-
-      if(chartTarget==='monthlyUsers'&&chartMonthlyUsersInst){
-        const c=chartMonthlyUsersInst;
-        if(tier==='all'){
-          c.data.datasets[0].data=_allMonthlyUsers;
-          c.data.datasets[0].borderColor='#F59E0B';c.data.datasets[0].backgroundColor='rgba(245,158,11,.08)';
-          c.data.datasets[0].pointBackgroundColor='#F59E0B';c.data.datasets[0].label='Monthly Active Users';
-          if(c.data.datasets[1])c.data.datasets[1].hidden=false;
-        }else if(_perTierMU){
-          c.data.labels=_perTierMU.labels;
-          c.data.datasets[0].data=_perTierMU[tier]||[];
-          c.data.datasets[0].borderColor=_tierColors[tier];c.data.datasets[0].backgroundColor=_tierColors[tier]+'14';
-          c.data.datasets[0].pointBackgroundColor=_tierColors[tier];
-          c.data.datasets[0].label={m365:'M365 Copilot',chat:'Copilot Chat',agents:'Agent Users'}[tier]||tier;
-          if(c.data.datasets[1])c.data.datasets[1].hidden=true;
-        }
-        c.update();
-      }
-
 
       if(chartTarget==='habit'&&chartHabitInst){
         const hd=getHabitDatasets(tier);
@@ -1632,6 +1675,54 @@ document.querySelectorAll('.metric-card[data-metric-id]').forEach(card => {
   });
 });
 
+/* Org Pattern Map — proportion bar + sorted horizontal bars */
+(function(){
+  const _opd={{ORG_PATTERN_DISTRIBUTION_JSON}};
+  if(!_opd||!_opd.total||!_opd.orgs.length) return;
+  const propBar=document.getElementById('patternProportionBar');
+  const barsContainer=document.getElementById('orgPatternBars');
+  if(!propBar||!barsContainer) return;
+
+  const colors={P1:'#2264E5',P2:'#7B2FF2',P3:'#10B981'};
+  const bg={P1:'rgba(34,100,229,',P2:'rgba(123,47,242,',P3:'rgba(16,185,129,'};
+  const labels={P1:'P1 · Human with Assistant',P2:'P2 · Human-Agent Teams',P3:'P3 · Agent-Operated'};
+  var counts={P1:0,P2:0,P3:0};
+  _opd.orgs.forEach(function(o){counts[o.pattern]++;});
+
+  /* Proportion bar */
+  ['P1','P2','P3'].forEach(function(p){
+    var pct=_opd.total>0?(counts[p]/_opd.total*100):0;
+    if(pct<=0) return;
+    var seg=document.createElement('div');
+    seg.style.cssText='flex:'+pct+';background:'+bg[p]+'.3);display:flex;align-items:center;justify-content:center;gap:.5rem;padding:0 .75rem;transition:flex 1s ease';
+    seg.innerHTML='<span style="font-size:1.3rem;font-weight:900;color:#fff">'+Math.round(pct)+'%</span><span style="font-size:.55rem;font-weight:700;color:'+colors[p]+';text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">'+p+' ('+counts[p]+')</span>';
+    propBar.appendChild(seg);
+  });
+
+  /* Sort all orgs by agent adoption descending */
+  var sorted=_opd.orgs.slice().sort(function(a,b){return b.agentPct-a.agentPct;});
+  var maxPct=Math.max.apply(null,sorted.map(function(o){return o.agentPct;}))||1;
+
+  /* Zone threshold lines + bars */
+  sorted.forEach(function(org){
+    var pat=org.pattern;
+    var barPct=Math.max(2,Math.round(org.agentPct/maxPct*100));
+    var row=document.createElement('div');
+    row.style.cssText='display:grid;grid-template-columns:70px 1fr 45px;gap:.5rem;align-items:center;padding:.25rem 0';
+
+    /* Org name */
+    row.innerHTML='<div style="font-size:.65rem;font-weight:700;color:rgba(255,255,255,.75);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+org.label+' — '+org.users.toLocaleString()+' users">'+org.label+'</div>'+
+      '<div style="height:22px;background:rgba(255,255,255,.03);border-radius:4px;position:relative;overflow:hidden">'+
+        '<div style="height:100%;width:'+barPct+'%;background:linear-gradient(90deg,'+bg[pat]+'.5),'+bg[pat]+'.25));border-radius:4px;transition:width 1s ease"></div>'+
+        '<div style="position:absolute;top:0;bottom:0;left:calc(5 / '+maxPct+' * 100%);width:1px;background:rgba(255,255,255,.1)" title="P2 threshold (5%)"></div>'+
+        '<div style="position:absolute;top:0;bottom:0;left:calc(25 / '+maxPct+' * 100%);width:1px;background:rgba(255,255,255,.1)" title="P3 threshold (25%)"></div>'+
+      '</div>'+
+      '<div style="font-size:.65rem;font-weight:800;color:'+colors[pat]+';text-align:right">'+org.agentPct+'%</div>';
+
+    barsContainer.appendChild(row);
+  });
+})();
+
 /* Chart: Org Scatter - M365 vs Agents */
 if(document.getElementById('chartOrgScatter')){
 const _scatterData=JSON.parse('{{ORG_SCATTER_DATA}}');
@@ -1652,6 +1743,22 @@ new Chart(document.getElementById('chartAppSurface'),{type:'bar',data:{labels:[{
 if(document.getElementById('chartAgentBar')){
 new Chart(document.getElementById('chartAgentBar'),{type:'bar',data:{labels:JSON.parse('{{TOP_AGENT_NAMES_JSON}}'),datasets:[{data:{{TOP_AGENT_SESSIONS}},backgroundColor:'rgba(14,165,233,.6)',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},datalabels:{display:false}},scales:{x:{title:{display:true,text:'Sessions per User',font:{size:10},color:cTick},grid:{color:cGrid},ticks:{color:cTickSub}},y:{grid:{display:false},ticks:{color:cTick,font:{size:11,weight:600}}}}}});
 }
+
+/* Pillar Radar Charts — Copilot vs Agents per pillar */
+(function(){
+  var rd={{PILLAR_RADAR_JSON}};
+  if(!rd) return;
+  Object.keys(rd).forEach(function(chartId){
+    var el=document.getElementById(chartId);
+    if(!el) return;
+    var d=rd[chartId];
+    new Chart(el,{type:'radar',data:{labels:d.labels,datasets:[
+      {label:'M365 Copilot',data:d.copilot,borderColor:'#2264E5',backgroundColor:'rgba(34,100,229,.12)',pointBackgroundColor:'#2264E5',pointBorderColor:'#fff',pointBorderWidth:1,pointRadius:3,borderWidth:2,fill:true},
+      {label:'Agents',data:d.agents,borderColor:'#7B2FF2',backgroundColor:'rgba(123,47,242,.1)',pointBackgroundColor:'#7B2FF2',pointBorderColor:'#fff',pointBorderWidth:1,pointRadius:3,borderWidth:2,fill:true},
+      {label:'Frontier',data:d.frontier,borderColor:'rgba(16,185,129,.3)',backgroundColor:'transparent',pointRadius:0,borderWidth:1,borderDash:[4,4],fill:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:false}},scales:{r:{beginAtZero:true,max:120,ticks:{display:false,stepSize:25},grid:{color:'rgba(255,255,255,.06)'},angleLines:{color:'rgba(255,255,255,.06)'},pointLabels:{font:{size:8,weight:600},color:'rgba(255,255,255,.45)',padding:8}}}}});
+  });
+})();
 </script>
 
 <script>
@@ -1685,6 +1792,28 @@ function exportToPDF() {
 }
 
 document.querySelectorAll('.flip-card').forEach(card=>{card.addEventListener('click',()=>card.classList.toggle('flipped'))});
+
+/* Edit mode toggle */
+var editMode=false;
+function toggleEditable(){
+  editMode=!editMode;
+  var btn=document.getElementById('editToggleBtn');
+  var targets=document.querySelectorAll('.section-title,.section-subtitle,.signal-question,.insight-callout,.insight-box,.so-what-text,.stat-callout-label,.spotlight-body,.spotlight-title,.theme-card h3,.theme-card p,.chart-card-sub,.headline-stat-label,h3,p');
+  targets.forEach(function(el){
+    if(editMode){
+      el.contentEditable='true';
+      el.style.outline='1px dashed rgba(123,47,242,.3)';
+      el.style.borderRadius='4px';
+    } else {
+      el.contentEditable='false';
+      el.style.outline='';
+    }
+  });
+  if(btn){
+    btn.style.background=editMode?'rgba(16,185,129,.8)':'rgba(123,47,242,.8)';
+    btn.querySelector('svg').nextSibling.textContent=editMode?' Editing':' Edit';
+  }
+}
 </script>
 
 </body>
