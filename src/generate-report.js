@@ -1424,19 +1424,21 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       var agentM = Object.entries(schemaV4.metrics).filter(function(e) { return e[1].lane === 'agents' && e[1].pillar === pKey; });
       var allM = copilotM.concat(agentM);
 
+      // Shorten long radar labels to prevent clipping
+      var shortLabels = { 'License Activation': 'Activation', 'License Coverage': 'Coverage', 'Usage Spread': 'Spread', 'Habitual User Rate': 'Habitual', 'Agent Habitual Rate': 'Agent Habit', 'Agent MoM Retention': 'Agent Retain', 'Deep Interactions': 'Deep Interact', 'App Surface Breadth': 'App Breadth', 'Agent Adoption': 'Agent Adopt', 'Org Penetration': 'Org Penetrate', 'Agent Breadth': 'Agent Breadth', 'Agent Return Rate': 'Agent Return' };
       radarData['radarPillar' + radarIdx] = {
-        labels: allM.map(function(e) { return e[1].name; }),
+        labels: allM.map(function(e) { return shortLabels[e[1].name] || e[1].name; }),
         copilot: allM.map(function(e) {
           if (e[1].lane !== 'copilot') return 0;
           var v = data[e[1].data_field];
           var max = e[1].bands ? e[1].bands[1] : 100;
-          return typeof v === 'number' ? Math.min(Math.round(v / max * 100), 120) : 0;
+          return typeof v === 'number' ? Math.max(8, Math.min(Math.round(v / max * 100), 120)) : 0;
         }),
         agents: allM.map(function(e) {
           if (e[1].lane !== 'agents') return 0;
           var v = data[e[1].data_field];
           var max = e[1].bands ? e[1].bands[1] : 100;
-          return typeof v === 'number' ? Math.min(Math.round(v / max * 100), 120) : 0;
+          return typeof v === 'number' ? Math.max(8, Math.min(Math.round(v / max * 100), 120)) : 0;
         }),
         frontier: allM.map(function() { return 100; })
       };
