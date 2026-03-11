@@ -1346,7 +1346,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       gridHtml += '</div>';
 
       // Two-column: radar left, cards right
-      gridHtml += '<div style="display:grid;grid-template-columns:240px 1fr;gap:1rem;align-items:start">';
+      gridHtml += '<div style="display:grid;grid-template-columns:280px 1fr;gap:1rem;align-items:start">';
 
       // Radar chart
       gridHtml += '<div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:.75rem">';
@@ -1427,7 +1427,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       var allM = copilotM.concat(agentM);
 
       // Shorten long radar labels to prevent clipping
-      var shortLabels = { 'License Activation': 'Activation', 'License Coverage': 'Coverage', 'Usage Spread': 'Spread', 'Habitual User Rate': 'Habitual', 'Agent Habitual Rate': 'Agent Habit', 'Agent MoM Retention': 'Agent Retain', 'Deep Interactions': 'Deep Interact', 'App Surface Breadth': 'App Breadth', 'Agent Adoption': 'Agent Adopt', 'Org Penetration': 'Org Penetrate', 'Agent Breadth': 'Agent Breadth', 'Agent Return Rate': 'Agent Return' };
+      var shortLabels = { 'License Activation': 'Activation', 'License Coverage': 'Coverage', 'Usage Spread': 'Spread', 'Habitual User Rate': 'Habitual', 'Agent Habitual Rate': 'Ag. Habit', 'Agent MoM Retention': 'Ag. Retain', 'Deep Interactions': 'Deep Int.', 'App Surface Breadth': 'App Breadth', 'Agent Adoption': 'Ag. Adopt', 'Org Penetration': 'Org. Pen.', 'Agent Breadth': 'Ag. Breadth', 'Agent Return Rate': 'Ag. Return', 'MoM Retention': 'Retention' };
       // Compute normalised values for radar and pillar score
       var copilotVals = [], agentVals = [];
       allM.forEach(function(e) {
