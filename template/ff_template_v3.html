@@ -1326,10 +1326,17 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <a href="#skill" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(123,47,242,.3);color:#8477FB;background:rgba(123,47,242,.06);transition:all .3s">Skill →</a>
     </div>
 
-    <!-- Dominant Pattern — single org-wide verdict -->
-    <div class="reveal reveal-d5" style="margin-top:2rem;text-align:center;padding:1.25rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">
-      <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-bottom:.3rem">Dominant Pattern</div>
-      <div style="font-size:1.3rem;font-weight:900;color:var(--brand)">{{DOMINANT_PATTERN_TIER}}: {{DOMINANT_PATTERN_NAME}}</div>
+    <!-- Dominant Pattern + metric proportion -->
+    <div class="reveal reveal-d5" style="margin-top:2rem;display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:center">
+      <div style="text-align:center;padding:1.25rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-bottom:.3rem">Dominant Pattern</div>
+        <div style="font-size:1.3rem;font-weight:900;color:var(--brand)">{{DOMINANT_PATTERN_TIER}}: {{DOMINANT_PATTERN_NAME}}</div>
+      </div>
+      <div style="padding:1.25rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-bottom:.6rem">Metric Distribution Across Patterns</div>
+        <div id="patternProportionInline" style="display:flex;height:28px;border-radius:6px;overflow:hidden;margin-bottom:.4rem"></div>
+        <div id="patternProportionLabels" style="display:flex;justify-content:center;gap:1rem;font-size:.5rem"></div>
+      </div>
     </div>
 
     <!-- V4 Scorecard -->
@@ -2104,9 +2111,46 @@ new Chart(document.getElementById('chartAgentBar'),{type:'bar',data:{labels:JSON
     new Chart(el,{type:'radar',data:{labels:d.labels,datasets:[
       {label:'M365 Copilot',data:d.copilot,borderColor:'#007fff',backgroundColor:'rgba(34,100,229,.12)',pointBackgroundColor:'#007fff',pointBorderColor:'#fff',pointBorderWidth:1,pointRadius:3,borderWidth:2,fill:true},
       {label:'Agents',data:d.agents,borderColor:'#8477FB',backgroundColor:'rgba(123,47,242,.1)',pointBackgroundColor:'#8477FB',pointBorderColor:'#fff',pointBorderWidth:1,pointRadius:3,borderWidth:2,fill:true},
-      {label:'Frontier',data:d.frontier,borderColor:'rgba(16,185,129,.3)',backgroundColor:'transparent',pointRadius:0,borderWidth:1,borderDash:[4,4],fill:false}
+      {label:'Pattern 3',data:d.frontier,borderColor:'rgba(16,185,129,.3)',backgroundColor:'transparent',pointRadius:0,borderWidth:1,borderDash:[4,4],fill:false}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:false}},scales:{r:{beginAtZero:true,max:120,ticks:{display:false,stepSize:25},grid:{color:'rgba(255,255,255,.06)'},angleLines:{color:'rgba(255,255,255,.06)'},pointLabels:{font:{size:7,weight:600},color:'rgba(255,255,255,.45)',padding:14}}}}});
+    /* Pillar score bar below radar */
+    if(typeof d.pillarScore==='number'){
+      var scoreDiv=document.createElement('div');
+      scoreDiv.style.cssText='margin-top:.5rem;padding:0 .25rem';
+      var sc=d.pillarScore;
+      var scCol=sc>=75?'#0D9488':sc>=40?'#D270F0':'#94A3B8';
+      scoreDiv.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.2rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.35)">Pillar Score</span><span style="font-size:.65rem;font-weight:900;color:'+scCol+'">'+sc+'/100</span></div><div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+sc+'%;background:'+scCol+';border-radius:2px;transition:width 1s ease"></div></div>';
+      el.parentElement.appendChild(scoreDiv);
+    }
   });
+})();
+
+/* Pattern proportion bar (next to Dominant Pattern) */
+(function(){
+  var pp={{PATTERN_PROPORTION_JSON}};
+  if(!pp||!pp.total) return;
+  var bar=document.getElementById('patternProportionInline');
+  var lbls=document.getElementById('patternProportionLabels');
+  if(!bar) return;
+  var cfg=[
+    {key:'P1',count:pp.P1,color:'#94A3B8',bg:'rgba(148,163,184,.3)',label:'Pattern 1'},
+    {key:'P2',count:pp.P2,color:'#D270F0',bg:'rgba(210,112,240,.3)',label:'Pattern 2'},
+    {key:'P3',count:pp.P3,color:'#0D9488',bg:'rgba(16,185,129,.3)',label:'Pattern 3'}
+  ];
+  cfg.forEach(function(c){
+    if(c.count<=0) return;
+    var pct=c.count/pp.total*100;
+    var seg=document.createElement('div');
+    seg.style.cssText='flex:'+pct+';background:'+c.bg+';display:flex;align-items:center;justify-content:center;transition:flex 1s ease';
+    seg.innerHTML='<span style="font-size:.7rem;font-weight:900;color:#fff">'+c.count+'</span>';
+    bar.appendChild(seg);
+  });
+  if(lbls){
+    cfg.forEach(function(c){
+      if(c.count<=0) return;
+      lbls.innerHTML+='<span style="display:flex;align-items:center;gap:.25rem"><span style="width:8px;height:8px;border-radius:2px;background:'+c.bg+'"></span><span style="color:'+c.color+';font-weight:700">'+c.label+'</span><span style="color:rgba(255,255,255,.3)">('+c.count+'/'+pp.total+')</span></span>';
+    });
+  }
 })();
 </script>
 

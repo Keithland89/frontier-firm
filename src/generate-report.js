@@ -1426,25 +1426,46 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
 
       // Shorten long radar labels to prevent clipping
       var shortLabels = { 'License Activation': 'Activation', 'License Coverage': 'Coverage', 'Usage Spread': 'Spread', 'Habitual User Rate': 'Habitual', 'Agent Habitual Rate': 'Agent Habit', 'Agent MoM Retention': 'Agent Retain', 'Deep Interactions': 'Deep Interact', 'App Surface Breadth': 'App Breadth', 'Agent Adoption': 'Agent Adopt', 'Org Penetration': 'Org Penetrate', 'Agent Breadth': 'Agent Breadth', 'Agent Return Rate': 'Agent Return' };
+      // Compute normalised values for radar and pillar score
+      var copilotVals = [], agentVals = [];
+      allM.forEach(function(e) {
+        var v = data[e[1].data_field];
+        var max = e[1].bands ? e[1].bands[1] : 100;
+        var norm = typeof v === 'number' ? Math.min(Math.round(v / max * 100), 120) : 0;
+        if (e[1].lane === 'copilot') copilotVals.push(norm);
+        if (e[1].lane === 'agents') agentVals.push(norm);
+      });
+      var pillarAvg = Math.round(copilotVals.concat(agentVals).reduce(function(s,v){return s+v;},0) / Math.max(copilotVals.length + agentVals.length, 1));
+
       radarData['radarPillar' + radarIdx] = {
         labels: allM.map(function(e) { return shortLabels[e[1].name] || e[1].name; }),
         copilot: allM.map(function(e) {
           if (e[1].lane !== 'copilot') return 0;
           var v = data[e[1].data_field];
           var max = e[1].bands ? e[1].bands[1] : 100;
-          return typeof v === 'number' ? Math.max(8, Math.min(Math.round(v / max * 100), 120)) : 0;
+          return typeof v === 'number' ? Math.max(15, Math.min(Math.round(v / max * 100), 120)) : 0;
         }),
         agents: allM.map(function(e) {
           if (e[1].lane !== 'agents') return 0;
           var v = data[e[1].data_field];
           var max = e[1].bands ? e[1].bands[1] : 100;
-          return typeof v === 'number' ? Math.max(8, Math.min(Math.round(v / max * 100), 120)) : 0;
+          return typeof v === 'number' ? Math.max(15, Math.min(Math.round(v / max * 100), 120)) : 0;
         }),
-        frontier: allM.map(function() { return 100; })
+        frontier: allM.map(function() { return 100; }),
+        pillarScore: Math.min(pillarAvg, 100)
       };
       radarIdx++;
     });
     html = html.replace(/\{\{PILLAR_RADAR_JSON\}\}/g, JSON.stringify(radarData));
+
+    // Pattern proportion — count how many of 13 metrics fall into each tier
+    var tierCounts = { P1: 0, P2: 0, P3: 0 };
+    Object.entries(schemaV4.metrics).forEach(function(e) {
+      var t = v4Tiers[e[0]] || 'P1';
+      tierCounts[t]++;
+    });
+    var totalMetrics = tierCounts.P1 + tierCounts.P2 + tierCounts.P3;
+    html = html.replace(/\{\{PATTERN_PROPORTION_JSON\}\}/g, JSON.stringify({ P1: tierCounts.P1, P2: tierCounts.P2, P3: tierCounts.P3, total: totalMetrics }));
 
     html = html.replace(/\{\{V2_SCORECARD_HTML\}\}/g, gridHtml);
     html = html.replace(/\{\{V4_SCORECARD_HTML\}\}/g, gridHtml);
@@ -1452,6 +1473,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     html = html.replace(/\{\{V2_SCORECARD_HTML\}\}/g, '');
     html = html.replace(/\{\{V4_SCORECARD_HTML\}\}/g, '');
     html = html.replace(/\{\{PILLAR_RADAR_JSON\}\}/g, '{}');
+    html = html.replace(/\{\{PATTERN_PROPORTION_JSON\}\}/g, '{}');
   }
 
   // ── METRIC GLOSSARY ──────────────────────────────────────
