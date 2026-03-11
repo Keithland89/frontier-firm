@@ -990,6 +990,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <a href="#habit" class="nav-link" data-section="habit">Habit</a>
       <a href="#skill" class="nav-link" data-section="skill">Skill</a>
       <a href="#value" class="nav-link" data-section="value">License Intel</a>
+      <a href="#pattern-map" class="nav-link" data-section="pattern-map">Orgs</a>
       <a href="#actions" class="nav-link" data-section="actions">Actions</a>
     </div>
     
@@ -2022,9 +2023,8 @@ document.querySelectorAll('.metric-card[data-metric-id]').forEach(card => {
 (function(){
   const _opd={{ORG_PATTERN_DISTRIBUTION_JSON}};
   if(!_opd||!_opd.total||!_opd.orgs.length) return;
-  const propBar=document.getElementById('patternProportionBar');
   const barsContainer=document.getElementById('orgPatternBars');
-  if(!propBar||!barsContainer) return;
+  if(!barsContainer) return;
 
   const colors={P1:'#007fff',P2:'#8477FB',P3:'#0D9488'};
   const bg={P1:'rgba(34,100,229,',P2:'rgba(123,47,242,',P3:'rgba(16,185,129,'};
@@ -2032,16 +2032,6 @@ document.querySelectorAll('.metric-card[data-metric-id]').forEach(card => {
   var counts={P1:0,P2:0,P3:0};
   var patternMap={'Foundation':'P1','Expansion':'P2','Frontier':'P3','P1':'P1','P2':'P2','P3':'P3'};
   _opd.orgs.forEach(function(o){if(!o.isOverall){var k=patternMap[o.pattern]||'P1';counts[k]++;}});
-
-  /* Proportion bar */
-  ['P1','P2','P3'].forEach(function(p){
-    var pct=_opd.total>0?(counts[p]/_opd.total*100):0;
-    if(pct<=0) return;
-    var seg=document.createElement('div');
-    seg.style.cssText='flex:'+pct+';background:'+bg[p]+'.3);display:flex;align-items:center;justify-content:center;gap:.5rem;padding:0 .75rem;transition:flex 1s ease';
-    seg.innerHTML='<span style="font-size:1.3rem;font-weight:900;color:#fff">'+Math.round(pct)+'%</span><span style="font-size:.55rem;font-weight:700;color:'+colors[p]+';text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">'+p+' ('+counts[p]+')</span>';
-    propBar.appendChild(seg);
-  });
 
   /* Sort all orgs by composite maturity score descending */
   var sorted=_opd.orgs.slice().sort(function(a,b){return (b.composite||0)-(a.composite||0);});
