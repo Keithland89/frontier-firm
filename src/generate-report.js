@@ -517,6 +517,10 @@ Return ONLY the JSON object, no markdown code fences.`;
 function generateTemplateInsights(data, signalTiers, pattern) {
   // Guard: ensure numeric fields used in template text don't produce NaN
   const safe = (v, fallback) => typeof v === 'number' && isFinite(v) ? v : fallback;
+  // Derive agent_health from agent_retention BEFORE copying to d
+  if ((data.agent_health === undefined || data.agent_health === 'not_available') && typeof data.agent_retention === 'number') {
+    data.agent_health = data.agent_retention;
+  }
   // Patch data with safe defaults for template text generation
   const d = Object.assign({}, data);
   d.m365_enablement = safe(d.m365_enablement, 0);
@@ -1174,6 +1178,8 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{DOMINANT_PATTERN_NAME\}\}/g, patternNames[domNum]);
   html = html.replace(/\{\{DOMINANT_PATTERN_DESC\}\}/g, patternDescs[domNum]);
   html = html.replace(/\{\{DOMINANT_PATTERN_NUM\}\}/g, String(domNum));
+  const patternTierNames = { 1: 'Foundation', 2: 'Expansion', 3: 'Frontier' };
+  html = html.replace(/\{\{DOMINANT_PATTERN_TIER\}\}/g, patternTierNames[domNum] || 'Foundation');
   html = html.replace(/\{\{P1_STATUS\}\}/g, patternProfile.p1);
   html = html.replace(/\{\{P2_STATUS\}\}/g, patternProfile.p2);
   html = html.replace(/\{\{P3_STATUS\}\}/g, patternProfile.p3);
@@ -1516,7 +1522,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   // Per-org Frontier Firm maturity — composite score across available signals
   // Combines: Reach (user count as % of total), Habit (relative scale), Skill (agent adoption %)
   // Score 0-100, classified into Pattern 1/2/3
-  var orgPatternCounts = { P1: 0, P2: 0, P3: 0 };
+  var orgPatternCounts = { Foundation: 0, Expansion: 0, Frontier: 0 };
   var orgPatternList = [];
   if (orgScatter.length > 0) {
     var maxOrgUsers = Math.max.apply(null, orgScatter.map(function(o) { return o.x || 1; }));
@@ -1538,9 +1544,9 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       var composite = Math.round(reachScore * 0.2 + habitScore * 0.3 + skillScore * 0.5);
 
       var orgPattern;
-      if (composite >= 60) orgPattern = 'P3';
-      else if (composite >= 30) orgPattern = 'P2';
-      else orgPattern = 'P1';
+      if (composite >= 60) orgPattern = 'Frontier';
+      else if (composite >= 30) orgPattern = 'Expansion';
+      else orgPattern = 'Foundation';
 
       orgPatternCounts[orgPattern]++;
       orgPatternList.push({
@@ -1555,8 +1561,8 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   }
   var orgPatternJSON = JSON.stringify({
     labels: ['Foundation · Assistant', 'Expansion · Agent Teams', 'Frontier · Agent-Operated'],
-    keys: ['P1', 'P2', 'P3'],
-    counts: [orgPatternCounts.P1, orgPatternCounts.P2, orgPatternCounts.P3],
+    keys: ['Foundation', 'Expansion', 'Frontier'],
+    counts: [orgPatternCounts.Foundation, orgPatternCounts.Expansion, orgPatternCounts.Frontier],
     total: orgScatter.length,
     orgs: orgPatternList
   });
