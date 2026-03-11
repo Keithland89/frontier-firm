@@ -1308,21 +1308,22 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 <!-- Org Pattern Map — synthesis after all evidence -->
 <section class="section" id="pattern-map" style="background:var(--section-dark);color:#fff">
   <div class="section-inner">
-    <div class="section-label reveal" style="color:rgba(255,255,255,.4)">Agent Maturity by Organisation</div>
+    <div class="section-label reveal" style="color:rgba(255,255,255,.4)">Frontier Firm Maturity by Organisation</div>
     <div class="signal-question reveal" style="color:rgba(255,255,255,.35)">How far has each part of the business progressed from individual AI (P1) to agent-operated work (P3)?</div>
     <h2 class="section-title reveal reveal-d1" style="color:#fff">{{ORG_COUNT}} organisations on the Frontier Firm journey</h2>
-    <p class="section-subtitle reveal reveal-d2" style="color:rgba(255,255,255,.5)">Classified by agent adoption rate — the gateway metric for pattern progression. Full scorecard metrics (Reach, Habit, Skill) are assessed at the tenant level above.</p>
+    <p class="section-subtitle reveal reveal-d2" style="color:rgba(255,255,255,.5)">Each org scored across Reach (user scale), Habit (relative deployment), and Skill (agent adoption) to produce a composite Frontier Firm maturity score. Bars show the breakdown; score out of 100.</p>
     <div class="reveal reveal-d3" style="margin-top:2rem">
       <!-- Proportion summary -->
       <div style="display:flex;height:52px;border-radius:10px;overflow:hidden;margin-bottom:1.5rem" id="patternProportionBar"></div>
       <!-- All orgs on one axis -->
       <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.5rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.35)">Agent adoption % by organisation</div>
+          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.35)">Frontier Firm composite score by organisation</div>
           <div style="display:flex;gap:1rem">
-            <span style="display:flex;align-items:center;gap:.3rem;font-size:.5rem;color:rgba(255,255,255,.35)"><span style="width:8px;height:8px;border-radius:2px;background:#2264E5;display:inline-block"></span>P1 &lt;5%</span>
-            <span style="display:flex;align-items:center;gap:.3rem;font-size:.5rem;color:rgba(255,255,255,.35)"><span style="width:8px;height:8px;border-radius:2px;background:#7B2FF2;display:inline-block"></span>P2 5-25%</span>
-            <span style="display:flex;align-items:center;gap:.3rem;font-size:.5rem;color:rgba(255,255,255,.35)"><span style="width:8px;height:8px;border-radius:2px;background:#10B981;display:inline-block"></span>P3 &gt;25%</span>
+            <span style="display:flex;align-items:center;gap:.3rem;font-size:.5rem;color:rgba(255,255,255,.35)"><span style="width:8px;height:8px;border-radius:2px;background:rgba(16,185,129,.5);display:inline-block"></span>Reach</span>
+            <span style="display:flex;align-items:center;gap:.3rem;font-size:.5rem;color:rgba(255,255,255,.35)"><span style="width:8px;height:8px;border-radius:2px;background:rgba(245,158,11,.5);display:inline-block"></span>Habit</span>
+            <span style="display:flex;align-items:center;gap:.3rem;font-size:.5rem;color:rgba(255,255,255,.35)"><span style="width:8px;height:8px;border-radius:2px;background:rgba(14,165,233,.5);display:inline-block"></span>Skill</span>
+            <span style="font-size:.45rem;color:rgba(255,255,255,.25)">Score /100 · hover for detail</span>
           </div>
         </div>
         <div id="orgPatternBars"></div>
@@ -1702,25 +1703,35 @@ document.querySelectorAll('.metric-card[data-metric-id]').forEach(card => {
     propBar.appendChild(seg);
   });
 
-  /* Sort all orgs by agent adoption descending */
-  var sorted=_opd.orgs.slice().sort(function(a,b){return b.agentPct-a.agentPct;});
-  var maxPct=Math.max.apply(null,sorted.map(function(o){return o.agentPct;}))||1;
+  /* Sort all orgs by composite maturity score descending */
+  var sorted=_opd.orgs.slice().sort(function(a,b){return (b.composite||0)-(a.composite||0);});
 
-  /* Zone threshold lines + bars */
+  /* Composite score bars */
   sorted.forEach(function(org){
     var pat=org.pattern;
-    var barPct=Math.max(2,Math.round(org.agentPct/maxPct*100));
+    var score=org.composite||0;
+    var barPct=Math.max(2,score);
     var row=document.createElement('div');
-    row.style.cssText='display:grid;grid-template-columns:70px 1fr 45px;gap:.5rem;align-items:center;padding:.25rem 0';
+    row.style.cssText='display:grid;grid-template-columns:80px 1fr 35px;gap:.5rem;align-items:center;padding:.3rem 0';
 
-    /* Org name */
-    row.innerHTML='<div style="font-size:.65rem;font-weight:700;color:rgba(255,255,255,.75);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+org.label+' — '+org.users.toLocaleString()+' users">'+org.label+'</div>'+
-      '<div style="height:22px;background:rgba(255,255,255,.03);border-radius:4px;position:relative;overflow:hidden">'+
-        '<div style="height:100%;width:'+barPct+'%;background:linear-gradient(90deg,'+bg[pat]+'.5),'+bg[pat]+'.25));border-radius:4px;transition:width 1s ease"></div>'+
-        '<div style="position:absolute;top:0;bottom:0;left:calc(5 / '+maxPct+' * 100%);width:1px;background:rgba(255,255,255,.1)" title="P2 threshold (5%)"></div>'+
-        '<div style="position:absolute;top:0;bottom:0;left:calc(25 / '+maxPct+' * 100%);width:1px;background:rgba(255,255,255,.1)" title="P3 threshold (25%)"></div>'+
+    /* Mini breakdown tooltip */
+    var tooltip=org.label+' — Composite: '+score+'/100';
+    if(org.scores){tooltip+=' (Reach:'+org.scores.reach+' Habit:'+org.scores.habit+' Skill:'+org.scores.skill+')';}
+    tooltip+=' — '+org.users.toLocaleString()+' users, '+org.agentPct+'% agent adoption';
+
+    /* Stacked bar showing Reach/Habit/Skill contribution */
+    var r=org.scores?org.scores.reach:0,h=org.scores?org.scores.habit:0,s=org.scores?org.scores.skill:0;
+    var total=Math.max(r+h+s,1);
+
+    row.innerHTML='<div style="font-size:.62rem;font-weight:700;color:rgba(255,255,255,.75);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+tooltip+'">'+org.label+'</div>'+
+      '<div style="height:24px;background:rgba(255,255,255,.03);border-radius:4px;position:relative;overflow:hidden;display:flex" title="'+tooltip+'">'+
+        '<div style="width:'+Math.round(r/total*barPct)+'%;height:100%;background:rgba(16,185,129,.4)"></div>'+
+        '<div style="width:'+Math.round(h/total*barPct)+'%;height:100%;background:rgba(245,158,11,.4)"></div>'+
+        '<div style="width:'+Math.round(s/total*barPct)+'%;height:100%;background:rgba(14,165,233,.4)"></div>'+
+        '<div style="position:absolute;left:30%;top:0;bottom:0;width:1px;background:rgba(255,255,255,.08)" title="Pattern 2 threshold"></div>'+
+        '<div style="position:absolute;left:60%;top:0;bottom:0;width:1px;background:rgba(255,255,255,.08)" title="Pattern 3 threshold"></div>'+
       '</div>'+
-      '<div style="font-size:.65rem;font-weight:800;color:'+colors[pat]+';text-align:right">'+org.agentPct+'%</div>';
+      '<div style="font-size:.6rem;font-weight:800;color:'+colors[pat]+';text-align:right">'+score+'</div>';
 
     barsContainer.appendChild(row);
   });

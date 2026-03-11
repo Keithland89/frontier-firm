@@ -1378,25 +1378,48 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     data.concentration_index = Math.round(usages.filter(function(u) { return u >= median; }).length / usages.length * 100);
   }
 
-  // Per-org pattern classification — P1/P2/P3 using gateway metrics
-  // P1 (Human with Assistant): agent adoption <5% — AI is individual-only
-  // P2 (Human-Agent Teams): agent adoption 5-25% — agents emerging
-  // P3 (Agent-Operated): agent adoption >25% — agents embedded in workflows
+  // Per-org Frontier Firm maturity — composite score across available signals
+  // Combines: Reach (user count as % of total), Habit (relative scale), Skill (agent adoption %)
+  // Score 0-100, classified into Pattern 1/2/3
   var orgPatternCounts = { P1: 0, P2: 0, P3: 0 };
   var orgPatternList = [];
   if (orgScatter.length > 0) {
+    var maxOrgUsers = Math.max.apply(null, orgScatter.map(function(o) { return o.x || 1; }));
+    var maxAgentPct = Math.max.apply(null, orgScatter.map(function(o) { return o.y || 1; }));
+    var totalUsers = n('total_active_users', 1);
+
     orgScatter.forEach(function(org) {
+      var users = org.x || 0;
       var agentPct = org.y || 0;
+
+      // Reach score (0-100): how much of total user base is in this org
+      var reachScore = Math.min(100, Math.round(users / totalUsers * 100 * 5)); // scale up — even small orgs get credit
+      // Habit proxy (0-100): relative user scale normalised to largest org
+      var habitScore = Math.min(100, Math.round(users / maxOrgUsers * 100));
+      // Skill score (0-100): agent adoption normalised to threshold
+      var skillScore = Math.min(100, Math.round(agentPct / 30 * 100)); // 30% = P3 threshold
+
+      // Composite: weighted average — Skill (agent progression) weighs most
+      var composite = Math.round(reachScore * 0.2 + habitScore * 0.3 + skillScore * 0.5);
+
       var orgPattern;
-      if (agentPct >= 25) orgPattern = 'P3';
-      else if (agentPct >= 5) orgPattern = 'P2';
+      if (composite >= 60) orgPattern = 'P3';
+      else if (composite >= 30) orgPattern = 'P2';
       else orgPattern = 'P1';
+
       orgPatternCounts[orgPattern]++;
-      orgPatternList.push({ label: org.label, pattern: orgPattern, agentPct: agentPct, users: org.x || 0 });
+      orgPatternList.push({
+        label: org.label,
+        pattern: orgPattern,
+        agentPct: agentPct,
+        users: users,
+        composite: composite,
+        scores: { reach: reachScore, habit: habitScore, skill: skillScore }
+      });
     });
   }
   var orgPatternJSON = JSON.stringify({
-    labels: ['P1 · Assistant', 'P2 · Agent Teams', 'P3 · Agent-Operated'],
+    labels: ['Pattern 1 · Assistant', 'Pattern 2 · Agent Teams', 'Pattern 3 · Agent-Operated'],
     keys: ['P1', 'P2', 'P3'],
     counts: [orgPatternCounts.P1, orgPatternCounts.P2, orgPatternCounts.P3],
     total: orgScatter.length,
