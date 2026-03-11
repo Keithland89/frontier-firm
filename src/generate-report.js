@@ -1354,7 +1354,9 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       gridHtml += '<div style="display:flex;justify-content:center;gap:1rem;margin-top:.4rem">';
       gridHtml += '<span style="display:flex;align-items:center;gap:.3rem;font-size:.48rem;color:rgba(255,255,255,.4)"><span style="width:8px;height:3px;background:#007fff;display:inline-block;border-radius:1px"></span>M365 Copilot</span>';
       gridHtml += '<span style="display:flex;align-items:center;gap:.3rem;font-size:.48rem;color:rgba(255,255,255,.4)"><span style="width:8px;height:3px;background:#8477FB;display:inline-block;border-radius:1px"></span>Agents</span>';
-      gridHtml += '</div></div>';
+      gridHtml += '</div>';
+      gridHtml += '<div id="' + chartId + '_score"></div>';
+      gridHtml += '</div>';
 
       // Metric cards grid (2 columns for cards)
       gridHtml += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">';

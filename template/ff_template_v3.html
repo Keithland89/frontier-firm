@@ -1394,9 +1394,9 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
     <h2 class="section-title reveal reveal-d1">{{TITLE_REACH}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_REACH}}</p>
     <div class="headline-stat reveal reveal-d2" style="--signal-accent:#0891B2">
-      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;background:rgba(14,165,233,.12);color:#0891B2;border:1px solid rgba(14,165,233,.2)">Hero Metric · License Activation</span></div>
-      <div class="headline-stat-value">{{M365_ENABLEMENT}}%</div>
-      <div class="headline-stat-label">of {{TOTAL_LICENSED_SEATS}} licensed seats are active across {{ORG_COUNT}} organisations</div>
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;background:rgba(14,165,233,.12);color:#0891B2;border:1px solid rgba(14,165,233,.2)">Hero Metric · License Spread</span></div>
+      <div class="headline-stat-value">{{LICENSE_COVERAGE_PCT}}%</div>
+      <div class="headline-stat-label">of {{TOTAL_ACTIVE_USERS}} active users hold a Copilot license — showing how far licensing has spread across the organisation</div>
       <span class="headline-stat-tier {{REACH_TIER_CLASS}}" style="background:rgba(14,165,233,.1);color:#0891B2;border:1px solid rgba(14,165,233,.15)">{{REACH_TIER}}</span>
     </div>
     <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#0891B2">Dive deeper into Reach <span class="dd-arrow">+</span></button>
@@ -2115,12 +2115,13 @@ new Chart(document.getElementById('chartAgentBar'),{type:'bar',data:{labels:JSON
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:false}},scales:{r:{beginAtZero:true,max:120,ticks:{display:false,stepSize:25},grid:{color:'rgba(255,255,255,.06)'},angleLines:{color:'rgba(255,255,255,.06)'},pointLabels:{font:{size:7,weight:600},color:'rgba(255,255,255,.45)',padding:14}}}}});
     /* Pillar score bar below radar */
     if(typeof d.pillarScore==='number'){
-      var scoreDiv=document.createElement('div');
-      scoreDiv.style.cssText='margin-top:.5rem;padding:0 .25rem';
-      var sc=d.pillarScore;
-      var scCol=sc>=75?'#0D9488':sc>=40?'#D270F0':'#94A3B8';
-      scoreDiv.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.2rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.35)">Pillar Score</span><span style="font-size:.65rem;font-weight:900;color:'+scCol+'">'+sc+'/100</span></div><div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+sc+'%;background:'+scCol+';border-radius:2px;transition:width 1s ease"></div></div>';
-      el.parentElement.appendChild(scoreDiv);
+      var scoreEl=document.getElementById(chartId+'_score');
+      if(scoreEl){
+        var sc=d.pillarScore;
+        var scCol=sc>=75?'#0D9488':sc>=40?'#D270F0':'#94A3B8';
+        scoreEl.style.cssText='margin-top:.5rem;padding:0 .25rem';
+        scoreEl.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.2rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.35)">Pillar Score</span><span style="font-size:.65rem;font-weight:900;color:'+scCol+'">'+sc+'/100</span></div><div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+sc+'%;background:'+scCol+';border-radius:2px;transition:width 1s ease"></div></div>';
+      }
     }
   });
 })();
