@@ -611,6 +611,22 @@ async function main() {
         };
       }).filter(r => r.unlicensed_users > 0);
       console.log('  license_priority_orgs: ' + data._supplementary_metrics.license_priority_orgs.length + ' orgs with unlicensed users');
+
+      // Enrich with sessions/week per org from audit logs
+      try {
+        const sessResult = await runDax(
+          "EVALUATE VAR Weeks = MAX(1, DATEDIFF(MIN('Chat + Agent Interactions (Audit Logs)'[WeekStart]), MAX('Chat + Agent Interactions (Audit Logs)'[WeekStart]), WEEK)) " +
+          "RETURN ADDCOLUMNS(SUMMARIZE('Chat + Agent Interactions (Audit Logs)', 'Chat + Agent Org Data'[Organization]), " +
+          "\"Sessions\", DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[ThreadId]), \"Weeks\", Weeks)"
+        );
+        const sessRows = sessResult._rows || [];
+        const sessMap = {};
+        sessRows.forEach(r => { if (r.Organization) sessMap[r.Organization] = { sessions: Number(r.Sessions) || 0, weeks: Number(r.Weeks) || 1 }; });
+        data._supplementary_metrics.license_priority_orgs.forEach(org => {
+          const s = sessMap[org.org];
+          if (s && s.weeks > 0) org.unlicensed_median_sessions_weekly = Math.round(s.sessions / s.weeks * 10) / 10;
+        });
+      } catch (e) { /* sessions/week enrichment failed — leave as null */ }
     } catch (e) {
       console.log('  license_priority_orgs: error - ' + e.message.substring(0, 150));
     }
@@ -924,6 +940,21 @@ async function main() {
           console.log('  complex_sessions: fallback = ' + data.complex_sessions + ' prompts/active day');
         }
       } catch (e) { console.log('  complex_sessions fallback failed: ' + e.message.substring(0, 80)); }
+    }
+  }
+
+  // deep_interactions_pct: % of sessions with 5+ prompts
+  if (data.deep_interactions_pct === undefined || data.deep_interactions_pct === 'not_available') {
+    const deepConfig = measureMap['deep_interactions_pct'];
+    if (deepConfig && deepConfig.fallback_dax) {
+      try {
+        const deepResult = await runDax(deepConfig.fallback_dax);
+        if (deepResult._rows && deepResult._rows.length > 0) {
+          const val = Number(deepResult._rows[0].v || deepResult._rows[0][Object.keys(deepResult._rows[0])[0]]) || 0;
+          data.deep_interactions_pct = Math.round(val * 1000) / 10; // convert 0.xx to xx.x%
+          console.log('  deep_interactions_pct: ' + data.deep_interactions_pct + '%');
+        }
+      } catch (e) { console.log('  deep_interactions_pct DAX failed: ' + e.message.substring(0, 80)); }
     }
   }
 

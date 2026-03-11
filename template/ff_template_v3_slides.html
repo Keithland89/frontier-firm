@@ -528,17 +528,17 @@
     <h2 class="slide-title editable" contenteditable="true">Three patterns of human-AI teaming</h2>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2rem">
       <div style="padding:1.5rem;background:rgba(34,100,229,.05);border:1px solid rgba(34,100,229,.15);border-top:3px solid var(--brand);border-radius:var(--radius)">
-        <div style="font-size:2rem;font-weight:900;color:var(--brand);margin-bottom:.5rem">Foundation</div>
+        <div style="font-size:2rem;font-weight:900;color:var(--brand);margin-bottom:.5rem">Pattern 1</div>
         <div style="font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:.5rem" contenteditable="true">Human with Assistant</div>
         <p style="font-size:.72rem;color:var(--text-muted);line-height:1.6" contenteditable="true">Every employee has an AI assistant that helps them work better and faster. AI supports individual work: drafting, summarising, researching — in the flow of work.</p>
       </div>
       <div style="padding:1.5rem;background:rgba(123,47,242,.05);border:1px solid rgba(123,47,242,.15);border-top:3px solid var(--purple);border-radius:var(--radius)">
-        <div style="font-size:2rem;font-weight:900;color:var(--purple);margin-bottom:.5rem">Expansion</div>
+        <div style="font-size:2rem;font-weight:900;color:var(--purple);margin-bottom:.5rem">Pattern 2</div>
         <div style="font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:.5rem" contenteditable="true">Human-Agent Teams</div>
         <p style="font-size:.72rem;color:var(--text-muted);line-height:1.6" contenteditable="true">Agents join teams as digital colleagues, taking on specific tasks at human direction. Humans delegate; agents execute; humans steer and review.</p>
       </div>
       <div style="padding:1.5rem;background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.15);border-top:3px solid var(--green);border-radius:var(--radius)">
-        <div style="font-size:2rem;font-weight:900;color:var(--green);margin-bottom:.5rem">Frontier</div>
+        <div style="font-size:2rem;font-weight:900;color:var(--green);margin-bottom:.5rem">Pattern 3</div>
         <div style="font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:.5rem" contenteditable="true">Agent-Operated</div>
         <p style="font-size:.72rem;color:var(--text-muted);line-height:1.6" contenteditable="true">Humans set direction; agents execute business processes end-to-end. Substantial workflows run autonomously with oversight and governance.</p>
       </div>
@@ -819,7 +819,7 @@
 
     var colors = {P1:'#2264E5', P2:'#7B2FF2', P3:'#10B981'};
     var bg = {P1:'rgba(34,100,229,', P2:'rgba(123,47,242,', P3:'rgba(16,185,129,'};
-    var labels = {P1:'Foundation \u00B7 Human with Assistant', P2:'Expansion \u00B7 Human-Agent Teams', P3:'Frontier \u00B7 Agent-Operated'};
+    var labels = {P1:'Pattern 1 \u00B7 Human with Assistant', P2:'Pattern 2 \u00B7 Human-Agent Teams', P3:'Pattern 3 \u00B7 Agent-Operated'};
     var counts = {P1:0, P2:0, P3:0};
     _opd.orgs.forEach(function(o){ counts[o.pattern]++; });
 

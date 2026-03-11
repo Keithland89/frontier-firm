@@ -331,8 +331,8 @@ let dominantPatternLabel = 'P1';
 if (profileStatusOrder[patternProfile.p2] > profileStatusOrder[patternProfile.p1]) dominantPatternLabel = 'P2';
 if (profileStatusOrder[patternProfile.p3] > profileStatusOrder[patternProfile.p2] && profileStatusOrder[patternProfile.p3] > profileStatusOrder[patternProfile.p1]) dominantPatternLabel = 'P3';
 
-// Build human-readable profile string: "Foundation primary  ·  Expansion nascent  ·  Frontier absent"
-const patternLabels = { p1: 'Foundation', p2: 'Expansion', p3: 'Frontier' };
+// Build human-readable profile string: "Pattern 1 primary  ·  Pattern 2 nascent  ·  Pattern 3 absent"
+const patternLabels = { p1: 'Pattern 1', p2: 'Pattern 2', p3: 'Pattern 3' };
 const profileParts = [];
 ['p1', 'p2', 'p3'].forEach(function(p) {
   const label = patternLabels[p];
@@ -538,6 +538,8 @@ function generateTemplateInsights(data, signalTiers, pattern) {
   if (d.embedded_user_rate === undefined) d.embedded_user_rate = 'not_available';
   if (d.licensed_avg_days === undefined) d.licensed_avg_days = 'not_available';
   if (d.unlicensed_avg_days === undefined) d.unlicensed_avg_days = 'not_available';
+  if (d.deep_interactions_pct === undefined) d.deep_interactions_pct = 'not_available';
+  if (data.deep_interactions_pct === undefined) data.deep_interactions_pct = 'not_available';
   // Agent adoption: derive if missing
   if ((d.agent_adoption === 'not_available' || d.agent_adoption === undefined) && typeof d.agent_users === 'number' && typeof d.total_active_users === 'number' && d.total_active_users > 0) {
     d.agent_adoption = Math.round(d.agent_users / d.total_active_users * 1000) / 10;
@@ -933,6 +935,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = safeSub(html, /\{\{M365_BREADTH\}\}/g, data.m365_breadth, 'm365_breadth');
   html = safeSub(html, /\{\{AGENT_BREADTH\}\}/g, data.agent_breadth, 'agent_breadth');
   html = safeSub(html, /\{\{COMPLEX_SESSIONS\}\}/g, data.complex_sessions, 'complex_sessions');
+  html = safeSub(html, /\{\{DEEP_INTERACTIONS_PCT\}\}/g, data.deep_interactions_pct, 'deep_interactions_pct');
   html = safeSub(html, /\{\{AGENT_HEALTH\}\}/g, data.agent_health, 'agent_health');
   html = safeSub(html, /\{\{AGENT_CREATORS_PCT\}\}/g, data.agent_creators_pct, 'agent_creators_pct');
   html = safeSub(html, /\{\{LICENSE_COVERAGE_PCT\}\}/g, data.license_coverage, 'license_coverage');
@@ -1178,8 +1181,8 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{DOMINANT_PATTERN_NAME\}\}/g, patternNames[domNum]);
   html = html.replace(/\{\{DOMINANT_PATTERN_DESC\}\}/g, patternDescs[domNum]);
   html = html.replace(/\{\{DOMINANT_PATTERN_NUM\}\}/g, String(domNum));
-  const patternTierNames = { 1: 'Foundation', 2: 'Expansion', 3: 'Frontier' };
-  html = html.replace(/\{\{DOMINANT_PATTERN_TIER\}\}/g, patternTierNames[domNum] || 'Foundation');
+  const patternTierNames = { 1: 'Pattern 1', 2: 'Pattern 2', 3: 'Pattern 3' };
+  html = html.replace(/\{\{DOMINANT_PATTERN_TIER\}\}/g, patternTierNames[domNum] || 'Pattern 1');
   html = html.replace(/\{\{P1_STATUS\}\}/g, patternProfile.p1);
   html = html.replace(/\{\{P2_STATUS\}\}/g, patternProfile.p2);
   html = html.replace(/\{\{P3_STATUS\}\}/g, patternProfile.p3);
@@ -1194,8 +1197,8 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   const tierCssClass = t => 'tier-' + (t === 'P3' ? 'fr' : t === 'P2' ? 'e' : 'f');
   const tierColor = t => t === 'P3' ? 'var(--tier-4)' : t === 'P2' ? 'var(--tier-3)' : 'var(--tier-2)';
   const tierHexColor = t => t === 'P3' ? '#0D9488' : t === 'P2' ? '#D270F0' : '#94A3B8';
-  const tierLabel = t => t === 'P3' ? 'Frontier: Human-led, Agent-operated' : t === 'P2' ? 'Expansion: Human-Agent Teams' : 'Foundation: Human with Assistant';
-  const tierLabelShort = t => t === 'P3' ? 'Frontier' : t === 'P2' ? 'Expansion' : 'Foundation';
+  const tierLabel = t => t === 'P3' ? 'Pattern 3: Human-led, Agent-operated' : t === 'P2' ? 'Pattern 2: Human-Agent Teams' : 'Pattern 1: Human with Assistant';
+  const tierLabelShort = t => t === 'P3' ? 'Pattern 3' : t === 'P2' ? 'Pattern 2' : 'Pattern 1';
   html = html.replace(/\{\{REACH_TIER\}\}/g, tierLabel(signalTiers.reach));
   html = html.replace(/\{\{HABIT_TIER\}\}/g, tierLabel(signalTiers.habit));
   html = html.replace(/\{\{SKILL_TIER\}\}/g, tierLabel(signalTiers.skill));
@@ -1301,7 +1304,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   if (schemaV4) {
     var v4TierBg = function(t) { return t === 'P3' ? 'rgba(16,185,129,.15)' : t === 'P2' ? 'rgba(245,158,11,.15)' : 'rgba(100,116,139,.12)'; };
     var v4TierColor = function(t) { return t === 'P3' ? '#0D9488' : t === 'P2' ? '#D270F0' : '#94A3B8'; };
-    var v4TierLabel = function(t) { return t === 'P3' ? 'Frontier' : t === 'P2' ? 'Expansion' : 'Foundation'; };
+    var v4TierLabel = function(t) { return t === 'P3' ? 'Pattern 3' : t === 'P2' ? 'Pattern 2' : 'Pattern 1'; };
     var pillarKeys = Object.keys(schemaV4.pillars);
     var laneKeys = Object.keys(schemaV4.lanes);
 
@@ -1489,9 +1492,9 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
         glossaryHtml += `<div class="glossary-card-desc">${m.description}</div>`;
         glossaryHtml += `<div class="glossary-card-meta">`;
         glossaryHtml += `<span class="glossary-card-pillar" style="color:${pillarColors[m.pillar]}">${pillarIcons[m.pillar] || ''} ${pillarLabels[m.pillar]}</span>`;
-        glossaryHtml += `<span class="glossary-band glossary-band-p1">Foundation &lt; ${m.bands[0]}${m.unit === '%' ? '%' : ''}</span>`;
-        glossaryHtml += `<span class="glossary-band glossary-band-p2">Expansion ${m.bands[0]}–${m.bands[1]}${m.unit === '%' ? '%' : ''}</span>`;
-        glossaryHtml += `<span class="glossary-band glossary-band-p3">Frontier &gt; ${m.bands[1]}${m.unit === '%' ? '%' : ''}</span>`;
+        glossaryHtml += `<span class="glossary-band glossary-band-p1">Pattern 1 &lt; ${m.bands[0]}${m.unit === '%' ? '%' : ''}</span>`;
+        glossaryHtml += `<span class="glossary-band glossary-band-p2">Pattern 2 ${m.bands[0]}–${m.bands[1]}${m.unit === '%' ? '%' : ''}</span>`;
+        glossaryHtml += `<span class="glossary-band glossary-band-p3">Pattern 3 &gt; ${m.bands[1]}${m.unit === '%' ? '%' : ''}</span>`;
         glossaryHtml += `</div>`;
         glossaryHtml += `<div class="glossary-card-value">${valDisplay}</div>`;
         glossaryHtml += `</div>`;
@@ -1525,23 +1528,31 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   var orgPatternCounts = { Foundation: 0, Expansion: 0, Frontier: 0 };
   var orgPatternList = [];
   if (orgScatter.length > 0) {
-    var maxOrgUsers = Math.max.apply(null, orgScatter.map(function(o) { return o.x || 1; }));
-    var maxAgentPct = Math.max.apply(null, orgScatter.map(function(o) { return o.y || 1; }));
     var totalUsers = n('total_active_users', 1);
+    var totalAgentUsers = n('agent_users', 0);
+    var orgAgentRate = totalUsers > 0 ? totalAgentUsers / totalUsers : 0; // org-wide agent adoption rate
 
     orgScatter.forEach(function(org) {
       var users = org.x || 0;
-      var agentPct = org.y || 0;
+      var agentUsers = org.y || 0;
 
-      // Reach score (0-100): how much of total user base is in this org
-      var reachScore = Math.min(100, Math.round(users / totalUsers * 100 * 5)); // scale up — even small orgs get credit
-      // Habit proxy (0-100): relative user scale normalised to largest org
-      var habitScore = Math.min(100, Math.round(users / maxOrgUsers * 100));
-      // Skill score (0-100): agent adoption normalised to threshold
-      var skillScore = Math.min(100, Math.round(agentPct / 30 * 100)); // 30% = P3 threshold
+      // Reach (0-100): org's activation rate — users relative to fair share of total
+      // Fair share = totalUsers / numOrgs; score = how many multiples of fair share
+      var fairShare = totalUsers / Math.max(orgScatter.length, 1);
+      var reachScore = Math.min(100, Math.round(users / fairShare * 33)); // 3× fair share = 100
 
-      // Composite: weighted average — Skill (agent progression) weighs most
-      var composite = Math.round(reachScore * 0.2 + habitScore * 0.3 + skillScore * 0.5);
+      // Habit (0-100): org's relative user depth — normalised to largest org
+      // Uses per-user density: more users relative to org-wide average = higher habit
+      var avgUsersPerOrg = totalUsers / Math.max(orgScatter.length, 1);
+      var habitScore = Math.min(100, Math.round(users / Math.max(avgUsersPerOrg, 1) * 33));
+
+      // Skill (0-100): agent adoption RATE within the org (agent users / total users in org)
+      // Normalised so that org-wide average agent rate = 50/100
+      var orgLocalAgentRate = users > 0 ? agentUsers / users : 0;
+      var skillScore = orgAgentRate > 0 ? Math.min(100, Math.round(orgLocalAgentRate / orgAgentRate * 50)) : 0;
+
+      // Composite: equal weight — all three signals matter
+      var composite = Math.round(reachScore * 0.33 + habitScore * 0.33 + skillScore * 0.34);
 
       var orgPattern;
       if (composite >= 60) orgPattern = 'Frontier';
@@ -1552,7 +1563,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       orgPatternList.push({
         label: org.label,
         pattern: orgPattern,
-        agentPct: agentPct,
+        agentPct: users > 0 ? Math.round(agentUsers / users * 1000) / 10 : 0,
         users: users,
         composite: composite,
         scores: { reach: reachScore, habit: habitScore, skill: skillScore }
@@ -1560,7 +1571,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     });
   }
   var orgPatternJSON = JSON.stringify({
-    labels: ['Foundation · Assistant', 'Expansion · Agent Teams', 'Frontier · Agent-Operated'],
+    labels: ['Pattern 1 · Assistant', 'Pattern 2 · Agent Teams', 'Pattern 3 · Agent-Operated'],
     keys: ['Foundation', 'Expansion', 'Frontier'],
     counts: [orgPatternCounts.Foundation, orgPatternCounts.Expansion, orgPatternCounts.Frontier],
     total: orgScatter.length,
@@ -1569,11 +1580,11 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{ORG_PATTERN_DISTRIBUTION_JSON\}\}/g, orgPatternJSON);
 
   // Dominant org pattern
-  var dominantOrgPattern = orgPatternCounts.P1 >= orgPatternCounts.P2 && orgPatternCounts.P1 >= orgPatternCounts.P3 ? 'Foundation · Human with Assistant'
-    : orgPatternCounts.P2 >= orgPatternCounts.P3 ? 'Expansion · Human-Agent Teams' : 'Frontier · Agent-Operated';
+  var dominantOrgPattern = orgPatternCounts.Foundation >= orgPatternCounts.Expansion && orgPatternCounts.Foundation >= orgPatternCounts.Frontier ? 'Pattern 1 · Human with Assistant'
+    : orgPatternCounts.Expansion >= orgPatternCounts.Frontier ? 'Pattern 2 · Human-Agent Teams' : 'Pattern 3 · Agent-Operated';
   html = html.replace(/\{\{DOMINANT_ORG_PATTERN\}\}/g, dominantOrgPattern);
-  html = html.replace(/\{\{ORG_FOUNDATION_COUNT\}\}/g, String(orgPatternCounts.P1));
-  html = html.replace(/\{\{ORG_EXPANSION_COUNT\}\}/g, String(orgPatternCounts.P2));
+  html = html.replace(/\{\{ORG_FOUNDATION_COUNT\}\}/g, String(orgPatternCounts.Foundation));
+  html = html.replace(/\{\{ORG_EXPANSION_COUNT\}\}/g, String(orgPatternCounts.Expansion));
   html = html.replace(/\{\{ORG_FRONTIER_COUNT\}\}/g, String(orgPatternCounts.P3));
   html = html.replace(/\{\{ORG_FOUNDATION_PCT\}\}/g, orgScatter.length > 0 ? String(Math.round(orgPatternCounts.P1 / orgScatter.length * 100)) : '0');
   html = html.replace(/\{\{ORG_EXPANSION_PCT\}\}/g, orgScatter.length > 0 ? String(Math.round(orgPatternCounts.P2 / orgScatter.length * 100)) : '0');

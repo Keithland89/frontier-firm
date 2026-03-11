@@ -1261,7 +1261,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 
           </div><!-- /matrix grid -->
 
-          <p style="text-align:center;font-size:.6rem;color:var(--text-3);font-style:italic;margin:.75rem 0 .5rem">These patterns coexist across different teams — an organisation can exhibit Expansion in some teams while remaining Foundation in others.</p>
+          <p style="text-align:center;font-size:.6rem;color:var(--text-3);font-style:italic;margin:.75rem 0 .5rem">These patterns coexist across different teams — an organisation can exhibit Pattern 2 in some teams while remaining Pattern 1 in others.</p>
         </div>
       </div>
     </div>
@@ -1353,7 +1353,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       </button>
       <div class="deep-dive-content">
         <div style="max-width:900px;margin:1rem auto 0">
-          <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:1rem;line-height:1.6">Each metric is scored into three tiers: <span class="glossary-band glossary-band-p1">Foundation</span> <span class="glossary-band glossary-band-p2">Expansion</span> <span class="glossary-band glossary-band-p3">Frontier</span>. A pillar's tier equals its weakest metric. A lane's tier equals its weakest pillar. The overall pattern equals the weaker lane.</p>
+          <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:1rem;line-height:1.6">Each metric is scored into three patterns: <span class="glossary-band glossary-band-p1">Pattern 1</span> <span class="glossary-band glossary-band-p2">Pattern 2</span> <span class="glossary-band glossary-band-p3">Pattern 3</span>. A pillar's pattern equals its weakest metric. A lane's pattern equals its weakest pillar. The overall pattern equals the weaker lane.</p>
           {{METRIC_GLOSSARY_HTML}}
         </div>
       </div>
@@ -1577,9 +1577,9 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
     <h2 class="section-title reveal reveal-d1">{{TITLE_SKILL}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_SKILL}}</p>
     <div class="headline-stat reveal reveal-d2" style="--signal-accent:#0891B2">
-      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;background:rgba(14,165,233,.12);color:#0891B2;border:1px solid rgba(14,165,233,.2)">Hero Metric · Avg Prompts per Session</span></div>
-      <div class="headline-stat-value">{{COMPLEX_SESSIONS}}</div>
-      <div class="headline-stat-label">average prompts per conversation — measuring how deep users go in each session across {{M365_BREADTH}} app surfaces</div>
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;background:rgba(14,165,233,.12);color:#0891B2;border:1px solid rgba(14,165,233,.2)">Hero Metric · Deep Interactions</span></div>
+      <div class="headline-stat-value">{{DEEP_INTERACTIONS_PCT}}%</div>
+      <div class="headline-stat-label">of sessions have 5+ prompts — measuring how often users go beyond surface-level queries across {{M365_BREADTH}} app surfaces</div>
       <span class="headline-stat-tier {{SKILL_TIER_CLASS}}" style="background:rgba(123,47,242,.1);color:#8477FB;border:1px solid rgba(123,47,242,.15)">{{SKILL_TIER}}</span>
     </div>
     <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#8477FB">Dive deeper into Skill <span class="dd-arrow">+</span></button>
@@ -1590,7 +1590,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
         <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#007fff;margin-bottom:.75rem">M365 Copilot</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
           <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">App Surface Breadth</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{M365_BREADTH}}</div><div style="font-size:.55rem;color:var(--text-3)">apps/user</div></div>
-          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Multi-Turn Sessions</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{COMPLEX_SESSIONS}}%</div><div style="font-size:.55rem;color:var(--text-3)">complex rate</div></div>
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Deep Interactions</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{DEEP_INTERACTIONS_PCT}}%</div><div style="font-size:.55rem;color:var(--text-3)">sessions with 5+ prompts</div></div>
         </div>
       </div>
       <!-- Agents lane -->
@@ -1644,7 +1644,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 <section class="section" id="pattern-map" style="background:var(--section-dark);color:#fff">
   <div class="section-inner">
     <div class="section-label reveal" style="color:rgba(255,255,255,.4)">Frontier Firm Maturity by Organisation</div>
-    <div class="signal-question reveal" style="color:rgba(255,255,255,.35)">How far has each part of the business progressed from individual AI (Foundation) to agent-operated work (Frontier)?</div>
+    <div class="signal-question reveal" style="color:rgba(255,255,255,.35)">How far has each part of the business progressed from individual AI (Pattern 1) to agent-operated work (Pattern 3)?</div>
     <h2 class="section-title reveal reveal-d1" style="color:#fff">{{ORG_COUNT}} organisations on the Frontier Firm journey</h2>
     <p class="section-subtitle reveal reveal-d2" style="color:rgba(255,255,255,.5)">Each org scored across Reach (user scale), Habit (relative deployment), and Skill (agent adoption) to produce a composite Frontier Firm maturity score. Bars show the breakdown; score out of 100.</p>
     <div class="reveal reveal-d3" style="margin-top:2rem">
@@ -1800,7 +1800,7 @@ document.querySelectorAll('.metric-card[data-metric-id]').forEach(card=>{
   bar.innerHTML=`<div class="mini-threshold-fill" style="width:0;background:${gradient}"></div><div class="mini-threshold-marker" style="left:0" data-pct="${pct}"></div>`;
   const labelsDiv=document.createElement('div');
   labelsDiv.className='mini-threshold-labels';
-  labelsDiv.innerHTML='<span>Foundation</span><span>Frontier</span>';
+  labelsDiv.innerHTML='<span>Pattern 1</span><span>Pattern 3</span>';
   // Insert before any existing detail div
   const unitEl=card.querySelector('.metric-card-unit');
   if(unitEl){unitEl.after(bar,labelsDiv)}
@@ -1894,10 +1894,10 @@ if(document.getElementById('chartWeeklyTrend')){
 /* Chart: Monthly Users by Tier (Habit section) */
 if(document.getElementById('chartHabitTiers')){
 new Chart(document.getElementById('chartHabitTiers'),{type:'bar',data:{labels:['M365 Copilot','Copilot Chat','Agents'],datasets:[
-  {label:'1-5 Active Days',data:[{{LIC_BAND_1_5_PCT}},{{CHAT_BAND_1_5_PCT}},{{AGENT_BAND_1_5_PCT}}],backgroundColor:['rgba(34,100,229,.25)','rgba(16,185,129,.25)','rgba(123,47,242,.25)'],borderRadius:0},
-  {label:'6-10 Active Days',data:[{{LIC_BAND_6_10_PCT}},{{CHAT_BAND_6_10_PCT}},{{AGENT_BAND_6_10_PCT}}],backgroundColor:['rgba(34,100,229,.5)','rgba(16,185,129,.5)','rgba(123,47,242,.5)'],borderRadius:0},
-  {label:'11-15 Active Days',data:[{{LIC_BAND_11_15_PCT}},{{CHAT_BAND_11_15_PCT}},{{AGENT_BAND_11_15_PCT}}],backgroundColor:['rgba(34,100,229,.75)','rgba(16,185,129,.75)','rgba(123,47,242,.75)'],borderRadius:0},
-  {label:'16+ Active Days',data:[{{LIC_BAND_16_PLUS_PCT}},{{CHAT_BAND_16_PLUS_PCT}},{{AGENT_BAND_16_PLUS_PCT}}],backgroundColor:['rgba(34,100,229,1)','rgba(16,185,129,1)','rgba(123,47,242,1)'],borderRadius:{topLeft:4,topRight:4,bottomLeft:0,bottomRight:0}}
+  {label:'1-5 Active Days',data:[{{LIC_BAND_1_5_PCT}},{{CHAT_BAND_1_5_PCT}},{{AGENT_BAND_1_5_PCT}}],backgroundColor:'rgba(148,163,184,.25)',borderRadius:0},
+  {label:'6-10 Active Days',data:[{{LIC_BAND_6_10_PCT}},{{CHAT_BAND_6_10_PCT}},{{AGENT_BAND_6_10_PCT}}],backgroundColor:'rgba(148,163,184,.5)',borderRadius:0},
+  {label:'11-15 Active Days',data:[{{LIC_BAND_11_15_PCT}},{{CHAT_BAND_11_15_PCT}},{{AGENT_BAND_11_15_PCT}}],backgroundColor:'rgba(210,112,240,.7)',borderRadius:0},
+  {label:'16+ Active Days',data:[{{LIC_BAND_16_PLUS_PCT}},{{CHAT_BAND_16_PLUS_PCT}},{{AGENT_BAND_16_PLUS_PCT}}],backgroundColor:'#0D9488',borderRadius:{topLeft:4,topRight:4,bottomLeft:0,bottomRight:0}}
 ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{usePointStyle:true,pointStyle:'circle',padding:12,font:{size:10,weight:500},color:cLegend}},datalabels:{display:ctx=>ctx.dataset.data[ctx.dataIndex]>=3,color:'#fff',font:{weight:700,size:11},formatter:v=>v+'%'}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:function(ctx){return['#007fff','#0D9488','#8477FB'][ctx.index]||cTick},font:{size:11,weight:700}}},y:{stacked:true,max:100,grid:{color:cGrid},ticks:{color:cTickSub,callback:v=>v+'%'}}}}});
 }
 
@@ -1943,8 +1943,8 @@ document.querySelectorAll('.tier-toggle').forEach(container=>{
 /* ── Metric Detail Data (PBI References) ───────────────── */
 const METRIC_DETAIL = {{METRIC_DETAIL_JS}};
 /* ── Metric Click-Through Handler ────────────────────────── */
-const TIER_COLORS = ['#007fff','#007fff','#8477FB','#0D9488']; // Foundation, Foundation, Expansion, Frontier
-const TIER_NAMES = ['Foundation','Foundation','Expansion','Frontier'];
+const TIER_COLORS = ['#007fff','#007fff','#8477FB','#0D9488']; // P1, P1, P2, P3
+const TIER_NAMES = ['Pattern 1','Pattern 1','Pattern 2','Pattern 3'];
 const VISUAL_TYPE_LABELS = {cardVisual:'KPI Card',pivotTable:'Table',clusteredColumnChart:'Bar Chart',donutChart:'Donut Chart',treemap:'Treemap',scatterChart:'Scatter Plot',columnChart:'Column Chart',areaChart:'Area Chart'};
 
 function buildThresholdBar(value, bands, bandLabels) {
@@ -1954,7 +1954,7 @@ function buildThresholdBar(value, bands, bandLabels) {
   const points = [0, ...bands, maxVal];
   for (let i = 0; i < points.length - 1; i++) {
     const width = ((points[i+1] - points[i]) / maxVal) * 100;
-    segments.push(`<div class="md-threshold-segment" style="width:${width}%;background:${TIER_COLORS[i] || TIER_COLORS[3]};opacity:.7"><span style="font-size:.45rem">${TIER_NAMES[i] || 'Frontier'}</span></div>`);
+    segments.push(`<div class="md-threshold-segment" style="width:${width}%;background:${TIER_COLORS[i] || TIER_COLORS[3]};opacity:.7"><span style="font-size:.45rem">${TIER_NAMES[i] || 'Pattern 3'}</span></div>`);
   }
   const markerPos = Math.min((value / maxVal) * 100, 98);
   return `<div class="md-threshold-track">${segments.join('')}<div class="md-threshold-marker" style="left:${markerPos}%" title="Current: ${isPercent ? (value*100).toFixed(1)+'%' : value.toLocaleString()}"></div></div>
@@ -2028,7 +2028,7 @@ document.querySelectorAll('.metric-card[data-metric-id]').forEach(card => {
 
   const colors={P1:'#007fff',P2:'#8477FB',P3:'#0D9488'};
   const bg={P1:'rgba(34,100,229,',P2:'rgba(123,47,242,',P3:'rgba(16,185,129,'};
-  const labels={P1:'Foundation · Human with Assistant',P2:'Expansion · Human-Agent Teams',P3:'Frontier · Agent-Operated'};
+  const labels={P1:'Pattern 1 · Human with Assistant',P2:'Pattern 2 · Human-Agent Teams',P3:'Pattern 3 · Agent-Operated'};
   var counts={P1:0,P2:0,P3:0};
   _opd.orgs.forEach(function(o){counts[o.pattern]++;});
 

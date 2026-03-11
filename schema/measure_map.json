@@ -234,6 +234,13 @@
     "description": "Session complexity — avg prompts per conversation thread. Higher values indicate deeper, multi-turn usage."
   },
 
+  "deep_interactions_pct": {
+    "type": "scalar",
+    "measures": [],
+    "fallback_dax": "EVALUATE VAR Sessions = ADDCOLUMNS(VALUES('Chat + Agent Interactions (Audit Logs)'[ThreadId]), \"Prompts\", CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Message_Id]), 'Chat + Agent Interactions (Audit Logs)'[Message_isPrompt] = \"TRUE\")) VAR TotalSessions = COUNTROWS(Sessions) VAR DeepSessions = COUNTROWS(FILTER(Sessions, [Prompts] >= 5)) RETURN ROW(\"v\", DIVIDE(DeepSessions, TotalSessions, 0))",
+    "description": "% of sessions (ThreadIds) with 5+ prompt messages — measures depth of multi-turn engagement."
+  },
+
   "agent_health": {
     "type": "scalar",
     "measures": ["[Agent Return Rate]", "[Avg Agent Return Rate %]"],
