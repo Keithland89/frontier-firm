@@ -35,7 +35,7 @@
 
   "metrics": {
     "copilot_app_breadth":    { "lane": "copilot", "pillar": "skill",       "name": "App Surface Breadth",   "unit": "apps/user",  "bands": [4, 7],    "data_field": "m365_breadth",         "description": "Avg distinct M365 app surfaces used per user" },
-    "copilot_multiturn":      { "lane": "copilot", "pillar": "skill",       "name": "Multi-Turn Rate",       "unit": "%",          "bands": [45, 75],  "data_field": "complex_sessions",     "description": "% of sessions with multiple conversational turns", "hero": true },
+    "copilot_multiturn":      { "lane": "copilot", "pillar": "skill",       "name": "Avg Prompts per Session", "unit": "prompts",  "bands": [3, 6],    "data_field": "complex_sessions",     "description": "Average prompts per conversation thread — higher values indicate deeper, multi-turn usage", "hero": true },
     "copilot_habitual":       { "lane": "copilot", "pillar": "consistency", "name": "Habitual User Rate",    "unit": "%",          "bands": [20, 40],  "data_field": "embedded_user_rate",   "description": "Users with 6+ active days/month over 3 months AND present in 2/3 months", "hero": true },
     "copilot_retention":      { "lane": "copilot", "pillar": "consistency", "name": "MoM Retention",         "unit": "%",          "bands": [80, 93],  "data_field": "m365_retention",       "description": "Average month-over-month user retention across complete months" },
     "copilot_activation":     { "lane": "copilot", "pillar": "reach",      "name": "License Activation",    "unit": "%",          "bands": [70, 90],  "data_field": "m365_enablement",      "description": "% of assigned Copilot licenses that are actively used", "hero": true },

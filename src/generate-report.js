@@ -424,7 +424,7 @@ Current assessment: Pattern ${pattern.number} (${pattern.name}).
 Signal scores:
 - Reach: ${signalTiers.reach} (${data.m365_enablement}% license activation, ${data.org_count} orgs, ${data.m365_adoption}% regular users)
 - Habit: ${signalTiers.habit} (${data.m365_retention}% MoM retention, ${data.m365_frequency}% habitual, ${data.chat_habit}% chat habit)
-- Skill: ${signalTiers.skill} (${data.m365_breadth} apps/user, ${data.agent_breadth} agents/user, ${data.complex_sessions}% complex sessions)
+- Skill: ${signalTiers.skill} (${data.m365_breadth} apps/user, ${data.agent_breadth} agents/user, ${data.complex_sessions} avg prompts/session)
 - Value: ${signalTiers.value} (${data.license_priority}x engagement premium, ~${timeSavedRealised}K hrs/yr saved)
 
 Key data points:
@@ -640,7 +640,7 @@ function buildMiniThresholds(data, schema) {
     M365_BREADTH: { field: 'm365_breadth', pct: false },
     AGENT_BREADTH: { field: 'agent_breadth', pct: false },
     AGENT_HEALTH: { field: 'agent_health', pct: true },
-    COMPLEX_SESSIONS: { field: 'complex_sessions', pct: true },
+    COMPLEX_SESSIONS: { field: 'complex_sessions', pct: false },
   };
 
   const result = {};
@@ -734,7 +734,7 @@ function buildMetricDetail(data, schema) {
     COMPLEX_SESSIONS: 'complex_sessions',
   };
 
-  const pctFields = new Set(['m365_enablement','license_coverage','m365_adoption','agent_adoption','agent_enablement','m365_frequency','m365_retention','m365_retention_3mo_avg','chat_habit','agent_habitual','agent_health','complex_sessions']);
+  const pctFields = new Set(['m365_enablement','license_coverage','m365_adoption','agent_adoption','agent_enablement','m365_frequency','m365_retention','m365_retention_3mo_avg','chat_habit','agent_habitual','agent_health']);
 
   const result = {};
   for (const [key, def] of Object.entries(defs)) {
@@ -1098,6 +1098,18 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{CULTURE_ACTION\}\}/g, cultureAction);
   html = html.replace(/\{\{CULTURE_HEADLINE\}\}/g, cultureHeadline);
   html = html.replace(/\{\{NARRATIVE_HEADLINE\}\}/g, cultureHeadline);
+  // Dominant pattern — full Frontier Firm name
+  const patternNames = { 1: 'Human with Assistant', 2: 'Human-Agent Teams', 3: 'Human-led, Agent-operated' };
+  const patternDescs = {
+    1: 'Every employee has an AI assistant. AI supports individual work — drafting, summarising, researching — in the flow of work.',
+    2: 'Agents join teams as digital colleagues. Humans delegate; agents execute; humans steer and review.',
+    3: 'Humans set direction; agents execute business processes end-to-end with oversight and governance.'
+  };
+  // Use V4 pattern.number (1, 2, or 3) — derived from weakest lane in the scorecard
+  const domNum = pattern.number || 1;
+  html = html.replace(/\{\{DOMINANT_PATTERN_NAME\}\}/g, patternNames[domNum]);
+  html = html.replace(/\{\{DOMINANT_PATTERN_DESC\}\}/g, patternDescs[domNum]);
+  html = html.replace(/\{\{DOMINANT_PATTERN_NUM\}\}/g, String(domNum));
   html = html.replace(/\{\{P1_STATUS\}\}/g, patternProfile.p1);
   html = html.replace(/\{\{P2_STATUS\}\}/g, patternProfile.p2);
   html = html.replace(/\{\{P3_STATUS\}\}/g, patternProfile.p3);
@@ -1112,11 +1124,15 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   const tierCssClass = t => 'tier-' + (t === 'P3' ? 'fr' : t === 'P2' ? 'e' : 'f');
   const tierColor = t => t === 'P3' ? 'var(--tier-4)' : t === 'P2' ? 'var(--tier-3)' : 'var(--tier-2)';
   const tierHexColor = t => t === 'P3' ? '#0D9488' : t === 'P2' ? '#D270F0' : '#94A3B8';
-  const tierLabel = t => t === 'P3' ? 'Pattern 3' : t === 'P2' ? 'Pattern 2' : 'Pattern 1';
+  const tierLabel = t => t === 'P3' ? 'P3: Human-led, Agent-operated' : t === 'P2' ? 'P2: Human-Agent Teams' : 'P1: Human with Assistant';
+  const tierLabelShort = t => t === 'P3' ? 'Pattern 3' : t === 'P2' ? 'Pattern 2' : 'Pattern 1';
   html = html.replace(/\{\{REACH_TIER\}\}/g, tierLabel(signalTiers.reach));
   html = html.replace(/\{\{HABIT_TIER\}\}/g, tierLabel(signalTiers.habit));
   html = html.replace(/\{\{SKILL_TIER\}\}/g, tierLabel(signalTiers.skill));
   html = html.replace(/\{\{VALUE_TIER\}\}/g, tierLabel(signalTiers.value));
+  html = html.replace(/\{\{REACH_TIER_SHORT\}\}/g, tierLabelShort(signalTiers.reach));
+  html = html.replace(/\{\{HABIT_TIER_SHORT\}\}/g, tierLabelShort(signalTiers.habit));
+  html = html.replace(/\{\{SKILL_TIER_SHORT\}\}/g, tierLabelShort(signalTiers.skill));
   html = html.replace(/\{\{REACH_TIER_CLASS\}\}/g, tierCssClass(signalTiers.reach));
   html = html.replace(/\{\{HABIT_TIER_CLASS\}\}/g, tierCssClass(signalTiers.habit));
   html = html.replace(/\{\{SKILL_TIER_CLASS\}\}/g, tierCssClass(signalTiers.skill));
@@ -1391,7 +1407,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
         const laneBg = m.lane === 'agents' ? 'rgba(123,47,242,.1)' : 'rgba(34,100,229,.1)';
         const laneBorder = m.lane === 'agents' ? 'rgba(123,47,242,.2)' : 'rgba(34,100,229,.2)';
         const val = data[m.data_field];
-        const valDisplay = typeof val === 'number' ? (m.unit === '%' ? val + '%' : val.toFixed(1)) : '—';
+        const valDisplay = typeof val === 'number' ? (m.unit === '%' ? Math.round(val * 10) / 10 + '%' : Number.isInteger(val) ? String(val) : val.toFixed(1)) : '—';
         const tier = v4Tiers[m.id] || 'P1';
         const heroTag = m.hero ? '<span class="glossary-hero-badge">Hero</span>' : '';
 

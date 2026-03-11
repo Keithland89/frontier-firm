@@ -228,9 +228,9 @@
 
   "complex_sessions": {
     "type": "scalar",
-    "measures": ["[Avg Turns Per Conversation]"],
-    "fallback_dax": "EVALUATE ROW(\"v\", DIVIDE(SUMX('ActiveDaysSummary', 'ActiveDaysSummary'[PromptCount]), SUMX('ActiveDaysSummary', 'ActiveDaysSummary'[ChatActiveDays]), 0))",
-    "description": "Session depth — avg prompts per active day. Primary: Avg Turns Per Conversation. Fallback: PromptCount / ChatActiveDays from ActiveDaysSummary."
+    "measures": ["[Avg Turns Per Conversation]", "[AveragePromptsPerSession]"],
+    "fallback_dax": "EVALUATE ROW(\"v\", AVERAGEX(VALUES('Chat + Agent Interactions (Audit Logs)'[ThreadId]), CALCULATE(DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[Message_Id]), 'Chat + Agent Interactions (Audit Logs)'[Message_isPrompt] = \"TRUE\")))",
+    "description": "Session complexity — avg prompts per conversation thread. Higher values indicate deeper, multi-turn usage."
   },
 
   "agent_health": {

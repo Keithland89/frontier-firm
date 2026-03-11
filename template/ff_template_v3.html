@@ -1001,19 +1001,15 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <div style="height:1px;width:60px;background:linear-gradient(90deg,rgba(255,255,255,.15),transparent)"></div>
     </div>
 
-    <!-- Pattern verdict — the centrepiece -->
-    <div style="margin:0 auto 2rem;max-width:600px">
+    <!-- Current Pattern — narrative headline -->
+    <div style="margin:0 auto 1.5rem;max-width:600px">
       <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:rgba(255,255,255,.3);margin-bottom:.6rem">Current Pattern</div>
       <div style="font-family:'Helvetica Now Display','DM Sans','Outfit',sans-serif;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;line-height:1.25;letter-spacing:-.01em;background:linear-gradient(90deg,#FEB702,#FB6BF5,#8477FB,#487BFA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">{{NARRATIVE_HEADLINE}}</div>
     </div>
 
-    <!-- Pillar verdict row -->
-    <div style="display:flex;justify-content:center;gap:2.5rem;margin-bottom:2.5rem">
-      <div style="text-align:center"><div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:.25rem">Reach</div><div style="font-size:1.1rem;font-weight:900;color:{{REACH_TIER_COLOR}}">{{REACH_TIER}}</div></div>
-      <div style="width:1px;background:rgba(255,255,255,.06)"></div>
-      <div style="text-align:center"><div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:.25rem">Habit</div><div style="font-size:1.1rem;font-weight:900;color:{{HABIT_TIER_COLOR}}">{{HABIT_TIER}}</div></div>
-      <div style="width:1px;background:rgba(255,255,255,.06)"></div>
-      <div style="text-align:center"><div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:.25rem">Skill</div><div style="font-size:1.1rem;font-weight:900;color:{{SKILL_TIER_COLOR}}">{{SKILL_TIER}}</div></div>
+    <!-- Dominant pattern — single org-wide verdict -->
+    <div style="margin:0 auto 2.5rem">
+      <span style="font-size:.82rem;font-weight:600;color:rgba(255,255,255,.45);letter-spacing:.02em">P{{DOMINANT_PATTERN_NUM}}: {{DOMINANT_PATTERN_NAME}}</span>
     </div>
 
     <!-- Four KPI cards — clean, no icons -->
@@ -1104,7 +1100,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
         <div style="max-width:1000px;margin:1.5rem auto 0">
           <!-- Intro paragraph -->
           <div style="margin-bottom:1.25rem;padding:1.25rem;background:linear-gradient(135deg,rgba(34,100,229,.03),rgba(123,47,242,.03));border:1px solid rgba(255,255,255,.06);border-radius:12px">
-            <p style="font-size:.82rem;color:var(--text-2);line-height:1.7;margin:0">Microsoft's <strong style="color:var(--text)">Frontier Firm</strong> research measures maturity across <strong style="color:var(--text)">three behavioural dimensions</strong> — Developing Habit, Refining Skill Set, and Expanding Impact — against <strong style="color:var(--text)">three patterns</strong> of human-AI collaboration. Frontier Firms see <strong style="color:var(--text)">3× higher ROI</strong> and <strong style="color:var(--text)">71% of employees say their company is thriving</strong> vs 39% globally.</p>
+            <p style="font-size:.82rem;color:var(--text-2);line-height:1.7;margin:0">Microsoft's <strong style="color:var(--text)">Frontier Firm</strong> research measures maturity across <strong style="color:var(--text)">three pillars</strong> — Reach (is AI spreading?), Habit (is it sticking?), and Skill (are they building proficiency?) — against <strong style="color:var(--text)">three patterns</strong> of human-AI collaboration. Frontier Firms see <strong style="color:var(--text)">3× higher ROI</strong> and <strong style="color:var(--text)">71% of employees say their company is thriving</strong> vs 39% globally.</p>
           </div>
 
           <!-- 3×3 Matrix Grid -->
@@ -1113,16 +1109,19 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
             <!-- Header row -->
             <div style="background:rgba(255,255,255,.02);padding:.75rem;border-bottom:1px solid rgba(255,255,255,.08);border-right:1px solid rgba(255,255,255,.08)"></div>
             <div style="background:rgba(255,255,255,.02);padding:.75rem 1rem;border-bottom:1px solid rgba(255,255,255,.08);border-right:1px solid rgba(255,255,255,.08);text-align:center">
-              <div style="display:inline-flex;align-items:center;gap:.4rem;margin-bottom:.3rem"><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:#0D9488;color:#fff;font-size:.6rem;font-weight:900">1</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-              <div style="font-size:.72rem;font-weight:700;color:var(--text)">Developing habit</div>
+              <div style="display:inline-flex;align-items:center;gap:.4rem;margin-bottom:.3rem"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+              <div style="font-size:.72rem;font-weight:700;color:#0D9488">Reach</div>
+              <div style="font-size:.55rem;color:var(--text-3);margin-top:.15rem">Is AI spreading?</div>
             </div>
             <div style="background:rgba(255,255,255,.02);padding:.75rem 1rem;border-bottom:1px solid rgba(255,255,255,.08);border-right:1px solid rgba(255,255,255,.08);text-align:center">
-              <div style="display:inline-flex;align-items:center;gap:.4rem;margin-bottom:.3rem"><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:#8477FB;color:#fff;font-size:.6rem;font-weight:900">2</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8477FB" stroke-width="1.5" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
-              <div style="font-size:.72rem;font-weight:700;color:var(--text)">Refining skill set</div>
+              <div style="display:inline-flex;align-items:center;gap:.4rem;margin-bottom:.3rem"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D270F0" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+              <div style="font-size:.72rem;font-weight:700;color:#D270F0">Habit</div>
+              <div style="font-size:.55rem;color:var(--text-3);margin-top:.15rem">Is it sticking?</div>
             </div>
             <div style="background:rgba(255,255,255,.02);padding:.75rem 1rem;border-bottom:1px solid rgba(255,255,255,.08);text-align:center">
-              <div style="display:inline-flex;align-items:center;gap:.4rem;margin-bottom:.3rem"><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:#0891B2;color:#fff;font-size:.6rem;font-weight:900">3</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0891B2" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
-              <div style="font-size:.72rem;font-weight:700;color:var(--text)">Expanding impact</div>
+              <div style="display:inline-flex;align-items:center;gap:.4rem;margin-bottom:.3rem"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0891B2" stroke-width="1.5" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+              <div style="font-size:.72rem;font-weight:700;color:#0891B2">Skill</div>
+              <div style="font-size:.55rem;color:var(--text-3);margin-top:.15rem">Building proficiency?</div>
             </div>
 
             <!-- Pattern 1 row -->
@@ -1132,45 +1131,45 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
               <div style="font-size:.62rem;color:var(--text-3);line-height:1.5">Every employee has an AI assistant that helps them work better and faster.</div>
             </div>
             <div style="padding:1rem;border-right:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)">
-              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Consistent weekly use replaces "try-and-see" spikes.</div>
+              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Baseline uptake spreads beyond enthusiasts across roles. Licenses activated, early adopters visible.</div>
             </div>
             <div style="padding:1rem;border-right:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)">
-              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Mostly assistive tasks; limited workflow chaining or delegation.</div>
+              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Consistent weekly use replaces "try-and-see" spikes. Retention is building but not yet habitual.</div>
             </div>
             <div style="padding:1rem;border-bottom:1px solid rgba(255,255,255,.08)">
-              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Baseline uptake spreads beyond enthusiasts (Power Users) across roles.</div>
+              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Mostly assistive tasks in 1-2 apps. Limited workflow chaining or multi-turn depth.</div>
             </div>
 
             <!-- Pattern 2 row -->
-            <div style="padding:1rem;border-right:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);background:rgba(123,47,242,.03)">
+            <div style="padding:1rem;border-right:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);background:rgba(132,119,251,.03)">
               <div style="font-size:.72rem;font-weight:800;color:#8477FB;margin-bottom:.2rem">Pattern 2</div>
               <div style="font-size:.78rem;font-weight:700;color:var(--text);margin-bottom:.5rem">Human-agent teams</div>
               <div style="font-size:.62rem;color:var(--text-3);line-height:1.5">Agents join teams as "digital colleagues", taking on specific tasks at human direction.</div>
             </div>
             <div style="padding:1rem;border-right:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)">
-              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6"><strong style="color:var(--text)">Repeatable</strong> team workflows emerge (not just individual prompts).</div>
+              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Use spreads across teams and functions. <strong style="color:var(--text)">Agent adoption</strong> emerges alongside Copilot usage.</div>
             </div>
             <div style="padding:1rem;border-right:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)">
-              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Delegation increases; agents own steps in multi-step work; humans supervise.</div>
+              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6"><strong style="color:var(--text)">Repeatable</strong> workflows emerge. Users return month-over-month; active days increase steadily.</div>
             </div>
             <div style="padding:1rem;border-bottom:1px solid rgba(255,255,255,.08)">
-              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Use spreads across teams/functions; sharing and replication accelerates.</div>
+              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Delegation increases; agents own steps in multi-step work. App surface breadth widens beyond 4 apps.</div>
             </div>
 
             <!-- Pattern 3 row -->
-            <div style="padding:1rem;border-right:1px solid rgba(255,255,255,.08);background:rgba(16,185,129,.03)">
+            <div style="padding:1rem;border-right:1px solid rgba(255,255,255,.08);background:rgba(13,148,136,.03)">
               <div style="font-size:.72rem;font-weight:800;color:#0D9488;margin-bottom:.2rem">Pattern 3</div>
               <div style="font-size:.78rem;font-weight:700;color:var(--text);margin-bottom:.5rem">Human-led, agent-operated</div>
               <div style="font-size:.62rem;color:var(--text-3);line-height:1.5">Humans set direction and agents execute business processes and workflows, checking in as needed.</div>
             </div>
             <div style="padding:1rem;border-right:1px solid rgba(255,255,255,.08)">
-              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Agent-supported workflows become part of operating cadence and standards.</div>
+              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Enterprise-wide penetration. AI is the default, not the exception. Org coverage exceeds 60%.</div>
             </div>
             <div style="padding:1rem;border-right:1px solid rgba(255,255,255,.08)">
-              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Orchestration + oversight: clear checkpoints, exception handling, quality controls.</div>
+              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Agent-supported workflows are part of operating cadence. 40%+ users are habitual (6+ days/month).</div>
             </div>
             <div style="padding:1rem">
-              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Enterprise-scale agent workflows across functions, with accountable human direction.</div>
+              <div style="font-size:.7rem;color:var(--text-2);line-height:1.6">Orchestration + oversight: 7+ app surfaces, multi-turn mastery, governance frameworks in place.</div>
             </div>
 
           </div><!-- /matrix grid -->
@@ -1180,13 +1179,10 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       </div>
     </div>
 
-    <!-- Pillar Summary — the verdict in one line -->
-    <div class="reveal reveal-d5" style="margin-top:2rem;display:flex;justify-content:center;gap:2rem;padding:1.25rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">
-      <div style="text-align:center"><div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#0D9488;margin-bottom:.3rem">Reach</div><div style="font-size:1.3rem;font-weight:900;color:{{REACH_TIER_COLOR}}">{{REACH_TIER}}</div></div>
-      <div style="width:1px;background:rgba(255,255,255,.08)"></div>
-      <div style="text-align:center"><div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#D270F0;margin-bottom:.3rem">Habit</div><div style="font-size:1.3rem;font-weight:900;color:{{HABIT_TIER_COLOR}}">{{HABIT_TIER}}</div></div>
-      <div style="width:1px;background:rgba(255,255,255,.08)"></div>
-      <div style="text-align:center"><div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#0891B2;margin-bottom:.3rem">Skill</div><div style="font-size:1.3rem;font-weight:900;color:{{SKILL_TIER_COLOR}}">{{SKILL_TIER}}</div></div>
+    <!-- Dominant Pattern — single org-wide verdict -->
+    <div class="reveal reveal-d5" style="margin-top:2rem;text-align:center;padding:1.25rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">
+      <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-bottom:.3rem">Dominant Pattern</div>
+      <div style="font-size:1.3rem;font-weight:900;color:var(--brand)">P{{DOMINANT_PATTERN_NUM}}: {{DOMINANT_PATTERN_NAME}}</div>
     </div>
 
     <!-- V4 Scorecard -->
