@@ -1454,7 +1454,8 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
           return typeof v === 'number' ? Math.max(15, Math.min(Math.round(v / max * 100), 120)) : 0;
         }),
         frontier: allM.map(function() { return 100; }),
-        pillarScore: Math.min(pillarAvg, 100)
+        pillarScore: Math.min(pillarAvg, 100),
+        pillarColor: (schemaV4.pillars[pKey] && schemaV4.pillars[pKey].color_accent) || '#94A3B8'
       };
       radarIdx++;
     });

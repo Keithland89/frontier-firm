@@ -2118,7 +2118,7 @@ new Chart(document.getElementById('chartAgentBar'),{type:'bar',data:{labels:JSON
       var scoreEl=document.getElementById(chartId+'_score');
       if(scoreEl){
         var sc=d.pillarScore;
-        var scCol=sc>=75?'#0D9488':sc>=40?'#D270F0':'#94A3B8';
+        var scCol=d.pillarColor||'#94A3B8';
         scoreEl.style.cssText='margin-top:.5rem;padding:0 .25rem';
         scoreEl.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.2rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.35)">Pillar Score</span><span style="font-size:.65rem;font-weight:900;color:'+scCol+'">'+sc+'/100</span></div><div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+sc+'%;background:'+scCol+';border-radius:2px;transition:width 1s ease"></div></div>';
       }
