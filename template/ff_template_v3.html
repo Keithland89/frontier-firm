@@ -30,8 +30,8 @@
   --orange: #F97316;
   --green: #10B981;
   --red-soft: #EF4444;
-  --hero-bg: #0A0A1A;
-  --section-dark: #0F1024;
+  --hero-bg: #0F1025;
+  --section-dark: #141432;
   --bg: #FAFAFA;
   --surface: #FFFFFF;
   --border: #E2E8F0;
@@ -59,13 +59,13 @@
 }
 body{counter-reset:section-counter}
 [data-theme="dark"] {
-  --bg: #0A0A1A;
-  --surface: #161630;
-  --border: #252550;
+  --bg: #111128;
+  --surface: #1A1A3A;
+  --border: #2A2A55;
   --text: #F1F5F9;
   --text-2: #CBD5E1;
-  --text-3: #64748B;
-  --nav-bg: rgba(10,10,26,0.94);
+  --text-3: #8E9AB8;
+  --nav-bg: rgba(17,17,40,0.94);
   --toggle-bg: #334155;
 }
 
@@ -139,7 +139,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 .theme-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.05)}
 .theme-card-label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent,var(--brand));margin-bottom:.4rem}
 .theme-card h3{font-size:.88rem;font-weight:600;color:var(--text);margin-bottom:.4rem;line-height:1.3}
-.theme-card p{font-size:.78rem;color:var(--text-2);line-height:1.55}
+.theme-card p{font-size:.85rem;color:var(--text-2);line-height:1.6}
 .theme-card-stat{margin-top:.6rem;font-size:1.3rem;font-weight:800;color:var(--accent,var(--brand));font-variant-numeric:tabular-nums}
 
 /* ═══════════════════════════════════════════════════════════
@@ -179,11 +179,11 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 .two-col-60{grid-template-columns:1.5fr 1fr}
 .chart-card{background:var(--surface);border:1px solid var(--border);padding:1.5rem;position:relative}
 .chart-card-title{font-size:.82rem;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem}
-.chart-card-sub{font-size:.78rem;color:var(--text-3);margin-bottom:1rem}
+.chart-card-sub{font-size:.82rem;color:var(--text-3);margin-bottom:1rem}
 .stat-callout{padding:1.25rem 1.5rem;border-left:4px solid var(--accent,var(--brand));background:var(--surface);margin-bottom:1rem;border:1px solid var(--border);border-left:4px solid var(--accent,var(--brand))}
 .stat-callout-val{font-size:2rem;font-weight:900;color:var(--accent,var(--brand));line-height:1;font-variant-numeric:tabular-nums}
 .stat-callout-label{font-size:.8rem;color:var(--text-2);margin-top:.2rem;line-height:1.4}
-.insight-box{padding:.85rem 1.1rem;border-left:3px solid var(--accent,var(--teal));border-radius:0 8px 8px 0;margin-top:.75rem;font-size:.78rem;color:var(--text-2);line-height:1.55;background:rgba(0,0,0,.015)}
+.insight-box{padding:.85rem 1.1rem;border-left:3px solid var(--accent,var(--teal));border-radius:0 8px 8px 0;margin-top:.75rem;font-size:.85rem;color:var(--text-2);line-height:1.6;background:rgba(0,0,0,.015)}
 .insight-callout{padding:.75rem 1rem;border-radius:8px;font-size:.8rem;line-height:1.6;color:var(--text-2);background:linear-gradient(135deg,rgba(34,100,229,.04),rgba(123,47,242,.04));border:1px solid rgba(34,100,229,.1);position:relative;padding-left:2rem}
 .insight-callout::before{content:'💡';position:absolute;left:.7rem;top:.7rem;font-size:.85rem}
 [data-theme="dark"] .insight-callout{background:linear-gradient(135deg,rgba(34,100,229,.06),rgba(123,47,242,.06));border-color:rgba(34,100,229,.12)}
@@ -300,6 +300,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 .journey-current-label{position:absolute;top:-3.5rem;left:50%;transform:translateX(-50%);background:var(--copilot-gradient-h);color:#fff;padding:.3rem .9rem;border-radius:100px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;box-shadow:0 4px 16px rgba(34,100,229,.3)}
 .journey-current-label::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:2px;height:10px;background:var(--brand);border-radius:1px}
 .recs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin-top:1.5rem}
+.recs-grid .rec-card:nth-child(-n+2){grid-column:1/-1}
 .rec-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
 .rec-card:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(0,0,0,.06)}
 .rec-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem}
@@ -584,7 +585,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 [data-theme="dark"] .signal-card:hover{box-shadow:0 12px 40px rgba(0,0,0,.3),0 0 0 1px var(--signal-color,var(--brand))}
 .signal-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--signal-color) 10%,transparent);margin-bottom:.6rem}
 .signal-icon svg{width:18px;height:18px;stroke:var(--signal-color);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.signal-question{font-size:.62rem;color:var(--text-3);font-weight:500;font-style:italic;margin-bottom:.5rem;line-height:1.3}
+.signal-question{font-size:.78rem;color:var(--text-3);font-weight:500;font-style:italic;margin-bottom:.5rem;line-height:1.4}
 .signal-value{font-family:'Outfit','Segoe UI Variable',sans-serif;font-size:1.6rem;font-weight:900;color:var(--text);line-height:1;margin-bottom:.15rem;letter-spacing:-.02em}
 .signal-sub{font-size:.62rem;color:var(--text-3);font-weight:500;margin-bottom:.6rem}
 .signal-gauge{height:5px;border-radius:3px;background:var(--border);position:relative;margin-bottom:.2rem;overflow:visible}
@@ -720,7 +721,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
    =============================================================== */
 
 /* Signal identity borders */
-.signal-section{position:relative;border-left:6px solid var(--signal-accent,var(--brand));box-shadow:inset 6px 0 20px -6px color-mix(in srgb,var(--signal-accent) 20%,transparent)}
+.signal-section{position:relative;border-left:3px solid var(--signal-accent,var(--brand))}
 .signal-section .section-inner{padding-left:2rem}
 
 
@@ -853,7 +854,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 
 /* Deep-dive collapsible sections */
 .deep-dive-content{max-height:0;overflow:hidden;opacity:0;transition:max-height .6s cubic-bezier(.16,1,.3,1),opacity .4s ease}
-.deep-dive-content.expanded{max-height:5000px;opacity:1;overflow:visible}
+.deep-dive-content.expanded,.deep-dive-content.default-open{max-height:5000px;opacity:1;overflow:visible}
 .dive-deeper-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;margin:1.25rem 0 .5rem;padding:.75rem 1.5rem;border:1px dashed var(--accent,rgba(255,255,255,.15));border-radius:10px;background:transparent;color:var(--accent,rgba(255,255,255,.5));font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:all .3s}
 .dive-deeper-btn:hover{background:rgba(255,255,255,.03);border-style:solid}
 .dive-deeper-btn.open{border-style:solid;background:rgba(255,255,255,.02)}
@@ -877,10 +878,10 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
 .pattern-profile-card:hover{transform:translateY(-2px)}
 
 /* Force signal section borders */
-#reach.signal-section{border-left:6px solid #0EA5E9 !important;box-shadow:inset 6px 0 20px -6px rgba(14,165,233,.2) !important}
-#habit.signal-section{border-left:6px solid #F59E0B !important;box-shadow:inset 6px 0 20px -6px rgba(245,158,11,.2) !important}
-#skill.signal-section{border-left:6px solid #7B2FF2 !important;box-shadow:inset 6px 0 20px -6px rgba(123,47,242,.2) !important}
-#value.signal-section{border-left:6px solid #10B981 !important;box-shadow:inset 6px 0 20px -6px rgba(16,185,129,.2) !important}
+#reach.signal-section{border-left:3px solid #0EA5E9 !important}
+#habit.signal-section{border-left:3px solid #F59E0B !important}
+#skill.signal-section{border-left:3px solid #7B2FF2 !important}
+#value.signal-section{border-left:3px solid #10B981 !important}
 </style>
 </head>
 <body>
@@ -929,7 +930,7 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <div class="hero-kpi" style="--kpi-color:#7B2FF2"><div class="hero-kpi-val"><span class="counter" data-target="{{TOTAL_ACTIVE_USERS}}">0</span></div><div class="hero-kpi-label">Active Users<br>Across All Tiers</div></div>
       <div class="hero-kpi" style="--kpi-color:#2264E5"><div class="hero-kpi-val"><span class="counter" data-target="{{LICENSED_USERS}}">0</span></div><div class="hero-kpi-label">Licensed M365<br>Copilot Users</div></div>
       <div class="hero-kpi" style="--kpi-color:#0EA5E9"><div class="hero-kpi-val"><span class="counter" data-target="{{AGENT_USERS}}">0</span></div><div class="hero-kpi-label">Agent Users<br>{{AGENT_ADOPTION}}% Adoption</div></div>
-      <div class="hero-kpi" style="--kpi-color:#10B981"><div class="hero-kpi-val"><span class="counter" data-target="{{M365_RETENTION_INT}}" data-suffix="%">0</span></div><div class="hero-kpi-label">Licensed MoM<br>Retention Rate</div></div>
+      <div class="hero-kpi" style="--kpi-color:#10B981"><div class="hero-kpi-val"><span class="counter" data-target="{{M365_RETENTION_INT}}" data-suffix="%">0</span></div><div class="hero-kpi-label">Copilot &amp; Agent<br>MoM Retention</div></div>
     </div>
   </div>
   <div class="hero-scroll"><span>Scroll to explore</span><div class="scroll-arrow"></div></div>
@@ -1058,8 +1059,8 @@ body{font-family:'Segoe UI Variable','Segoe UI','Inter',-apple-system,BlinkMacSy
       <div class="headline-stat-label">of {{TOTAL_LICENSED_SEATS}} licensed seats are active across {{ORG_COUNT}} organisations</div>
       <span class="headline-stat-tier {{REACH_TIER_CLASS}}" style="background:rgba(14,165,233,.1);color:#0EA5E9;border:1px solid rgba(14,165,233,.15)">{{REACH_TIER}}</span>
     </div>
-    <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#0EA5E9">Dive deeper into Reach <span class="dd-arrow">+</span></button>
-    <div class="deep-dive-content">
+    <button class="dive-deeper-btn reveal open" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#0EA5E9">Dive deeper into Reach <span class="dd-arrow">+</span></button>
+    <div class="deep-dive-content expanded">
     <div class="tier-nav reveal reveal-d2">
       <button class="tier-nav-btn active" data-tier="all">Overall</button>
       <button class="tier-nav-btn" data-tier="m365">M365 Copilot</button>

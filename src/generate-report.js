@@ -1285,14 +1285,17 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
         gridHtml += '<div class="flip-card scorecard-cell" style="min-height:' + (isHero ? '120' : '110') + 'px' + heroSpan + '">';
         gridHtml += '<div class="flip-card-inner">';
 
-        // FRONT
-        gridHtml += '<div class="flip-card-front" style="background:' + laneBg + (isHero ? '.07' : '.04') + ');border:1px solid ' + laneBg + (isHero ? '.15' : '.1') + ');border-left:' + (isHero ? '4' : '3') + 'px solid ' + laneColor + ';padding:.65rem">';
-        gridHtml += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem">';
-        gridHtml += '<span style="font-size:.4rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:' + laneColor + '">' + lane.label + (isHero ? ' \u00b7 HERO METRIC' : '') + '</span>';
-        gridHtml += '<span style="font-size:.35rem;font-weight:700;padding:.08rem .25rem;border-radius:100px;background:' + v4TierBg(mTier) + ';color:' + v4TierColor(mTier) + '">' + mTier + '</span>';
+        // FRONT — hero cards get gradient background, non-hero get subtle lane tint
+        var frontBg = isHero
+          ? 'background:linear-gradient(135deg,' + laneBg + '.12),' + laneBg + '.06));border:1px solid ' + laneBg + '.2);border-left:5px solid ' + laneColor
+          : 'background:' + laneBg + '.06);border:1px solid ' + laneBg + '.12);border-left:3px solid ' + laneColor;
+        gridHtml += '<div class="flip-card-front" style="' + frontBg + ';padding:' + (isHero ? '.85rem 1rem' : '.65rem') + '">';
+        gridHtml += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem">';
+        gridHtml += '<span style="font-size:.42rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:' + laneColor + '">' + lane.label + (isHero ? ' \u00b7 HERO' : '') + '</span>';
+        gridHtml += '<span style="font-size:.38rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:' + v4TierBg(mTier) + ';color:' + v4TierColor(mTier) + ';border:1px solid ' + v4TierColor(mTier) + '33">' + mTier + '</span>';
         gridHtml += '</div>';
-        gridHtml += '<div style="font-size:' + heroSize + ';font-weight:900;color:' + v4TierColor(mTier) + ';line-height:1;margin-bottom:.2rem">' + display + (mDef.unit === '%' ? '%' : '') + '</div>';
-        gridHtml += '<div style="font-size:' + (isHero ? '.55rem' : '.45rem') + ';font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:rgba(255,255,255,' + (isHero ? '.5' : '.35') + ')">' + mDef.name + '</div>';
+        gridHtml += '<div style="font-size:' + heroSize + ';font-weight:900;color:' + (isHero ? '#fff' : v4TierColor(mTier)) + ';line-height:1;margin-bottom:.25rem">' + display + (mDef.unit === '%' ? '%' : '') + '</div>';
+        gridHtml += '<div style="font-size:' + (isHero ? '.55rem' : '.48rem') + ';font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:rgba(255,255,255,' + (isHero ? '.6' : '.4') + ')">' + mDef.name + '</div>';
         gridHtml += '</div>';
 
         // BACK
