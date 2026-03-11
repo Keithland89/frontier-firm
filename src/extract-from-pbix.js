@@ -615,16 +615,20 @@ async function main() {
       // Enrich with sessions/week per org from audit logs
       try {
         const sessResult = await runDax(
-          "EVALUATE VAR Weeks = MAX(1, DATEDIFF(MIN('Chat + Agent Interactions (Audit Logs)'[WeekStart]), MAX('Chat + Agent Interactions (Audit Logs)'[WeekStart]), WEEK)) " +
-          "RETURN ADDCOLUMNS(SUMMARIZE('Chat + Agent Interactions (Audit Logs)', 'Chat + Agent Org Data'[Organization]), " +
-          "\"Sessions\", DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[ThreadId]), \"Weeks\", Weeks)"
+          "EVALUATE SUMMARIZECOLUMNS('Chat + Agent Org Data'[Organization], " +
+          "\"Sessions\", DISTINCTCOUNT('Chat + Agent Interactions (Audit Logs)'[ThreadId]))"
         );
+        // Get total weeks separately
+        const weeksResult = await runDax(
+          "EVALUATE ROW(\"v\", MAX(1, DATEDIFF(MIN('Chat + Agent Interactions (Audit Logs)'[WeekStart]), MAX('Chat + Agent Interactions (Audit Logs)'[WeekStart]), WEEK)))"
+        );
+        const weeks = Number((weeksResult._rows || [])[0]?.v || (weeksResult._rows || [])[0]?.[Object.keys((weeksResult._rows || [])[0] || {})[0]]) || 1;
         const sessRows = sessResult._rows || [];
         const sessMap = {};
-        sessRows.forEach(r => { if (r.Organization) sessMap[r.Organization] = { sessions: Number(r.Sessions) || 0, weeks: Number(r.Weeks) || 1 }; });
+        sessRows.forEach(r => { if (r.Organization) sessMap[r.Organization] = Number(r.Sessions) || 0; });
         data._supplementary_metrics.license_priority_orgs.forEach(org => {
           const s = sessMap[org.org];
-          if (s && s.weeks > 0) org.unlicensed_median_sessions_weekly = Math.round(s.sessions / s.weeks * 10) / 10;
+          if (s && weeks > 0) org.unlicensed_median_sessions_weekly = Math.round(s / weeks * 10) / 10;
         });
       } catch (e) { /* sessions/week enrichment failed — leave as null */ }
     } catch (e) {
