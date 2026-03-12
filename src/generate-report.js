@@ -90,6 +90,14 @@ if (!data.license_coverage) {
     ? Math.round(_n('licensed_users') / Math.max(_n('total_active_users'), 1) * 1000) / 10
     : 0;
 }
+// Concentration index: compute from org_scatter_data if not already set
+if ((data.concentration_index === undefined || data.concentration_index === 'not_available') && Array.isArray(data.org_scatter_data) && data.org_scatter_data.length >= 2) {
+  var _usages = data.org_scatter_data.map(function(o) { return o.x || 0; }).sort(function(a, b) { return a - b; });
+  var _median = _usages[Math.floor(_usages.length / 2)];
+  data.concentration_index = Math.round(_usages.filter(function(u) { return u >= _median; }).length / _usages.length * 100);
+}
+if (data.concentration_index === undefined) data.concentration_index = 'not_available';
+
 // Agent habitual rate: % of agent users with 11+ active days
 if (!data.agent_habitual) {
   data.agent_habitual = (data.agent_band_11_15_pct || 0) + (data.agent_band_16_plus_pct || 0);
@@ -562,6 +570,7 @@ function generateTemplateInsights(data, signalTiers, pattern) {
     var median = usages[Math.floor(usages.length / 2)];
     d.concentration_index = Math.round(usages.filter(function(u) { return u >= median; }).length / usages.length * 100);
   }
+  if (d.concentration_index === undefined) d.concentration_index = 'not_available';
   // Agent retention: leave as not_available if no agent-specific data — NEVER proxy from m365_retention (different population)
   if (d.agent_retention === undefined) d.agent_retention = 'not_available';
   // Agent health = agent return rate (same concept, same population) — derive from agent_retention if extracted

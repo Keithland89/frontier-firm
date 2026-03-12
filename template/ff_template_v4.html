@@ -484,6 +484,9 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 /* Active metric card outline */
 .metric-card.active{outline:2px solid var(--tier-color,#007fff)!important;outline-offset:2px!important}
 
+/* Sticky metric cards — stay visible while scrolling drill-down */
+.signal-metrics.sticky{position:sticky;top:60px;z-index:10;background:var(--bg,#09090B);padding:.75rem 0;margin-left:-2.5rem;margin-right:-2.5rem;padding-left:2.5rem;padding-right:2.5rem;border-bottom:1px solid rgba(255,255,255,.06);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+
 /* Hero badge as drill-down button — breathing glow */
 .hero-drill-btn{display:inline-flex;align-items:center;gap:.4rem;animation:heroPulse 3s ease-in-out infinite;position:relative;font-size:.6rem!important;padding:.3rem .8rem!important}
 .hero-drill-btn .hero-arrow{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:currentColor;color:inherit;margin-left:.2rem;transition:transform .3s}
@@ -493,16 +496,22 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 .hero-drill-btn:active{transform:translateY(0)}
 @keyframes heroPulse{0%,100%{box-shadow:0 0 0 0 rgba(132,119,251,0)}50%{box-shadow:0 0 0 6px rgba(132,119,251,.12)}}
 
-/* Hint text below hero stat */
+/* Hint removed from headline-stat — replaced by explicit HTML connector */
 .headline-stat{position:relative;cursor:pointer}
-.headline-stat::after{content:'Click to explore deeper ↓';display:block;margin-top:.6rem;font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--signal-accent,#8477FB);opacity:.35;transition:opacity .3s}
-.headline-stat:hover::after{opacity:.7}
 
 /* Metric cards — persistent clickable footer */
-.metric-card::after{content:'Explore ↓'!important;position:absolute!important;bottom:.5rem!important;right:.6rem!important;font-size:.5rem!important;font-weight:700!important;text-transform:uppercase!important;letter-spacing:.06em!important;color:var(--tier-color,#007fff)!important;opacity:.4!important;transition:all .3s!important}
-.metric-card:hover::after{opacity:1!important;transform:translateY(-1px)!important}
-.metric-card{padding-bottom:2rem!important}
+.metric-card::after{content:'Explore ↓'!important;position:absolute!important;bottom:.6rem!important;right:.7rem!important;font-size:.55rem!important;font-weight:700!important;text-transform:uppercase!important;letter-spacing:.06em!important;color:var(--tier-color,#007fff)!important;opacity:.5!important;transition:all .3s!important}
+.metric-card:hover::after{opacity:1!important;transform:translateY(-2px)!important}
+.metric-card{padding-bottom:2.2rem!important}
 .metric-card .metric-card-bar{margin-bottom:.25rem}
+
+/* Explore prompt — visual connector between hero/hint and cards below */
+.explore-prompt{display:flex;align-items:center;gap:.6rem;margin:1rem 0 .5rem;opacity:.4;transition:opacity .3s}
+.explore-prompt:hover{opacity:.7}
+.explore-prompt-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--signal-accent,#8477FB),transparent)}
+.explore-prompt-text{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--signal-accent,#8477FB);white-space:nowrap;display:flex;align-items:center;gap:.35rem}
+.explore-prompt-text svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;animation:bounceDown 2s ease-in-out infinite}
+@keyframes bounceDown{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
 
 /* Drill-down signpost badge */
 .drill-signpost{display:inline-flex;align-items:center;gap:.3rem;padding:.15rem .5rem;border-radius:100px;font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:rgba(0,127,255,.08);color:var(--signpost-color,#007fff);border:1px solid rgba(0,127,255,.12);margin-bottom:.5rem;cursor:pointer;transition:all .2s}
@@ -678,6 +687,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
   html { font-size: 8.5px !important; }
   body { background: #fff !important; color: #1A1A2E !important; line-height: 1.4 !important; }
   * { transition: none !important; animation: none !important; box-shadow: none !important; }
+  .signal-metrics.sticky { position: static !important; backdrop-filter: none !important; border-bottom: none !important; margin: 0 !important; padding: 0 !important; }
 
   .nav, .scroll-progress, .theme-toggle, .export-btn,
   .hero-scroll, .tier-nav, .insight-toggle, .tier-header,
@@ -915,11 +925,11 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 /* Deep-dive collapsible sections */
 .deep-dive-content{max-height:0;overflow:hidden;opacity:0;transition:max-height .6s cubic-bezier(.16,1,.3,1),opacity .4s ease}
 .deep-dive-content.expanded,.deep-dive-content.default-open{max-height:5000px;opacity:1;overflow:visible}
-.dive-deeper-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;margin:1.25rem 0 .5rem;padding:.75rem 1.5rem;border:1px dashed var(--accent,rgba(255,255,255,.15));border-radius:10px;background:transparent;color:var(--accent,rgba(255,255,255,.5));font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:all .3s}
-.dive-deeper-btn:hover{background:rgba(255,255,255,.03);border-style:solid}
-.dive-deeper-btn.open{border-style:solid;background:rgba(255,255,255,.02)}
-.dive-deeper-btn.open .dd-arrow{transform:rotate(45deg)}
-.dd-arrow{font-size:1rem;font-weight:300;transition:transform .3s;line-height:1}
+/* Dive deeper button — hidden by default, shown as "close" when open */
+.dive-deeper-btn{display:none;align-items:center;justify-content:center;gap:.5rem;width:100%;margin:.5rem 0;padding:.6rem 1.5rem;border:1px solid var(--accent,rgba(255,255,255,.1));border-radius:10px;background:rgba(255,255,255,.02);color:var(--accent,rgba(255,255,255,.4));font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:all .3s}
+.dive-deeper-btn:hover{background:rgba(255,255,255,.04);border-color:var(--accent,rgba(255,255,255,.2))}
+.dive-deeper-btn.open{display:flex}
+.dd-arrow{font-size:.85rem;font-weight:300;transition:transform .3s;line-height:1}
 
 /* V2 scorecard tier badges */
 .hero-metric-tier{display:inline-block;margin-top:.5rem;padding:.15rem .55rem;border-radius:100px;font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
@@ -1274,6 +1284,8 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <span class="headline-stat-tier {{REACH_TIER_CLASS}}" style="background:rgba(14,165,233,.1);color:#0891B2;border:1px solid rgba(14,165,233,.15)">{{REACH_TIER}}</span>
     </div>
 
+    <div class="explore-prompt reveal reveal-d2" style="--signal-accent:#0891B2"><span class="explore-prompt-line"></span><span class="explore-prompt-text"><svg viewBox="0 0 12 12"><path d="M6 2v8M3 7l3 3 3-3"/></svg> Select a metric to explore</span><span class="explore-prompt-line"></span></div>
+
     <!-- Reach metric cards — 4 supporting metrics (hero shown above) -->
     <div class="signal-metrics reach-metrics reveal reveal-d3" style="display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin:1.5rem 0">
 
@@ -1327,7 +1339,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 
     </div>
 
-    <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#0891B2">Dive deeper into Reach <span class="dd-arrow">+</span></button>
+    <button class="dive-deeper-btn close-drill" style="--accent:#0891B2">Close detail <span class="dd-arrow">&times;</span></button>
     <div class="deep-dive-content">
 
     <!-- Panel: User Population — card 0 (Active Licensed Users) + hero -->
@@ -1408,6 +1420,9 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <div class="headline-stat-label">of licensed users are habitual (6+ active days over 3 months) &mdash; MoM retention is {{M365_RETENTION}}%</div>
       <span class="headline-stat-tier {{HABIT_TIER_CLASS}}" style="background:rgba(210,112,240,.1);color:#D270F0;border:1px solid rgba(210,112,240,.15)">{{HABIT_TIER}}</span>
     </div>
+
+    <div class="explore-prompt reveal reveal-d2" style="--signal-accent:#D270F0"><span class="explore-prompt-line"></span><span class="explore-prompt-text"><svg viewBox="0 0 12 12"><path d="M6 2v8M3 7l3 3 3-3"/></svg> Select a metric to explore</span><span class="explore-prompt-line"></span></div>
+
     <!-- Habit metric cards — 3 supporting metrics (hero shown above) -->
     <div class="signal-metrics habit-metrics reveal reveal-d3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:1.5rem 0">
       <div class="metric-card" data-drill-idx="0" style="--tier-color:#D270F0" tabindex="0">
@@ -1433,7 +1448,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       </div>
     </div>
 
-    <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#D270F0">Dive deeper into Habit <span class="dd-arrow">+</span></button>
+    <button class="dive-deeper-btn close-drill" style="--accent:#D270F0">Close detail <span class="dd-arrow">&times;</span></button>
     <div class="deep-dive-content">
 
     <!-- Panel: Retention bars + chart — cards 0,1 (both Return Rate cards) -->
@@ -1542,6 +1557,9 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <div class="headline-stat-label">of sessions have 5+ prompts &mdash; measuring depth of engagement across {{M365_BREADTH}} app surfaces</div>
       <span class="headline-stat-tier {{SKILL_TIER_CLASS}}" style="background:rgba(132,119,251,.1);color:#8477FB;border:1px solid rgba(132,119,251,.15)">{{SKILL_TIER}}</span>
     </div>
+
+    <div class="explore-prompt reveal reveal-d2" style="--signal-accent:#8477FB"><span class="explore-prompt-line"></span><span class="explore-prompt-text"><svg viewBox="0 0 12 12"><path d="M6 2v8M3 7l3 3 3-3"/></svg> Select a metric to explore</span><span class="explore-prompt-line"></span></div>
+
     <!-- Skill metric cards — 3 supporting metrics (hero shown above) -->
     <div class="signal-metrics skill-metrics reveal reveal-d3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:1.5rem 0">
       <div class="metric-card" data-drill-idx="0" style="--tier-color:#8477FB" tabindex="0">
@@ -1567,7 +1585,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       </div>
     </div>
 
-    <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#8477FB">Dive deeper into Skill <span class="dd-arrow">+</span></button>
+    <button class="dive-deeper-btn close-drill" style="--accent:#8477FB">Close detail <span class="dd-arrow">&times;</span></button>
     <div class="deep-dive-content">
 
     <!-- Panel: Deep Interactions hero — weekly depth trend + per-agent depth -->
@@ -1876,23 +1894,33 @@ window.addEventListener('scroll',()=>{const st=document.documentElement.scrollTo
         }
         /* Show only matching panels */
         showPanelsFor(i);
-        /* Scroll to first visible panel */
+        /* Scroll to first visible panel — offset for nav + sticky cards */
         setTimeout(function(){
           var first=ddContent.querySelector('.drill-panel[style*="display: block"], .drill-panel:not([style*="display: none"])');
           if(first){
-            var y=first.getBoundingClientRect().top+window.pageYOffset-navH()-24;
+            var stickyH=metricsGrid.classList.contains('sticky')?metricsGrid.offsetHeight:0;
+            var y=first.getBoundingClientRect().top+window.pageYOffset-navH()-stickyH-24;
             window.scrollTo({top:y,behavior:'smooth'});
           }
         },350);
       });
     });
 
-    /* When dive-deeper button is clicked directly → show all panels */
+    /* Close button — collapse drill-down and unstick cards */
     if(ddBtn){
       ddBtn.addEventListener('click',function(){
         activeIdx=null;
         setActiveCard(-1);
         showAll();
+        if(ddContent){
+          ddContent.classList.remove('expanded');
+          ddBtn.classList.remove('open');
+        }
+        if(metricsGrid)metricsGrid.classList.remove('sticky');
+        /* Scroll back to section top */
+        var navH2=document.querySelector('.nav')?document.querySelector('.nav').offsetHeight:60;
+        var y=section.getBoundingClientRect().top+window.pageYOffset-navH2-16;
+        window.scrollTo({top:y,behavior:'smooth'});
       });
     }
   });
@@ -1939,6 +1967,28 @@ document.querySelectorAll('.headline-stat').forEach(function(hs){
     if(btn)btn.click();
   });
 });
+
+/* ── Sticky metric cards when drill-down is open ─────────── */
+(function(){
+  var observer=new MutationObserver(function(mutations){
+    mutations.forEach(function(m){
+      if(m.target.classList.contains('deep-dive-content')){
+        var section=m.target.closest('.signal-section');
+        if(!section)return;
+        var grid=section.querySelector('.signal-metrics');
+        if(!grid)return;
+        if(m.target.classList.contains('expanded')){
+          grid.classList.add('sticky');
+        } else {
+          grid.classList.remove('sticky');
+        }
+      }
+    });
+  });
+  document.querySelectorAll('.deep-dive-content').forEach(function(dd){
+    observer.observe(dd,{attributes:true,attributeFilter:['class']});
+  });
+})();
 
 /* ── Chart.js Setup ──────────────────────────────────────── */
 Chart.register(ChartDataLabels);
