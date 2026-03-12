@@ -1135,25 +1135,15 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
     </div>
     <h2 class="section-title reveal reveal-d1">{{TITLE_MATURITY}}</h2>
 
-    <!-- The Story -->
-    <div class="reveal reveal-d3" style="margin-top:2.5rem;max-width:800px">
-      <div style="background:linear-gradient(135deg,rgba(123,47,242,.04),rgba(34,100,229,.04));border:1px solid rgba(123,47,242,.12);border-radius:12px;padding:2rem;border-left:4px solid #8477FB">
-        <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#8477FB;margin-bottom:.75rem">The Story Behind the Numbers</div>
-        <p style="font-size:.92rem;color:var(--text);line-height:1.7;margin:0 0 1rem">{{CULTURE_DESC}}</p>
-        <p style="font-size:.82rem;color:var(--text-2);line-height:1.65;margin:0 0 1rem">The data that follows explores three questions: <strong style="color:var(--text)">Is AI spreading?</strong> (Reach), <strong style="color:var(--text)">Is it becoming a habit?</strong> (Habit), and <strong style="color:var(--text)">Are they building proficiency?</strong> (Skill). Each question is assessed across both the M365 Copilot and Agents lanes.</p>
-        <p style="font-size:.82rem;color:var(--text-2);line-height:1.65;margin:0"><strong style="color:var(--amber)">{{CULTURE_RED_FLAG}}</strong></p>
-      </div>
-    </div>
-
     <!-- Signal navigation links -->
-    <div style="display:flex;gap:1.5rem;margin:1.5rem 0;justify-content:center" class="reveal reveal-d4">
+    <div style="display:flex;gap:1.5rem;margin:2rem 0;justify-content:center" class="reveal reveal-d3">
       <a href="#reach" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(14,165,233,.3);color:#0891B2;background:rgba(14,165,233,.06);transition:all .3s">Reach &rarr;</a>
-      <a href="#habit" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(245,158,11,.3);color:#D270F0;background:rgba(245,158,11,.06);transition:all .3s">Habit &rarr;</a>
+      <a href="#habit" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(210,112,240,.3);color:#D270F0;background:rgba(210,112,240,.06);transition:all .3s">Habit &rarr;</a>
       <a href="#skill" style="text-decoration:none;padding:.5rem 1.25rem;border-radius:100px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid rgba(123,47,242,.3);color:#8477FB;background:rgba(123,47,242,.06);transition:all .3s">Skill &rarr;</a>
     </div>
 
     <!-- Dominant Pattern + metric proportion -->
-    <div class="reveal reveal-d5" style="margin-top:2rem;display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:center">
+    <div class="reveal reveal-d4" style="margin-top:1rem;display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:center">
       <div style="text-align:center;padding:1.25rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">
         <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-bottom:.3rem">Dominant Pattern</div>
         <div style="font-size:1.3rem;font-weight:900;color:var(--brand)">{{DOMINANT_PATTERN_TIER}}: {{DOMINANT_PATTERN_NAME}}</div>
@@ -1165,45 +1155,8 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       </div>
     </div>
 
-    <!-- V4 Scorecard -->
-    <div class="reveal reveal-d6" style="margin-top:1.5rem">
-      <div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:.75rem">
-        <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5)">Scorecard</div>
-        <div style="font-size:.6rem;color:rgba(255,255,255,.3)">Click any card to see what it measures</div>
-      </div>
-      {{V4_SCORECARD_HTML}}
-    </div>
-
-    <!-- Metric Glossary — collapsible -->
-    <div class="reveal" style="margin-top:1.5rem">
-      <button class="dive-deeper-btn" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:rgba(255,255,255,.3);border-color:rgba(255,255,255,.1);font-size:.65rem">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:.3rem"><path d="M11.29 5.81c.38-1.08 1.9-1.08 2.28 0l.86 2.45a1.2 1.2 0 00.76.76l2.45.86c1.08.38 1.08 1.9 0 2.28l-2.45.86a1.2 1.2 0 00-.76.76l-.86 2.45c-.38 1.08-1.9 1.08-2.28 0l-.86-2.45a1.2 1.2 0 00-.76-.76l-2.45-.86c-1.08-.38-1.08-1.9 0-2.28l2.45-.86a1.2 1.2 0 00.76-.76l.86-2.45z" fill="rgba(255,255,255,.4)"/></svg>
-        Metric Glossary &mdash; All 13 Metrics <span class="dd-arrow">+</span>
-      </button>
-      <div class="deep-dive-content">
-        <div style="max-width:900px;margin:1rem auto 0">
-          <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:1rem;line-height:1.6">Each metric is scored into three patterns: <span class="glossary-band glossary-band-p1">Pattern 1</span> <span class="glossary-band glossary-band-p2">Pattern 2</span> <span class="glossary-band glossary-band-p3">Pattern 3</span>. A pillar's pattern equals its weakest metric. A lane's pattern equals its weakest pillar. The overall pattern equals the weaker lane.</p>
-          {{METRIC_GLOSSARY_HTML}}
-        </div>
-      </div>
-    </div>
-
-    <div class="spotlight reveal reveal-d5" style="--signal-accent:#8477FB;margin-top:1.5rem">
-      <div class="spotlight-icon">&#10024;</div>
-      <div class="spotlight-title">What the data says about where to go next</div>
-      <div class="spotlight-body">{{SPOTLIGHT_MATURITY}}</div>
-    </div>
-
   </div>
 </section>
-
-<div class="pull-quote-strip">
-  <div style="display:flex;align-items:center;justify-content:center;gap:.75rem;margin-bottom:.6rem;opacity:.5">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M11.29 3.81c.38-1.08 1.9-1.08 2.28 0l1.73 4.9a1.2 1.2 0 00.76.76l4.9 1.73c1.08.38 1.08 1.9 0 2.28l-4.9 1.73a1.2 1.2 0 00-.76.76l-1.73 4.9c-.38 1.08-1.9 1.08-2.28 0l-1.73-4.9a1.2 1.2 0 00-.76-.76l-4.9-1.73c-1.08-.38-1.08-1.9 0-2.28l4.9-1.73a1.2 1.2 0 00.76-.76l1.73-4.9z" fill="url(#cpPQ)"/><defs><linearGradient id="cpPQ" x1="3" y1="3" x2="20" y2="20"><stop offset="0%" stop-color="#8477FB"/><stop offset="50%" stop-color="#007fff"/><stop offset="100%" stop-color="#0891B2"/></linearGradient></defs></svg>
-  </div>
-  <div class="pull-quote-text">{{PULLQUOTE_0}}</div>
-  <div class="pull-quote-source">Evidence follows: Reach &rarr; Habit &rarr; Skill</div>
-</div>
 
 
 <!-- ═══════════════════════════════════════════════════════════════════
@@ -1593,6 +1546,50 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
     </div>
   </div>
 </section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     APPENDIX — Scorecard, Glossary, Detail (collapsed by default)
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section" id="appendix" style="background:var(--section-dark,var(--bg))">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label" style="color:rgba(255,255,255,.4)">Appendix</div>
+      <h2 class="section-title reveal reveal-d1">Detailed Scorecard &amp; Metric Reference</h2>
+    </div>
+
+    <button class="dive-deeper-btn reveal reveal-d2" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:rgba(255,255,255,.3);border-color:rgba(255,255,255,.1)">
+      Expand Scorecard &amp; Glossary <span class="dd-arrow">+</span>
+    </button>
+    <div class="deep-dive-content">
+
+      <!-- V4 Scorecard (radar charts + flip cards) -->
+      <div style="margin-top:1.5rem">
+        <div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:.75rem">
+          <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5)">Scorecard</div>
+          <div style="font-size:.6rem;color:rgba(255,255,255,.3)">Click any card to see what it measures</div>
+        </div>
+        {{V4_SCORECARD_HTML}}
+      </div>
+
+      <!-- Metric Glossary -->
+      <div style="margin-top:2rem;max-width:900px">
+        <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5);margin-bottom:.75rem">Metric Glossary — All 13 Metrics</div>
+        <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:1rem;line-height:1.6">Each metric is scored into three patterns: <span class="glossary-band glossary-band-p1">Pattern 1</span> <span class="glossary-band glossary-band-p2">Pattern 2</span> <span class="glossary-band glossary-band-p3">Pattern 3</span>. A pillar's pattern equals its weakest metric. A lane's pattern equals its weakest pillar. The overall pattern equals the weaker lane.</p>
+        {{METRIC_GLOSSARY_HTML}}
+      </div>
+
+      <!-- Spotlight -->
+      <div class="spotlight" style="--signal-accent:#8477FB;margin-top:1.5rem">
+        <div class="spotlight-icon">&#10024;</div>
+        <div class="spotlight-title">What the data says about where to go next</div>
+        <div class="spotlight-body">{{SPOTLIGHT_MATURITY}}</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 
 <footer class="footer">
   <div style="height:1px;background:var(--border)"></div>

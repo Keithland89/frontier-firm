@@ -1633,10 +1633,10 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{DOMINANT_ORG_PATTERN\}\}/g, dominantOrgPattern);
   html = html.replace(/\{\{ORG_FOUNDATION_COUNT\}\}/g, String(orgPatternCounts.Foundation));
   html = html.replace(/\{\{ORG_EXPANSION_COUNT\}\}/g, String(orgPatternCounts.Expansion));
-  html = html.replace(/\{\{ORG_FRONTIER_COUNT\}\}/g, String(orgPatternCounts.P3));
-  html = html.replace(/\{\{ORG_FOUNDATION_PCT\}\}/g, orgScatter.length > 0 ? String(Math.round(orgPatternCounts.P1 / orgScatter.length * 100)) : '0');
-  html = html.replace(/\{\{ORG_EXPANSION_PCT\}\}/g, orgScatter.length > 0 ? String(Math.round(orgPatternCounts.P2 / orgScatter.length * 100)) : '0');
-  html = html.replace(/\{\{ORG_FRONTIER_PCT\}\}/g, orgScatter.length > 0 ? String(Math.round(orgPatternCounts.P3 / orgScatter.length * 100)) : '0');
+  html = html.replace(/\{\{ORG_FRONTIER_COUNT\}\}/g, String(orgPatternCounts.Frontier));
+  html = html.replace(/\{\{ORG_FOUNDATION_PCT\}\}/g, orgScatter.length > 0 ? String(Math.round(orgPatternCounts.Foundation / orgScatter.length * 100)) : '0');
+  html = html.replace(/\{\{ORG_EXPANSION_PCT\}\}/g, orgScatter.length > 0 ? String(Math.round(orgPatternCounts.Expansion / orgScatter.length * 100)) : '0');
+  html = html.replace(/\{\{ORG_FRONTIER_PCT\}\}/g, orgScatter.length > 0 ? String(Math.round(orgPatternCounts.Frontier / orgScatter.length * 100)) : '0');
 
   // Org scatter insights — dynamic from the data
   var orgInsights = '';
