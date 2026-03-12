@@ -2095,7 +2095,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     html = html.replace(/\{\{HERO_CONTEXT\}\}/g,
       fmt(data.total_active_users) + ' users across ' + n('org_count', 0) + ' organisations. ' +
       (typeof data.agent_users === 'number' ? fmt(data.agent_users) + ' already using agents. ' : '') +
-      fmt(data.chat_users) + ' using AI on their own without a licence.');
+      fmt(data.chat_users) + ' already using AI — a ready-made licensing opportunity.');
 
     // Verdict card titles (data-driven)
     html = html.replace(/\{\{VERDICT_WORKING_TITLE\}\}/g, 'Deployment has landed');
@@ -2119,7 +2119,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     html = html.replace(/\{\{REACH_CONTEXT\}\}/g,
       'Copilot is deployed across ' + n('org_count', 0) + ' organisations with ' + fmt(data.total_licensed_seats) + ' seats. ' +
       'The technology has landed. But ' + Math.round(100 - _n('m365_enablement', 0)) + '% of licenses are inactive — and ' +
-      fmt(data.chat_users) + ' users are already using AI on their own without a license.');
+      fmt(data.chat_users) + ' users are already active — proven demand ready to license.');
     html = html.replace(/\{\{HABIT_CONTEXT\}\}/g,
       'Retention is healthy — people are returning. The harder question is whether they\'re building real routines or just checking in. ' +
       'The difference between monthly visitors and daily dependence is the culture shift that separates AI leaders from the rest.');
