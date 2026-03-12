@@ -1006,6 +1006,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
     <div class="nav-links">
       <a href="#overview" class="nav-link active" data-section="overview">Overview</a>
       <a href="#verdict" class="nav-link" data-section="verdict">Summary</a>
+      <a href="#framework" class="nav-link" data-section="framework">Framework</a>
       <a href="#scorecard" class="nav-link" data-section="scorecard">Scorecard</a>
       <a href="#reach" class="nav-link" data-section="reach">Reach</a>
       <a href="#habit" class="nav-link" data-section="habit">Habit</a>
@@ -1119,6 +1120,80 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
         <div class="v-sub">users ready to license — proven AI demand</div>
       </div>
     </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     FRONTIER FIRM FRAMEWORK — Pattern cards + journey track
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section" id="framework" style="background:var(--bg)" data-dominant="{{DOMINANT_PATTERN_NUM}}">
+  <div class="section-inner" style="max-width:1100px">
+
+    <div class="reveal">
+      <div style="display:inline-flex;align-items:center;gap:8px;font-size:.72rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--text-3);margin-bottom:.75rem">
+        <span style="display:block;width:20px;height:2px;background:var(--brand)"></span>
+        Frontier Firm Framework
+      </div>
+      <h2 style="font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;letter-spacing:-.02em;color:var(--text);margin-bottom:.5rem;line-height:1.2">Where does {{CUSTOMER_NAME}} sit on the journey?</h2>
+    </div>
+
+    <!-- Intro callout -->
+    <div class="reveal reveal-d1" style="margin:1.5rem 0 2rem;max-width:780px;padding:1.25rem 1.5rem;background:var(--surface);border-radius:12px;border:1px solid var(--border);border-left:3px solid var(--brand)">
+      <p style="font-size:.9rem;color:var(--text-2);line-height:1.75;margin:0"><strong style="color:var(--text)">Microsoft's Frontier Firm research</strong> maps organisations across three patterns of human-AI collaboration. Moving from P1 to P3 isn't about deploying more technology — it requires <strong style="color:var(--text)">new norms: when to delegate, how to review agent output, what good enough looks like from a machine colleague.</strong> Frontier Firms see <strong style="color:var(--text)">3&times; higher ROI</strong> and <strong style="color:var(--text)">71%</strong> of employees say their company is thriving vs 39% globally.</p>
+    </div>
+
+    <!-- Journey track -->
+    <div class="reveal reveal-d2" style="position:relative;margin-bottom:2.5rem;padding:0 calc(16.6% / 2)">
+      <div style="height:2px;background:var(--border);margin:32px 0;position:relative">
+        <div id="journeyTrackFill" style="height:100%;width:0%;background:linear-gradient(90deg,rgb(59,130,246),rgb(16,185,129));transition:width 1.5s cubic-bezier(.16,1,.3,1)"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:-6px;position:relative">
+        <div style="width:12px;height:12px;border-radius:50%;background:rgb(59,130,246);border:2px solid rgb(59,130,246)" id="jDot1"></div>
+        <div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--border);background:var(--bg)" id="jDot2"></div>
+        <div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--border);background:var(--bg)" id="jDot3"></div>
+      </div>
+    </div>
+
+    <!-- Three pattern cards -->
+    <div class="reveal reveal-d3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem">
+
+      <!-- P1 -->
+      <div style="background:var(--surface);border:1px solid rgba(59,130,246,.3);border-radius:16px;padding:1.75rem;position:relative;box-shadow:0 0 0 1px rgba(59,130,246,.15),0 4px 24px rgba(0,0,0,.2)" id="patternCard1">
+        <div id="currentPin" style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:rgb(59,130,246);color:#fff;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.22rem .8rem;border-radius:100px;white-space:nowrap;display:none">Dominant Pattern — {{CUSTOMER_NAME}}</div>
+        <div style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;margin-bottom:1rem;background:rgba(59,130,246,.12);color:rgb(59,130,246)">P1</div>
+        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgb(59,130,246);margin-bottom:.4rem">Human with Assistant</div>
+        <h3 style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">AI helps individuals. Humans drive.</h3>
+        <p style="font-size:.82rem;color:var(--text-2);line-height:1.65;margin-bottom:1rem">AI tools assist individual employees in completing tasks faster. Each person works with AI independently — but there is no team-level orchestration and no delegated execution.</p>
+        <div style="color:rgb(59,130,246)"><strong style="font-size:1.4rem;font-weight:800;display:block;margin-bottom:.1rem;font-variant-numeric:tabular-nums">{{ORG_FOUNDATION_COUNT}}</strong><span style="font-size:.68rem;color:var(--text-3)">of {{ORG_COUNT}} orgs at this pattern</span></div>
+      </div>
+
+      <!-- P2 -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.75rem;position:relative" id="patternCard2">
+        <div style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;margin-bottom:1rem;background:rgba(16,185,129,.1);color:rgb(16,185,129)">P2</div>
+        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgb(16,185,129);margin-bottom:.4rem">Human–Agent Teams</div>
+        <h3 style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Humans orchestrate. Agents execute.</h3>
+        <p style="font-size:.82rem;color:var(--text-2);line-height:1.65;margin-bottom:1rem">Employees become "agent bosses" — they set goals, agents handle execution, humans review outputs. Tasks are delegated, not just assisted.</p>
+        <div style="color:rgb(16,185,129)"><strong style="font-size:1.4rem;font-weight:800;display:block;margin-bottom:.1rem;font-variant-numeric:tabular-nums">{{ORG_EXPANSION_COUNT}}</strong><span style="font-size:.68rem;color:var(--text-3)">of {{ORG_COUNT}} orgs at this pattern</span></div>
+      </div>
+
+      <!-- P3 -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.75rem;position:relative" id="patternCard3">
+        <div style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;margin-bottom:1rem;background:rgba(139,92,246,.1);color:rgb(139,92,246)">P3</div>
+        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgb(139,92,246);margin-bottom:.4rem">Agent-Operated</div>
+        <h3 style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Agents handle whole workflows.</h3>
+        <p style="font-size:.82rem;color:var(--text-2);line-height:1.65;margin-bottom:1rem">Agents operate autonomously across entire workflows with minimal human prompting. Humans focus on exceptions, governance, and outcomes.</p>
+        <div style="color:rgb(139,92,246)"><strong style="font-size:1.4rem;font-weight:800;display:block;margin-bottom:.1rem;font-variant-numeric:tabular-nums">{{ORG_FRONTIER_COUNT}}</strong><span style="font-size:.68rem;color:var(--text-3)">of {{ORG_COUNT}} orgs at this pattern</span></div>
+      </div>
+
+    </div>
+
+    <!-- Transition callout -->
+    <div class="reveal reveal-d4" style="margin-top:2rem;padding:1.25rem 1.5rem;background:var(--surface);border-radius:12px;border:1px solid rgba(16,185,129,.2);border-left:4px solid rgb(16,185,129)">
+      <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgb(16,185,129);margin-bottom:.5rem">The transition that matters</div>
+      <p style="font-size:.875rem;color:var(--text-2);line-height:1.72;max-width:740px">{{CULTURE_ACTION}}</p>
+    </div>
+
   </div>
 </section>
 
@@ -2006,6 +2081,34 @@ new Chart(document.getElementById('chartAgentBar'),{type:'bar',data:{labels:JSON
       if(c.count<=0) return;
       lbls.innerHTML+='<span style="display:flex;align-items:center;gap:.25rem"><span style="width:8px;height:8px;border-radius:2px;background:'+c.bg+'"></span><span style="color:'+c.color+';font-weight:700">'+c.label+'</span><span style="color:rgba(255,255,255,.3)">('+c.count+'/'+pp.total+')</span></span>';
     });
+  }
+})();
+
+/* Journey track animation + pattern card highlighting */
+(function(){
+  var fw = document.getElementById('framework');
+  if(!fw) return;
+  var dom = parseInt(fw.dataset.dominant) || 1;
+  var fill = dom === 3 ? 100 : dom === 2 ? 50 : 16;
+  var track = document.getElementById('journeyTrackFill');
+  if(track) setTimeout(function(){ track.style.width = fill + '%'; }, 500);
+  // Highlight dots
+  var dots = [document.getElementById('jDot1'), document.getElementById('jDot2'), document.getElementById('jDot3')];
+  for(var i = 0; i < dom; i++){
+    if(dots[i]){
+      var colors = ['rgb(59,130,246)','rgb(16,185,129)','rgb(139,92,246)'];
+      dots[i].style.background = colors[i]; dots[i].style.borderColor = colors[i];
+      if(i === dom - 1) dots[i].style.boxShadow = '0 0 0 4px rgba(' + (i===0?'59,130,246':i===1?'16,185,129':'139,92,246') + ',.2)';
+    }
+  }
+  // Show current pin on dominant card
+  var pin = document.getElementById('currentPin');
+  var card = document.getElementById('patternCard' + dom);
+  if(pin && card){
+    pin.style.display = 'block';
+    if(dom > 1){ pin.parentElement.removeChild(pin); card.style.position='relative'; card.insertBefore(pin, card.firstChild); }
+    card.style.borderColor = dom===1?'rgba(59,130,246,.3)':dom===2?'rgba(16,185,129,.3)':'rgba(139,92,246,.3)';
+    card.style.boxShadow = '0 0 0 1px rgba('+(dom===1?'59,130,246':dom===2?'16,185,129':'139,92,246')+',.15),0 4px 24px rgba(0,0,0,.2)';
   }
 })();
 </script>
