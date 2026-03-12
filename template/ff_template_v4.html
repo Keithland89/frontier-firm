@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{CUSTOMER_NAME}} — Frontier Firm Assessment</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+/*
+ * ─── V4 DESIGN SYSTEM ──────────────────────────────────────────────
+ *
+ * COLOR SYSTEM — three parallel vocabularies stored as raw RGB triplets
+ * so they can be used with alpha: rgba(var(--dim-habit), 0.08)
+ *
+ *   DIMENSIONS (what we measure):
+ *     --dim-reach:  teal-green 52,211,153  → Expanding Impact
+ *     --dim-habit:  amber      251,191,36  → Developing Habit
+ *     --dim-skill:  blue       96,165,250  → Refining Skill Set
+ *
+ *   PATTERNS (where orgs sit on the journey):
+ *     --p1:  blue   59,130,246  → Human with Assistant
+ *     --p2:  green  16,185,129  → Human-Agent Teams
+ *     --p3:  purple 139,92,246  → Agent-Operated
+ *
+ * Adopted from the shorter "Skill Habit Reach Emphasis" reference report.
+ * ─────────────────────────────────────────────────────────────────── */
+:root {
+  --bg-primary:    #0a1628;
+  --bg-secondary:  #0f1f3a;
+  --bg-card:       #132040;
+  --bg-card-hover: #182a52;
+  --bg-surface:    #1a2d50;
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-medium: rgba(255,255,255,0.10);
+  --border-strong: rgba(255,255,255,0.18);
+  --text-primary:  #f0f4fc;
+  --text-secondary:#94a3b8;
+  --text-muted:    #64748b;
+  --text-dim:      #475569;
+  --dim-reach:  52,211,153;
+  --dim-habit:  251,191,36;
+  --dim-skill:  96,165,250;
+  --p1: 59,130,246;
+  --p2: 16,185,129;
+  --p3: 139,92,246;
+  --accent:     #3b82f6;
+  --radius:     12px;
+  --radius-sm:   8px;
+  --radius-lg:  16px;
+  --shadow:     0 4px 24px rgba(0,0,0,.30);
+  --shadow-lg:  0 8px 40px rgba(0,0,0,.45);
+  --ease:       cubic-bezier(.4,0,.2,1);
+  --font:       'Segoe UI',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  --wide:       1120px;
+}
+
+/* ─── RESET ─── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);background:var(--bg-primary);color:var(--text-primary);
+  line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ─── SCROLL PROGRESS ─── */
+.progress{position:fixed;top:0;left:0;width:0;height:3px;z-index:1001;
+  background:linear-gradient(90deg,rgb(var(--dim-reach)),rgb(var(--dim-skill)),rgb(var(--dim-habit)));
+  transition:width .1s linear}
+
+/* ─── NAV ─── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;
+  background:rgba(10,22,40,.92);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border-subtle);
+  transform:translateY(-100%);transition:transform .35s var(--ease)}
+.nav.show{transform:translateY(0)}
+.nav-inner{max-width:var(--wide);margin:0 auto;
+  padding:0 clamp(16px,4vw,48px);height:52px;
+  display:flex;align-items:center;gap:2rem}
+.nav-brand{font-size:.72rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--accent);flex-shrink:0}
+.nav-links{display:flex;flex:1;gap:0}
+.nav-link{padding:.3rem .75rem;font-size:.7rem;font-weight:600;
+  color:var(--text-muted);text-decoration:none;white-space:nowrap;
+  text-transform:uppercase;letter-spacing:.06em;position:relative;
+  border-bottom:2px solid transparent;transition:all .2s}
+.nav-link:hover,.nav-link.on{color:var(--text-primary);border-bottom-color:var(--accent)}
+.nav-edit{margin-left:auto;padding:.3rem .75rem;font-size:.65rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;color:var(--accent);
+  background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);
+  border-radius:100px;cursor:pointer;transition:all .2s;font-family:var(--font)}
+.nav-edit:hover{background:rgba(59,130,246,.15)}
+
+/* ─── SECTION BASE ─── */
+.s{position:relative;overflow:hidden}
+.s-alt{background:var(--bg-secondary)}
+.wrap{max-width:var(--wide);margin:0 auto;padding:80px clamp(16px,4vw,48px)}
+
+.eyebrow{display:inline-flex;align-items:center;gap:8px;
+  font-size:.72rem;font-weight:700;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--text-muted);margin-bottom:.75rem}
+.eyebrow::before{content:'';display:block;width:20px;height:2px;background:var(--accent)}
+
+.stitle{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;
+  letter-spacing:-.02em;color:var(--text-primary);margin-bottom:.5rem;line-height:1.2}
+.ssub{font-size:.95rem;color:var(--text-secondary);
+  max-width:620px;line-height:1.75;margin-bottom:2.5rem}
+
+/* ─── REVEAL ─── */
+.r{opacity:0;transform:translateY(22px);
+  transition:opacity .6s ease,transform .6s ease}
+.r.on{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.10s}.d2{transition-delay:.20s}
+.d3{transition-delay:.30s}.d4{transition-delay:.40s}
+
+
+/* ════════════════════════════════════
+   1. HERO
+   ════════════════════════════════════ */
+.hero{min-height:100vh;display:flex;align-items:center;
+  justify-content:center;position:relative;overflow:hidden}
+.hero-glow{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 50% at 50% 30%,
+    rgba(59,130,246,.07) 0%,transparent 70%)}
+
+.hero-content{position:relative;z-index:2;text-align:center;
+  max-width:840px;padding:2rem}
+
+.hero-pill{display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;
+  color:rgba(52,211,153,.75);margin-bottom:1.5rem;
+  padding:.4rem 1.1rem;border:1px solid rgba(52,211,153,.2);
+  border-radius:100px;background:rgba(52,211,153,.05)}
+.dot{width:6px;height:6px;border-radius:50%;
+  background:rgb(var(--dim-reach));animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.hero-h{font-size:clamp(1.9rem,4.5vw,3rem);font-weight:700;
+  color:var(--text-primary);line-height:1.18;letter-spacing:-.025em;
+  margin-bottom:.85rem}
+.hero-h .grad{background:linear-gradient(90deg,rgb(var(--dim-skill)),rgb(var(--dim-reach)));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.hero-ctx{font-size:1rem;color:var(--text-secondary);
+  max-width:540px;margin:0 auto 2.5rem;line-height:1.75}
+
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);
+  gap:.85rem;max-width:640px;margin:0 auto}
+.kpi{background:rgba(255,255,255,.03);border:1px solid var(--border-subtle);
+  border-radius:var(--radius);padding:1.25rem 1rem;text-align:center;
+  transition:all .3s var(--ease)}
+.kpi:hover{background:rgba(255,255,255,.05);border-color:var(--border-medium);
+  transform:translateY(-2px);box-shadow:var(--shadow)}
+.kpi-v{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:800;
+  letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1}
+.kpi-l{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;
+  letter-spacing:.07em;margin-top:.35rem;font-weight:500}
+
+
+/* ════════════════════════════════════
+   2. VERDICT (Exec Summary)
+   ════════════════════════════════════ */
+.v-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.v-card{background:var(--bg-card);border:1px solid var(--border-subtle);
+  border-radius:var(--radius-lg);padding:1.75rem;
+  border-top:3px solid transparent;
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.v-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.v-label{font-size:.62rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;margin-bottom:.5rem}
+.v-card h3{font-size:1rem;font-weight:700;color:var(--text-primary);
+  margin-bottom:.6rem;line-height:1.3}
+.v-card p{font-size:.875rem;color:var(--text-secondary);line-height:1.72}
+.v-stat{font-size:1.7rem;font-weight:800;margin-top:.85rem;
+  font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.v-sub{font-size:.68rem;color:var(--text-muted);margin-top:.15rem}
+
+
+/* ════════════════════════════════════
+   3. FRAMEWORK (Journey Track)
+   ════════════════════════════════════ */
+.pattern-intro{font-size:.9rem;color:var(--text-secondary);line-height:1.75;
+  max-width:720px;margin-bottom:2.5rem;padding:1.25rem 1.5rem;
+  background:var(--bg-card);border-radius:var(--radius);
+  border:1px solid var(--border-subtle);border-left:3px solid var(--accent)}
+.pattern-intro strong{color:var(--text-primary)}
+
+.p-track-wrap{position:relative;margin-bottom:3rem;padding:0 calc(16.6% / 2)}
+.p-track{height:2px;background:var(--border-subtle);margin:32px 0;position:relative}
+.p-track-fill{height:100%;width:0;
+  background:linear-gradient(90deg,rgb(var(--p1)),rgb(var(--p2)));
+  transition:width 1.5s cubic-bezier(.16,1,.3,1)}
+.p-dots{display:flex;justify-content:space-between;margin-top:-6px;position:relative}
+.p-dot{width:12px;height:12px;border-radius:50%;
+  border:2px solid var(--border-medium);background:var(--bg-primary)}
+.p-dot.done{background:rgb(var(--p1));border-color:rgb(var(--p1))}
+.p-dot.here{background:rgb(var(--p2));border-color:rgb(var(--p2));
+  box-shadow:0 0 0 4px rgba(var(--p2),.2)}
+
+.p-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.p-card{background:var(--bg-card);border:1px solid var(--border-subtle);
+  border-radius:var(--radius-lg);padding:1.75rem;position:relative;
+  transition:transform .3s var(--ease)}
+.p-card:hover{transform:translateY(-2px)}
+.p-card.current{border-color:rgba(var(--p1),.45);
+  box-shadow:0 0 0 1px rgba(var(--p1),.2),var(--shadow)}
+
+.current-pin{position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+  background:rgb(var(--p1));color:#fff;
+  font-size:.58rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;padding:.22rem .8rem;border-radius:100px;white-space:nowrap}
+
+.p-num{width:38px;height:38px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;
+  font-size:.9rem;font-weight:800;margin-bottom:1rem}
+.p-tag{font-size:.62rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;margin-bottom:.4rem}
+.p-card h3{font-size:.95rem;font-weight:700;color:var(--text-primary);
+  margin-bottom:.5rem;line-height:1.3}
+.p-card p{font-size:.82rem;color:var(--text-secondary);
+  line-height:1.65;margin-bottom:1rem}
+.p-org-count strong{font-size:1.4rem;font-weight:800;display:block;
+  margin-bottom:.1rem;font-variant-numeric:tabular-nums}
+.p-org-count span{font-size:.68rem;color:var(--text-muted)}
+
+.p-transition{margin-top:2rem;padding:1.25rem 1.5rem;
+  background:var(--bg-card);border-radius:var(--radius);
+  border:1px solid rgba(var(--p2),.2);border-left:4px solid rgb(var(--p2))}
+.p-transition-label{font-size:.62rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;color:rgb(var(--p2));margin-bottom:.5rem}
+.p-transition p{font-size:.875rem;color:var(--text-secondary);
+  line-height:1.72;max-width:740px}
+.p-transition strong{color:var(--text-primary)}
+
+
+/* ════════════════════════════════════
+   4-6. SIGNAL SECTIONS (Reach/Habit/Skill)
+   ════════════════════════════════════ */
+.signal{margin-bottom:4rem}
+.signal:last-child{margin-bottom:0}
+
+.signal-bar{display:flex;align-items:center;gap:.65rem;
+  margin-bottom:1.5rem;padding-bottom:1rem;
+  border-bottom:1px solid var(--border-subtle)}
+.signal-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.signal-name{font-size:.7rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.13em}
+
+.sig-header{display:flex;align-items:flex-start;
+  justify-content:space-between;gap:2rem;margin-bottom:1.75rem}
+.sig-title h3{font-size:clamp(1.05rem,2vw,1.35rem);font-weight:700;
+  color:var(--text-primary);margin-bottom:.3rem;line-height:1.25}
+.sig-title p{font-size:.85rem;color:var(--text-secondary);
+  line-height:1.65;max-width:520px}
+.sig-num{text-align:right;flex-shrink:0}
+.big-num{font-size:clamp(2.8rem,5vw,4rem);font-weight:800;
+  line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.big-label{font-size:.72rem;color:var(--text-muted);margin-top:.3rem}
+
+/* Reach: 3 stat cards */
+.reach-3{display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1rem;margin-bottom:1.75rem}
+.r3-card{background:var(--bg-card);border:1px solid var(--border-subtle);
+  border-radius:var(--radius);padding:1.25rem;text-align:center;
+  border-top:3px solid transparent}
+.r3-val{font-size:1.8rem;font-weight:800;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums}
+.r3-label{font-size:.72rem;color:var(--text-muted);margin-top:.3rem;line-height:1.4}
+.r3-sub{font-size:.62rem;color:var(--text-dim);margin-top:.15rem}
+
+/* Habit: distribution bars */
+.habit-chart{background:var(--bg-card);border:1px solid var(--border-subtle);
+  border-radius:var(--radius);padding:1.5rem;margin-bottom:1.75rem}
+.hc-title{font-size:.68rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--text-muted);margin-bottom:1.25rem}
+.h-row{display:flex;align-items:center;gap:.85rem;margin-bottom:.75rem}
+.h-row:last-child{margin-bottom:0}
+.h-label{font-size:.75rem;font-weight:600;color:var(--text-secondary);
+  width:94px;flex-shrink:0;text-align:right;line-height:1.3}
+.h-track{flex:1;height:36px;background:rgba(255,255,255,.04);
+  border-radius:6px;overflow:hidden}
+.h-bar{height:100%;border-radius:6px;display:flex;align-items:center;
+  padding:0 10px;transition:width 1.4s cubic-bezier(.16,1,.3,1)}
+.h-bar span{font-size:.78rem;font-weight:700;color:#fff}
+.h-pct{font-size:.78rem;font-weight:700;width:48px;flex-shrink:0}
+.conv-tag{display:inline-block;font-size:.58rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.05em;
+  padding:.18rem .5rem;border-radius:100px;margin-top:.2rem;
+  background:rgba(251,191,36,.12);color:rgb(251,191,36);
+  border:1px solid rgba(251,191,36,.22)}
+
+/* Skill: 3 stat cards */
+.skill-3{display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1rem;margin-bottom:1.75rem}
+.sk-card{background:var(--bg-card);border:1px solid var(--border-subtle);
+  border-radius:var(--radius);padding:1.25rem;text-align:center}
+.sk-val{font-size:1.7rem;font-weight:800;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums}
+.sk-label{font-size:.72rem;color:var(--text-muted);margin-top:.3rem;line-height:1.4}
+.sk-ctx{font-size:.62rem;color:var(--text-dim);margin-top:.15rem}
+
+/* So-what callout */
+.sowhat{padding:1.25rem 1.5rem;border-radius:var(--radius);
+  margin-top:.25rem;position:relative}
+.sowhat::before{content:'So what?';position:absolute;top:-.65rem;right:1rem;
+  font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:.15rem .5rem;border-radius:100px;background:var(--bg-primary);
+  color:var(--text-muted)}
+.sowhat p{font-size:.875rem;line-height:1.72;color:var(--text-primary)}
+.sowhat strong{font-weight:700}
+
+/* Agent spotlight panel */
+.agent-spotlight{background:var(--bg-card);border:1px solid var(--border-subtle);
+  border-radius:var(--radius);padding:1.5rem;margin-bottom:1.75rem}
+.agent-spotlight-header{display:flex;align-items:baseline;justify-content:space-between;
+  gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.agent-spotlight-title{font-size:.68rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;color:rgb(var(--dim-skill));margin-bottom:.2rem}
+.agent-spotlight-sub{font-size:.8rem;color:var(--text-secondary)}
+
+
+/* ════════════════════════════════════
+   EXPAND / COLLAPSE
+   ════════════════════════════════════ */
+.detail-toggle{display:inline-flex;align-items:center;gap:.5rem;
+  background:none;border:1px solid var(--border-subtle);border-radius:100px;
+  padding:.5rem 1.15rem;font-size:.72rem;font-weight:600;color:var(--accent);
+  cursor:pointer;margin-top:1.25rem;font-family:var(--font);transition:all .2s}
+.detail-toggle:hover{background:rgba(59,130,246,.06);border-color:var(--accent)}
+.detail-toggle .arr{display:inline-block;transition:transform .3s;font-size:.6rem}
+.detail-toggle.open .arr{transform:rotate(180deg)}
+.detail-content{max-height:0;overflow:hidden;
+  transition:max-height .5s cubic-bezier(.16,1,.3,1),opacity .4s;opacity:0}
+.detail-content.open{max-height:3000px;opacity:1;margin-top:1.25rem}
+.detail-inner{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.detail-card{background:var(--bg-card);border:1px solid var(--border-subtle);
+  border-radius:var(--radius);padding:1.25rem}
+.detail-card-title{font-size:.72rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--text-muted);margin-bottom:1rem}
+.chart-wrap{position:relative;width:100%;max-height:280px}
+
+
+/* ════════════════════════════════════
+   7. ORG TABLE
+   ════════════════════════════════════ */
+.table-wrap{overflow-x:auto;
+  border:1px solid var(--border-subtle);border-radius:var(--radius)}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{background:var(--bg-surface);padding:10px 14px;text-align:left;
+  font-weight:700;font-size:.68rem;text-transform:uppercase;
+  letter-spacing:.07em;color:var(--text-muted);
+  border-bottom:1px solid var(--border-medium)}
+td{padding:10px 14px;border-bottom:1px solid var(--border-subtle);
+  vertical-align:middle}
+tr:hover td{background:var(--bg-card-hover)}
+tr:last-child td{border-bottom:none}
+.org-name{font-weight:700;color:var(--text-primary)}
+.pb{display:flex;align-items:center;gap:8px}
+.pb-track{height:5px;border-radius:3px;background:rgba(255,255,255,.06);
+  width:72px;overflow:hidden}
+.pb-fill{height:100%;border-radius:3px;transition:width 1s ease}
+.pb-n{font-size:.8rem;font-weight:700;font-variant-numeric:tabular-nums;min-width:22px}
+.badge{display:inline-block;padding:.14rem .48rem;border-radius:100px;
+  font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.bp1{background:rgba(var(--p1),.12);color:rgb(var(--p1))}
+.bp2{background:rgba(var(--p2),.12);color:rgb(var(--p2))}
+.bp3{background:rgba(var(--p3),.12);color:rgb(var(--p3))}
+
+
+/* ════════════════════════════════════
+   8. RECOMMENDATIONS
+   ════════════════════════════════════ */
+.recs{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem}
+.rec{background:var(--bg-card);border:1px solid var(--border-subtle);
+  border-radius:var(--radius-lg);padding:1.75rem;
+  border-left:4px solid transparent;
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.rec:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.rec-hd{display:flex;align-items:center;gap:.65rem;margin-bottom:.8rem}
+.rec-n{width:30px;height:30px;border-radius:8px;display:flex;
+  align-items:center;justify-content:center;
+  font-weight:800;font-size:.85rem;color:#fff;flex-shrink:0}
+.rec-pri{font-size:.58rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;padding:.14rem .5rem;border-radius:100px}
+.rec h3{font-size:.95rem;font-weight:700;color:var(--text-primary);
+  margin-bottom:.5rem;line-height:1.35}
+.rec p{font-size:.82rem;color:var(--text-secondary);line-height:1.68}
+.rec-target{margin-top:.85rem;padding:.55rem .8rem;border-radius:var(--radius-sm);
+  font-size:.75rem;font-weight:600;color:var(--text-secondary);
+  background:rgba(255,255,255,.03);border:1px solid var(--border-subtle)}
+.rec-target::before{content:'\2192 ';color:var(--accent);font-weight:700}
+
+
+/* ════════════════════════════════════
+   9. APPENDIX (Collapsible)
+   ════════════════════════════════════ */
+.appendix-toggle{display:flex;align-items:center;gap:.65rem;
+  width:100%;background:none;border:1px solid var(--border-subtle);
+  border-radius:var(--radius);padding:1rem 1.5rem;cursor:pointer;
+  font-family:var(--font);transition:all .2s;text-align:left}
+.appendix-toggle:hover{background:rgba(59,130,246,.04);border-color:var(--accent)}
+.appendix-toggle-title{font-size:.88rem;font-weight:700;color:var(--text-primary)}
+.appendix-toggle-sub{font-size:.72rem;color:var(--text-muted);margin-left:auto}
+.appendix-toggle .arr{font-size:.6rem;color:var(--text-muted);
+  transition:transform .3s;margin-left:.5rem}
+.appendix-toggle.open .arr{transform:rotate(180deg)}
+.appendix-body{max-height:0;overflow:hidden;
+  transition:max-height .6s cubic-bezier(.16,1,.3,1),opacity .4s;opacity:0}
+.appendix-body.open{max-height:20000px;opacity:1;margin-top:1.5rem}
+
+
+/* ════════════════════════════════════
+   FOOTER
+   ════════════════════════════════════ */
+footer{background:var(--bg-primary);padding:2.5rem;text-align:center;
+  border-top:1px solid var(--border-subtle);position:relative}
+footer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,rgb(var(--dim-reach)),rgb(var(--dim-skill)),rgb(var(--dim-habit)));opacity:.2}
+footer p{font-size:.72rem;color:var(--text-muted);line-height:1.85}
+footer strong{color:var(--text-secondary)}
+footer a{color:var(--accent);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+
+/* ════════════════════════════════════
+   EDIT MODE
+   ════════════════════════════════════ */
+body.edit-mode [contenteditable="true"]{outline:2px dashed rgba(59,130,246,.4);
+  outline-offset:2px;border-radius:4px;min-height:1em}
+body.edit-mode [contenteditable="true"]:focus{outline-color:var(--accent);
+  background:rgba(59,130,246,.04)}
+
+
+/* ════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════ */
+@media(max-width:1024px){
+  .v-grid,.p-cards,.kpis{grid-template-columns:1fr}
+  .skill-3,.reach-3{grid-template-columns:repeat(2,1fr)}
+  .sig-header{flex-direction:column}
+  .sig-num{text-align:left}
+  .p-track-wrap{display:none}
+  .detail-inner{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .recs,.skill-3,.reach-3{grid-template-columns:1fr}
+  .h-label{width:70px;font-size:.68rem}
+  .nav-links{display:none}
+}
+
+
+/* ════════════════════════════════════
+   PRINT
+   ════════════════════════════════════ */
+@page{size:A4 landscape;margin:10mm}
+@media print{
+  html{font-size:8px!important}
+  .progress,.nav,.detail-toggle,.nav-edit{display:none!important}
+  .detail-content{max-height:none!important;opacity:1!important;overflow:visible!important}
+  body,section,footer{background:#fff!important;color:#1a1a2e!important}
+  .hero{min-height:auto!important;padding:2rem 0!important}
+  .hero-h{color:#1a1a2e!important;-webkit-text-fill-color:#1a1a2e}
+  .hero-h .grad{background:none;-webkit-text-fill-color:#3b82f6;color:#3b82f6}
+  .v-card,.p-card,.rec,.habit-chart,.r3-card,.sk-card,.agent-spotlight,.detail-card{
+    background:#f8fafc!important;border:1px solid #e2e8f0!important;
+    page-break-inside:avoid}
+  th{background:#f1f5f9!important;color:#475569!important}
+  .sowhat{background:#f8fafc!important;border:1px solid #e2e8f0!important}
+  .sowhat::before{background:#fff!important}
+  #hero{page-break-after:always}
+  #verdict{page-break-before:always}
+  #framework{page-break-before:always}
+  #reach{page-break-before:always}
+  #habit{page-break-before:always}
+  #skill{page-break-before:always}
+  #actions{page-break-before:always}
+  .appendix-body{max-height:none!important;opacity:1!important;overflow:visible!important}
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="prog"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">Frontier Firm</div>
+    <div class="nav-links">
+      <a class="nav-link" href="#verdict">Verdict</a>
+      <a class="nav-link" href="#framework">Framework</a>
+      <a class="nav-link" href="#reach">Reach</a>
+      <a class="nav-link" href="#habit">Habit</a>
+      <a class="nav-link" href="#skill">Skill</a>
+      <a class="nav-link" href="#orgs">Orgs</a>
+      <a class="nav-link" href="#actions">Actions</a>
+    </div>
+    <button class="nav-edit" id="editBtn" title="Toggle edit mode">Edit</button>
+  </div>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 1: HERO
+     Full-screen verdict sentence, 3 KPIs. Deliberate pause.
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="s hero" id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+
+    <div class="hero-pill r">
+      <span class="dot"></span>
+      {{CUSTOMER_NAME}} &nbsp;&middot;&nbsp; Frontier Firm Assessment &nbsp;&middot;&nbsp; {{ANALYSIS_PERIOD}}
+    </div>
+
+    <!-- NEW V4 PLACEHOLDER: {{NARRATIVE_HEADLINE}} — AI-generated verdict sentence -->
+    <h1 class="hero-h r d1">{{NARRATIVE_HEADLINE}}</h1>
+
+    <p class="hero-ctx r d2">
+      <!-- NEW V4 PLACEHOLDER: {{HERO_CONTEXT}} — 2-3 sentence context paragraph -->
+      {{HERO_CONTEXT}}
+    </p>
+
+    <div class="kpis r d3">
+      <div class="kpi">
+        <div class="kpi-v" style="color:rgb(var(--dim-reach))">{{TOTAL_ACTIVE_USERS}}</div>
+        <div class="kpi-l">Active users</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-v" style="color:rgb(var(--dim-habit))">{{M365_RETENTION}}%</div>
+        <div class="kpi-l">MoM retention</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-v" style="color:rgb(var(--dim-skill))">{{INACTIVE_LICENSES}}</div>
+        <div class="kpi-l">Licences to unlock</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 2: EXEC SUMMARY / VERDICT
+     "The story in three lines" — Working / What's Next / The Move
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="s s-alt" id="verdict">
+  <div class="wrap">
+
+    <div class="eyebrow r">Executive Summary</div>
+    <h2 class="stitle r d1">The story in three lines</h2>
+    <p class="ssub r d2">
+      <!-- NEW V4 PLACEHOLDER: {{VERDICT_INTRO}} — 1-2 sentence framing -->
+      {{VERDICT_INTRO}}
+    </p>
+
+    <div class="v-grid">
+
+      <!-- WORKING (green / Reach) -->
+      <div class="v-card r d1" style="border-top-color:rgb(var(--dim-reach))">
+        <div class="v-label" style="color:rgb(var(--dim-reach))">What's working</div>
+        <!-- NEW V4 PLACEHOLDER: {{VERDICT_WORKING_TITLE}} -->
+        <h3>{{VERDICT_WORKING_TITLE}}</h3>
+        <p>{{EXEC_SUMMARY_GOOD}}</p>
+        <div class="v-stat" style="color:rgb(var(--dim-reach))">{{M365_ENABLEMENT}}%</div>
+        <div class="v-sub">license activation rate</div>
+      </div>
+
+      <!-- WHAT'S NEXT (amber / Habit) -->
+      <div class="v-card r d2" style="border-top-color:rgb(var(--dim-habit))">
+        <div class="v-label" style="color:rgb(var(--dim-habit))">What's next</div>
+        <!-- NEW V4 PLACEHOLDER: {{VERDICT_NEXT_TITLE}} -->
+        <h3>{{VERDICT_NEXT_TITLE}}</h3>
+        <p>{{EXEC_SUMMARY_GAP}}</p>
+        <div class="v-stat" style="color:rgb(var(--dim-habit))">{{BAND_6_10}}</div>
+        <div class="v-sub">users in the conversion zone</div>
+      </div>
+
+      <!-- THE MOVE (blue / Skill) -->
+      <div class="v-card r d3" style="border-top-color:rgb(var(--dim-skill))">
+        <div class="v-label" style="color:rgb(var(--dim-skill))">The move</div>
+        <!-- NEW V4 PLACEHOLDER: {{VERDICT_MOVE_TITLE}} -->
+        <h3>{{VERDICT_MOVE_TITLE}}</h3>
+        <p>{{EXEC_SUMMARY_OPP}}</p>
+        <div class="v-stat" style="color:rgb(var(--dim-skill))">{{CHAT_USERS}}</div>
+        <div class="v-sub">users already using AI without a licence</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 3: FRAMEWORK
+     P1 -> P2 -> P3 journey track with "you are here" pin.
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="s" id="framework">
+  <div class="wrap">
+
+    <div class="eyebrow r">Frontier Firm Framework</div>
+    <h2 class="stitle r d1">Where does {{CUSTOMER_NAME}} sit on the journey?</h2>
+
+    <div class="pattern-intro r d2">
+      Microsoft's Frontier Firm research maps organisations across three patterns
+      of human-AI collaboration. Moving from P1 to P3 isn't about deploying more
+      technology &mdash; it requires <strong>new norms: when to delegate, how to review
+      agent output, what good enough looks like from a machine colleague.</strong>
+      Frontier Firms see <strong>3x higher ROI</strong> and <strong>71%</strong> of
+      employees say their company is thriving vs 39% globally.
+    </div>
+
+    <!-- Journey track -->
+    <!-- NEW V4 PLACEHOLDER: {{JOURNEY_TRACK_FILL_PCT}} — % width for progress fill -->
+    <div class="p-track-wrap r d2">
+      <div class="p-track">
+        <div class="p-track-fill" id="ptrack" data-fill="{{JOURNEY_TRACK_FILL_PCT}}"></div>
+      </div>
+      <div class="p-dots">
+        <!-- Dots are dynamically styled based on {{DOMINANT_PATTERN_NUM}} -->
+        <div class="p-dot" id="pdot1"></div>
+        <div class="p-dot" id="pdot2"></div>
+        <div class="p-dot" id="pdot3"></div>
+      </div>
+    </div>
+
+    <!-- Three pattern cards -->
+    <div class="p-cards r d3">
+
+      <!-- P1 -->
+      <div class="p-card" id="pcard1">
+        <div class="p-num" style="background:rgba(var(--p1),.12);color:rgb(var(--p1))">P1</div>
+        <div class="p-tag" style="color:rgb(var(--p1))">Human with Assistant</div>
+        <h3>AI helps individuals. Humans drive.</h3>
+        <p>AI tools assist individual employees in completing tasks faster. Each person
+          works with AI independently &mdash; but there is no team-level orchestration
+          and no delegated execution.</p>
+        <div class="p-org-count" style="color:rgb(var(--p1))">
+          <strong>{{ORG_FOUNDATION_COUNT}}</strong>
+          <span>of {{ORG_COUNT}} orgs at this pattern</span>
+        </div>
+      </div>
+
+      <!-- P2 -->
+      <div class="p-card" id="pcard2">
+        <div class="p-num" style="background:rgba(var(--p2),.1);color:rgb(var(--p2))">P2</div>
+        <div class="p-tag" style="color:rgb(var(--p2))">Human-Agent Teams</div>
+        <h3>Humans orchestrate. Agents execute.</h3>
+        <p>Employees become "agent bosses" &mdash; they set goals, agents handle execution,
+          humans review outputs. Tasks are delegated, not just assisted.</p>
+        <div class="p-org-count" style="color:rgb(var(--p2))">
+          <strong>{{ORG_EXPANSION_COUNT}}</strong>
+          <span>of {{ORG_COUNT}} orgs at this pattern</span>
+        </div>
+      </div>
+
+      <!-- P3 -->
+      <div class="p-card" id="pcard3">
+        <div class="p-num" style="background:rgba(var(--p3),.1);color:rgb(var(--p3))">P3</div>
+        <div class="p-tag" style="color:rgb(var(--p3))">Agent-Operated</div>
+        <h3>Agents handle whole workflows.</h3>
+        <p>Agents operate autonomously across entire workflows with minimal human
+          prompting. Humans focus on exceptions, governance, and outcomes.</p>
+        <div class="p-org-count" style="color:rgb(var(--p3))">
+          <strong>{{ORG_FRONTIER_COUNT}}</strong>
+          <span>of {{ORG_COUNT}} orgs at this pattern</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Transition callout -->
+    <div class="p-transition r d4">
+      <div class="p-transition-label">The transition that matters</div>
+      <p>{{CULTURE_ACTION}}</p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 4: REACH — Expanding Impact
+     Question -> Big number -> 3 stat cards -> So What -> Expand
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="s s-alt" id="reach">
+  <div class="wrap">
+
+    <div class="signal r">
+
+      <div class="signal-bar">
+        <div class="signal-dot" style="background:rgb(var(--dim-reach))"></div>
+        <span class="signal-name" style="color:rgb(var(--dim-reach))">
+          Reach &nbsp;&mdash;&nbsp; Expanding Impact
+        </span>
+      </div>
+
+      <div class="sig-header">
+        <div class="sig-title">
+          <!-- NEW V4 PLACEHOLDER: {{REACH_QUESTION}} — provocative question headline -->
+          <h3>{{REACH_QUESTION}}</h3>
+          <!-- NEW V4 PLACEHOLDER: {{REACH_CONTEXT}} — supporting paragraph -->
+          <p>{{REACH_CONTEXT}}</p>
+        </div>
+        <div class="sig-num">
+          <div class="big-num" style="color:rgb(var(--dim-reach))">{{LICENSE_COVERAGE_PCT}}%</div>
+          <div class="big-label">license coverage</div>
+        </div>
+      </div>
+
+      <div class="reach-3">
+        <div class="r3-card" style="border-top-color:rgb(var(--dim-reach))">
+          <div class="r3-val" style="color:rgb(var(--dim-reach))">{{LICENSED_USERS}}</div>
+          <div class="r3-label">Active licensed users</div>
+        </div>
+        <div class="r3-card" style="border-top-color:var(--text-dim);opacity:.75">
+          <div class="r3-val" style="color:var(--text-secondary)">{{INACTIVE_LICENSES}}</div>
+          <div class="r3-label">Licences ready to redirect</div>
+        </div>
+        <div class="r3-card" style="border-top-color:rgb(var(--dim-habit))">
+          <div class="r3-val" style="color:rgb(var(--dim-habit))">{{CHAT_USERS}}</div>
+          <div class="r3-label">Unlicensed users</div>
+          <div class="r3-sub">Organic demand &mdash; no licence needed</div>
+        </div>
+      </div>
+
+      <!-- So What -->
+      <div class="sowhat" style="background:rgba(var(--dim-reach),.04);
+        border:1px solid rgba(var(--dim-reach),.15);
+        border-left:4px solid rgb(var(--dim-reach))">
+        <p>{{INSIGHT_REACH}}</p>
+      </div>
+
+      <!-- Expand: Weekly Trend + Licence Priority -->
+      <button class="detail-toggle" data-target="reach-detail">
+        Dive deeper &mdash; charts, trend, detail <span class="arr">&#9660;</span>
+      </button>
+      <div class="detail-content" id="reach-detail">
+        <div class="detail-inner">
+          <div class="detail-card">
+            <div class="detail-card-title">Weekly Activation Trend</div>
+            <div class="chart-wrap">
+              <canvas id="chartWeeklyTrend"></canvas>
+            </div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-card-title">Licence Priority</div>
+            {{LICENSE_PRIORITY_TABLE}}
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /signal -->
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 5: HABIT — Developing Habit
+     Question -> Big number -> CSS distribution bars -> So What -> Expand
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="s" id="habit">
+  <div class="wrap">
+
+    <div class="signal r">
+
+      <div class="signal-bar">
+        <div class="signal-dot" style="background:rgb(var(--dim-habit))"></div>
+        <span class="signal-name" style="color:rgb(var(--dim-habit))">
+          Habit &nbsp;&mdash;&nbsp; Developing Habit
+        </span>
+      </div>
+
+      <div class="sig-header">
+        <div class="sig-title">
+          <!-- NEW V4 PLACEHOLDER: {{HABIT_QUESTION}} -->
+          <h3>{{HABIT_QUESTION}}</h3>
+          <!-- NEW V4 PLACEHOLDER: {{HABIT_CONTEXT}} -->
+          <p>{{HABIT_CONTEXT}}</p>
+        </div>
+        <div class="sig-num">
+          <div class="big-num" style="color:rgb(var(--dim-habit))">{{EMBEDDED_USER_RATE}}%</div>
+          <div class="big-label">habitual user rate</div>
+        </div>
+      </div>
+
+      <!-- Habit distribution bars (CSS-only) -->
+      <div class="habit-chart" id="habit-bars">
+        <div class="hc-title">Monthly active days &mdash; M365 Copilot licensed users</div>
+
+        <div class="h-row">
+          <div class="h-label">1 &ndash; 5 days</div>
+          <div class="h-track">
+            <div class="h-bar" style="width:{{LIC_BAND_1_5_PCT}}%;background:rgba(255,255,255,.1)">
+              <span style="color:var(--text-muted)">{{LIC_BAND_1_5_PCT}}%</span>
+            </div>
+          </div>
+          <div class="h-pct" style="color:var(--text-muted)">Sampling</div>
+        </div>
+
+        <div class="h-row">
+          <div class="h-label">
+            6 &ndash; 10 days
+            <div class="conv-tag">{{BAND_6_10}} users</div>
+          </div>
+          <div class="h-track">
+            <div class="h-bar" style="width:{{LIC_BAND_6_10_PCT}}%;background:rgba(251,191,36,.55)">
+              <span>{{LIC_BAND_6_10_PCT}}%</span>
+            </div>
+          </div>
+          <div class="h-pct" style="color:rgb(var(--dim-habit))">Conversion zone &#8592;</div>
+        </div>
+
+        <div class="h-row">
+          <div class="h-label">11 &ndash; 15 days</div>
+          <div class="h-track">
+            <div class="h-bar" style="width:{{LIC_BAND_11_15_PCT}}%;background:rgba(96,165,250,.55)">
+              <span>{{LIC_BAND_11_15_PCT}}%</span>
+            </div>
+          </div>
+          <div class="h-pct" style="color:rgb(var(--dim-skill))">Habit forming</div>
+        </div>
+
+        <div class="h-row">
+          <div class="h-label">16+ days</div>
+          <div class="h-track">
+            <div class="h-bar" style="width:{{LIC_BAND_16_PLUS_PCT}}%;min-width:56px;background:rgba(52,211,153,.6)">
+              <span>{{LIC_BAND_16_PLUS_PCT}}%</span>
+            </div>
+          </div>
+          <div class="h-pct" style="color:rgb(var(--dim-reach))">Habitual</div>
+        </div>
+
+      </div>
+
+      <!-- So What -->
+      <div class="sowhat" style="background:rgba(var(--dim-habit),.04);
+        border:1px solid rgba(var(--dim-habit),.15);
+        border-left:4px solid rgb(var(--dim-habit))">
+        <p>{{INSIGHT_HABIT}}</p>
+      </div>
+
+      <!-- Expand: Retention MoM -->
+      <button class="detail-toggle" data-target="habit-detail">
+        Dive deeper &mdash; retention trend, per-tier data <span class="arr">&#9660;</span>
+      </button>
+      <div class="detail-content" id="habit-detail">
+        <div class="detail-inner">
+          <div class="detail-card" style="grid-column:1/-1">
+            <div class="detail-card-title">Month-on-Month Retention</div>
+            <div class="chart-wrap">
+              <canvas id="chartRetention"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /signal -->
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 6: SKILL — Refining Skill Set
+     Question -> Big number -> 3 stat cards -> Agent Spotlight -> So What -> Expand
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="s s-alt" id="skill">
+  <div class="wrap">
+
+    <div class="signal r">
+
+      <div class="signal-bar">
+        <div class="signal-dot" style="background:rgb(var(--dim-skill))"></div>
+        <span class="signal-name" style="color:rgb(var(--dim-skill))">
+          Skill &nbsp;&mdash;&nbsp; Refining Skill Set
+        </span>
+      </div>
+
+      <div class="sig-header">
+        <div class="sig-title">
+          <!-- NEW V4 PLACEHOLDER: {{SKILL_QUESTION}} -->
+          <h3>{{SKILL_QUESTION}}</h3>
+          <!-- NEW V4 PLACEHOLDER: {{SKILL_CONTEXT}} -->
+          <p>{{SKILL_CONTEXT}}</p>
+        </div>
+        <div class="sig-num">
+          <div class="big-num" style="color:rgb(var(--dim-skill))">{{DEEP_INTERACTIONS_PCT}}%</div>
+          <div class="big-label">deep interaction rate</div>
+        </div>
+      </div>
+
+      <div class="skill-3">
+        <div class="sk-card">
+          <div class="sk-val" style="color:rgb(var(--dim-skill))">{{AGENT_ADOPTION}}%</div>
+          <div class="sk-label">Agent adoption rate</div>
+        </div>
+        <div class="sk-card">
+          <div class="sk-val" style="color:rgb(var(--dim-skill))">{{DEEP_INTERACTIONS_PCT}}%</div>
+          <div class="sk-label">Deep interactions</div>
+          <div class="sk-ctx">Sessions with 5+ prompts</div>
+        </div>
+        <div class="sk-card">
+          <div class="sk-val" style="color:rgb(var(--dim-skill))">{{AGENT_HEALTH}}%</div>
+          <div class="sk-label">Agent return rate</div>
+          <div class="sk-ctx">Multi-user agent portfolio health</div>
+        </div>
+      </div>
+
+      <!-- Agent Spotlight (pre-rendered HTML from generator) -->
+      <!-- NEW V4 PLACEHOLDER: {{AGENT_SPOTLIGHT_HTML}} — CSS-only intensity bars -->
+      <div class="agent-spotlight">
+        {{AGENT_SPOTLIGHT_HTML}}
+      </div>
+
+      <!-- So What -->
+      <div class="sowhat" style="background:rgba(var(--dim-skill),.04);
+        border:1px solid rgba(var(--dim-skill),.15);
+        border-left:4px solid rgb(var(--dim-skill))">
+        <p>{{INSIGHT_SKILL}}</p>
+      </div>
+
+      <!-- Expand: App Surface -->
+      <button class="detail-toggle" data-target="skill-detail">
+        Dive deeper &mdash; app surface, agent leaderboard <span class="arr">&#9660;</span>
+      </button>
+      <div class="detail-content" id="skill-detail">
+        <div class="detail-inner">
+          <div class="detail-card">
+            <div class="detail-card-title">App Surface Breakdown</div>
+            <div class="chart-wrap">
+              <canvas id="chartAppSurface"></canvas>
+            </div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-card-title">Agent Leaderboard</div>
+            <!-- NEW V4 PLACEHOLDER: {{AGENT_LEADERBOARD_HTML}} — pre-rendered table -->
+            {{AGENT_LEADERBOARD_HTML}}
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /signal -->
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 7: ORGS
+     Table with inline score bars, pattern badges, dimension scores.
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="s" id="orgs">
+  <div class="wrap">
+
+    <div class="eyebrow r">Organisation Detail</div>
+    <h2 class="stitle r d1">{{ORG_COUNT}} organisations on the Frontier Firm journey</h2>
+    <p class="ssub r d2">
+      Each organisation scored across Reach, Habit, and Skill.
+      Pattern shows where each sits on the P1 &rarr; P2 &rarr; P3 progression.
+    </p>
+
+    <!-- NEW V4 PLACEHOLDER: {{ORG_TABLE_V4_HTML}} — pre-rendered org table -->
+    <div class="r d3" id="orgtable">
+      {{ORG_TABLE_V4_HTML}}
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 8: ACTIONS / RECOMMENDATIONS
+     4 numbered cards with targets.
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="s s-alt" id="actions">
+  <div class="wrap">
+
+    <div class="eyebrow r">Recommendations</div>
+    <h2 class="stitle r d1">Four moves towards Frontier</h2>
+    <p class="ssub r d2">
+      Each recommendation targets a specific dimension of maturity &mdash; building the
+      habits, proficiency, and reach that separate organisations where AI is
+      deployed from those where it's truly embedded.
+    </p>
+
+    <!-- NEW V4 PLACEHOLDER: {{ACTIONS_HTML}} — pre-rendered 4 recommendation cards -->
+    <div class="recs r d3">
+      {{ACTIONS_HTML}}
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 9: APPENDIX (collapsible)
+     Scorecard (radar charts + flip cards), metric glossary.
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="s" id="appendix">
+  <div class="wrap">
+
+    <div class="eyebrow r">Reference Material</div>
+    <h2 class="stitle r d1">Appendix</h2>
+
+    <button class="appendix-toggle r d2" data-target="appendix-body">
+      <span class="appendix-toggle-title">Scorecard, Radar Charts &amp; Metric Glossary</span>
+      <span class="appendix-toggle-sub">Full data reference</span>
+      <span class="arr">&#9660;</span>
+    </button>
+
+    <div class="appendix-body" id="appendix-body">
+      <!-- NEW V4 PLACEHOLDER: {{V4_SCORECARD_HTML}} — pillar-based scorecard with radar -->
+      {{V4_SCORECARD_HTML}}
+
+      <!-- EXISTING PLACEHOLDER: {{METRIC_GLOSSARY_HTML}} — 13-card metric glossary -->
+      {{METRIC_GLOSSARY_HTML}}
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════════════════════════════ -->
+<footer>
+  <p><strong>{{CUSTOMER_NAME}} Frontier Firm Assessment</strong></p>
+  <p>
+    Generated from live analytics data. All metrics trace to named DAX measures
+    in the AI-in-One Dashboard. {{RETENTION_NOTE}}. Analysis period: {{ANALYSIS_PERIOD}}.
+  </p>
+  <p style="margin-top:.5rem;color:var(--text-dim)">
+    Powered by Microsoft 365 Copilot Analytics &nbsp;&middot;&nbsp;
+    Frontier Firm Framework &nbsp;&middot;&nbsp; Microsoft Research
+  </p>
+  <p style="margin-top:.75rem">
+    Questions or feedback? Reach out to
+    <a href="https://www.linkedin.com/in/keithmcgrane/" target="_blank" rel="noopener">Keith Mcgrane</a>
+    &nbsp;&middot;&nbsp;
+    <a href="https://www.linkedin.com/in/keithmcgrane/" target="_blank" rel="noopener">LinkedIn</a>
+  </p>
+</footer>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════════════════════════ -->
+<script>
+/* ── Scroll progress + nav show + active section tracking ── */
+const prog  = document.getElementById('prog');
+const nav   = document.getElementById('nav');
+const links = document.querySelectorAll('.nav-link');
+const sects = document.querySelectorAll('section[id]');
+
+function tick(){
+  const sy  = window.scrollY;
+  const max = document.documentElement.scrollHeight - innerHeight;
+  if(max > 0) prog.style.width = (sy / max * 100) + '%';
+  nav.classList.toggle('show', sy > 60);
+
+  /* active nav link */
+  let cur = '';
+  sects.forEach(s => { if(sy >= s.offsetTop - 120) cur = s.id; });
+  links.forEach(l =>
+    l.classList.toggle('on', l.getAttribute('href') === '#' + cur));
+}
+
+window.addEventListener('scroll', tick, {passive:true});
+tick();
+
+
+/* ── IntersectionObserver for .r reveal ── */
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) e.target.classList.add('on');
+  });
+}, {threshold:0.12, rootMargin:'0px 0px -40px 0px'});
+
+document.querySelectorAll('.r').forEach(el => revealObs.observe(el));
+
+
+/* ── Expand / Collapse toggles ── */
+document.querySelectorAll('.detail-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const targetId = btn.dataset.target;
+    const content = document.getElementById(targetId);
+    if(!content) return;
+    const isOpen = content.classList.toggle('open');
+    btn.classList.toggle('open', isOpen);
+    /* Initialize charts on first open */
+    if(isOpen && !content.dataset.init){
+      content.dataset.init = '1';
+      initChartsIn(content);
+    }
+  });
+});
+
+/* Appendix toggle */
+document.querySelectorAll('.appendix-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const targetId = btn.dataset.target;
+    const content = document.getElementById(targetId);
+    if(!content) return;
+    const isOpen = content.classList.toggle('open');
+    btn.classList.toggle('open', isOpen);
+  });
+});
+
+
+/* ── Edit mode toggle ── */
+const editBtn = document.getElementById('editBtn');
+if(editBtn){
+  editBtn.addEventListener('click', () => {
+    const active = document.body.classList.toggle('edit-mode');
+    editBtn.textContent = active ? 'Done' : 'Edit';
+    /* Make text elements editable */
+    const editableSelectors = 'h1,h2,h3,p,.kpi-v,.kpi-l,.v-stat,.v-sub,.r3-val,.r3-label,.sk-val,.sk-label,.big-num,.big-label,.sowhat p,.p-transition p,.rec h3,.rec p,.rec-target';
+    document.querySelectorAll(editableSelectors).forEach(el => {
+      el.contentEditable = active ? 'true' : 'false';
+    });
+  });
+}
+
+
+/* ── Animate habit bars on first view ── */
+const habitObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(!e.isIntersecting) return;
+    e.target.querySelectorAll('.h-bar').forEach(bar => {
+      const w = bar.style.width;
+      bar.style.width = '0';
+      requestAnimationFrame(() =>
+        setTimeout(() => bar.style.width = w, 80));
+    });
+    habitObs.unobserve(e.target);
+  });
+}, {threshold: 0.2});
+
+const hb = document.getElementById('habit-bars');
+if(hb) habitObs.observe(hb);
+
+
+/* ── Animate org table score bars on first view ── */
+const tableObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(!e.isIntersecting) return;
+    e.target.querySelectorAll('.pb-fill').forEach(bar => {
+      const w = bar.dataset.w;
+      if(!w) return;
+      bar.style.width = '0';
+      requestAnimationFrame(() =>
+        setTimeout(() => bar.style.width = w + '%', 80));
+    });
+    tableObs.unobserve(e.target);
+  });
+}, {threshold: 0.1});
+
+const ot = document.getElementById('orgtable');
+if(ot) tableObs.observe(ot);
+
+
+/* ── Animate agent bars on first view ── */
+const agentObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(!e.isIntersecting) return;
+    e.target.querySelectorAll('.ag-bar').forEach((bar, i) => {
+      const w = bar.dataset.w;
+      if(!w) return;
+      bar.style.width = '0';
+      setTimeout(() => bar.style.width = w + '%', 80 + i * 60);
+    });
+    agentObs.unobserve(e.target);
+  });
+}, {threshold: 0.2});
+
+document.querySelectorAll('[id*="agent"]').forEach(el => {
+  if(el.querySelectorAll('.ag-bar').length) agentObs.observe(el);
+});
+
+
+/* ── Animate pattern track on scroll ── */
+const trackObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(!e.isIntersecting) return;
+    const fill = document.getElementById('ptrack');
+    if(fill){
+      const pct = fill.dataset.fill || '50';
+      fill.style.width = '0';
+      setTimeout(() => fill.style.width = pct + '%', 100);
+    }
+    trackObs.disconnect();
+  });
+}, {threshold: 0.5});
+
+const pt = document.querySelector('.p-track-wrap');
+if(pt) trackObs.observe(pt);
+
+
+/* ── Pattern pin logic (driven by {{DOMINANT_PATTERN_NUM}}) ── */
+(function(){
+  /* NEW V4 PLACEHOLDER: {{DOMINANT_PATTERN_NUM}} — 1, 2, or 3 */
+  const dom = parseInt('{{DOMINANT_PATTERN_NUM}}', 10) || 1;
+  /* Style dots */
+  for(let i = 1; i <= 3; i++){
+    const dot = document.getElementById('pdot' + i);
+    const card = document.getElementById('pcard' + i);
+    if(!dot || !card) continue;
+    if(i < dom){ dot.classList.add('done'); }
+    if(i === dom){
+      dot.classList.add('here');
+      card.classList.add('current');
+      /* Add pin to current card */
+      const pin = document.createElement('div');
+      pin.className = 'current-pin';
+      pin.textContent = 'Dominant pattern \u2014 {{CUSTOMER_NAME}}';
+      card.appendChild(pin);
+    }
+  }
+})();
+
+
+/* ── Chart.js initialisation (only inside expandable sections) ── */
+function initChartsIn(container){
+
+  /* Weekly Trend Chart */
+  if(container.querySelector('#chartWeeklyTrend')){
+    const ctx = document.getElementById('chartWeeklyTrend');
+    if(ctx){
+      try{
+        /* EXISTING PLACEHOLDERS from V3: */
+        const labels = {{WEEKLY_TREND_LABELS_JSON}};
+        const values = {{WEEKLY_TREND_VALUES_JSON}};
+        new Chart(ctx, {
+          type:'line',
+          data:{
+            labels: labels,
+            datasets:[{
+              label:'Weekly Active Users',
+              data: values,
+              borderColor:'rgb(52,211,153)',
+              backgroundColor:'rgba(52,211,153,.08)',
+              fill:true,
+              tension:.35,
+              pointRadius:2,
+              pointHoverRadius:5,
+              borderWidth:2
+            }]
+          },
+          options:{
+            responsive:true,
+            maintainAspectRatio:false,
+            plugins:{legend:{display:false},datalabels:{display:false}},
+            scales:{
+              x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10},maxRotation:45}},
+              y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10}},beginAtZero:true}
+            }
+          }
+        });
+      }catch(e){console.warn('chartWeeklyTrend init failed:',e)}
+    }
+  }
+
+  /* Retention MoM Chart */
+  if(container.querySelector('#chartRetention')){
+    const ctx = document.getElementById('chartRetention');
+    if(ctx){
+      try{
+        /* EXISTING V3 PLACEHOLDER for retention data */
+        const labels = JSON.parse('{{RETENTION_MONTH_LABELS}}');
+        const values = JSON.parse('{{RETENTION_MONTH_VALUES}}');
+        const colors = JSON.parse('{{RETENTION_MONTH_COLORS}}');
+        new Chart(ctx, {
+          type:'bar',
+          data:{
+            labels: labels,
+            datasets:[{
+              label:'MoM Retention %',
+              data: values,
+              backgroundColor: colors || values.map(() => 'rgba(251,191,36,.5)'),
+              borderColor: colors || values.map(() => 'rgb(251,191,36)'),
+              borderWidth:1,
+              borderRadius:4,
+              maxBarThickness:40
+            }]
+          },
+          options:{
+            responsive:true,
+            maintainAspectRatio:false,
+            plugins:{
+              legend:{display:false},
+              datalabels:{
+                anchor:'end',
+                align:'top',
+                color:'#94a3b8',
+                font:{size:10,weight:'bold'},
+                formatter:v => v ? v.toFixed(1)+'%' : ''
+              }
+            },
+            scales:{
+              x:{grid:{display:false},ticks:{color:'#64748b',font:{size:10}}},
+              y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10}},
+                min:0,max:100,
+                callback:v => v+'%'}
+            }
+          },
+          plugins:[ChartDataLabels]
+        });
+      }catch(e){console.warn('chartRetention init failed:',e)}
+    }
+  }
+
+  /* App Surface Chart */
+  if(container.querySelector('#chartAppSurface')){
+    const ctx = document.getElementById('chartAppSurface');
+    if(ctx){
+      try{
+        /* NEW V4 PLACEHOLDER: {{APP_SURFACE_LABELS_JSON}} and {{APP_SURFACE_VALUES_JSON}} */
+        const labels = {{APP_SURFACE_LABELS_JSON}};
+        const values = {{APP_SURFACE_VALUES_JSON}};
+        new Chart(ctx, {
+          type:'bar',
+          data:{
+            labels: labels,
+            datasets:[{
+              label:'Users',
+              data: values,
+              backgroundColor:'rgba(96,165,250,.45)',
+              borderColor:'rgb(96,165,250)',
+              borderWidth:1,
+              borderRadius:4,
+              maxBarThickness:32
+            }]
+          },
+          options:{
+            indexAxis:'y',
+            responsive:true,
+            maintainAspectRatio:false,
+            plugins:{legend:{display:false},datalabels:{display:false}},
+            scales:{
+              x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10}}},
+              y:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:10}}}
+            }
+          }
+        });
+      }catch(e){console.warn('chartAppSurface init failed:',e)}
+    }
+  }
+}
+</script>
+
+<!--
+  ═══════════════════════════════════════════════════════════════════
+  V4 TEMPLATE PLACEHOLDER REFERENCE
+  ═══════════════════════════════════════════════════════════════════
+
+  REUSED FROM V3 (same populateTemplate() function):
+  ─────────────────────────────────────────────────────────────────
+  {{CUSTOMER_NAME}}            — Company name
+  {{ANALYSIS_PERIOD}}          — e.g. "Oct 2025 – Jan 2026"
+  {{NARRATIVE_HEADLINE}}       — AI-generated verdict sentence
+  {{TOTAL_ACTIVE_USERS}}       — Total active user count
+  {{M365_RETENTION}}           — Month-on-month retention %
+  {{INACTIVE_LICENSES}}        — Number of idle licenses
+  {{M365_ENABLEMENT}}          — License activation %
+  {{BAND_6_10}}                — Users in 6-10 day band
+  {{CHAT_USERS}}               — Unlicensed chat users
+  {{EXEC_SUMMARY_GOOD}}        — What's working text
+  {{EXEC_SUMMARY_GAP}}         — What's next text
+  {{EXEC_SUMMARY_OPP}}         — The move text
+  {{ORG_COUNT}}                — Organisation count
+  {{ORG_FOUNDATION_COUNT}}     — P1 org count
+  {{ORG_EXPANSION_COUNT}}      — P2 org count
+  {{ORG_FRONTIER_COUNT}}       — P3 org count
+  {{CULTURE_ACTION}}           — Transition callout text
+  {{LICENSE_COVERAGE_PCT}}     — License coverage %
+  {{LICENSED_USERS}}           — Active licensed users
+  {{EMBEDDED_USER_RATE}}       — Habitual user rate %
+  {{LIC_BAND_1_5_PCT}}        — % users in 1-5 day band
+  {{LIC_BAND_6_10_PCT}}       — % users in 6-10 day band
+  {{LIC_BAND_11_15_PCT}}      — % users in 11-15 day band
+  {{LIC_BAND_16_PLUS_PCT}}    — % users in 16+ day band
+  {{DEEP_INTERACTIONS_PCT}}    — Deep interaction rate %
+  {{AGENT_ADOPTION}}           — Agent adoption %
+  {{AGENT_HEALTH}}             — Agent return rate %
+  {{INSIGHT_REACH}}            — Reach "So What" text
+  {{INSIGHT_HABIT}}            — Habit "So What" text
+  {{INSIGHT_SKILL}}            — Skill "So What" text
+  {{LICENSE_PRIORITY_TABLE}}   — HTML table for licence priority
+  {{RETENTION_NOTE}}           — Footer retention note
+  {{METRIC_GLOSSARY_HTML}}     — 13-card metric glossary
+  {{DOMINANT_PATTERN_NUM}}     — 1, 2, or 3
+
+  Chart data (JSON):
+  {{WEEKLY_TREND_LABELS_JSON}} — Array of week labels
+  {{WEEKLY_TREND_VALUES_JSON}} — Array of weekly values
+  {{RETENTION_MONTH_LABELS}}   — JSON string of month labels
+  {{RETENTION_MONTH_VALUES}}   — JSON string of retention values
+  {{RETENTION_MONTH_COLORS}}   — JSON string of bar colors
+
+  NEW V4 PLACEHOLDERS (generator must populate):
+  ─────────────────────────────────────────────────────────────────
+  {{HERO_CONTEXT}}             — 2-3 sentence hero context
+  {{VERDICT_INTRO}}            — Exec summary intro paragraph
+  {{VERDICT_WORKING_TITLE}}    — "What's working" card H3
+  {{VERDICT_NEXT_TITLE}}       — "What's next" card H3
+  {{VERDICT_MOVE_TITLE}}       — "The move" card H3
+  {{JOURNEY_TRACK_FILL_PCT}}   — % width for journey progress bar
+  {{REACH_QUESTION}}           — Provocative question for Reach
+  {{REACH_CONTEXT}}            — Supporting context for Reach
+  {{HABIT_QUESTION}}           — Provocative question for Habit
+  {{HABIT_CONTEXT}}            — Supporting context for Habit
+  {{SKILL_QUESTION}}           — Provocative question for Skill
+  {{SKILL_CONTEXT}}            — Supporting context for Skill
+  {{AGENT_SPOTLIGHT_HTML}}     — Pre-rendered agent intensity bars
+  {{AGENT_LEADERBOARD_HTML}}   — Pre-rendered agent leaderboard
+  {{ORG_TABLE_V4_HTML}}        — Pre-rendered org table
+  {{ACTIONS_HTML}}             — Pre-rendered 4 recommendation cards
+  {{V4_SCORECARD_HTML}}        — Pillar-based scorecard with radars
+  {{APP_SURFACE_LABELS_JSON}}  — Array of app names
+  {{APP_SURFACE_VALUES_JSON}}  — Array of app user counts
+  ═══════════════════════════════════════════════════════════════════
+-->
+
+</body>
+</html>

@@ -19,9 +19,10 @@ const path = require('path');
 // ============================================================
 // CONFIG
 // ============================================================
-const useV3 = process.argv.includes('--v3');
+const useV4 = process.argv.includes('--v4');
+const useV3 = process.argv.includes('--v3') || useV4; // V4 uses V3 scoring + data pipeline
 const useSlides = process.argv.includes('--slides');
-const templateFile = useSlides ? 'ff_template_v3_slides.html' : (useV3 ? 'ff_template_v3.html' : 'ff_template.html');
+const templateFile = useSlides ? 'ff_template_v3_slides.html' : (useV4 ? 'ff_template_v4.html' : (useV3 ? 'ff_template_v3.html' : 'ff_template.html'));
 const TEMPLATE_PATH = path.resolve(__dirname, '..', 'template', templateFile);
 const SCHEMA_PATH = path.resolve(__dirname, '..', 'schema', 'ff_schema.json');
 
@@ -1085,6 +1086,9 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{TIME_SAVED_REALISED\}\}/g, `~${timeSavedRealised}K`);
   html = html.replace(/\{\{TIME_SAVED_UNREALISED\}\}/g, `~${timeSavedUnrealised}K`);
 
+  // Active day band counts (absolute numbers)
+  html = safeSub(html, /\{\{BAND_6_10\}\}/g, typeof data.band_6_10 === 'number' ? data.band_6_10.toLocaleString() : '—', 'band_6_10');
+
   // Active day bands
   html = safeSub(html, /\{\{BAND_1_5_PCT\}\}/g, data.band_1_5_pct, 'band_1_5_pct');
   html = safeSub(html, /\{\{BAND_6_10_PCT\}\}/g, data.band_6_10_pct, 'band_6_10_pct');
@@ -1696,10 +1700,10 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   const totalSessions = agentArr.slice(0, 8).map(a => a.sessions || 0);
   const agentUsers = agentArr.slice(0, 8).map(a => a.users || 0);
   const sessions = totalSessions.length > 0 ? totalSessions : (data.top_agent_sessions || []);
-  const maxSess = Math.max(...sessions, 1);
+  const leaderMaxSess = Math.max(...sessions, 1);
   let leaderRows = '';
   for (let i = 0; i < Math.min(names.length, 5); i++) {
-    const pct = Math.round((sessions[i] || 0) / maxSess * 100);
+    const pct = Math.round((sessions[i] || 0) / leaderMaxSess * 100);
     const bg = agentColors[i % agentColors.length];
     const userLabel = agentUsers[i] ? ' · ' + fmt(agentUsers[i]) + ' users' : '';
     leaderRows += '<div class="top-agent-row"><span class="top-agent-name">' + names[i] + '<span style="font-size:.55rem;color:var(--text-3);font-weight:400;margin-left:.4rem">' + userLabel + '</span></span><div class="top-agent-track"><div class="top-agent-fill" data-width="' + pct + '" style="width:0;background:' + bg + '"><span>' + fmt(sessions[i] || 0) + '</span></div></div><span class="top-agent-count">' + fmt(sessions[i] || 0) + '</span></div>\n';
@@ -1846,8 +1850,12 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       total: weeklyTrend.map(function(w) { return (w.m365 || 0) + (w.chat || 0) + (w.agents || 0); })
     };
     html = html.replace(/\{\{WEEKLY_TREND_JSON\}\}/g, JSON.stringify(wtData));
+    html = html.replace(/\{\{WEEKLY_TREND_LABELS_JSON\}\}/g, JSON.stringify(wtData.labels));
+    html = html.replace(/\{\{WEEKLY_TREND_VALUES_JSON\}\}/g, JSON.stringify(wtData.activation));
   } else {
     html = html.replace(/\{\{WEEKLY_TREND_JSON\}\}/g, JSON.stringify({ labels: [], activation: [], agent_adoption: [], total: [], m365_raw: [], chat_raw: [], agents_raw: [] }));
+    html = html.replace(/\{\{WEEKLY_TREND_LABELS_JSON\}\}/g, '[]');
+    html = html.replace(/\{\{WEEKLY_TREND_VALUES_JSON\}\}/g, '[]');
   }
 
   // Per-tier monthly data — for tier toggle charts
@@ -2081,6 +2089,136 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   }
 
   // Clean up any remaining unresolved placeholders
+  // ── V4 Template — additional placeholders ──
+  if (useV4) {
+    // Hero context
+    html = html.replace(/\{\{HERO_CONTEXT\}\}/g,
+      fmt(data.total_active_users) + ' users across ' + n('org_count', 0) + ' organisations. ' +
+      (typeof data.agent_users === 'number' ? fmt(data.agent_users) + ' already using agents. ' : '') +
+      fmt(data.chat_users) + ' using AI on their own without a licence.');
+
+    // Verdict card titles (data-driven)
+    html = html.replace(/\{\{VERDICT_WORKING_TITLE\}\}/g, 'Deployment has landed');
+    html = html.replace(/\{\{VERDICT_NEXT_TITLE\}\}/g, 'Strong reach. The next move is depth.');
+    html = html.replace(/\{\{VERDICT_MOVE_TITLE\}\}/g, 'The nudge cohort is ready');
+    html = html.replace(/\{\{VERDICT_INTRO\}\}/g, 'This organisation has crossed the AI deployment threshold. The data below shows what\'s working, what\'s ready to grow, and where to move first.');
+
+    // Journey track fill
+    var journeyFill = pattern.number === 3 ? 100 : pattern.number === 2 ? 50 : 16;
+    html = html.replace(/\{\{JOURNEY_TRACK_FILL_PCT\}\}/g, String(journeyFill));
+
+    // Signal question headlines
+    var reachQ = _n('license_coverage', 0) + '% of users hold a license. Is AI actually reaching the org?';
+    var habitQ = data.m365_retention + '% come back each month. But is it becoming a habit?';
+    var skillQ = 'Using AI. But are they going deep?';
+    html = html.replace(/\{\{REACH_QUESTION\}\}/g, reachQ);
+    html = html.replace(/\{\{HABIT_QUESTION\}\}/g, habitQ);
+    html = html.replace(/\{\{SKILL_QUESTION\}\}/g, skillQ);
+
+    // Signal context paragraphs
+    html = html.replace(/\{\{REACH_CONTEXT\}\}/g,
+      'Copilot is deployed across ' + n('org_count', 0) + ' organisations with ' + fmt(data.total_licensed_seats) + ' seats. ' +
+      'The technology has landed. But ' + Math.round(100 - _n('m365_enablement', 0)) + '% of licenses are inactive — and ' +
+      fmt(data.chat_users) + ' users are already using AI on their own without a license.');
+    html = html.replace(/\{\{HABIT_CONTEXT\}\}/g,
+      'Retention is healthy — people are returning. The harder question is whether they\'re building real routines or just checking in. ' +
+      'The difference between monthly visitors and daily dependence is the culture shift that separates AI leaders from the rest.');
+    html = html.replace(/\{\{SKILL_CONTEXT\}\}/g,
+      _n('m365_breadth', 0) + ' apps per user out of 27 available. ' + _n('agent_adoption', 0) + '% have adopted agents. ' +
+      'The question is whether this becomes a lasting capability advantage.');
+
+    // Agent spotlight HTML — CSS-only intensity bars
+    var agentSpotHtml = '';
+    if (Array.isArray(data.agent_table) && data.agent_table.length > 0) {
+      var spotMaxSess = Math.max.apply(null, data.agent_table.map(function(a) { return a.sessions_per_user || a.sessions || 0; }));
+      data.agent_table.slice(0, 8).forEach(function(agent) {
+        var sessPerUser = agent.sessions_per_user || (agent.users > 0 ? Math.round(agent.sessions / agent.users * 10) / 10 : 0);
+        var barW = spotMaxSess > 0 ? Math.max(5, Math.round(sessPerUser / spotMaxSess * 100)) : 5;
+        var isCustom = (agent.type || '').toLowerCase().includes('builder') || (agent.type || '').toLowerCase().includes('lob');
+        var is1P = (agent.type || '').toLowerCase().includes('microsoft') || (agent.type || '').toLowerCase().includes('1p');
+        var badgeStyle = isCustom ? 'background:rgba(16,185,129,.15);color:rgb(16,185,129);border:1px solid rgba(16,185,129,.2)' :
+          is1P ? 'background:rgba(96,165,250,.1);color:rgb(96,165,250);border:1px solid rgba(96,165,250,.15)' :
+          'background:rgba(255,255,255,.06);color:var(--text-muted);border:1px solid var(--border-subtle)';
+        var badgeLabel = isCustom ? 'Custom' : is1P ? '1P' : 'Shared';
+        var barColor = isCustom ? 'rgb(16,185,129)' : is1P ? 'rgb(96,165,250)' : 'var(--text-muted)';
+        var numColor = isCustom ? 'color:rgb(16,185,129)' : is1P ? 'color:rgb(96,165,250)' : 'color:var(--text-secondary)';
+        agentSpotHtml += '<div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:.75rem;padding:.55rem .85rem;' +
+          (isCustom ? 'background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.12);border-radius:8px' : 'border-radius:8px') + '">' +
+          '<div style="display:flex;align-items:center;gap:.65rem;min-width:0">' +
+          '<span style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:.15rem .45rem;border-radius:100px;' + badgeStyle + ';flex-shrink:0">' + badgeLabel + '</span>' +
+          '<span style="font-size:.82rem;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + agent.name + '</span>' +
+          '<div style="flex:1;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;min-width:40px"><div style="height:100%;width:' + barW + '%;border-radius:3px;background:' + barColor + '"></div></div>' +
+          '</div>' +
+          '<div style="font-size:.82rem;font-weight:700;' + numColor + ';font-variant-numeric:tabular-nums;white-space:nowrap">' + sessPerUser + ' <span style="font-size:.62rem;font-weight:500;color:var(--text-muted)">sess/user</span></div>' +
+          '</div>';
+      });
+    }
+    html = html.replace(/\{\{AGENT_SPOTLIGHT_HTML\}\}/g, agentSpotHtml || '<p style="color:var(--text-muted);font-size:.82rem">No agent data available.</p>');
+    html = html.replace(/\{\{AGENT_LEADERBOARD_HTML\}\}/g, agentSpotHtml || '');
+
+    // Org table (V4 style — HTML table with inline score bars)
+    var orgTableHtml = '';
+    if (orgPatternList && orgPatternList.length > 0) {
+      orgTableHtml += '<div style="overflow-x:auto;border:1px solid var(--border-subtle);border-radius:var(--radius)">';
+      orgTableHtml += '<table style="width:100%;border-collapse:collapse;font-size:.82rem">';
+      orgTableHtml += '<thead><tr style="border-bottom:1px solid var(--border-medium)">';
+      orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:left;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted,#64748b)">Organisation</th>';
+      orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:center;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted,#64748b)">Pattern</th>';
+      orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:left;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted,#64748b)">Score</th>';
+      orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:right;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:rgb(var(--dim-reach,52,211,153))">Reach</th>';
+      orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:right;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:rgb(var(--dim-habit,251,191,36))">Habit</th>';
+      orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:right;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:rgb(var(--dim-skill,96,165,250))">Skill</th>';
+      orgTableHtml += '</tr></thead><tbody>';
+      var sortedOrgs = orgPatternList.slice().sort(function(a, b) { return (b.composite || 0) - (a.composite || 0); });
+      var patMap = { Foundation: 'P1', Expansion: 'P2', Frontier: 'P3' };
+      sortedOrgs.forEach(function(org) {
+        var p = patMap[org.pattern] || 'P1';
+        var badgeCls = p === 'P3' ? 'background:rgba(139,92,246,.12);color:rgb(139,92,246)' : p === 'P2' ? 'background:rgba(16,185,129,.12);color:rgb(16,185,129)' : 'background:rgba(59,130,246,.12);color:rgb(59,130,246)';
+        var isOv = org.isOverall;
+        orgTableHtml += '<tr style="border-bottom:1px solid var(--border-subtle,rgba(255,255,255,.06))' + (isOv ? ';background:rgba(255,255,255,.03)' : '') + '">';
+        orgTableHtml += '<td style="padding:10px 14px;font-weight:' + (isOv ? '900' : '700') + ';color:var(--text-primary,#f0f4fc)">' + org.label + '</td>';
+        orgTableHtml += '<td style="padding:10px 14px;text-align:center"><span style="display:inline-block;padding:.14rem .48rem;border-radius:100px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;' + badgeCls + '">' + p + '</span></td>';
+        orgTableHtml += '<td style="padding:10px 14px"><div style="display:flex;align-items:center;gap:8px"><div style="height:5px;border-radius:3px;background:rgba(255,255,255,.06);width:72px;overflow:hidden"><div style="height:100%;border-radius:3px;width:' + org.composite + '%;background:var(--accent,#3b82f6)"></div></div><span style="font-size:.8rem;font-weight:700;font-variant-numeric:tabular-nums;min-width:22px">' + org.composite + '</span></div></td>';
+        orgTableHtml += '<td style="padding:10px 14px;text-align:right;color:rgb(var(--dim-reach,52,211,153));font-weight:600">' + (org.scores ? org.scores.reach : 0) + '</td>';
+        orgTableHtml += '<td style="padding:10px 14px;text-align:right;color:rgb(var(--dim-habit,251,191,36));font-weight:600">' + (org.scores ? org.scores.habit : 0) + '</td>';
+        orgTableHtml += '<td style="padding:10px 14px;text-align:right;color:rgb(var(--dim-skill,96,165,250));font-weight:600">' + (org.scores ? org.scores.skill : 0) + '</td>';
+        orgTableHtml += '</tr>';
+      });
+      orgTableHtml += '</tbody></table></div>';
+    }
+    html = html.replace(/\{\{ORG_TABLE_V4_HTML\}\}/g, orgTableHtml || '<p style="color:var(--text-muted)">Organisation data not available.</p>');
+
+    // Actions HTML — 4 recommendation cards
+    var actionsHtml = '';
+    var recColors = ['rgb(var(--dim-reach))', 'rgb(var(--dim-habit))', 'rgb(var(--dim-skill))', 'rgb(var(--p2))'];
+    var recs = [
+      { title: 'Redirect idle licenses to proven demand', desc: 'Reallocate ' + fmt(data.inactive_licenses) + ' inactive licenses to the ' + fmt(data.chat_users) + ' unlicensed users already showing organic demand.', target: 'Target: ' + Math.round(_n('license_coverage', 0) * 1.5) + '% license coverage within 90 days' },
+      { title: 'Convert the 6\u201310 day cohort to habitual', desc: 'The ' + fmt(data.band_6_10) + ' users averaging 6\u201310 active days are one nudge from building routine. Peer benchmarks, manager modelling, and workflow-tied nudges.', target: 'Target: 30% of cohort reaching 11+ days within 60 days' },
+      { title: 'Embed AI into 3\u20134 high-value workflows per function', desc: 'Users average ' + _n('m365_breadth', 0) + ' apps out of 27. Moving from ' + _n('m365_breadth', 0) + ' to 4+ surfaces transforms AI from a side tool to a core workflow.', target: 'Target: ' + Math.round(_n('m365_breadth', 0) + 2) + '+ app surfaces per user' },
+      { title: 'Scale agent governance before the footprint outpaces it', desc: _n('agent_adoption', 0) + '% of users engage with agents. Define delegation norms, review cadences, and escalation protocols for the agent portfolio.', target: 'Target: governance framework for all ' + (data.total_agents || 0) + ' agents within 45 days' }
+    ];
+    recs.forEach(function(rec, i) {
+      actionsHtml += '<div style="background:var(--bg-card,#132040);border:1px solid var(--border-subtle,rgba(255,255,255,.06));border-radius:16px;padding:1.75rem;border-left:4px solid ' + recColors[i] + '">';
+      actionsHtml += '<div style="display:flex;align-items:center;gap:.65rem;margin-bottom:.8rem"><div style="width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#fff;flex-shrink:0;background:' + recColors[i] + '">' + (i + 1) + '</div></div>';
+      actionsHtml += '<h3 style="font-size:.95rem;font-weight:700;color:var(--text-primary,#f0f4fc);margin-bottom:.5rem;line-height:1.35">' + rec.title + '</h3>';
+      actionsHtml += '<p style="font-size:.82rem;color:var(--text-secondary,#94a3b8);line-height:1.68">' + rec.desc + '</p>';
+      actionsHtml += '<div style="margin-top:.85rem;padding:.55rem .8rem;border-radius:8px;font-size:.75rem;font-weight:600;color:var(--text-secondary,#94a3b8);background:rgba(255,255,255,.03);border:1px solid var(--border-subtle,rgba(255,255,255,.06))"><span style="color:var(--accent,#3b82f6);font-weight:700">\u2192 </span>' + rec.target + '</div>';
+      actionsHtml += '</div>';
+    });
+    html = html.replace(/\{\{ACTIONS_HTML\}\}/g, actionsHtml);
+
+    // App surface chart data (V4)
+    var v4AppData = data._supplementary_metrics && data._supplementary_metrics.app_interactions;
+    if (Array.isArray(v4AppData) && v4AppData.length > 0) {
+      var topApps = v4AppData.slice(0, 12);
+      html = html.replace(/\{\{APP_SURFACE_LABELS_JSON\}\}/g, JSON.stringify(topApps.map(function(a) { return a.app || a.name || 'Unknown'; })));
+      html = html.replace(/\{\{APP_SURFACE_VALUES_JSON\}\}/g, JSON.stringify(topApps.map(function(a) { return a.users || a.count || 0; })));
+    } else {
+      html = html.replace(/\{\{APP_SURFACE_LABELS_JSON\}\}/g, '["No data"]');
+      html = html.replace(/\{\{APP_SURFACE_VALUES_JSON\}\}/g, '[0]');
+    }
+  }
+
   html = html.replace(/\{\{[A-Z_0-9]+\}\}/g, (match) => {
     console.warn('Unresolved placeholder:', match);
     return '';
