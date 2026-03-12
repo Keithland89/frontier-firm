@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{CUSTOMER_NAME}} — Frontier Firm Assessment</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <style>
 /*
  * ─── V4 DESIGN SYSTEM ──────────────────────────────────────────────
@@ -107,6 +107,7 @@ body{font-family:var(--font);background:var(--bg-primary);color:var(--text-prima
 /* ─── REVEAL ─── */
 .r{opacity:0;transform:translateY(22px);
   transition:opacity .6s ease,transform .6s ease}
+#hero .r{opacity:1;transform:none} /* Hero visible immediately */
 .r.on{opacity:1;transform:translateY(0)}
 .d1{transition-delay:.10s}.d2{transition-delay:.20s}
 .d3{transition-delay:.30s}.d4{transition-delay:.40s}
@@ -1078,6 +1079,9 @@ const revealObs = new IntersectionObserver(entries => {
 
 document.querySelectorAll('.r').forEach(el => revealObs.observe(el));
 
+/* Force-reveal hero elements immediately (don't wait for observer on first paint) */
+document.querySelectorAll('#hero .r').forEach(el => el.classList.add('on'));
+
 
 /* ── Expand / Collapse toggles ── */
 document.querySelectorAll('.detail-toggle').forEach(btn => {
@@ -1266,9 +1270,9 @@ function initChartsIn(container){
     if(ctx){
       try{
         /* EXISTING V3 PLACEHOLDER for retention data */
-        const labels = JSON.parse('{{RETENTION_MONTH_LABELS}}');
-        const values = JSON.parse('{{RETENTION_MONTH_VALUES}}');
-        const colors = JSON.parse('{{RETENTION_MONTH_COLORS}}');
+        const labels = {{RETENTION_MONTH_LABELS}};
+        const values = {{RETENTION_MONTH_VALUES}};
+        const colors = {{RETENTION_MONTH_COLORS}};
         new Chart(ctx, {
           type:'bar',
           data:{
