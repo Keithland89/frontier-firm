@@ -1222,6 +1222,50 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <div class="headline-stat-label">of {{TOTAL_ACTIVE_USERS}} active users hold a Copilot license &mdash; showing how far licensing has spread across the organisation</div>
       <span class="headline-stat-tier {{REACH_TIER_CLASS}}" style="background:rgba(14,165,233,.1);color:#0891B2;border:1px solid rgba(14,165,233,.15)">{{REACH_TIER}}</span>
     </div>
+
+    <!-- Reach stat cards — scorecard style with threshold bars -->
+    <div class="reveal reveal-d3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0">
+      <div class="flip-card" style="min-height:130px">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background:linear-gradient(135deg,rgba(13,148,136,.12),rgba(13,148,136,.04));border:1px solid rgba(13,148,136,.2);border-left:5px solid #0D9488;padding:1rem">
+            <div style="font-size:.42rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#0D9488;margin-bottom:.5rem">Active Licensed</div>
+            <div style="font-size:2rem;font-weight:900;color:#0D9488;line-height:1;margin-bottom:.25rem;font-variant-numeric:tabular-nums">{{LICENSED_USERS}}</div>
+            <div style="font-size:.55rem;color:var(--text-3)">users with Copilot licences</div>
+          </div>
+          <div class="flip-card-back" style="background:rgba(13,148,136,.06);border:1px solid rgba(13,148,136,.12);border-left:3px solid #0D9488;padding:.65rem">
+            <div style="font-size:.5rem;font-weight:700;color:#0D9488;margin-bottom:.3rem">License Activation</div>
+            <div style="font-size:.48rem;color:rgba(255,255,255,.45);line-height:1.5">{{M365_ENABLEMENT}}% of {{TOTAL_LICENSED_SEATS}} assigned seats are actively used</div>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card" style="min-height:130px">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-left:5px solid #64748b;padding:1rem;opacity:.85">
+            <div style="font-size:.42rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin-bottom:.5rem">Licences to Redirect</div>
+            <div style="font-size:2rem;font-weight:900;color:#94a3b8;line-height:1;margin-bottom:.25rem;font-variant-numeric:tabular-nums">{{INACTIVE_LICENSES}}</div>
+            <div style="font-size:.55rem;color:var(--text-3)">available for reallocation</div>
+          </div>
+          <div class="flip-card-back" style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-left:3px solid #64748b;padding:.65rem">
+            <div style="font-size:.5rem;font-weight:700;color:#94a3b8;margin-bottom:.3rem">Inactive Capacity</div>
+            <div style="font-size:.48rem;color:rgba(255,255,255,.45);line-height:1.5">Spend that could be redirected to orgs where demand is already proven</div>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card" style="min-height:130px">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background:linear-gradient(135deg,rgba(251,191,36,.08),rgba(251,191,36,.02));border:1px solid rgba(251,191,36,.2);border-left:5px solid #fbbf24;padding:1rem">
+            <div style="font-size:.42rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#fbbf24;margin-bottom:.5rem">License-Ready Users</div>
+            <div style="font-size:2rem;font-weight:900;color:#fbbf24;line-height:1;margin-bottom:.25rem;font-variant-numeric:tabular-nums">{{CHAT_USERS}}</div>
+            <div style="font-size:.55rem;color:var(--text-3)">already using AI — ready to convert</div>
+          </div>
+          <div class="flip-card-back" style="background:rgba(251,191,36,.04);border:1px solid rgba(251,191,36,.12);border-left:3px solid #fbbf24;padding:.65rem">
+            <div style="font-size:.5rem;font-weight:700;color:#fbbf24;margin-bottom:.3rem">Proven Demand</div>
+            <div style="font-size:.48rem;color:rgba(255,255,255,.45);line-height:1.5">Users already active with Copilot Chat — proven demand ready to license</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#0891B2">Dive deeper into Reach <span class="dd-arrow">+</span></button>
     <div class="deep-dive-content">
     <div class="tier-nav reveal reveal-d2">
