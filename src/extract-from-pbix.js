@@ -234,7 +234,22 @@ async function main() {
   console.log('Discovering measures...');
   const allMeasures = await callTool('measure_operations', { operation: 'List' });
   const measureNames = new Set((allMeasures.data || allMeasures._rows || []).map(m => m.name || m.Name || ''));
-  console.log('Found ' + measureNames.size + ' measures in PBIX\n');
+  console.log('Found ' + measureNames.size + ' measures in PBIX');
+
+  // Discover ActiveDaysSummary columns for per-org habit query
+  let adsCols = [];
+  let orgDataCols = [];
+  try {
+    const adsResult = await runDax("EVALUATE SELECTCOLUMNS(FILTER(INFO.COLUMNS(), [TableName] = \"ActiveDaysSummary\"), \"Col\", [ExplicitName])");
+    adsCols = (adsResult._rows || []).map(r => r.Col);
+    console.log('ActiveDaysSummary columns: ' + adsCols.join(', '));
+  } catch (e) { console.log('Could not discover ActiveDaysSummary columns'); }
+  try {
+    const orgResult = await runDax("EVALUATE SELECTCOLUMNS(FILTER(INFO.COLUMNS(), [TableName] = \"Chat + Agent Org Data\"), \"Col\", [ExplicitName])");
+    orgDataCols = (orgResult._rows || []).map(r => r.Col);
+    console.log('Chat + Agent Org Data columns: ' + orgDataCols.join(', '));
+  } catch (e) { console.log('Could not discover Org Data columns'); }
+  console.log('');
 
   // ============================================================
   // DATA OBJECT & HELPERS
@@ -398,6 +413,69 @@ async function main() {
       console.log('  org_scatter_data: error - ' + e.message.substring(0, 150));
       set('org_scatter_data', null);
     }
+  }
+
+  // --- Per-Org Habit Data (habitual user % per org) ---
+  try {
+    // Build DAX queries dynamically based on discovered column names
+    const adsUserCol = adsCols.includes('Audit_UserId') ? 'Audit_UserId' : adsCols.includes('UserId') ? 'UserId' : adsCols.find(c => /user.*id/i.test(c)) || 'Audit_UserId';
+    const adsDaysCol = adsCols.includes('ChatActiveDays') ? 'ChatActiveDays' : adsCols.includes('ActiveDays') ? 'ActiveDays' : adsCols.includes('Active_Days') ? 'Active_Days' : adsCols.find(c => /active.*day/i.test(c)) || 'ChatActiveDays';
+    const orgCol = orgDataCols.includes('Organization') ? 'Organization' : orgDataCols.includes('Org') ? 'Org' : orgDataCols.find(c => /org/i.test(c)) || 'Organization';
+    const orgUserCol = orgDataCols.includes('PersonId') ? 'PersonId' : orgDataCols.includes('Audit_UserId') ? 'Audit_UserId' : orgDataCols.includes('UserId') ? 'UserId' : orgDataCols.find(c => /person.*id|user.*id/i.test(c)) || 'PersonId';
+    console.log('  org_habit: using columns ADS[' + adsUserCol + ',' + adsDaysCol + '] OrgData[' + orgCol + ',' + orgUserCol + ']');
+
+    const orgHabitDaxVariants = [
+      // Variant 1: ADDCOLUMNS using relationship (ADS.Audit_UserId -> OrgData.PersonId)
+      "EVALUATE ADDCOLUMNS(SUMMARIZE('Chat + Agent Org Data', 'Chat + Agent Org Data'[" + orgCol + "]), \"Users\", CALCULATE(DISTINCTCOUNT('Chat + Agent Org Data'[" + orgUserCol + "])), \"HabitualUsers\", CALCULATE(DISTINCTCOUNT('ActiveDaysSummary'[" + adsUserCol + "]), 'ActiveDaysSummary'[" + adsDaysCol + "] >= 6))",
+      // Variant 2: SUMMARIZECOLUMNS with filter on ActiveDaysSummary
+      "EVALUATE SUMMARIZECOLUMNS('Chat + Agent Org Data'[" + orgCol + "], \"Users\", DISTINCTCOUNT('Chat + Agent Org Data'[" + orgUserCol + "]), \"HabitualUsers\", CALCULATE(DISTINCTCOUNT('ActiveDaysSummary'[" + adsUserCol + "]), 'ActiveDaysSummary'[" + adsDaysCol + "] >= 6))",
+      // Variant 3: Just user counts (no habit — fallback)
+      "EVALUATE ADDCOLUMNS(SUMMARIZE('Chat + Agent Org Data', 'Chat + Agent Org Data'[" + orgCol + "]), \"Users\", CALCULATE(DISTINCTCOUNT('Chat + Agent Org Data'[" + orgUserCol + "])))"
+    ];
+    let orgHabitResult;
+    for (const q of orgHabitDaxVariants) {
+      try {
+        orgHabitResult = await runDax(q);
+        if (orgHabitResult._rows && orgHabitResult._rows.length > 0) {
+          console.log('  org_habit: rows=' + orgHabitResult._rows.length);
+          break;
+        }
+      } catch (e) {
+        console.log('  org_habit: query variant failed - ' + e.message.substring(0, 80));
+      }
+    }
+    if (orgHabitResult && orgHabitResult._rows && orgHabitResult._rows.length > 0) {
+      data._org_habit_data = {};
+      orgHabitResult._rows.forEach(r => {
+        const orgName = r.Organization || r[orgCol] || r.Org || Object.values(r).find(v => typeof v === 'string');
+        if (orgName) {
+          const users = Number(r.Users) || 0;
+          const habitual = Number(r.HabitualUsers) || 0;
+          data._org_habit_data[orgName] = {
+            users: users,
+            habitual_users: habitual,
+            habitual_pct: users > 0 ? Math.round(habitual / users * 1000) / 10 : 0
+          };
+        }
+      });
+      console.log('  org_habit_data: ' + Object.keys(data._org_habit_data).length + ' orgs with habit data');
+      // Merge into org_scatter_data
+      if (Array.isArray(data.org_scatter_data) && data.org_scatter_data.length > 0) {
+        var matchCount = 0;
+        data.org_scatter_data.forEach(org => {
+          const habit = data._org_habit_data[org.label];
+          if (habit) {
+            org.habitual_pct = habit.habitual_pct;
+            matchCount++;
+          }
+        });
+        console.log('  org_habit merged: ' + matchCount + '/' + data.org_scatter_data.length + ' orgs matched');
+      }
+    } else {
+      console.log('  org_habit_data: no data extracted (all variants failed)');
+    }
+  } catch (e) {
+    console.log('  org_habit_data: error - ' + e.message.substring(0, 100));
   }
 
   // --- Monthly Data ---

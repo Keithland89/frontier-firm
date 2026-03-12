@@ -559,6 +559,15 @@ function generateTemplateInsights(data, signalTiers, pattern) {
   d.inactive_licenses = safe(d.inactive_licenses, 0);
   d.band_1_5_pct = safe(d.band_1_5_pct, 0);
   d.band_6_10 = safe(d.band_6_10, 0);
+  // Reconcile absolute band counts: if they don't sum to ~licensed_users, derive from percentages
+  var bandSum = safe(d.band_1_5, 0) + safe(d.band_6_10, 0) + safe(d.band_11_15, 0) + safe(d.band_16_plus, 0);
+  var licUsers = safe(d.licensed_users, 0);
+  if (licUsers > 0 && (bandSum === 0 || Math.abs(bandSum - licUsers) > licUsers * 0.15)) {
+    d.band_1_5 = Math.round(safe(d.licensed_band_1_5_pct, 0) / 100 * licUsers);
+    d.band_6_10 = Math.round(safe(d.licensed_band_6_10_pct, 0) / 100 * licUsers);
+    d.band_11_15 = Math.round(safe(d.licensed_band_11_15_pct, 0) / 100 * licUsers);
+    d.band_16_plus = Math.round(safe(d.licensed_band_16_plus_pct, 0) / 100 * licUsers);
+  }
   d.total_licensed_seats = safe(d.total_licensed_seats, 1);
   // Auto-default fields that older PBIX templates may not have
   if (d.org_penetration_pct === undefined) d.org_penetration_pct = 'not_available';
@@ -945,7 +954,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = safeSub(html, /\{\{CHAT_HABIT\}\}/g, data.chat_habit, 'chat_habit');
   html = safeSub(html, /\{\{AGENT_FREQUENCY\}\}/g, data.agent_frequency, 'agent_frequency');
   html = safeSub(html, /\{\{M365_RETENTION\}\}/g, data.m365_retention, 'm365_retention');
-  html = safeSub(html, /\{\{M365_RETENTION_INT\}\}/g, typeof data.m365_retention === 'number' ? Math.round(data.m365_retention) : 'not_available', 'm365_retention_int');
+  html = safeSub(html, /\{\{M365_RETENTION_INT\}\}/g, typeof data.m365_retention === 'number' ? data.m365_retention : 'not_available', 'm365_retention_int');
   html = safeSub(html, /\{\{CHAT_RETENTION\}\}/g, data.chat_retention, 'chat_retention');
   html = safeSub(html, /\{\{AGENT_RETENTION\}\}/g, data.agent_retention, 'agent_retention');
 
@@ -1644,6 +1653,8 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     var orgAgentRate = totalUsers > 0 ? totalAgentUsers / totalUsers : 0; // org-wide agent adoption rate
 
     var maxOrgUsers = Math.max.apply(null, orgScatter.map(function(o) { return o.x || 0; }).concat([1]));
+    var hasOrgHabit = orgScatter.some(function(o) { return typeof o.habitual_pct === 'number'; });
+    var overallHabitualRate = _n('embedded_user_rate', 0); // org-wide habitual rate for normalisation
 
     orgScatter.forEach(function(org) {
       var users = org.x || 0;
@@ -1652,12 +1663,24 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       // Reach (0-100): org's user count as % of the largest org
       var reachScore = Math.min(100, Math.round(users / maxOrgUsers * 100));
 
+      // Habit (0-100): org's habitual user % relative to overall average
+      // If per-org habit data available: normalise so overall rate = 50
+      var habitScore = 0;
+      if (hasOrgHabit && typeof org.habitual_pct === 'number' && overallHabitualRate > 0) {
+        habitScore = Math.min(100, Math.round(org.habitual_pct / overallHabitualRate * 50));
+      }
+
       // Skill (0-100): org's agent adoption % relative to overall average
       // Average = 50, double average = 100
       var skillScore = orgAgentRate > 0 ? Math.min(100, Math.round(agentAdoptPct / (orgAgentRate * 100) * 50)) : 0;
 
-      // Composite: equal weight Reach + Skill (no per-org Habit data available)
-      var composite = Math.round(reachScore * 0.5 + skillScore * 0.5);
+      // Composite: equal weight across available signals
+      var composite;
+      if (hasOrgHabit) {
+        composite = Math.round(reachScore * 0.33 + habitScore * 0.33 + skillScore * 0.34);
+      } else {
+        composite = Math.round(reachScore * 0.5 + skillScore * 0.5);
+      }
 
       var orgPattern;
       if (composite >= 60) orgPattern = 'Frontier';
@@ -1671,7 +1694,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
         agentPct: agentAdoptPct,
         users: users,
         composite: composite,
-        scores: { reach: reachScore, skill: skillScore }
+        scores: { reach: reachScore, habit: habitScore, skill: skillScore }
       });
     });
   }
@@ -1688,7 +1711,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       agentPct: _n('agent_adoption', 0),
       users: n('total_active_users', 0),
       composite: overallComposite,
-      scores: { reach: overallReach, skill: overallSkill },
+      scores: { reach: overallReach, habit: overallHabit, skill: overallSkill },
       isOverall: true
     });
   }
@@ -1743,7 +1766,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   const licPriorityOrgs = data._supplementary_metrics && data._supplementary_metrics.license_priority_orgs;
   if (licPriorityOrgs && licPriorityOrgs.length) {
     let tbl = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.78rem">';
-    tbl += '<thead><tr style="border-bottom:2px solid rgba(255,255,255,.1)"><th style="text-align:left;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Organisation</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Unlicensed</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Licensed</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Ratio</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Sessions/Wk</th></tr></thead><tbody>';
+    tbl += '<thead><tr style="border-bottom:2px solid rgba(255,255,255,.1)"><th style="text-align:left;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Organisation</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Unlicensed</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Licensed</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">% Unlicensed</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Sessions/Wk</th></tr></thead><tbody>';
     licPriorityOrgs.slice(0, 10).forEach(function(org) {
       const unlicCount = org.unlicensed_users || org.unlicensed || 0;
       const licCount = org.licensed_users || org.licensed || 0;
@@ -2329,6 +2352,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:center;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted,#64748b)">Pattern</th>';
       orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:left;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted,#64748b)">Score</th>';
       orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:right;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:rgb(var(--dim-reach,52,211,153))">Reach</th>';
+      orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:right;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:rgb(var(--dim-habit,251,191,36))">Habit</th>';
       orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:right;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:rgb(var(--dim-skill,96,165,250))">Skill</th>';
       orgTableHtml += '</tr></thead><tbody>';
       var sortedOrgs = orgPatternList.filter(function(o) { return o.isOverall || (o.users || 0) >= 10; }).sort(function(a, b) { if (a.isOverall) return -1; if (b.isOverall) return 1; return (b.composite || 0) - (a.composite || 0); });
@@ -2342,6 +2366,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
         orgTableHtml += '<td style="padding:10px 14px;text-align:center"><span style="display:inline-block;padding:.14rem .48rem;border-radius:100px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;' + badgeCls + '">' + p + '</span></td>';
         orgTableHtml += '<td style="padding:10px 14px"><div style="display:flex;align-items:center;gap:8px"><div style="height:5px;border-radius:3px;background:rgba(255,255,255,.06);width:72px;overflow:hidden"><div style="height:100%;border-radius:3px;width:' + org.composite + '%;background:var(--accent,#3b82f6)"></div></div><span style="font-size:.8rem;font-weight:700;font-variant-numeric:tabular-nums;min-width:22px">' + org.composite + '</span></div></td>';
         orgTableHtml += '<td style="padding:10px 14px;text-align:right;color:rgb(var(--dim-reach,52,211,153));font-weight:600">' + (org.scores ? org.scores.reach : 0) + '</td>';
+        orgTableHtml += '<td style="padding:10px 14px;text-align:right;color:rgb(var(--dim-habit,251,191,36));font-weight:600">' + (org.scores ? (org.scores.habit || '—') : '—') + '</td>';
         orgTableHtml += '<td style="padding:10px 14px;text-align:right;color:rgb(var(--dim-skill,96,165,250));font-weight:600">' + (org.scores ? org.scores.skill : 0) + '</td>';
         orgTableHtml += '</tr>';
       });
