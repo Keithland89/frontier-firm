@@ -71,7 +71,8 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;font-size:16px}
 body{font-family:var(--font);background:var(--bg);color:var(--text);
-  line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  counter-reset:section-counter}
 
 /* ── SCROLL PROGRESS ── */
 .progress{position:fixed;top:0;left:0;width:0;height:3px;z-index:1001;
@@ -553,6 +554,171 @@ body.edit-mode [contenteditable="true"]:focus{outline-color:var(--brand);
   footer *{color:#475569!important}
   footer strong{color:#1a1a2e!important}
 }
+
+
+/* ════════════════════════════════════
+   V3 SIGNAL SECTION CLASSES
+   (imported from ff_template_v3.html)
+   ════════════════════════════════════ */
+
+/* Scroll reveal — V3 uses .reveal/.visible instead of .r/.on */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:.1s}.reveal-d2{transition-delay:.2s}.reveal-d3{transition-delay:.3s}.reveal-d4{transition-delay:.4s}.reveal-d5{transition-delay:.5s}
+
+/* Section & layout */
+.section{position:relative;overflow:hidden}
+.section-inner{max-width:1120px;margin:0 auto;padding:4rem 2.5rem}
+.section-label{font-size:.65rem;font-weight:500;text-transform:uppercase;letter-spacing:.2em;color:var(--brand);margin-bottom:.6rem;display:inline-flex;align-items:center;gap:.35rem;counter-increment:section-counter}
+.section-label::before{content:counter(section-counter,decimal-leading-zero);font-size:.55rem;font-weight:800;color:var(--brand);background:rgba(34,100,229,.06);border:1px solid rgba(34,100,229,.12);padding:.15rem .45rem;border-radius:100px;margin-right:.35rem}
+.section-title{font-family:var(--font-display);font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;line-height:1.2;margin-bottom:.6rem;color:var(--text);letter-spacing:-.02em;position:relative;display:inline-block}
+.section-title::after{content:'';position:absolute;bottom:-.15rem;left:0;width:60px;height:3px;background:var(--copilot-gradient-h);border-radius:2px;opacity:.6}
+.section-subtitle{font-size:.95rem;color:var(--text-2);max-width:600px;line-height:1.75;font-weight:400}
+
+/* Signal section (V3 border-left accent) */
+.signal-section{position:relative;border-left:3px solid var(--signal-accent,var(--brand))}
+.signal-section .section-inner{padding-left:2rem}
+.signal-section>.section-inner>.section-label{font-size:0;line-height:0;margin-bottom:.25rem}
+.signal-section>.section-inner>.section-label::before{font-size:.55rem;line-height:normal}
+.signal-section::before{content:'';position:absolute;top:0;left:0;width:200px;height:100%;background:linear-gradient(90deg,color-mix(in srgb,var(--signal-accent) 8%,transparent),transparent);pointer-events:none}
+.signal-section .slide-frame{border-left:3px solid color-mix(in srgb,var(--signal-accent) 25%,var(--border))}
+.signal-section .chart-card::before{opacity:1 !important;background:linear-gradient(90deg,var(--signal-accent),transparent) !important}
+.signal-section .insight-box{border-left-color:var(--signal-accent) !important}
+.signal-section .insight-box::before{background:var(--signal-accent) !important}
+
+/* Signal badge */
+.signal-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .9rem .35rem .7rem;border-radius:100px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#fff;background:var(--signal-accent,var(--brand));margin-bottom:1.25rem;position:relative;box-shadow:0 2px 8px color-mix(in srgb,var(--signal-accent) 30%,transparent)}
+.signal-badge svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* Signal question */
+.signal-question{font-size:.78rem;color:var(--text-3);font-weight:500;font-style:italic;margin-bottom:.5rem;line-height:1.4}
+
+/* Headline stat */
+.headline-stat{text-align:center;padding:2rem 0 1.5rem;position:relative}
+.headline-stat-value{font-family:var(--font-display);font-size:3.5rem;font-weight:700;line-height:1;letter-spacing:-.03em;color:var(--signal-accent,var(--brand));margin-bottom:.25rem}
+.headline-stat-label{font-size:.85rem;color:var(--text-2);font-weight:500}
+.headline-stat-tier{display:inline-flex;padding:.2rem .6rem;border-radius:100px;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+
+/* Dive deeper button */
+.dive-deeper-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;margin:1.25rem 0 .5rem;padding:.75rem 1.5rem;border:1px dashed var(--accent,rgba(255,255,255,.15));border-radius:10px;background:transparent;color:var(--accent,rgba(255,255,255,.5));font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:all .3s;font-family:var(--font)}
+.dive-deeper-btn:hover{background:rgba(255,255,255,.03);border-style:solid}
+.dive-deeper-btn.open{border-style:solid;background:rgba(255,255,255,.02)}
+.dive-deeper-btn.open .dd-arrow{transform:rotate(45deg)}
+.dd-arrow{font-size:1rem;font-weight:300;transition:transform .3s;line-height:1}
+
+/* Deep dive content */
+.deep-dive-content{max-height:0;overflow:hidden;opacity:0;transition:max-height .6s cubic-bezier(.16,1,.3,1),opacity .4s ease}
+.deep-dive-content.expanded,.deep-dive-content.default-open{max-height:5000px;opacity:1;overflow:visible}
+
+/* Tier navigation */
+.tier-nav{display:flex;gap:.5rem;margin:1.25rem 0;flex-wrap:wrap}
+.tier-nav-btn{padding:.4rem 1rem;border-radius:100px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);font-size:.7rem;font-weight:600;cursor:pointer;transition:all .25s cubic-bezier(.16,1,.3,1);font-family:inherit;border-width:1.5px}
+.tier-nav-btn:hover{border-color:var(--brand);color:var(--brand)}
+.tier-nav-btn:hover:not(.active){background:rgba(34,100,229,.04);transform:translateY(-1px)}
+.tier-nav-btn.active{background:var(--brand);color:#fff;border-color:var(--brand);box-shadow:0 2px 8px rgba(34,100,229,.2)}
+.tier-nav-btn[data-tier="m365"].active{background:#007fff;border-color:#007fff}
+.tier-nav-btn[data-tier="agents"].active{background:#8477FB;border-color:#8477FB}
+.tier-nav-btn[data-tier="chat"].active{background:#0891B2;border-color:#0891B2}
+
+/* Tier header */
+.tier-header{padding:.65rem 1.1rem;margin-top:2.5rem;margin-bottom:1.25rem;border-left:4px solid var(--tier-color,var(--brand));border-radius:0 8px 8px 0;background:linear-gradient(90deg,rgba(34,100,229,.04),transparent);display:flex;align-items:center;gap:.6rem}
+.tier-header[data-tier="agents"]{background:linear-gradient(90deg,rgba(123,47,242,.04),transparent);border-left-color:#8477FB}
+.tier-header[data-tier="m365"]{background:linear-gradient(90deg,rgba(34,100,229,.04),transparent);border-left-color:#007fff}
+.tier-header-label{font-size:.78rem;font-weight:700;color:var(--text)}
+.tier-header-badge{display:inline-block;padding:.15rem .55rem;border-radius:100px;font-size:.58rem;font-weight:600}
+.tier-header-badge.m365{background:rgba(34,100,229,.1);color:#007fff;border:1px solid rgba(34,100,229,.15)}
+.tier-header-badge.agents{background:rgba(123,47,242,.1);color:#8477FB;border:1px solid rgba(123,47,242,.15)}
+
+/* Slide frame */
+.slide-frame{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;margin:2.5rem 0;position:relative;overflow:hidden}
+.slide-frame{background:rgba(22,22,48,.5);border-color:rgba(255,255,255,.06)}
+.slide-frame::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--signal-accent,var(--brand)),transparent);opacity:.4}
+.slide-label{display:inline-flex;align-items:center;gap:.4rem;padding:.2rem .6rem;border-radius:6px;font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--signal-accent,var(--text-3));background:color-mix(in srgb,var(--signal-accent,var(--brand)) 6%,transparent);border:1px solid color-mix(in srgb,var(--signal-accent,var(--brand)) 12%,transparent);margin-bottom:1rem}
+
+/* Two column grid */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:stretch}
+.two-col-60{grid-template-columns:1.5fr 1fr}
+
+/* Chart card */
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;position:relative;overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow .3s,transform .3s}
+.chart-card{border:1px solid rgba(255,255,255,.06);box-shadow:0 1px 2px rgba(0,0,0,.15),0 4px 16px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.04)}
+.chart-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--copilot-gradient-h);opacity:0;transition:opacity .4s}
+.chart-card:hover::before{opacity:.6}
+.chart-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.chart-card-title{font-family:var(--font-display);font-size:.85rem;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem}
+.chart-card-sub{font-size:.82rem;color:var(--text-3);margin-bottom:1rem}
+
+/* Stat callout */
+.stat-callout{padding:1.25rem 1.5rem;background:var(--surface);margin-bottom:1rem;border:1px solid var(--border);border-left:4px solid var(--accent,var(--brand));border-radius:10px;box-shadow:var(--shadow-sm)}
+.stat-callout-val{font-family:var(--font-display);font-size:2.2rem;font-weight:700;color:var(--accent,var(--brand));line-height:1;font-variant-numeric:tabular-nums}
+.stat-callout-label{font-size:.8rem;color:var(--text-2);margin-top:.2rem;line-height:1.4}
+
+/* Insight boxes */
+.insight-box{padding:.85rem 1.1rem;border-left:3px solid var(--accent,var(--teal));border-radius:0 8px 8px 0;margin-top:.75rem;font-size:.85rem;color:var(--text-2);line-height:1.6;background:rgba(255,255,255,.02)}
+.insight-box-eyebrow{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent,var(--teal));margin-bottom:.3rem}
+.insight-box strong{color:var(--text);font-weight:700}
+.insight-box--opportunity{background:linear-gradient(135deg,rgba(14,165,233,.06),transparent);border-left-color:#0891B2}
+.insight-box--opportunity .insight-box-eyebrow{color:#0891B2}
+.insight-box--success{background:linear-gradient(135deg,rgba(16,185,129,.06),transparent);border-left-color:#0D9488}
+.insight-box--success .insight-box-eyebrow{color:#0D9488}
+.insight-box--warning{background:linear-gradient(135deg,rgba(245,158,11,.06),transparent);border-left-color:#D270F0}
+.insight-box--warning .insight-box-eyebrow{color:#D270F0}
+.insight-callout{padding:.75rem 1rem;border-radius:8px;font-size:.8rem;line-height:1.6;color:var(--text-2);background:linear-gradient(135deg,rgba(34,100,229,.06),rgba(123,47,242,.06));border:1px solid rgba(34,100,229,.12);position:relative;padding-left:2rem}
+.insight-callout::before{content:'\1F4A1';position:absolute;left:.7rem;top:.7rem;font-size:.85rem}
+
+/* So What (V3 style) */
+.so-what{margin:1.5rem 0;padding:1.2rem 1.5rem;border-radius:12px;border-left:4px solid var(--signal-accent,var(--brand));background:color-mix(in srgb,var(--signal-accent) 6%,rgba(22,22,48,.8));position:relative;overflow:hidden}
+.so-what::before{content:'SO WHAT?';position:absolute;top:.5rem;right:1rem;font-size:.5rem;font-weight:800;letter-spacing:.1em;color:var(--signal-accent);opacity:.3}
+.so-what-text{font-size:.85rem;color:var(--text);line-height:1.6;font-weight:500}
+.so-what-text strong{color:var(--signal-accent);font-weight:700}
+
+/* Spotlight */
+.spotlight{margin:1.5rem 0;padding:1.5rem 2rem;border-radius:16px;border:2px solid color-mix(in srgb,var(--signal-accent) 25%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--signal-accent) 6%,rgba(22,22,48,.9)),rgba(22,22,48,.7));box-shadow:0 8px 32px color-mix(in srgb,var(--signal-accent) 15%,transparent);position:relative;overflow:hidden}
+.spotlight::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--signal-accent),color-mix(in srgb,var(--signal-accent) 30%,transparent))}
+.spotlight-icon{display:inline-flex;width:28px;height:28px;border-radius:50%;background:color-mix(in srgb,var(--signal-accent) 12%,transparent);align-items:center;justify-content:center;margin-bottom:.6rem;font-size:.8rem}
+.spotlight-title{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.35rem;line-height:1.3}
+.spotlight-body{font-size:.78rem;color:var(--text-2);line-height:1.6}
+.spotlight-body strong{color:var(--text);font-weight:600}
+
+/* Retention */
+.retention-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem}
+.retention-bar-container{margin-bottom:1.5rem}
+.retention-bar-label{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.4rem}
+.retention-bar-label span:first-child{color:rgba(255,255,255,.7);font-weight:500}
+.retention-bar-label span:last-child{color:#fff;font-weight:800;font-size:1rem}
+.retention-track{height:36px;background:rgba(255,255,255,.06);border-radius:6px;overflow:hidden;position:relative}
+.retention-fill{height:100%;border-radius:6px;transition:width 1.6s cubic-bezier(.16,1,.3,1);display:flex;align-items:center;justify-content:flex-end;padding-right:8px}
+.retention-threshold{position:absolute;top:0;height:100%;width:2px;background:rgba(255,255,255,.3)}
+.retention-threshold-label{position:absolute;top:-18px;transform:translateX(-50%);font-size:.55rem;color:rgba(255,255,255,.35);white-space:nowrap}
+
+/* Copilot divider (between signal sections) */
+.copilot-divider{display:flex;align-items:center;gap:1rem;margin:0;padding:.5rem 0}
+.copilot-divider::before,.copilot-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.copilot-divider-icon{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:rgba(0,127,255,.06);border:1px solid rgba(0,127,255,.1)}
+
+/* V3 responsive overrides for signal sections */
+@media(max-width:1024px){
+  .two-col,.two-col-60,.retention-grid{grid-template-columns:1fr}
+  .section-inner{padding:3rem 1rem}
+}
+@media(max-width:640px){
+  .section-inner{padding:3rem 1rem}
+}
+
+/* Print overrides for V3 signal sections */
+@media print{
+  .reveal{opacity:1!important;transform:none!important}
+  .deep-dive-content{max-height:none!important;opacity:1!important;overflow:visible!important}
+  .dive-deeper-btn,.tier-nav,.copilot-divider{display:none!important}
+  .signal-section{border-left:3px solid #ccc!important}
+  .signal-section::before{display:none!important}
+  .retention-grid{page-break-inside:avoid;border:1px solid #E2E8F0!important;background:#F1F5F9!important;color:#1A1A2E!important;padding:.8rem!important}
+  .retention-grid *{color:#1A1A2E!important}
+  .retention-fill{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .retention-track{background:#E2E8F0!important}
+  .chart-card,.stat-callout,.slide-frame,.spotlight{background:#f8fafc!important;border:1px solid #e2e8f0!important;page-break-inside:avoid}
+  .so-what{background:#f8fafc!important;border:1px solid #e2e8f0!important}
+}
 </style>
 </head>
 <body>
@@ -750,260 +916,308 @@ body.edit-mode [contenteditable="true"]:focus{outline-color:var(--brand);
 
 
 <!-- ═══════════════════════════════════════════════════════════════════
-     SECTION 4: REACH — Expanding Impact
-     Question -> Big number -> 3 stat cards -> So What -> Expand
+     SECTION 4: REACH — V3 Rich Signal Section
+     V3 dual-lane layout with V4 question headline + So What callout
      ═══════════════════════════════════════════════════════════════════ -->
-<section class="s s-alt" id="reach">
-  <div class="wrap">
+<section class="section signal-section" id="reach" style="background:var(--bg);--signal-accent:#0891B2">
+  <div class="section-inner">
 
-    <div class="signal r">
+    <!-- V4 Question Headline -->
+    <div class="sig-header"><div class="sig-title"><h3>{{REACH_QUESTION}}</h3><p>{{REACH_CONTEXT}}</p></div><div class="sig-num"><div class="big-num" style="color:rgb(var(--dim-reach))">{{LICENSE_COVERAGE_PCT}}%</div><div class="big-label">license spread</div></div></div>
 
-      <div class="signal-bar">
-        <div class="signal-dot" style="background:rgb(var(--dim-reach))"></div>
-        <span class="signal-name" style="color:rgb(var(--dim-reach))">
-          Reach &nbsp;&mdash;&nbsp; Expanding Impact
-        </span>
+    <div class="section-label reveal">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:.2rem"><path d="M11.29 5.81c.38-1.08 1.9-1.08 2.28 0l.86 2.45a1.2 1.2 0 00.76.76l2.45.86c1.08.38 1.08 1.9 0 2.28l-2.45.86a1.2 1.2 0 00-.76.76l-.86 2.45c-.38 1.08-1.9 1.08-2.28 0l-.86-2.45a1.2 1.2 0 00-.76-.76l-2.45-.86c-1.08-.38-1.08-1.9 0-2.28l2.45-.86a1.2 1.2 0 00.76-.76l.86-2.45z" fill="#0891B2"/></svg>
+      Reach
+    </div><div class="signal-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Reach</div>
+    <div class="signal-question reveal">{{LICENSED_USERS_FMT}} licensed users. How many are actually showing up?</div>
+    <h2 class="section-title reveal reveal-d1">{{TITLE_REACH}}</h2>
+    <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_REACH}}</p>
+    <div class="headline-stat reveal reveal-d2" style="--signal-accent:#0891B2">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;background:rgba(14,165,233,.12);color:#0891B2;border:1px solid rgba(14,165,233,.2)">Hero Metric · License Spread</span></div>
+      <div class="headline-stat-value">{{LICENSE_COVERAGE_PCT}}%</div>
+      <div class="headline-stat-label">of {{TOTAL_ACTIVE_USERS}} active users hold a Copilot license — showing how far licensing has spread across the organisation</div>
+      <span class="headline-stat-tier {{REACH_TIER_CLASS}}" style="background:rgba(14,165,233,.1);color:#0891B2;border:1px solid rgba(14,165,233,.15)">{{REACH_TIER}}</span>
+    </div>
+    <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#0891B2">Dive deeper into Reach <span class="dd-arrow">+</span></button>
+    <div class="deep-dive-content">
+    <div class="tier-nav reveal reveal-d2">
+      <button class="tier-nav-btn active" data-tier="all">Overall</button>
+      <button class="tier-nav-btn" data-tier="m365">M365 Copilot</button>
+      <button class="tier-nav-btn" data-tier="agents">Agents</button>
+    </div>
+    <div class="slide-frame reveal" style="--signal-accent:#0891B2"><div class="slide-label">User Population</div><div class="tier-group" data-tier-content="all">
+    <div class="two-col-60 two-col reveal reveal-d3">
+      <div class="chart-card">
+        <div class="chart-card-title">User Population by Tier</div>
+        <div class="chart-card-sub">Total unique users across all access tiers</div>
+        <div style="height:280px"><canvas id="chartTiers"></canvas></div>
+        <div class="insight-box insight-box--success" style="--accent:var(--brand);margin-top:1rem"><div class="insight-box-eyebrow">Key Insight</div>{{INSIGHT_REACH_TIER}}</div>
       </div>
-
-      <div class="sig-header">
-        <div class="sig-title">
-          <h3>{{REACH_QUESTION}}</h3>
-          <p>{{REACH_CONTEXT}}</p>
-        </div>
-        <div class="sig-num">
-          <div class="big-num" style="color:rgb(var(--dim-reach))">{{LICENSE_COVERAGE_PCT}}%</div>
-          <div class="big-label">license coverage</div>
-        </div>
+      <div style="display:flex;flex-direction:column;gap:1rem">
+        <div class="stat-callout" style="--accent:#007fff"><div class="stat-callout-val"><span class="counter" data-target="{{LICENSED_USERS}}">0</span></div><div class="stat-callout-label">Licensed M365 Copilot users -- highest engagement profile <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(34,100,229,.1);color:#007fff;border:1px solid rgba(34,100,229,.15);margin-left:.4rem;vertical-align:middle">M365 Copilot</span></div></div>
+        <div class="stat-callout" style="--accent:#8477FB"><div class="stat-callout-val"><span class="counter" data-target="{{CHAT_USERS}}">0</span></div><div class="stat-callout-label">Unlicensed Chat users -- organic demand signal <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(14,165,233,.1);color:#0891B2;border:1px solid rgba(14,165,233,.15);margin-left:.4rem;vertical-align:middle">Copilot Chat</span></div></div>
+        <div class="stat-callout" style="--accent:#0891B2"><div class="stat-callout-val"><span class="counter" data-target="{{AGENT_USERS}}">0</span></div><div class="stat-callout-label">Agent users -- specialist cohort, {{AGENT_ADOPTION}}% adoption <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(123,47,242,.1);color:#8477FB;border:1px solid rgba(123,47,242,.15);margin-left:.4rem;vertical-align:middle">Agents</span></div></div>
+        <div class="insight-box" style="--accent:#0891B2"><div class="insight-box-eyebrow">Context</div><strong>{{TOTAL_LICENSED_SEATS}} total licensed seats</strong> with {{M365_ENABLEMENT}}% activation. The {{INACTIVE_LICENSES}} inactive licenses represent the fastest path to expanded engagement.</div>
       </div>
+    </div>
 
-      <div class="reach-3">
-        <div class="r3-card" style="border-top-color:rgb(var(--dim-reach))">
-          <div class="r3-val" style="color:rgb(var(--dim-reach))">{{LICENSED_USERS}}</div>
-          <div class="r3-label">Active licensed users</div>
-        </div>
-        <div class="r3-card" style="border-top-color:var(--text-dim);opacity:.75">
-          <div class="r3-val" style="color:var(--text-2)">{{INACTIVE_LICENSES}}</div>
-          <div class="r3-label">Licences ready to redirect</div>
-        </div>
-        <div class="r3-card" style="border-top-color:rgb(var(--dim-habit))">
-          <div class="r3-val" style="color:rgb(var(--dim-habit))">{{CHAT_USERS}}</div>
-          <div class="r3-label">License-ready users</div>
-          <div class="r3-sub">Already using AI &mdash; ready to convert</div>
-        </div>
-      </div>
+    <div class="so-what reveal" style="--signal-accent:#0891B2">
+      <div class="so-what-text">{{INSIGHT_REACH}}</div>
+    </div>
 
-      <!-- So What -->
-      <div class="sowhat" style="background:rgba(var(--dim-reach),.04);
-        border:1px solid rgba(var(--dim-reach),.15);
-        border-left:4px solid rgb(var(--dim-reach))">
-        <p>{{INSIGHT_REACH}}</p>
-      </div>
-
-      <!-- Expand: Weekly Trend + Licence Priority -->
-      <button class="detail-toggle" data-target="reach-detail">
-        Dive deeper &mdash; charts, trend, detail <span class="arr">&#9660;</span>
-      </button>
-      <div class="detail-content" id="reach-detail">
-        <div class="detail-inner">
-          <div class="detail-card">
-            <div class="detail-card-title">Weekly Activation Trend</div>
-            <div class="chart-wrap">
-              <canvas id="chartWeeklyTrend"></canvas>
-            </div>
-          </div>
-          <div class="detail-card">
-            <div class="detail-card-title">Licence Priority</div>
-            {{LICENSE_PRIORITY_TABLE}}
-          </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0" class="reveal reveal-d3">
+      <!-- Copilot lane -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;border-left:4px solid #007fff">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#007fff;margin-bottom:.75rem">M365 Copilot</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">License Activation</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{M365_ENABLEMENT}}%</div></div>
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">License Coverage</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{LICENSE_COVERAGE}}%</div></div>
         </div>
       </div>
+      <!-- Agents lane -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;border-left:4px solid #8477FB">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8477FB;margin-bottom:.75rem">Agents</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Agent Adoption</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{AGENT_ADOPTION}}%</div></div>
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Org Penetration</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{ORG_PENETRATION_PCT}}%</div></div>
+        </div>
+      </div>
+    </div>
 
-    </div><!-- /signal -->
+    <!-- Weekly scorecard metrics trend -->
+    <div class="two-col reveal" style="margin-top:1.5rem;gap:1rem">
+      <div class="chart-card"><div class="chart-card-title">Weekly Activation &amp; Agent Adoption</div><div class="chart-card-sub">Scorecard metrics tracked week-by-week</div><div style="height:280px"><canvas id="chartWeeklyTrend"></canvas></div></div>
+      <div class="chart-card" style="display:flex;flex-direction:column;justify-content:center;padding:1.5rem"><div class="chart-card-title" style="margin-bottom:1rem">Key Takeaways</div>{{TAKEAWAY_WEEKLY_TREND}}</div>
+    </div>
+    <div class="insight-callout reveal" style="margin-top:1rem">{{INSIGHT_MONTHLY_GROWTH}}</div>
+
+    </div><!-- /tier-group overall --></div><!-- /slide-frame -->
+    <div class="tier-group" data-tier-content="m365">
+    <div class="tier-header" data-tier="m365"><span class="tier-header-badge m365">M365 Copilot</span><span class="tier-header-label">Licensed Copilot Engagement</span></div>
+    <div class="two-col reveal reveal-d4" style="margin-top:1rem">
+      <div class="chart-card"><div class="chart-card-title">Sessions per User -- Engagement Depth <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(34,100,229,.1);color:#007fff;border:1px solid rgba(34,100,229,.15);margin-left:.4rem;vertical-align:middle">M365 Copilot</span> <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(14,165,233,.1);color:#0891B2;border:1px solid rgba(14,165,233,.15);margin-left:.4rem;vertical-align:middle">Copilot Chat</span> <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(123,47,242,.1);color:#8477FB;border:1px solid rgba(123,47,242,.15);margin-left:.4rem;vertical-align:middle">Agents</span></div><div class="chart-card-sub">Higher = more habitual usage per individual</div><div style="height:220px"><canvas id="chartEngagement"></canvas></div></div>
+      <div class="chart-card" style="display:flex;flex-direction:column;justify-content:center;padding:1.5rem">
+        <div class="chart-card-title" style="margin-bottom:1rem">Key Takeaways</div>
+        {{ORG_SCATTER_INSIGHTS}}
+      </div>
+    </div>
+    <div class="insight-callout reveal" style="margin-top:1rem">{{INSIGHT_ENGAGEMENT_DEPTH}}</div>
+    <div style="margin-top:2.5rem" class="reveal reveal-d5">
+      <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">{{ORG_INTENSITY_HEADLINE}}</h3>
+      <p style="font-size:.88rem;color:var(--text-2);margin-bottom:1.5rem">{{ORG_INTENSITY_BODY}}</p>
+    </div>
+    </div><!-- /tier-group m365 -->
+    <div class="tier-group" data-tier-content="agents">
+    <div class="tier-header" data-tier="agents"><span class="tier-header-badge agents">Agents</span><span class="tier-header-label">Agent Adoption Across Organisations</span></div>
+    <div style="margin-top:1rem" class="reveal reveal-d5">
+      <h3 style="font-size:1rem;font-weight:700;margin-top:1rem;margin-bottom:.5rem">{{ORG_SCATTER_HEADLINE}}</h3>
+      <p style="font-size:.78rem;color:var(--text-2);margin-bottom:1rem">Each bubble represents an organisation. X-axis = M365 Copilot users, Y-axis = % using agents. Size = total sessions.</p>
+      <div style="height:320px"><canvas id="chartOrgScatter"></canvas></div>
+      <div style="display:flex;gap:1.25rem;justify-content:center;margin-top:.6rem;flex-wrap:wrap">
+        <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0D9488"></span> 12%+ agents</span>
+        <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0891B2"></span> 8-12% agents</span>
+        <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#8477FB"></span> 5-8% agents</span>
+        <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#94A3B8"></span> &lt;5% agents</span>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-top:1.25rem">
+        <span style="color:#0D9488;font-weight:600;font-size:.8rem">Intensity signal:</span> <span style="font-size:.82rem;color:var(--text-2)">{{ORG_INTENSITY_COMPARISON}}</span>
+      </div>
+      <div class="insight-box insight-box--opportunity" style="--accent:var(--copilot-teal);margin-top:1rem"><div class="insight-box-eyebrow">Organisation Insight</div>{{ORG_AGENT_INSIGHT}}</div>
+    </div>
+    </div><!-- /tier-group agents -->
+
+    <!-- License Priority Table -->
+    <div class="reveal" style="margin-top:2rem">
+      {{LICENSE_PRIORITY_TABLE}}
+    </div>
+
+    </div><!-- /deep-dive-content -->
+
+    <!-- V4 So What Callout -->
+    <div class="sowhat" style="background:rgba(var(--dim-reach),.04);border:1px solid rgba(var(--dim-reach),.15);border-left:4px solid rgb(var(--dim-reach))"><p>{{INSIGHT_REACH}}</p></div>
 
   </div>
 </section>
 
+<!-- Bridge: Reach -> Habit -->
+<div class="copilot-divider"><div class="copilot-divider-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M11.29 3.81c.38-1.08 1.9-1.08 2.28 0l1.73 4.9a1.2 1.2 0 00.76.76l4.9 1.73c1.08.38 1.08 1.9 0 2.28l-4.9 1.73a1.2 1.2 0 00-.76.76l-1.73 4.9c-.38 1.08-1.9 1.08-2.28 0l-1.73-4.9a1.2 1.2 0 00-.76-.76l-4.9-1.73c-1.08-.38-1.08-1.9 0-2.28l4.9-1.73a1.2 1.2 0 00.76-.76l1.73-4.9z" fill="#D270F0" opacity=".5"/></svg></div></div>
 
 <!-- ═══════════════════════════════════════════════════════════════════
-     SECTION 5: HABIT — Developing Habit
-     Question -> Big number -> CSS distribution bars -> So What -> Expand
+     SECTION 5: HABIT — V3 Rich Signal Section
+     V3 dual-lane layout with V4 question headline + So What callout
      ═══════════════════════════════════════════════════════════════════ -->
-<section class="s" id="habit">
-  <div class="wrap">
+<section class="section signal-section" id="habit" style="--signal-accent:#D270F0">
+  <div class="section-inner">
 
-    <div class="signal r">
+    <!-- V4 Question Headline -->
+    <div class="sig-header"><div class="sig-title"><h3>{{HABIT_QUESTION}}</h3><p>{{HABIT_CONTEXT}}</p></div><div class="sig-num"><div class="big-num" style="color:rgb(var(--dim-habit))">{{EMBEDDED_USER_RATE}}%</div><div class="big-label">habitual user rate</div></div></div>
 
-      <div class="signal-bar">
-        <div class="signal-dot" style="background:rgb(var(--dim-habit))"></div>
-        <span class="signal-name" style="color:rgb(var(--dim-habit))">
-          Habit &nbsp;&mdash;&nbsp; Developing Habit
-        </span>
-      </div>
+    <div class="section-label reveal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:.2rem"><path d="M11.29 5.81c.38-1.08 1.9-1.08 2.28 0l.86 2.45a1.2 1.2 0 00.76.76l2.45.86c1.08.38 1.08 1.9 0 2.28l-2.45.86a1.2 1.2 0 00-.76.76l-.86 2.45c-.38 1.08-1.9 1.08-2.28 0l-.86-2.45a1.2 1.2 0 00-.76-.76l-2.45-.86c-1.08-.38-1.08-1.9 0-2.28l2.45-.86a1.2 1.2 0 00.76-.76l.86-2.45z" fill="#D270F0"/></svg>Habit</div><div class="signal-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Habit</div>
+    <div class="signal-question reveal">{{M365_RETENTION_INT}}% come back month-over-month. But how deep does the habit run?</div>
+    <h2 class="section-title reveal reveal-d1">{{TITLE_HABIT}}</h2>
+    <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_HABIT}}</p>
+    <div class="headline-stat reveal reveal-d2" style="--signal-accent:#D270F0">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;background:rgba(245,158,11,.12);color:#D270F0;border:1px solid rgba(245,158,11,.2)">Hero Metric · Habitual User Rate</span></div>
+      <div class="headline-stat-value">{{EMBEDDED_USER_RATE}}%</div>
+      <div class="headline-stat-label">of licensed users are habitual (6+ active days over 3 months) — MoM retention is {{M365_RETENTION}}%</div>
+      <span class="headline-stat-tier {{HABIT_TIER_CLASS}}" style="background:rgba(245,158,11,.1);color:#D270F0;border:1px solid rgba(245,158,11,.15)">{{HABIT_TIER}}</span>
+    </div>
+    <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#D270F0">Dive deeper into Habit <span class="dd-arrow">+</span></button>
+    <div class="deep-dive-content">
 
-      <div class="sig-header">
-        <div class="sig-title">
-          <h3>{{HABIT_QUESTION}}</h3>
-          <p>{{HABIT_CONTEXT}}</p>
+    <!-- Retention first — the headline signal -->
+    <div class="slide-frame reveal" style="--signal-accent:#D270F0;margin-top:1.5rem">
+      <div class="slide-label">Retention Strength</div>
+      <div class="retention-grid reveal reveal-d1" style="background:var(--section-dark);border-radius:16px;padding:2rem;color:#fff;border:1px solid rgba(245,158,11,.15)">
+        <div>
+          <div class="retention-bar-container"><div class="retention-bar-label"><span>Licensed M365 Copilot</span><span>{{M365_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{M365_RETENTION}}" style="width:0;background:linear-gradient(90deg,#007fff,#4A8AFF)"></div><div class="retention-threshold" style="left:50%"><span class="retention-threshold-label">50%</span></div><div class="retention-threshold" style="left:70%"><span class="retention-threshold-label">70%</span></div><div class="retention-threshold" style="left:85%"><span class="retention-threshold-label">85%</span></div></div></div>
+          <div class="retention-bar-container"><div class="retention-bar-label"><span>Unlicensed Chat</span><span>{{CHAT_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{CHAT_RETENTION}}" style="width:0;background:linear-gradient(90deg,#8477FB,#9B5FFF)"></div></div></div>
+          <div class="retention-bar-container"><div class="retention-bar-label"><span>Agent Users</span><span>{{AGENT_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{AGENT_RETENTION}}" style="width:0;background:linear-gradient(90deg,#0891B2,#38BDF8)"></div></div></div>
+          <div style="padding:.75rem 1rem;background:rgba(245,158,11,.06);border-left:3px solid #D270F0;border-radius:0 8px 8px 0;margin-top:1rem;font-size:.75rem;color:rgba(255,255,255,.6);line-height:1.5">{{RETENTION_CORRECTION_NOTE}}</div>
         </div>
-        <div class="sig-num">
-          <div class="big-num" style="color:rgb(var(--dim-habit))">{{EMBEDDED_USER_RATE}}%</div>
-          <div class="big-label">habitual user rate</div>
-        </div>
-      </div>
-
-      <!-- Habit distribution bars (CSS-only) -->
-      <div class="habit-chart" id="habit-bars">
-        <div class="hc-title">Monthly active days &mdash; M365 Copilot licensed users</div>
-
-        <div class="h-row">
-          <div class="h-label">1 &ndash; 5 days</div>
-          <div class="h-track">
-            <div class="h-bar" style="width:{{LIC_BAND_1_5_PCT}}%;background:rgba(255,255,255,.1)">
-              <span style="color:var(--text-dim)">{{LIC_BAND_1_5_PCT}}%</span>
-            </div>
-          </div>
-          <div class="h-pct" style="color:var(--text-dim)">Sampling</div>
-        </div>
-
-        <div class="h-row">
-          <div class="h-label">
-            6 &ndash; 10 days
-            <div class="conv-tag">{{BAND_6_10}} users</div>
-          </div>
-          <div class="h-track">
-            <div class="h-bar" style="width:{{LIC_BAND_6_10_PCT}}%;background:rgba(251,191,36,.55)">
-              <span>{{LIC_BAND_6_10_PCT}}%</span>
-            </div>
-          </div>
-          <div class="h-pct" style="color:rgb(var(--dim-habit))">Conversion zone &#8592;</div>
-        </div>
-
-        <div class="h-row">
-          <div class="h-label">11 &ndash; 15 days</div>
-          <div class="h-track">
-            <div class="h-bar" style="width:{{LIC_BAND_11_15_PCT}}%;background:rgba(96,165,250,.55)">
-              <span>{{LIC_BAND_11_15_PCT}}%</span>
-            </div>
-          </div>
-          <div class="h-pct" style="color:rgb(var(--dim-skill))">Habit forming</div>
-        </div>
-
-        <div class="h-row">
-          <div class="h-label">16+ days</div>
-          <div class="h-track">
-            <div class="h-bar" style="width:{{LIC_BAND_16_PLUS_PCT}}%;min-width:56px;background:rgba(52,211,153,.6)">
-              <span>{{LIC_BAND_16_PLUS_PCT}}%</span>
-            </div>
-          </div>
-          <div class="h-pct" style="color:rgb(var(--dim-reach))">Habitual</div>
-        </div>
-
-      </div>
-
-      <!-- So What -->
-      <div class="sowhat" style="background:rgba(var(--dim-habit),.04);
-        border:1px solid rgba(var(--dim-habit),.15);
-        border-left:4px solid rgb(var(--dim-habit))">
-        <p>{{INSIGHT_HABIT}}</p>
-      </div>
-
-      <!-- Expand: Retention MoM -->
-      <button class="detail-toggle" data-target="habit-detail">
-        Dive deeper &mdash; retention trend, per-tier data <span class="arr">&#9660;</span>
-      </button>
-      <div class="detail-content" id="habit-detail">
-        <div class="detail-inner">
-          <div class="detail-card" style="grid-column:1/-1">
-            <div class="detail-card-title">Month-on-Month Retention</div>
-            <div class="chart-wrap">
-              <canvas id="chartRetention"></canvas>
-            </div>
-          </div>
+        <div style="text-align:center">
+          <div style="height:240px"><canvas id="chartRetention"></canvas></div>
+          <p style="font-size:.78rem;color:rgba(255,255,255,.5);margin-top:.4rem;line-height:1.4">Average MoM retention: <strong style="color:#fff">{{M365_RETENTION}}%</strong> across complete months</p>
         </div>
       </div>
+    </div>
 
-    </div><!-- /signal -->
+
+    <div class="so-what reveal" style="--signal-accent:#D270F0;margin-top:1.5rem">
+      <div class="so-what-text">{{INSIGHT_HABIT}}</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0" class="reveal reveal-d3">
+      <!-- Copilot lane -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;border-left:4px solid #007fff">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#007fff;margin-bottom:.75rem">M365 Copilot</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Habitual User Rate</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{EMBEDDED_USER_RATE}}%</div><div style="font-size:.55rem;color:var(--text-3)">6+ days over 3 months</div></div>
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">MoM Retention</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{M365_RETENTION}}%</div><div style="font-size:.55rem;color:var(--text-3)">across complete months</div></div>
+        </div>
+      </div>
+      <!-- Agents lane -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;border-left:4px solid #8477FB">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8477FB;margin-bottom:.75rem">Agents</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Agent Habitual Rate</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{AGENT_HABITUAL_PCT}}%</div><div style="font-size:.55rem;color:var(--text-3)">agent users with 6+ days</div></div>
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Agent Retention</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{AGENT_RETENTION}}%</div><div style="font-size:.55rem;color:var(--text-3)">MoM agent retention</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Habit formation comparison -->
+    <div class="slide-frame reveal" style="--signal-accent:#D270F0;margin-top:1.5rem">
+      <div class="slide-label">Habit Depth</div>
+      <div class="two-col reveal reveal-d1">
+        <div class="chart-card" style="flex:1.5;margin-bottom:0">
+          <div class="chart-card-title">Active Day Distribution by Tier</div>
+          <div class="chart-card-sub">% of users in each active day band — averaged across all complete months</div>
+          <div style="height:280px"><canvas id="chartHabitTiers"></canvas></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          {{HABIT_KEY_INSIGHT_HTML}}
+        </div>
+      </div>
+    </div>
+
+    <div class="spotlight reveal" style="--signal-accent:#D270F0;margin-top:1.5rem">
+      <div class="spotlight-icon">&#10024;</div>
+      <div class="spotlight-title">The conversion opportunity hiding in plain sight</div>
+      <div class="spotlight-body">{{SPOTLIGHT_HABIT}}</div>
+    </div>
+
+    <div class="insight-box reveal" style="--accent:var(--amber);margin-top:1.5rem"><div class="insight-box-eyebrow" style="color:var(--amber)">Geographic Pattern</div>{{GEO_PATTERN_INSIGHT}}</div>
+    </div><!-- /deep-dive-content -->
+
+    <!-- V4 So What Callout -->
+    <div class="sowhat" style="background:rgba(var(--dim-habit),.04);border:1px solid rgba(var(--dim-habit),.15);border-left:4px solid rgb(var(--dim-habit))"><p>{{INSIGHT_HABIT}}</p></div>
 
   </div>
 </section>
 
+<!-- Bridge: Habit -> Skill -->
+<div class="copilot-divider"><div class="copilot-divider-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M11.29 3.81c.38-1.08 1.9-1.08 2.28 0l1.73 4.9a1.2 1.2 0 00.76.76l4.9 1.73c1.08.38 1.08 1.9 0 2.28l-4.9 1.73a1.2 1.2 0 00-.76.76l-1.73 4.9c-.38 1.08-1.9 1.08-2.28 0l-1.73-4.9a1.2 1.2 0 00-.76-.76l-4.9-1.73c-1.08-.38-1.08-1.9 0-2.28l4.9-1.73a1.2 1.2 0 00.76-.76l1.73-4.9z" fill="#8477FB" opacity=".5"/></svg></div></div>
 
 <!-- ═══════════════════════════════════════════════════════════════════
-     SECTION 6: SKILL — Refining Skill Set
-     Question -> Big number -> 3 stat cards -> Agent Spotlight -> So What -> Expand
+     SECTION 6: SKILL — V3 Rich Signal Section
+     V3 dual-lane layout with V4 question headline + So What callout
      ═══════════════════════════════════════════════════════════════════ -->
-<section class="s s-alt" id="skill">
-  <div class="wrap">
+<section class="section signal-section" id="skill" style="background:var(--bg);--signal-accent:#8477FB">
+  <div class="section-inner">
 
-    <div class="signal r">
+    <!-- V4 Question Headline -->
+    <div class="sig-header"><div class="sig-title"><h3>{{SKILL_QUESTION}}</h3><p>{{SKILL_CONTEXT}}</p></div><div class="sig-num"><div class="big-num" style="color:rgb(var(--dim-skill))">{{DEEP_INTERACTIONS_PCT}}%</div><div class="big-label">deep interactions</div></div></div>
 
-      <div class="signal-bar">
-        <div class="signal-dot" style="background:rgb(var(--dim-skill))"></div>
-        <span class="signal-name" style="color:rgb(var(--dim-skill))">
-          Skill &nbsp;&mdash;&nbsp; Refining Skill Set
-        </span>
-      </div>
-
-      <div class="sig-header">
-        <div class="sig-title">
-          <h3>{{SKILL_QUESTION}}</h3>
-          <p>{{SKILL_CONTEXT}}</p>
-        </div>
-        <div class="sig-num">
-          <div class="big-num" style="color:rgb(var(--dim-skill))">{{DEEP_INTERACTIONS_PCT}}%</div>
-          <div class="big-label">deep interaction rate</div>
-        </div>
-      </div>
-
-      <div class="skill-3">
-        <div class="sk-card">
-          <div class="sk-val" style="color:rgb(var(--dim-skill))">{{AGENT_ADOPTION}}%</div>
-          <div class="sk-label">Agent adoption rate</div>
-        </div>
-        <div class="sk-card">
-          <div class="sk-val" style="color:rgb(var(--dim-skill))">{{DEEP_INTERACTIONS_PCT}}%</div>
-          <div class="sk-label">Deep interactions</div>
-          <div class="sk-ctx">Sessions with 5+ prompts</div>
-        </div>
-        <div class="sk-card">
-          <div class="sk-val" style="color:rgb(var(--dim-skill))">{{AGENT_HEALTH}}%</div>
-          <div class="sk-label">Agent return rate</div>
-          <div class="sk-ctx">Multi-user agent portfolio health</div>
+    <div class="section-label reveal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:.2rem"><path d="M11.29 5.81c.38-1.08 1.9-1.08 2.28 0l.86 2.45a1.2 1.2 0 00.76.76l2.45.86c1.08.38 1.08 1.9 0 2.28l-2.45.86a1.2 1.2 0 00-.76.76l-.86 2.45c-.38 1.08-1.9 1.08-2.28 0l-.86-2.45a1.2 1.2 0 00-.76-.76l-2.45-.86c-1.08-.38-1.08-1.9 0-2.28l2.45-.86a1.2 1.2 0 00.76-.76l.86-2.45z" fill="#8477FB"/></svg>Skill</div><div class="signal-badge"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Skill</div>
+    <div class="signal-question reveal">{{M365_BREADTH}} apps per user. {{AGENT_ADOPTION}}% agent adoption. Are people building proficiency — or still stuck in basic use?</div>
+    <h2 class="section-title reveal reveal-d1">{{TITLE_SKILL}}</h2>
+    <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_SKILL}}</p>
+    <div class="headline-stat reveal reveal-d2" style="--signal-accent:#0891B2">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem"><span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;background:rgba(14,165,233,.12);color:#0891B2;border:1px solid rgba(14,165,233,.2)">Hero Metric · Deep Interactions</span></div>
+      <div class="headline-stat-value">{{DEEP_INTERACTIONS_PCT}}%</div>
+      <div class="headline-stat-label">of sessions have 5+ prompts — measuring how often users go beyond surface-level queries across {{M365_BREADTH}} app surfaces</div>
+      <span class="headline-stat-tier {{SKILL_TIER_CLASS}}" style="background:rgba(123,47,242,.1);color:#8477FB;border:1px solid rgba(123,47,242,.15)">{{SKILL_TIER}}</span>
+    </div>
+    <button class="dive-deeper-btn reveal" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:#8477FB">Dive deeper into Skill <span class="dd-arrow">+</span></button>
+    <div class="deep-dive-content">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0" class="reveal reveal-d3">
+      <!-- Copilot lane -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;border-left:4px solid #007fff">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#007fff;margin-bottom:.75rem">M365 Copilot</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">App Surface Breadth</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{M365_BREADTH}}</div><div style="font-size:.55rem;color:var(--text-3)">apps/user</div></div>
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Deep Interactions</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{DEEP_INTERACTIONS_PCT}}%</div><div style="font-size:.55rem;color:var(--text-3)">sessions with 5+ prompts</div></div>
         </div>
       </div>
-
-      <!-- Agent Spotlight (pre-rendered HTML from generator) -->
-      <div class="agent-spotlight">
-        {{AGENT_SPOTLIGHT_HTML}}
-      </div>
-
-      <!-- So What -->
-      <div class="sowhat" style="background:rgba(var(--dim-skill),.04);
-        border:1px solid rgba(var(--dim-skill),.15);
-        border-left:4px solid rgb(var(--dim-skill))">
-        <p>{{INSIGHT_SKILL}}</p>
-      </div>
-
-      <!-- Expand: App Surface -->
-      <button class="detail-toggle" data-target="skill-detail">
-        Dive deeper &mdash; app surface, agent leaderboard <span class="arr">&#9660;</span>
-      </button>
-      <div class="detail-content" id="skill-detail">
-        <div class="detail-inner">
-          <div class="detail-card">
-            <div class="detail-card-title">App Surface Breakdown</div>
-            <div class="chart-wrap">
-              <canvas id="chartAppSurface"></canvas>
-            </div>
-          </div>
-          <div class="detail-card">
-            <div class="detail-card-title">Agent Leaderboard</div>
-            {{AGENT_LEADERBOARD_HTML}}
-          </div>
+      <!-- Agents lane -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;border-left:4px solid #8477FB">
+        <div style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8477FB;margin-bottom:.75rem">Agents</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Agent Breadth</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{AGENT_BREADTH}}</div><div style="font-size:.55rem;color:var(--text-3)">agents/user</div></div>
+          <div><div style="font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3)">Agent Return Rate</div><div style="font-size:1.4rem;font-weight:900;color:var(--text)">{{AGENT_HEALTH}}%</div><div style="font-size:.55rem;color:var(--text-3)">multi-user agents</div></div>
         </div>
       </div>
+    </div>
 
-    </div><!-- /signal -->
+    <div class="two-col reveal reveal-d2" style="margin-bottom:1rem">
+      <div class="chart-card" style="border-left:4px solid #007fff">
+        <div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#007fff;margin-bottom:.4rem">M365 Copilot</div>
+        <div class="chart-card-title">App Surface Distribution</div>
+        <div class="chart-card-sub">Copilot usage by M365 application</div>
+        <div style="position:relative;height:280px"><canvas id="chartAppSurface"></canvas></div>
+      </div>
+      <div class="chart-card" style="border-left:4px solid #8477FB">
+        <div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8477FB;margin-bottom:.4rem">Agents</div>
+        <div class="chart-card-title">Agent Leaderboard</div>
+        <div class="chart-card-sub">Top agents by total sessions — ranked by reach and depth</div>
+        <div style="position:relative;height:280px"><canvas id="chartAgentBar"></canvas></div>
+      </div>
+    </div>
+    <div class="two-col reveal" style="margin-bottom:1.5rem;gap:1rem">
+      <div class="chart-card" style="padding:1.25rem"><div class="chart-card-title" style="margin-bottom:.75rem">Key Takeaways · App Surface</div>{{TAKEAWAY_APP_SURFACE}}</div>
+      <div class="chart-card" style="padding:1.25rem"><div class="chart-card-title" style="margin-bottom:.75rem">Key Takeaways · Agent Portfolio</div>{{TAKEAWAY_AGENT_LEADERBOARD}}</div>
+    </div>
+
+    <!-- Agent table (consolidated into Skill) -->
+    <div style="margin-top:2rem" class="reveal reveal-d4">
+      <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">Top Agents by Impact <span style="display:inline-block;padding:.15rem .5rem;border-radius:100px;font-size:.6rem;font-weight:600;background:rgba(123,47,242,.1);color:var(--purple);border:1px solid rgba(123,47,242,.2)">Agents</span></h3>
+      <p style="font-size:.85rem;color:var(--text-2);margin-bottom:1.25rem">The agents that matter most — ranked by total sessions with type, reach and stickiness.</p>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:.78rem">
+          <thead><tr style="border-bottom:2px solid var(--border)"><th style="text-align:left;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Agent</th><th style="text-align:left;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Type</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Users</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Sessions</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Sess/User</th></tr></thead>
+          <tbody>{{AGENT_TABLE_ROWS}}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="so-what reveal" style="--signal-accent:#8477FB">
+      <div class="so-what-text">{{INSIGHT_SKILL}}</div>
+    </div>
+    </div><!-- /deep-dive-content -->
+
+    <!-- V4 So What Callout -->
+    <div class="sowhat" style="background:rgba(var(--dim-skill),.04);border:1px solid rgba(var(--dim-skill),.15);border-left:4px solid rgb(var(--dim-skill))"><p>{{INSIGHT_SKILL}}</p></div>
 
   </div>
 </section>
@@ -1132,7 +1346,7 @@ window.addEventListener('scroll', tick, {passive:true});
 tick();
 
 
-/* ── IntersectionObserver for .r reveal ── */
+/* ── IntersectionObserver for .r reveal (V4 sections) ── */
 var revealObs = new IntersectionObserver(function(entries){
   entries.forEach(function(e){
     if(e.isIntersecting) e.target.classList.add('on');
@@ -1143,6 +1357,49 @@ document.querySelectorAll('.r').forEach(function(el){ revealObs.observe(el); });
 
 /* Force-reveal hero elements immediately */
 document.querySelectorAll('#hero .r').forEach(function(el){ el.classList.add('on'); });
+
+
+/* ── IntersectionObserver for .reveal (V3 signal sections) ── */
+var v3RevealObs = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(e.isIntersecting) e.target.classList.add('visible');
+  });
+}, {threshold:0.12, rootMargin:'0px 0px -40px 0px'});
+
+document.querySelectorAll('.reveal').forEach(function(el){ v3RevealObs.observe(el); });
+
+
+/* ── V3 Tier Navigation (Overall / M365 / Agents tabs) ── */
+document.querySelectorAll('.tier-nav').forEach(function(nav){
+  nav.addEventListener('click', function(e){
+    var btn = e.target.closest('.tier-nav-btn');
+    if(!btn) return;
+    var tier = btn.dataset.tier;
+    nav.querySelectorAll('.tier-nav-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    var section = nav.closest('.section-inner') || nav.closest('.deep-dive-content');
+    if(!section) return;
+    section.querySelectorAll('[data-tier-content]').forEach(function(g){
+      g.style.display = (tier === 'all' || g.dataset.tierContent === tier) ? '' : 'none';
+    });
+  });
+});
+
+
+/* ── Animate V3 retention bars on first view ── */
+var retBarObs = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(!e.isIntersecting) return;
+    e.target.querySelectorAll('.retention-fill').forEach(function(bar){
+      var w = bar.dataset.width;
+      if(!w) return;
+      setTimeout(function(){ bar.style.width = w + '%'; }, 200);
+    });
+    retBarObs.unobserve(e.target);
+  });
+}, {threshold: 0.2});
+
+document.querySelectorAll('.retention-grid').forEach(function(el){ retBarObs.observe(el); });
 
 
 /* ── Expand / Collapse toggles ── */
@@ -1179,7 +1436,7 @@ if(editBtn){
   editBtn.addEventListener('click', function(){
     var active = document.body.classList.toggle('edit-mode');
     editBtn.textContent = active ? 'Done' : 'Edit';
-    var editableSelectors = 'h1,h2,h3,p,.kpi-v,.kpi-l,.v-stat,.v-sub,.r3-val,.r3-label,.sk-val,.sk-label,.big-num,.big-label,.sowhat p,.p-transition p,.rec h3,.rec p,.rec-target';
+    var editableSelectors = 'h1,h2,h3,p,.kpi-v,.kpi-l,.v-stat,.v-sub,.r3-val,.r3-label,.sk-val,.sk-label,.big-num,.big-label,.sowhat p,.p-transition p,.rec h3,.rec p,.rec-target,.section-title,.section-subtitle,.signal-question,.headline-stat-value,.headline-stat-label,.so-what-text,.stat-callout-label,.spotlight-body,.spotlight-title,.chart-card-sub';
     document.querySelectorAll(editableSelectors).forEach(function(el){
       el.contentEditable = active ? 'true' : 'false';
     });
@@ -1187,23 +1444,21 @@ if(editBtn){
 }
 
 
-/* ── Animate habit bars on first view ── */
-var habitObs = new IntersectionObserver(function(entries){
-  entries.forEach(function(e){
-    if(!e.isIntersecting) return;
-    e.target.querySelectorAll('.h-bar').forEach(function(bar){
-      var w = bar.style.width;
-      bar.style.width = '0';
-      requestAnimationFrame(function(){
-        setTimeout(function(){ bar.style.width = w; }, 80);
-      });
+/* ── V3 Dive-deeper: initialize charts on first expand ── */
+document.querySelectorAll('.dive-deeper-btn').forEach(function(btn){
+  var observer = new MutationObserver(function(mutations){
+    mutations.forEach(function(m){
+      if(m.target.classList.contains('expanded') && !m.target.dataset.chartsInit){
+        m.target.dataset.chartsInit = '1';
+        initChartsIn(m.target);
+      }
     });
-    habitObs.unobserve(e.target);
   });
-}, {threshold: 0.2});
-
-var hb = document.getElementById('habit-bars');
-if(hb) habitObs.observe(hb);
+  var content = btn.nextElementSibling;
+  if(content && content.classList.contains('deep-dive-content')){
+    observer.observe(content, {attributes:true, attributeFilter:['class']});
+  }
+});
 
 
 /* ── Animate org table score bars on first view ── */
@@ -1310,8 +1565,12 @@ var counterObs = new IntersectionObserver(function(entries){
 document.querySelectorAll('.counter').forEach(function(el){ counterObs.observe(el); });
 
 
-/* ── Chart.js initialisation (only inside expandable sections) ── */
+/* ── Chart.js initialisation (works for both V3 deep-dive and V4 detail sections) ── */
 function initChartsIn(container){
+
+  var darkGrid = 'rgba(255,255,255,.04)';
+  var tickColor = '#64748b';
+  var tickFont = {size:10};
 
   /* Weekly Trend Chart */
   if(container.querySelector('#chartWeeklyTrend')){
@@ -1341,8 +1600,8 @@ function initChartsIn(container){
             maintainAspectRatio:false,
             plugins:{legend:{display:false},datalabels:{display:false}},
             scales:{
-              x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10},maxRotation:45}},
-              y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10}},beginAtZero:true}
+              x:{grid:{color:darkGrid},ticks:{color:tickColor,font:tickFont,maxRotation:45}},
+              y:{grid:{color:darkGrid},ticks:{color:tickColor,font:tickFont},beginAtZero:true}
             }
           }
         });
@@ -1386,8 +1645,8 @@ function initChartsIn(container){
               }
             },
             scales:{
-              x:{grid:{display:false},ticks:{color:'#64748b',font:{size:10}}},
-              y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10}},
+              x:{grid:{display:false},ticks:{color:tickColor,font:tickFont}},
+              y:{grid:{color:darkGrid},ticks:{color:tickColor,font:tickFont},
                 min:0,max:100}
             }
           },
@@ -1424,12 +1683,167 @@ function initChartsIn(container){
             maintainAspectRatio:false,
             plugins:{legend:{display:false},datalabels:{display:false}},
             scales:{
-              x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10}}},
-              y:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:10}}}
+              x:{grid:{color:darkGrid},ticks:{color:tickColor,font:tickFont}},
+              y:{grid:{display:false},ticks:{color:'#94a3b8',font:tickFont}}
             }
           }
         });
       }catch(e){console.warn('chartAppSurface init failed:',e);}
+    }
+  }
+
+  /* User Population Tiers Chart (V3 Reach) */
+  if(container.querySelector('#chartTiers')){
+    var tiersCtx = document.getElementById('chartTiers');
+    if(tiersCtx){
+      try{
+        var tiersLabels = {{TIER_CHART_LABELS_JSON}};
+        var tiersValues = {{TIER_CHART_VALUES_JSON}};
+        var tiersColors = {{TIER_CHART_COLORS_JSON}};
+        new Chart(tiersCtx, {
+          type:'bar',
+          data:{
+            labels: tiersLabels,
+            datasets:[{
+              label:'Users',
+              data: tiersValues,
+              backgroundColor: tiersColors,
+              borderWidth:0,
+              borderRadius:6,
+              maxBarThickness:48
+            }]
+          },
+          options:{
+            responsive:true,
+            maintainAspectRatio:false,
+            plugins:{legend:{display:false},datalabels:{anchor:'end',align:'top',color:'#94a3b8',font:{size:10,weight:'bold'},formatter:function(v){return v?v.toLocaleString():'';}}},
+            scales:{
+              x:{grid:{display:false},ticks:{color:tickColor,font:tickFont}},
+              y:{grid:{color:darkGrid},ticks:{color:tickColor,font:tickFont},beginAtZero:true}
+            }
+          },
+          plugins:[ChartDataLabels]
+        });
+      }catch(e){console.warn('chartTiers init failed:',e);}
+    }
+  }
+
+  /* Sessions per User Engagement Chart (V3 Reach M365 tier) */
+  if(container.querySelector('#chartEngagement')){
+    var engCtx = document.getElementById('chartEngagement');
+    if(engCtx){
+      try{
+        var engLabels = {{ENGAGEMENT_CHART_LABELS_JSON}};
+        var engValues = {{ENGAGEMENT_CHART_VALUES_JSON}};
+        var engColors = {{ENGAGEMENT_CHART_COLORS_JSON}};
+        new Chart(engCtx, {
+          type:'bar',
+          data:{
+            labels: engLabels,
+            datasets:[{
+              label:'Sessions per User',
+              data: engValues,
+              backgroundColor: engColors,
+              borderWidth:0,
+              borderRadius:6,
+              maxBarThickness:40
+            }]
+          },
+          options:{
+            responsive:true,
+            maintainAspectRatio:false,
+            plugins:{legend:{display:false},datalabels:{anchor:'end',align:'top',color:'#94a3b8',font:{size:10,weight:'bold'},formatter:function(v){return v?v.toFixed(1):'';}}},
+            scales:{
+              x:{grid:{display:false},ticks:{color:tickColor,font:tickFont}},
+              y:{grid:{color:darkGrid},ticks:{color:tickColor,font:tickFont},beginAtZero:true}
+            }
+          },
+          plugins:[ChartDataLabels]
+        });
+      }catch(e){console.warn('chartEngagement init failed:',e);}
+    }
+  }
+
+  /* Org Scatter Chart (V3 Reach Agents tier) */
+  if(container.querySelector('#chartOrgScatter')){
+    var scCtx = document.getElementById('chartOrgScatter');
+    if(scCtx){
+      try{
+        var scData = {{ORG_SCATTER_DATA_JSON}};
+        new Chart(scCtx, {
+          type:'bubble',
+          data:{datasets: scData},
+          options:{
+            responsive:true,
+            maintainAspectRatio:false,
+            plugins:{legend:{display:false},datalabels:{display:false}},
+            scales:{
+              x:{title:{display:true,text:'M365 Copilot Users',color:tickColor,font:tickFont},grid:{color:darkGrid},ticks:{color:tickColor,font:tickFont}},
+              y:{title:{display:true,text:'Agent Adoption %',color:tickColor,font:tickFont},grid:{color:darkGrid},ticks:{color:tickColor,font:tickFont},beginAtZero:true}
+            }
+          }
+        });
+      }catch(e){console.warn('chartOrgScatter init failed:',e);}
+    }
+  }
+
+  /* Active Day Distribution by Tier (V3 Habit) */
+  if(container.querySelector('#chartHabitTiers')){
+    var htCtx = document.getElementById('chartHabitTiers');
+    if(htCtx){
+      try{
+        var htLabels = {{HABIT_TIERS_LABELS_JSON}};
+        var htDatasets = {{HABIT_TIERS_DATASETS_JSON}};
+        new Chart(htCtx, {
+          type:'bar',
+          data:{labels: htLabels, datasets: htDatasets},
+          options:{
+            responsive:true,
+            maintainAspectRatio:false,
+            plugins:{legend:{display:true,position:'top',labels:{color:'#94a3b8',font:{size:10}}},datalabels:{display:false}},
+            scales:{
+              x:{stacked:true,grid:{display:false},ticks:{color:tickColor,font:tickFont}},
+              y:{stacked:true,grid:{color:darkGrid},ticks:{color:tickColor,font:tickFont,callback:function(v){return v+'%';}},beginAtZero:true,max:100}
+            }
+          }
+        });
+      }catch(e){console.warn('chartHabitTiers init failed:',e);}
+    }
+  }
+
+  /* Agent Leaderboard Bar Chart (V3 Skill) */
+  if(container.querySelector('#chartAgentBar')){
+    var abCtx = document.getElementById('chartAgentBar');
+    if(abCtx){
+      try{
+        var abLabels = {{AGENT_BAR_LABELS_JSON}};
+        var abValues = {{AGENT_BAR_VALUES_JSON}};
+        new Chart(abCtx, {
+          type:'bar',
+          data:{
+            labels: abLabels,
+            datasets:[{
+              label:'Sessions',
+              data: abValues,
+              backgroundColor:'rgba(132,119,251,.45)',
+              borderColor:'rgb(132,119,251)',
+              borderWidth:1,
+              borderRadius:4,
+              maxBarThickness:32
+            }]
+          },
+          options:{
+            indexAxis:'y',
+            responsive:true,
+            maintainAspectRatio:false,
+            plugins:{legend:{display:false},datalabels:{display:false}},
+            scales:{
+              x:{grid:{color:darkGrid},ticks:{color:tickColor,font:tickFont}},
+              y:{grid:{display:false},ticks:{color:'#94a3b8',font:tickFont}}
+            }
+          }
+        });
+      }catch(e){console.warn('chartAgentBar init failed:',e);}
     }
   }
 }
@@ -1437,10 +1851,10 @@ function initChartsIn(container){
 
 <!--
   ═══════════════════════════════════════════════════════════════════
-  V4 TEMPLATE PLACEHOLDER REFERENCE
+  V4 TEMPLATE PLACEHOLDER REFERENCE (V3 Signal Sections Merged)
   ═══════════════════════════════════════════════════════════════════
 
-  REUSED FROM V3 (same populateTemplate() function):
+  CORE PLACEHOLDERS (V4 hero, verdict, framework, orgs, actions):
   ─────────────────────────────────────────────────────────────────
   {{CUSTOMER_NAME}}            — Company name
   {{ANALYSIS_PERIOD}}          — e.g. "Oct 2025 - Jan 2026"
@@ -1449,7 +1863,6 @@ function initChartsIn(container){
   {{M365_RETENTION}}           — Month-on-month retention %
   {{INACTIVE_LICENSES}}        — Number of idle licenses
   {{M365_ENABLEMENT}}          — License activation %
-  {{BAND_6_10}}                — Users in 6-10 day band
   {{CHAT_USERS}}               — Unlicensed chat users
   {{EXEC_SUMMARY_GOOD}}        — What's working text
   {{EXEC_SUMMARY_GAP}}         — What's next text
@@ -1462,10 +1875,6 @@ function initChartsIn(container){
   {{LICENSE_COVERAGE_PCT}}     — License coverage %
   {{LICENSED_USERS}}           — Active licensed users
   {{EMBEDDED_USER_RATE}}       — Habitual user rate %
-  {{LIC_BAND_1_5_PCT}}        — % users in 1-5 day band
-  {{LIC_BAND_6_10_PCT}}       — % users in 6-10 day band
-  {{LIC_BAND_11_15_PCT}}      — % users in 11-15 day band
-  {{LIC_BAND_16_PLUS_PCT}}    — % users in 16+ day band
   {{DEEP_INTERACTIONS_PCT}}    — Deep interaction rate %
   {{AGENT_ADOPTION}}           — Agent adoption %
   {{AGENT_HEALTH}}             — Agent return rate %
@@ -1477,14 +1886,7 @@ function initChartsIn(container){
   {{METRIC_GLOSSARY_HTML}}     — 13-card metric glossary
   {{DOMINANT_PATTERN_NUM}}     — 1, 2, or 3
 
-  Chart data (JSON):
-  {{WEEKLY_TREND_LABELS_JSON}} — Array of week labels
-  {{WEEKLY_TREND_VALUES_JSON}} — Array of weekly values
-  {{RETENTION_MONTH_LABELS}}   — JSON string of month labels
-  {{RETENTION_MONTH_VALUES}}   — JSON string of retention values
-  {{RETENTION_MONTH_COLORS}}   — JSON string of bar colors
-
-  NEW V4 PLACEHOLDERS (generator must populate):
+  V4 LAYOUT PLACEHOLDERS:
   ─────────────────────────────────────────────────────────────────
   {{HERO_CONTEXT}}             — 2-3 sentence hero context
   {{VERDICT_INTRO}}            — Exec summary intro paragraph
@@ -1498,13 +1900,73 @@ function initChartsIn(container){
   {{HABIT_CONTEXT}}            — Supporting context for Habit
   {{SKILL_QUESTION}}           — Provocative question for Skill
   {{SKILL_CONTEXT}}            — Supporting context for Skill
-  {{AGENT_SPOTLIGHT_HTML}}     — Pre-rendered agent intensity bars
-  {{AGENT_LEADERBOARD_HTML}}   — Pre-rendered agent leaderboard
   {{ORG_TABLE_V4_HTML}}        — Pre-rendered org table
   {{ACTIONS_HTML}}             — Pre-rendered 4 recommendation cards
   {{V4_SCORECARD_HTML}}        — Pillar-based scorecard with radars
+
+  V3 SIGNAL SECTION PLACEHOLDERS (Reach / Habit / Skill):
+  ─────────────────────────────────────────────────────────────────
+  {{LICENSED_USERS_FMT}}       — Formatted licensed user count
+  {{TITLE_REACH}}              — Reach section title
+  {{SUBTITLE_REACH}}           — Reach section subtitle
+  {{REACH_TIER_CLASS}}         — CSS class for reach tier badge
+  {{REACH_TIER}}               — Reach tier label text
+  {{INSIGHT_REACH_TIER}}       — Tier insight for reach
+  {{AGENT_USERS}}              — Agent user count
+  {{TOTAL_LICENSED_SEATS}}     — Total licensed seat count
+  {{LICENSE_COVERAGE}}         — License coverage % (non-PCT version)
+  {{ORG_PENETRATION_PCT}}      — Org penetration %
+  {{TAKEAWAY_WEEKLY_TREND}}    — HTML for weekly trend takeaways
+  {{INSIGHT_MONTHLY_GROWTH}}   — Monthly growth insight text
+  {{ORG_SCATTER_INSIGHTS}}     — Org scatter key takeaways HTML
+  {{INSIGHT_ENGAGEMENT_DEPTH}} — Engagement depth insight text
+  {{ORG_INTENSITY_HEADLINE}}   — Org intensity headline
+  {{ORG_INTENSITY_BODY}}       — Org intensity body text
+  {{ORG_SCATTER_HEADLINE}}     — Org scatter headline
+  {{ORG_INTENSITY_COMPARISON}} — Org intensity comparison text
+  {{ORG_AGENT_INSIGHT}}        — Org agent insight text
+  {{M365_RETENTION_INT}}       — Retention as integer
+  {{TITLE_HABIT}}              — Habit section title
+  {{SUBTITLE_HABIT}}           — Habit section subtitle
+  {{HABIT_TIER_CLASS}}         — CSS class for habit tier badge
+  {{HABIT_TIER}}               — Habit tier label text
+  {{CHAT_RETENTION}}           — Chat user retention %
+  {{AGENT_RETENTION}}          — Agent user retention %
+  {{RETENTION_CORRECTION_NOTE}}— Retention correction note
+  {{AGENT_HABITUAL_PCT}}       — Agent habitual user %
+  {{HABIT_KEY_INSIGHT_HTML}}   — Habit key insight HTML block
+  {{SPOTLIGHT_HABIT}}          — Habit spotlight body text
+  {{GEO_PATTERN_INSIGHT}}      — Geographic pattern insight
+  {{TITLE_SKILL}}              — Skill section title
+  {{SUBTITLE_SKILL}}           — Skill section subtitle
+  {{SKILL_TIER_CLASS}}         — CSS class for skill tier badge
+  {{SKILL_TIER}}               — Skill tier label text
+  {{M365_BREADTH}}             — App surface breadth
+  {{AGENT_BREADTH}}            — Agent breadth per user
+  {{TAKEAWAY_APP_SURFACE}}     — App surface takeaways HTML
+  {{TAKEAWAY_AGENT_LEADERBOARD}} — Agent leaderboard takeaways HTML
+  {{AGENT_TABLE_ROWS}}         — Agent table rows HTML
+
+  CHART DATA (JSON):
+  ─────────────────────────────────────────────────────────────────
+  {{WEEKLY_TREND_LABELS_JSON}} — Array of week labels
+  {{WEEKLY_TREND_VALUES_JSON}} — Array of weekly values
+  {{RETENTION_MONTH_LABELS}}   — JSON array of month labels
+  {{RETENTION_MONTH_VALUES}}   — JSON array of retention values
+  {{RETENTION_MONTH_COLORS}}   — JSON array of bar colors
   {{APP_SURFACE_LABELS_JSON}}  — Array of app names
   {{APP_SURFACE_VALUES_JSON}}  — Array of app user counts
+  {{TIER_CHART_LABELS_JSON}}   — Tier chart labels (V3 Reach)
+  {{TIER_CHART_VALUES_JSON}}   — Tier chart values
+  {{TIER_CHART_COLORS_JSON}}   — Tier chart colors
+  {{ENGAGEMENT_CHART_LABELS_JSON}} — Engagement chart labels
+  {{ENGAGEMENT_CHART_VALUES_JSON}} — Engagement chart values
+  {{ENGAGEMENT_CHART_COLORS_JSON}} — Engagement chart colors
+  {{ORG_SCATTER_DATA_JSON}}    — Bubble chart datasets
+  {{HABIT_TIERS_LABELS_JSON}}  — Habit tier day band labels
+  {{HABIT_TIERS_DATASETS_JSON}}— Habit tier stacked bar datasets
+  {{AGENT_BAR_LABELS_JSON}}    — Agent leaderboard labels
+  {{AGENT_BAR_VALUES_JSON}}    — Agent leaderboard values
   ═══════════════════════════════════════════════════════════════════
 -->
 
