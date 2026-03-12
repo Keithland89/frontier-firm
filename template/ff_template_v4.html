@@ -712,15 +712,15 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
   .section-subtitle { font-size: 0.72rem !important; margin-bottom: 0.4rem !important; }
   .section-label { font-size: 0.55rem !important; margin-bottom: 0.2rem !important; }
 
-  #hero { page-break-after: always; min-height: auto !important; padding: 1.2rem 1rem !important; }
-  #methodology { page-break-before: auto; }
-  #summary     { page-break-before: always; }
-  #scale       { page-break-before: always; }
-  #frequency   { page-break-before: always; }
-  #proficiency { page-break-before: always; }
-  #metrics     { page-break-before: always; }
-  #license     { page-break-before: always; }
+  #overview    { page-break-after: always; min-height: auto !important; padding: 1.2rem 1rem !important; }
+  #verdict     { page-break-before: auto; }
+  #framework   { page-break-before: always; }
+  #reach       { page-break-before: always; }
+  #habit       { page-break-before: always; }
+  #skill       { page-break-before: always; }
+  #orgs        { page-break-before: always; }
   #actions     { page-break-before: always; }
+  #appendix    { page-break-before: always; }
 
   .chart-card, .theme-card, .stat-callout, .metric-card,
   .rec-card, .agent-panel, .insight-box, .funnel-container,
@@ -1077,7 +1077,6 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <a href="#reach" class="nav-link" data-section="reach">Reach</a>
       <a href="#habit" class="nav-link" data-section="habit">Habit</a>
       <a href="#skill" class="nav-link" data-section="skill">Skill</a>
-      <a href="#practice" class="nav-link" data-section="practice">Practice</a>
       <a href="#orgs" class="nav-link" data-section="orgs">Orgs</a>
       <a href="#actions" class="nav-link" data-section="actions">Actions</a>
     </div>
@@ -1716,7 +1715,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <h2 class="section-title reveal reveal-d1">Detailed Scorecard &amp; Metric Reference</h2>
     </div>
 
-    <button class="dive-deeper-btn reveal reveal-d2" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="--accent:rgba(255,255,255,.3);border-color:rgba(255,255,255,.1)">
+    <button class="appendix-toggle reveal reveal-d2" onclick="this.nextElementSibling.classList.toggle('expanded');this.classList.toggle('open')" style="display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;margin:.5rem 0;padding:.75rem 1.5rem;border:1px dashed rgba(255,255,255,.15);border-radius:10px;background:transparent;color:rgba(255,255,255,.4);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:all .3s">
       Expand Scorecard &amp; Glossary <span class="dd-arrow">+</span>
     </button>
     <div class="deep-dive-content">
@@ -1735,13 +1734,6 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
         <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5);margin-bottom:.75rem">Metric Glossary — All 13 Metrics</div>
         <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:1rem;line-height:1.6">Each metric is scored into three patterns: <span class="glossary-band glossary-band-p1">Pattern 1</span> <span class="glossary-band glossary-band-p2">Pattern 2</span> <span class="glossary-band glossary-band-p3">Pattern 3</span>. A pillar's pattern equals its weakest metric. A lane's pattern equals its weakest pillar. The overall pattern equals the weaker lane.</p>
         {{METRIC_GLOSSARY_HTML}}
-      </div>
-
-      <!-- Spotlight -->
-      <div class="spotlight" style="--signal-accent:#8477FB;margin-top:1.5rem">
-        <div class="spotlight-icon">&#10024;</div>
-        <div class="spotlight-title">What the data says about where to go next</div>
-        <div class="spotlight-body">{{SPOTLIGHT_MATURITY}}</div>
       </div>
 
     </div>
@@ -2213,7 +2205,9 @@ if(document.getElementById('chartSessionsPerOrg')){
   var aaLabels={{AGENT_ADOPT_ORG_LABELS_JSON}};
   var aaValues={{AGENT_ADOPT_ORG_VALUES_JSON}};
   var aaOverall={{AGENT_ADOPTION}};
-  new Chart(document.getElementById('chartSessionsPerOrg'),{type:'bar',data:{labels:aaLabels,datasets:[{data:aaValues,backgroundColor:aaValues.map(function(v){return v>=aaOverall?'rgba(132,119,251,.7)':'rgba(148,163,184,.35)'}),borderRadius:4,barThickness:20}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},datalabels:{display:true,anchor:'end',align:'end',color:cLabel,font:{size:10,weight:700},formatter:function(v){return v+'%'}},annotation:{annotations:{avgLine:{type:'line',xMin:aaOverall,xMax:aaOverall,borderColor:'rgba(132,119,251,.5)',borderWidth:2,borderDash:[4,4],label:{display:true,content:'Avg '+aaOverall+'%',position:'start',color:'#8477FB',font:{size:9,weight:700},backgroundColor:'rgba(0,0,0,.6)'}}}}},scales:{x:{title:{display:true,text:'Agent Adoption %',color:cTick,font:{size:10,weight:600}},grid:{color:cGrid},ticks:{color:cTickSub,font:{size:9},callback:function(v){return v+'%'}},max:100},y:{grid:{display:false},ticks:{color:cTick,font:{size:10,weight:600}}}}}});
+  var aaMax=Math.max.apply(null,aaValues.length?aaValues:[10]);
+  var aaXMax=Math.ceil(aaMax*1.3/5)*5; /* round up to nearest 5 with 30% padding */
+  new Chart(document.getElementById('chartSessionsPerOrg'),{type:'bar',data:{labels:aaLabels,datasets:[{data:aaValues,backgroundColor:aaValues.map(function(v){return v>=aaOverall?'rgba(132,119,251,.7)':'rgba(148,163,184,.35)'}),borderRadius:4,barThickness:20}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},datalabels:{display:true,anchor:'end',align:'end',color:cLabel,font:{size:10,weight:700},formatter:function(v){return v+'%'}},annotation:{annotations:{avgLine:{type:'line',xMin:aaOverall,xMax:aaOverall,borderColor:'rgba(132,119,251,.5)',borderWidth:2,borderDash:[4,4],label:{display:true,content:'Avg '+aaOverall+'%',position:'start',color:'#8477FB',font:{size:9,weight:700},backgroundColor:'rgba(0,0,0,.6)'}}}}},scales:{x:{title:{display:true,text:'Agent Adoption %',color:cTick,font:{size:10,weight:600}},grid:{color:cGrid},ticks:{color:cTickSub,font:{size:9},callback:function(v){return v+'%'}},min:0,max:aaXMax},y:{grid:{display:false},ticks:{color:cTick,font:{size:10,weight:600}}}}}});
 }
 
 /* Chart: Org Scatter - M365 vs Agents */
