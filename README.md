@@ -2,7 +2,7 @@
 
 Generate AI adoption maturity reports from Microsoft 365 Copilot usage data.
 
-The **Frontier Firm Assessment** measures an organisation's Microsoft Copilot maturity across **13 metrics**, **3 pillars** (Reach, Habit, Skill), and **2 lanes** (M365 Copilot, Agents) — classifying their maturity into **Pattern 1** (Human with Assistant), **Pattern 2** (Human-Agent Teams), or **Pattern 3** (Human-led, Agent-operated).
+The **Frontier Firm Assessment** measures an organisation's Microsoft Copilot maturity across **13 metrics**, **3 pillars** (Reach, Habit, Skill), and **2 lanes** (M365 Copilot, Agents) — classifying their maturity into **Pattern 1** (Foundation), **Pattern 2** (Expansion), or **Pattern 3** (Frontier).
 
 ## Quick Start
 
@@ -72,9 +72,9 @@ node src/generate-report.js --data data/contoso.json --v3 --no-ai
 
 | Pattern | Name | Description |
 |---------|------|-------------|
-| **Pattern 1** | Human with Assistant | Every employee has an AI assistant. Consistent weekly use replaces "try-and-see" spikes. |
-| **Pattern 2** | Human-Agent Teams | Agents join teams as digital colleagues. Repeatable team workflows emerge. |
-| **Pattern 3** | Human-led, Agent-operated | Humans set direction; agents execute business processes end-to-end. |
+| **Pattern 1** | Foundation | Every employee has an AI assistant. Consistent weekly use replaces "try-and-see" spikes. |
+| **Pattern 2** | Expansion | Agents join teams as digital colleagues. Repeatable team workflows emerge. |
+| **Pattern 3** | Frontier | Humans set direction; agents execute business processes end-to-end. |
 
 ### 13 Metrics (2 Lanes × 3 Pillars)
 

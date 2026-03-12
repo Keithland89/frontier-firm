@@ -3,7 +3,8 @@
  * Frontier Firm Report Generator
  *
  * Usage:
- *   node generate-report.js --data customer_data.json --output ./reports/
+ *   node generate-report.js --data customer_data.json --name "Vodafone" --v4
+ *   node generate-report.js --data customer_data.json --name "Company Name" --output ./reports/
  *   node generate-report.js --data customer_data.json --output ./reports/ --no-ai
  *
  * Reads a customer data JSON, calculates signal scores and pattern,
@@ -32,6 +33,7 @@ const dataArg = args.find((a, i) => args[i - 1] === '--data') || path.resolve(__
 const outputArg = args.find((a, i) => args[i - 1] === '--output') || path.resolve(__dirname, '..', 'output');
 const noAI = args.includes('--no-ai');
 const brandArg = args.find((a, i) => args[i - 1] === '--brand');
+const nameArg = args.find((a, i) => args[i - 1] === '--name');
 const apiKey = process.env.ANTHROPIC_API_KEY || '';
 
 // ============================================================
@@ -70,6 +72,10 @@ const schemaV2 = fs.existsSync(schemaV2Path) ? JSON.parse(fs.readFileSync(schema
 const schemaV4Path = path.resolve(__dirname, '..', 'schema', 'ff_schema_v4.json');
 const schemaV4 = fs.existsSync(schemaV4Path) ? JSON.parse(fs.readFileSync(schemaV4Path, 'utf8')) : null;
 const data = JSON.parse(fs.readFileSync(path.resolve(dataArg), 'utf8'));
+if (nameArg) {
+  data.customer_name = nameArg;
+  console.log(`Customer name overridden to: ${nameArg}`);
+}
 console.log(`Loaded data for: ${data.customer_name}`);
 
 // ============================================================
@@ -299,7 +305,7 @@ if (schemaV4) {
 // ============================================================
 const patternProfile = { p1: 'Absent', p2: 'Absent', p3: 'Absent' };
 
-// P1: Human with Assistant
+// P1: Foundation
 // Presence: ≥10% licensed users with ≥1 active day (≈ m365_enablement ≥ 10%)
 // Maturity: ≥30% in Frequent/Daily tier (≥11 active days) → licensed_band_11_15_pct + licensed_band_16_plus_pct ≥ 30
 const p1PresenceVal = _n('m365_enablement', 0);
@@ -308,7 +314,7 @@ if (p1PresenceVal >= 10) {
   patternProfile.p1 = p1MaturityVal >= 30 ? 'Primary' : 'Nascent';
 }
 
-// P2: Human-Agent Teams
+// P2: Expansion
 // Presence: ≥5% of users with agent sessions (≈ agent_adoption ≥ 5%)
 // Maturity: agent return rate ≥ 40% (≈ agent_health ≥ 40)
 const p2PresenceVal = _n('agent_adoption', 0);
@@ -317,7 +323,7 @@ if (p2PresenceVal >= 5) {
   patternProfile.p2 = p2MaturityVal >= 40 ? 'Primary' : 'Nascent';
 }
 
-// P3: Human-Led, Agent-Operated
+// P3: Frontier
 // Presence: ≥5 active agents in portfolio OR ≥5% users in daily agent tier
 // Maturity: agents across ≥3 distinct business functions (use org_count with agents as proxy)
 const p3PresenceAgents = _n('multi_user_agents', 0) >= 5 || (_n('agent_habitual_rate', 0) >= 5);
@@ -363,7 +369,7 @@ const breadthVal = _n('m365_breadth', 0);
 if (patternProfile.p3 === 'Primary') {
   cultureStage = 'Frontier Primary'; cultureStageNum = 4;
   cultureHeadline = 'Agents are running real work \u2014 the question is governance';
-  cultureDesc = 'This organisation has crossed the agent inflection point. Human-agent teams are active across multiple functions \u2014 agents don\u2019t just assist, they execute. Employees are becoming "agent bosses," orchestrating outcomes by directing autonomous agents. The question is no longer "should we use AI?" \u2014 it\u2019s "why isn\u2019t AI handling this?"';
+  cultureDesc = 'This organisation has crossed the agent inflection point. Frontier-level agent operations are active across multiple functions \u2014 agents don\u2019t just assist, they execute. Employees are becoming "agent bosses," orchestrating outcomes by directing autonomous agents. The question is no longer "should we use AI?" \u2014 it\u2019s "why isn\u2019t AI handling this?"';
   cultureRedFlag = 'The risk is over-automation without oversight. Agents running substantial workflows need review cadences, escalation protocols, and governance frameworks. Speed without judgment isn\u2019t maturity \u2014 it\u2019s risk.';
   cultureAction = 'Structure teams as human-agent units with clear roles. Build continuous feedback loops between humans and agents. Embed AI competency in hiring and governance.';
 } else if (patternProfile.p2 === 'Primary' || (patternProfile.p2 === 'Nascent' && patternProfile.p1 === 'Primary')) {
@@ -942,6 +948,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = safeSub(html, /\{\{LICENSE_COVERAGE_PCT\}\}/g, data.license_coverage, 'license_coverage');
   html = safeSub(html, /\{\{LICENSE_COVERAGE\}\}/g, data.license_coverage, 'license_coverage');
   html = safeSub(html, /\{\{ORG_PENETRATION_PCT\}\}/g, data.org_penetration_pct, 'org_penetration_pct');
+  html = safeSub(html, /\{\{CONCENTRATION_INDEX\}\}/g, data.concentration_index, 'concentration_index');
   html = safeSub(html, /\{\{EMBEDDED_USER_RATE\}\}/g, data.embedded_user_rate, 'embedded_user_rate');
   html = safeSub(html, /\{\{AGENT_HABITUAL_PCT\}\}/g, typeof data.agent_habitual_rate === 'number' ? data.agent_habitual_rate : (typeof data.agent_habitual === 'number' ? data.agent_habitual : 'not_available'), 'agent_habitual_pct');
   html = safeSub(html, /\{\{COHORT_CHURN_DELTA\}\}/g,
@@ -1068,6 +1075,50 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     insightHtml += '</div>';
 
     html = html.replace(/\{\{HABIT_KEY_INSIGHT_HTML\}\}/g, insightHtml);
+
+    // Agent-focused equivalent
+    var agentHabitual = Math.round((ab1115 + ab16p) * 10) / 10;
+    var agentConversion = Math.round(ab610 * 10) / 10;
+    var agentInsightTitle, agentInsightBody, agentInsightColor;
+    if (ab15 >= 90) {
+      agentInsightTitle = ab15 + '% of agent users are in the shallow zone';
+      agentInsightBody = 'Almost all agent users engage <strong>fewer than 6 days/month</strong>. Agent usage is exploratory, not habitual. The ' + agentConversion + '% in the 6\u201310 day band represent the conversion opportunity.';
+      agentInsightColor = '#8477FB';
+    } else if (agentHabitual >= 15) {
+      agentInsightTitle = agentHabitual + '% of agent users are deeply habitual';
+      agentInsightBody = '<strong>' + agentHabitual + '%</strong> of agent users hit <strong>11+ active days/month</strong> \u2014 a strong signal that agents are becoming part of daily work. Focus on replicating what these power users do.';
+      agentInsightColor = '#0D9488';
+    } else {
+      agentInsightTitle = 'Agent habits are still forming';
+      agentInsightBody = 'Only <strong>' + agentHabitual + '%</strong> of agent users reach 11+ active days. Most (' + ab15 + '%) are in the <strong>1\u20135 day</strong> band \u2014 trying agents but not yet relying on them.';
+      agentInsightColor = '#8477FB';
+    }
+
+    var agentInsightHtml = '';
+    agentInsightHtml += '<div class="drill-insight" style="--di-color:' + agentInsightColor + ';margin-top:1rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Key Insight</span></div>';
+    agentInsightHtml += '<div class="drill-insight-body"><strong>' + agentInsightTitle + '</strong><br>' + agentInsightBody + '</div></div>';
+
+    // Agent band summary table
+    agentInsightHtml += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.75rem">';
+    agentInsightHtml += '<div style="background:rgba(123,47,242,.04);border:1px solid rgba(123,47,242,.1);border-radius:8px;padding:.75rem">';
+    agentInsightHtml += '<div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8477FB;margin-bottom:.5rem">Agent Bands</div>';
+    agentInsightHtml += '<div style="display:flex;flex-direction:column;gap:.3rem;font-size:.6rem;color:rgba(255,255,255,.5)">';
+    agentInsightHtml += '<div style="display:flex;justify-content:space-between"><span>1\u20135 days</span><span style="font-weight:700;color:rgba(255,255,255,.7)">' + ab15 + '%</span></div>';
+    agentInsightHtml += '<div style="display:flex;justify-content:space-between"><span>6\u201310 days</span><span style="font-weight:700;color:#D270F0">' + ab610 + '%</span></div>';
+    agentInsightHtml += '<div style="display:flex;justify-content:space-between"><span>11\u201315 days</span><span style="font-weight:700;color:#0D9488">' + ab1115 + '%</span></div>';
+    agentInsightHtml += '<div style="display:flex;justify-content:space-between"><span>16+ days</span><span style="font-weight:700;color:#0D9488">' + ab16p + '%</span></div>';
+    agentInsightHtml += '</div></div>';
+    agentInsightHtml += '<div style="background:rgba(34,100,229,.04);border:1px solid rgba(34,100,229,.1);border-radius:8px;padding:.75rem">';
+    agentInsightHtml += '<div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#007fff;margin-bottom:.5rem">M365 Copilot Bands</div>';
+    agentInsightHtml += '<div style="display:flex;flex-direction:column;gap:.3rem;font-size:.6rem;color:rgba(255,255,255,.5)">';
+    agentInsightHtml += '<div style="display:flex;justify-content:space-between"><span>1\u20135 days</span><span style="font-weight:700;color:rgba(255,255,255,.7)">' + lb15 + '%</span></div>';
+    agentInsightHtml += '<div style="display:flex;justify-content:space-between"><span>6\u201310 days</span><span style="font-weight:700;color:#D270F0">' + lb610 + '%</span></div>';
+    agentInsightHtml += '<div style="display:flex;justify-content:space-between"><span>11\u201315 days</span><span style="font-weight:700;color:#0D9488">' + lb1115 + '%</span></div>';
+    agentInsightHtml += '<div style="display:flex;justify-content:space-between"><span>16+ days</span><span style="font-weight:700;color:#0D9488">' + lb16p + '%</span></div>';
+    agentInsightHtml += '</div></div>';
+    agentInsightHtml += '</div>';
+
+    html = html.replace(/\{\{AGENT_HABIT_INSIGHT_HTML\}\}/g, agentInsightHtml);
   })();
 
   // License priority table insight
@@ -1174,7 +1225,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{CULTURE_HEADLINE\}\}/g, cultureHeadline);
   html = html.replace(/\{\{NARRATIVE_HEADLINE\}\}/g, cultureHeadline);
   // Dominant pattern — full Frontier Firm name
-  const patternNames = { 1: 'Human with Assistant', 2: 'Human-Agent Teams', 3: 'Human-led, Agent-operated' };
+  const patternNames = { 1: 'Foundation', 2: 'Expansion', 3: 'Frontier' };
   const patternDescs = {
     1: 'Every employee has an AI assistant. AI supports individual work — drafting, summarising, researching — in the flow of work.',
     2: 'Agents join teams as digital colleagues. Humans delegate; agents execute; humans steer and review.',
@@ -1201,7 +1252,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   const tierCssClass = t => 'tier-' + (t === 'P3' ? 'fr' : t === 'P2' ? 'e' : 'f');
   const tierColor = t => t === 'P3' ? 'var(--tier-4)' : t === 'P2' ? 'var(--tier-3)' : 'var(--tier-2)';
   const tierHexColor = t => t === 'P3' ? '#0D9488' : t === 'P2' ? '#D270F0' : '#94A3B8';
-  const tierLabel = t => t === 'P3' ? 'Pattern 3: Human-led, Agent-operated' : t === 'P2' ? 'Pattern 2: Human-Agent Teams' : 'Pattern 1: Human with Assistant';
+  const tierLabel = t => t === 'P3' ? 'Pattern 3: Frontier' : t === 'P2' ? 'Pattern 2: Expansion' : 'Pattern 1: Foundation';
   const tierLabelShort = t => t === 'P3' ? 'Pattern 3' : t === 'P2' ? 'Pattern 2' : 'Pattern 1';
   html = html.replace(/\{\{REACH_TIER\}\}/g, tierLabel(signalTiers.reach));
   html = html.replace(/\{\{HABIT_TIER\}\}/g, tierLabel(signalTiers.habit));
@@ -1551,6 +1602,14 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   });
   html = html.replace(/\{\{ORG_SCATTER_DATA\}\}/g, safeJSON(scatterDatasets, 'org_scatter_data'));
 
+  // Agent adoption % by org — from scatter data (y = agent adoption %, x = licensed users)
+  var agentAdoptOrgs = orgScatter
+    .filter(function(o) { return o.x > 0; })
+    .map(function(o) { return { label: o.label + ' (' + fmt(o.x) + ')', value: Math.round(o.y * 10) / 10 }; })
+    .sort(function(a, b) { return b.value - a.value; });
+  html = html.replace(/\{\{AGENT_ADOPT_ORG_LABELS_JSON\}\}/g, JSON.stringify(agentAdoptOrgs.map(function(o) { return o.label; })));
+  html = html.replace(/\{\{AGENT_ADOPT_ORG_VALUES_JSON\}\}/g, JSON.stringify(agentAdoptOrgs.map(function(o) { return o.value; })));
+
   // Concentration Index — already computed in derived-data phase above; no duplicate needed here
 
   // Per-org Frontier Firm maturity — composite score across available signals
@@ -1619,7 +1678,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     });
   }
   var orgPatternJSON = JSON.stringify({
-    labels: ['Pattern 1 · Assistant', 'Pattern 2 · Agent Teams', 'Pattern 3 · Agent-Operated'],
+    labels: ['Pattern 1 · Foundation', 'Pattern 2 · Expansion', 'Pattern 3 · Frontier'],
     keys: ['Foundation', 'Expansion', 'Frontier'],
     counts: [orgPatternCounts.Foundation, orgPatternCounts.Expansion, orgPatternCounts.Frontier],
     total: orgScatter.length,
@@ -1628,8 +1687,8 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{ORG_PATTERN_DISTRIBUTION_JSON\}\}/g, orgPatternJSON);
 
   // Dominant org pattern
-  var dominantOrgPattern = orgPatternCounts.Foundation >= orgPatternCounts.Expansion && orgPatternCounts.Foundation >= orgPatternCounts.Frontier ? 'Pattern 1 · Human with Assistant'
-    : orgPatternCounts.Expansion >= orgPatternCounts.Frontier ? 'Pattern 2 · Human-Agent Teams' : 'Pattern 3 · Agent-Operated';
+  var dominantOrgPattern = orgPatternCounts.Foundation >= orgPatternCounts.Expansion && orgPatternCounts.Foundation >= orgPatternCounts.Frontier ? 'Pattern 1 · Foundation'
+    : orgPatternCounts.Expansion >= orgPatternCounts.Frontier ? 'Pattern 2 · Expansion' : 'Pattern 3 · Frontier';
   html = html.replace(/\{\{DOMINANT_ORG_PATTERN\}\}/g, dominantOrgPattern);
   html = html.replace(/\{\{ORG_FOUNDATION_COUNT\}\}/g, String(orgPatternCounts.Foundation));
   html = html.replace(/\{\{ORG_EXPANSION_COUNT\}\}/g, String(orgPatternCounts.Expansion));
@@ -1720,7 +1779,18 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   // Agent table rows — prefer agent_table array (has full data), fallback to top_agent_* arrays
   let tableRows = '';
   const agentTableArr = Array.isArray(data.agent_table) ? data.agent_table : [];
+
+  // Helper: render sessions/user cell with inline data bar
+  function spuCell(val, max) {
+    var pct = max > 0 ? Math.min(100, Math.round(val / max * 100)) : 0;
+    var color = val >= 50 ? '#0D9488' : val >= 20 ? '#8477FB' : '#64748b';
+    return '<td style="padding:.55rem .4rem;min-width:120px"><div style="display:flex;align-items:center;gap:.5rem">' +
+      '<div style="flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden"><div style="height:100%;width:' + pct + '%;background:' + color + ';border-radius:3px;transition:width .6s"></div></div>' +
+      '<span style="font-size:.78rem;font-weight:700;font-variant-numeric:tabular-nums;color:' + color + ';min-width:32px;text-align:right">' + val + '</span></div></td>';
+  }
+
   if (agentTableArr.length > 0) {
+    var spuMax = Math.max.apply(null, agentTableArr.slice(0, 10).map(function(r) { return r.sessions_per_user || (r.users > 0 ? r.sessions / r.users : 0); }));
     agentTableArr.slice(0, 10).forEach(function(row) {
       const sessPerUser = row.sessions_per_user || (row.users > 0 ? Math.round(row.sessions / row.users * 10) / 10 : 0);
       tableRows += '<tr style="border-bottom:1px solid var(--border)">' +
@@ -1728,13 +1798,16 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
         '<td style="padding:.55rem .4rem;font-size:.72rem;color:var(--text-2)">' + (row.type || '—') + '</td>' +
         '<td style="text-align:right;padding:.55rem .4rem;font-variant-numeric:tabular-nums">' + fmtN(row.users || 0) + '</td>' +
         '<td style="text-align:right;padding:.55rem .4rem;font-variant-numeric:tabular-nums">' + fmtN(row.sessions || 0) + '</td>' +
-        '<td style="text-align:right;padding:.55rem .4rem;font-variant-numeric:tabular-nums;font-weight:600;color:var(--purple)">' + sessPerUser + '</td>' +
+        spuCell(sessPerUser, spuMax) +
         '</tr>\n';
     });
   } else {
     // Fallback to top_agent_* arrays
     const types = data.top_agent_types || [];
     const users = data.top_agent_users || [];
+    var spuVals = [];
+    for (let i = 0; i < Math.min(names.length, 8); i++) { spuVals.push(users[i] > 0 ? sessions[i] / users[i] : 0); }
+    var spuMax = Math.max.apply(null, spuVals.length ? spuVals : [1]);
     for (let i = 0; i < Math.min(names.length, 8); i++) {
       const type = types[i] || '—';
       const uCount = users[i] || 0;
@@ -1745,7 +1818,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
         '<td style="padding:.55rem .4rem;font-size:.72rem;color:var(--text-2)">' + type + '</td>' +
         '<td style="text-align:right;padding:.55rem .4rem;font-variant-numeric:tabular-nums">' + fmtN(uCount) + '</td>' +
         '<td style="text-align:right;padding:.55rem .4rem;font-variant-numeric:tabular-nums">' + fmtN(sess) + '</td>' +
-        '<td style="text-align:right;padding:.55rem .4rem;font-variant-numeric:tabular-nums;font-weight:600;color:var(--purple)">' + sessPerUser + '</td>' +
+        spuCell(sessPerUser === '—' ? 0 : parseFloat(sessPerUser), spuMax) +
         '</tr>\n';
     }
   }
@@ -1857,6 +1930,81 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     html = html.replace(/\{\{WEEKLY_TREND_LABELS_JSON\}\}/g, '[]');
     html = html.replace(/\{\{WEEKLY_TREND_VALUES_JSON\}\}/g, '[]');
   }
+
+  // Deep Interactions hero — weekly depth trend + per-agent depth
+  if (weeklyTrend && weeklyTrend.length > 0) {
+    var depthLabels = weeklyTrend.map(function(w) {
+      var raw = String(w.week || '');
+      var ukMatch = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      var d = ukMatch ? new Date(Number(ukMatch[3]), Number(ukMatch[2]) - 1, Number(ukMatch[1])) : new Date(raw);
+      return isNaN(d.getTime()) ? raw.substring(0, 6) : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    });
+    var depthValues = weeklyTrend.map(function(w) {
+      var total = (w.m365 || 0) + (w.chat || 0) + (w.agents || 0);
+      return total > 0 ? Math.round((w.agents || 0) / total * 1000) / 10 : 0;
+    });
+    html = html.replace(/\{\{DEPTH_TREND_LABELS_JSON\}\}/g, JSON.stringify(depthLabels));
+    html = html.replace(/\{\{DEPTH_TREND_VALUES_JSON\}\}/g, JSON.stringify(depthValues));
+  } else {
+    html = html.replace(/\{\{DEPTH_TREND_LABELS_JSON\}\}/g, '[]');
+    html = html.replace(/\{\{DEPTH_TREND_VALUES_JSON\}\}/g, '[]');
+  }
+  // Per-agent depth — sessions per user, top 8 sorted
+  var agentDepthArr = (Array.isArray(data.agent_table) ? data.agent_table : [])
+    .filter(function(a) { return a.sessions_per_user > 0 || (a.users > 0 && a.sessions > 0); })
+    .map(function(a) { return { name: a.name, spu: a.sessions_per_user || Math.round(a.sessions / a.users * 10) / 10 }; })
+    .sort(function(a, b) { return b.spu - a.spu; })
+    .slice(0, 8);
+  html = html.replace(/\{\{AGENT_DEPTH_LABELS_JSON\}\}/g, JSON.stringify(agentDepthArr.map(function(a) { return a.name; })));
+  html = html.replace(/\{\{AGENT_DEPTH_VALUES_JSON\}\}/g, JSON.stringify(agentDepthArr.map(function(a) { return a.spu; })));
+  // Deep interaction hero insight
+  var depthPct = _n('deep_interactions_pct', 0);
+  var avgPrompts = _n('complex_sessions', 0);
+  var topAgent = agentDepthArr.length > 0 ? agentDepthArr[0] : null;
+  var depthInsight = '<strong>' + depthPct + '% of sessions go deep</strong> (5+ prompts), with an average of ' + avgPrompts + ' prompts per session.';
+  if (topAgent) depthInsight += ' <strong>' + topAgent.name + '</strong> leads at ' + topAgent.spu + ' sessions/user \u2014 the highest stickiness in the portfolio.';
+  if (depthPct < 5) depthInsight += ' Most interactions are still shallow \u2014 one-and-done queries rather than multi-turn problem solving. The opportunity is to shift from \u201Ctrying AI\u201D to \u201Crelying on AI\u201D.';
+  else if (depthPct >= 15) depthInsight += ' This is a strong depth signal \u2014 users are genuinely problem-solving with AI, not just testing it.';
+  html = html.replace(/\{\{DEEP_INTERACTION_HERO_INSIGHT\}\}/g, depthInsight);
+
+  // Agent Stickiness bubble chart — reach (users) vs depth (sessions/user)
+  var stickinessAgents = (Array.isArray(data.agent_table) ? data.agent_table : [])
+    .filter(function(a) { return (a.users || 0) >= 2; })
+    .map(function(a) {
+      var spu = a.sessions_per_user || (a.users > 0 ? Math.round(a.sessions / a.users * 10) / 10 : 0);
+      return { name: a.name, users: a.users, spu: spu, sessions: a.sessions, type: a.type || 'Unknown' };
+    })
+    .sort(function(a, b) { return b.sessions - a.sessions; })
+    .slice(0, 10);
+  var maxSess = Math.max.apply(null, stickinessAgents.map(function(a) { return a.sessions; }).concat([1]));
+  var stickinessDatasets = stickinessAgents.map(function(a) {
+    var rNorm = Math.max(5, Math.round(a.sessions / maxSess * 25));
+    var isCustom = /builder|custom/i.test(a.type);
+    return {
+      label: a.name,
+      data: [{ x: a.users, y: a.spu, r: rNorm }],
+      backgroundColor: isCustom ? 'rgba(16,185,129,.5)' : 'rgba(132,119,251,.45)',
+      borderColor: isCustom ? '#0D9488' : '#8477FB',
+      borderWidth: 1.5
+    };
+  });
+  html = html.replace(/\{\{AGENT_STICKINESS_DATA_JSON\}\}/g, JSON.stringify(stickinessDatasets));
+
+  // Stickiness insight — find agents with both high reach AND high depth
+  var highReachDepth = stickinessAgents.filter(function(a) { return a.users >= 50 && a.spu >= 10; });
+  var lowReachHighDepth = stickinessAgents.filter(function(a) { return a.users < 30 && a.spu >= 30; });
+  var stickinessInsight = '';
+  if (highReachDepth.length > 0) {
+    stickinessInsight += '<strong>' + highReachDepth.map(function(a) { return a.name; }).join(', ') + '</strong> combine broad reach with deep engagement \u2014 these are the agents driving real workflow change.';
+  }
+  if (lowReachHighDepth.length > 0) {
+    stickinessInsight += (stickinessInsight ? '<br><br>' : '') + '<strong>' + lowReachHighDepth.map(function(a) { return a.name; }).join(', ') + '</strong> show extreme stickiness (' + lowReachHighDepth.map(function(a) { return a.spu; }).join(', ') + ' sess/user) but limited reach \u2014 niche power tools that could scale if promoted.';
+  }
+  if (!stickinessInsight) {
+    stickinessInsight = 'The ' + stickinessAgents.length + ' multi-user agents show varied stickiness. <strong>' + (stickinessAgents[0] ? stickinessAgents[0].name : 'Top agent') + '</strong> leads in total usage. Look for agents in the top-right quadrant \u2014 high reach AND high depth \u2014 as models for what good looks like.';
+  }
+  stickinessInsight += '<br><br><span style="display:inline-flex;align-items:center;gap:.3rem;font-size:.7rem"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#8477FB"></span> Microsoft (1P)</span> <span style="display:inline-flex;align-items:center;gap:.3rem;font-size:.7rem;margin-left:.5rem"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#0D9488"></span> Custom-built</span>';
+  html = html.replace(/\{\{AGENT_STICKINESS_INSIGHT\}\}/g, stickinessInsight);
 
   // Per-tier monthly data — for tier toggle charts
   const perTierMonthlyUsers = data._supplementary_metrics && data._supplementary_metrics.per_tier_monthly_users;
@@ -2169,7 +2317,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:right;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:rgb(var(--dim-habit,251,191,36))">Habit</th>';
       orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:right;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:rgb(var(--dim-skill,96,165,250))">Skill</th>';
       orgTableHtml += '</tr></thead><tbody>';
-      var sortedOrgs = orgPatternList.slice().sort(function(a, b) { return (b.composite || 0) - (a.composite || 0); });
+      var sortedOrgs = orgPatternList.filter(function(o) { return o.isOverall || (o.users || 0) >= 10; }).sort(function(a, b) { return (b.composite || 0) - (a.composite || 0); });
       var patMap = { Foundation: 'P1', Expansion: 'P2', Frontier: 'P3' };
       sortedOrgs.forEach(function(org) {
         var p = patMap[org.pattern] || 'P1';
@@ -2188,9 +2336,14 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     }
     html = html.replace(/\{\{ORG_TABLE_V4_HTML\}\}/g, orgTableHtml || '<p style="color:var(--text-muted)">Organisation data not available.</p>');
 
-    // Actions HTML — 4 recommendation cards
+    // Actions HTML — 4 recommendation cards with vivid dimension colours
     var actionsHtml = '';
-    var recColors = ['rgb(var(--dim-reach))', 'rgb(var(--dim-habit))', 'rgb(var(--dim-skill))', 'rgb(var(--p2))'];
+    var recDims = [
+      { color: '#34D399', bg: 'rgba(52,211,153,.08)', border: 'rgba(52,211,153,.25)', glow: 'rgba(52,211,153,.12)', label: 'Reach' },
+      { color: '#FBBF24', bg: 'rgba(251,191,36,.08)', border: 'rgba(251,191,36,.25)', glow: 'rgba(251,191,36,.12)', label: 'Habit' },
+      { color: '#60A5FA', bg: 'rgba(96,165,250,.08)', border: 'rgba(96,165,250,.25)', glow: 'rgba(96,165,250,.12)', label: 'Skill' },
+      { color: '#8477FB', bg: 'rgba(132,119,251,.08)', border: 'rgba(132,119,251,.25)', glow: 'rgba(132,119,251,.12)', label: 'Agents' }
+    ];
     var recs = [
       { title: 'Redirect idle licenses to proven demand', desc: 'Reallocate ' + fmt(data.inactive_licenses) + ' inactive licenses to the ' + fmt(data.chat_users) + ' unlicensed users already showing organic demand.', target: 'Target: ' + Math.round(_n('license_coverage', 0) * 1.5) + '% license coverage within 90 days' },
       { title: 'Convert the 6\u201310 day cohort to habitual', desc: 'The ' + fmt(data.band_6_10) + ' users averaging 6\u201310 active days are one nudge from building routine. Peer benchmarks, manager modelling, and workflow-tied nudges.', target: 'Target: 30% of cohort reaching 11+ days within 60 days' },
@@ -2198,11 +2351,19 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       { title: 'Scale agent governance before the footprint outpaces it', desc: _n('agent_adoption', 0) + '% of users engage with agents. Define delegation norms, review cadences, and escalation protocols for the agent portfolio.', target: 'Target: governance framework for all ' + (data.total_agents || 0) + ' agents within 45 days' }
     ];
     recs.forEach(function(rec, i) {
-      actionsHtml += '<div style="background:var(--bg-card,#132040);border:1px solid var(--border-subtle,rgba(255,255,255,.06));border-radius:16px;padding:1.75rem;border-left:4px solid ' + recColors[i] + '">';
-      actionsHtml += '<div style="display:flex;align-items:center;gap:.65rem;margin-bottom:.8rem"><div style="width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#fff;flex-shrink:0;background:' + recColors[i] + '">' + (i + 1) + '</div></div>';
-      actionsHtml += '<h3 style="font-size:.95rem;font-weight:700;color:var(--text-primary,#f0f4fc);margin-bottom:.5rem;line-height:1.35">' + rec.title + '</h3>';
-      actionsHtml += '<p style="font-size:.82rem;color:var(--text-secondary,#94a3b8);line-height:1.68">' + rec.desc + '</p>';
-      actionsHtml += '<div style="margin-top:.85rem;padding:.55rem .8rem;border-radius:8px;font-size:.75rem;font-weight:600;color:var(--text-secondary,#94a3b8);background:rgba(255,255,255,.03);border:1px solid var(--border-subtle,rgba(255,255,255,.06))"><span style="color:var(--accent,#3b82f6);font-weight:700">\u2192 </span>' + rec.target + '</div>';
+      var d = recDims[i];
+      actionsHtml += '<div style="background:' + d.bg + ';border:1px solid ' + d.border + ';border-radius:16px;padding:1.75rem;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s">';
+      // Gradient accent top bar
+      actionsHtml += '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,' + d.color + ',transparent);opacity:.7"></div>';
+      // Number badge + dimension label
+      actionsHtml += '<div style="display:flex;align-items:center;gap:.65rem;margin-bottom:.8rem">';
+      actionsHtml += '<div style="width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#fff;flex-shrink:0;background:' + d.color + ';box-shadow:0 4px 12px ' + d.glow + '">' + (i + 1) + '</div>';
+      actionsHtml += '<span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.15rem .5rem;border-radius:100px;color:' + d.color + ';background:' + d.glow + ';border:1px solid ' + d.border + '">' + d.label + '</span>';
+      actionsHtml += '</div>';
+      actionsHtml += '<h3 style="font-size:.95rem;font-weight:700;color:#f0f4fc;margin-bottom:.5rem;line-height:1.35">' + rec.title + '</h3>';
+      actionsHtml += '<p style="font-size:.82rem;color:#94a3b8;line-height:1.68">' + rec.desc + '</p>';
+      // Target row with coloured arrow
+      actionsHtml += '<div style="margin-top:.85rem;padding:.55rem .8rem;border-radius:8px;font-size:.75rem;font-weight:600;color:#94a3b8;background:rgba(255,255,255,.03);border:1px solid ' + d.border + '"><span style="color:' + d.color + ';font-weight:700">\u2192 </span>' + rec.target + '</div>';
       actionsHtml += '</div>';
     });
     html = html.replace(/\{\{ACTIONS_HTML\}\}/g, actionsHtml);
