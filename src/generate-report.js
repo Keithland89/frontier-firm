@@ -1966,7 +1966,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   }
   // Per-agent depth — sessions per user, top 8 sorted
   var agentDepthArr = (Array.isArray(data.agent_table) ? data.agent_table : [])
-    .filter(function(a) { return a.sessions_per_user > 0 || (a.users > 0 && a.sessions > 0); })
+    .filter(function(a) { return (a.users || 0) >= 5 && (a.sessions_per_user > 0 || (a.users > 0 && a.sessions > 0)); })
     .map(function(a) { return { name: a.name, spu: a.sessions_per_user || Math.round(a.sessions / a.users * 10) / 10 }; })
     .sort(function(a, b) { return b.spu - a.spu; })
     .slice(0, 8);
@@ -1984,7 +1984,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
 
   // Agent Stickiness bubble chart — reach (users) vs depth (sessions/user)
   var stickinessAgents = (Array.isArray(data.agent_table) ? data.agent_table : [])
-    .filter(function(a) { return (a.users || 0) >= 2; })
+    .filter(function(a) { return (a.users || 0) >= 5; })
     .map(function(a) {
       var spu = a.sessions_per_user || (a.users > 0 ? Math.round(a.sessions / a.users * 10) / 10 : 0);
       return { name: a.name, users: a.users, spu: spu, sessions: a.sessions, type: a.type || 'Unknown' };
@@ -2331,7 +2331,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:right;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:rgb(var(--dim-reach,52,211,153))">Reach</th>';
       orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:right;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:rgb(var(--dim-skill,96,165,250))">Skill</th>';
       orgTableHtml += '</tr></thead><tbody>';
-      var sortedOrgs = orgPatternList.filter(function(o) { return o.isOverall || (o.users || 0) >= 10; }).sort(function(a, b) { return (b.composite || 0) - (a.composite || 0); });
+      var sortedOrgs = orgPatternList.filter(function(o) { return o.isOverall || (o.users || 0) >= 10; }).sort(function(a, b) { if (a.isOverall) return -1; if (b.isOverall) return 1; return (b.composite || 0) - (a.composite || 0); });
       var patMap = { Foundation: 'P1', Expansion: 'P2', Frontier: 'P3' };
       sortedOrgs.forEach(function(org) {
         var p = patMap[org.pattern] || 'P1';
