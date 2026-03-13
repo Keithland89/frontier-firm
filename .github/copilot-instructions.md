@@ -15,17 +15,25 @@ Generates a **Frontier Firm Assessment** — a visual HTML report measuring AI a
 
 ## The Pipeline
 
-A single command runs 5 mandatory quality gates:
+**IMPORTANT: Always use the `--v4` flag and `--name` flag.**
 
+### Step 1: Extract data from PBIX (if PBIX is open in Power BI Desktop)
 ```bash
-npm run report -- --data data/{customer}.json --output output/
+node src/extract-from-pbix.js --pbix "Customer Name"
 ```
 
-Or for full auto-extraction from an open PBIX:
-
+### Step 2: Generate the report
 ```bash
-npm run report -- --pbix "Customer Name" --output output/
+node src/generate-report.js --data data/{customer}.json --name "Customer Name" --v4
 ```
+
+### Full pipeline (extraction + generation)
+```bash
+node src/extract-from-pbix.js --pbix "Customer Name" && node src/generate-report.js --data data/{customer_slug}.json --name "Customer Name" --v4
+```
+
+The `--v4` flag is **mandatory** — without it, the old V1 template is used.
+The `--name` flag overrides the customer name (PBIX filenames are often cryptic).
 
 ### Pipeline Gates
 
@@ -81,7 +89,8 @@ When generating insights:
 | `src/extract-from-pbix.js` | PBIX auto-extraction |
 | `schema/ff_data_schema.json` | Required fields (65) |
 | `schema/ff_schema.json` | Scoring bands |
-| `template/ff_template.html` | HTML template |
+| `template/ff_template_v4.html` | **V4 HTML template (current — use --v4 flag)** |
+| `template/ff_template.html` | Legacy V1 template (do not use) |
 | `prompts/01-06` | Extraction and insight prompts |
 
 ## Scoring

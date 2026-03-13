@@ -14,17 +14,20 @@ Generates a **Frontier Firm Assessment** — a visual HTML report that measures 
 
 ## The Pipeline
 
-A single command runs 5 mandatory quality gates:
+**IMPORTANT: Always use the `--v4` flag and `--name` flag.**
 
+### Step 1: Extract data from PBIX (if PBIX is open in Power BI Desktop)
 ```bash
-npm run report -- --data data/{customer}.json --output output/
+node src/extract-from-pbix.js --pbix "Customer Name"
 ```
 
-Or for full auto-extraction from an open PBIX:
-
+### Step 2: Generate the V4 report
 ```bash
-npm run report -- --pbix "Customer Name" --output output/
+node src/generate-report.js --data data/{customer_slug}.json --name "Customer Name" --v4
 ```
+
+The `--v4` flag is **mandatory** — without it, the old V1 template is used.
+The `--name` flag overrides the customer name (PBIX filenames are often cryptic).
 
 ### Pipeline Gates
 
