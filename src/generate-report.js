@@ -1096,26 +1096,26 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     var insightHtml = '';
     // Key insight card
     insightHtml += '<div style="background:linear-gradient(135deg,rgba(255,255,255,.03),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:1.25rem;margin-bottom:.75rem;border-left:4px solid ' + keyInsightColor + '">';
-    insightHtml += '<div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:' + keyInsightColor + ';margin-bottom:.4rem">Key Insight</div>';
-    insightHtml += '<div style="font-size:1rem;font-weight:900;color:#fff;line-height:1.2;margin-bottom:.5rem">' + keyInsightTitle + '</div>';
-    insightHtml += '<div style="font-size:.72rem;color:rgba(255,255,255,.55);line-height:1.55">' + keyInsightBody + '</div>';
+    insightHtml += '<div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:' + keyInsightColor + ';margin-bottom:.5rem">Key Insight</div>';
+    insightHtml += '<div style="font-size:1.1rem;font-weight:900;color:#fff;line-height:1.25;margin-bottom:.6rem">' + keyInsightTitle + '</div>';
+    insightHtml += '<div style="font-size:.78rem;color:rgba(255,255,255,.55);line-height:1.6">' + keyInsightBody + '</div>';
     insightHtml += '</div>';
 
     // Two-lane summary beneath
-    insightHtml += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">';
+    insightHtml += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.25rem">';
     // Copilot bands
-    insightHtml += '<div style="background:rgba(34,100,229,.04);border:1px solid rgba(34,100,229,.1);border-radius:8px;padding:.75rem">';
-    insightHtml += '<div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#007fff;margin-bottom:.5rem">M365 Copilot Bands</div>';
-    insightHtml += '<div style="display:flex;flex-direction:column;gap:.3rem;font-size:.6rem;color:rgba(255,255,255,.5)">';
+    insightHtml += '<div style="background:rgba(34,100,229,.04);border:1px solid rgba(34,100,229,.1);border-radius:10px;padding:1rem">';
+    insightHtml += '<div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#007fff;margin-bottom:.6rem">M365 Copilot Bands</div>';
+    insightHtml += '<div style="display:flex;flex-direction:column;gap:.4rem;font-size:.7rem;color:rgba(255,255,255,.5)">';
     insightHtml += '<div style="display:flex;justify-content:space-between"><span>1\u20135 days</span><span style="font-weight:700;color:rgba(255,255,255,.7)">' + lb15 + '%</span></div>';
     insightHtml += '<div style="display:flex;justify-content:space-between"><span>6\u201310 days</span><span style="font-weight:700;color:#D270F0">' + lb610 + '%</span></div>';
     insightHtml += '<div style="display:flex;justify-content:space-between"><span>11\u201315 days</span><span style="font-weight:700;color:#0D9488">' + lb1115 + '%</span></div>';
     insightHtml += '<div style="display:flex;justify-content:space-between"><span>16+ days</span><span style="font-weight:700;color:#0D9488">' + lb16p + '%</span></div>';
     insightHtml += '</div></div>';
     // Agent bands
-    insightHtml += '<div style="background:rgba(123,47,242,.04);border:1px solid rgba(123,47,242,.1);border-radius:8px;padding:.75rem">';
-    insightHtml += '<div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8477FB;margin-bottom:.5rem">Agent Bands</div>';
-    insightHtml += '<div style="display:flex;flex-direction:column;gap:.3rem;font-size:.6rem;color:rgba(255,255,255,.5)">';
+    insightHtml += '<div style="background:rgba(123,47,242,.04);border:1px solid rgba(123,47,242,.1);border-radius:10px;padding:1rem">';
+    insightHtml += '<div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8477FB;margin-bottom:.6rem">Agent Bands</div>';
+    insightHtml += '<div style="display:flex;flex-direction:column;gap:.4rem;font-size:.7rem;color:rgba(255,255,255,.5)">';
     insightHtml += '<div style="display:flex;justify-content:space-between"><span>1\u20135 days</span><span style="font-weight:700;color:rgba(255,255,255,.7)">' + ab15 + '%</span></div>';
     insightHtml += '<div style="display:flex;justify-content:space-between"><span>6\u201310 days</span><span style="font-weight:700;color:#D270F0">' + ab610 + '%</span></div>';
     insightHtml += '<div style="display:flex;justify-content:space-between"><span>11\u201315 days</span><span style="font-weight:700;color:#0D9488">' + ab1115 + '%</span></div>';
@@ -2165,7 +2165,15 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     // Group by month, then by tier
     const months = [...new Set(perTierActiveDay.map(function(r) { return r.month; }))];
     const monthLabelsAD = months.map(function(m) {
-      var d = new Date(m); return d.toLocaleString('en',{month:'short'}) + ' ' + String(d.getFullYear()).substring(2);
+      // Handle DD/MM/YYYY format (common in PBIX exports)
+      var parts = String(m).replace(/\s.*$/, '').split('/');
+      var d;
+      if (parts.length === 3 && parseInt(parts[0], 10) <= 31 && parseInt(parts[1], 10) <= 12) {
+        d = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+      } else {
+        d = new Date(m);
+      }
+      return isNaN(d.getTime()) ? String(m).substring(0, 7) : d.toLocaleString('en', {month:'short'}) + ' ' + String(d.getFullYear()).substring(2);
     });
     function extractTierBands(tier) {
       // Try case-insensitive match and support both count and pct field names

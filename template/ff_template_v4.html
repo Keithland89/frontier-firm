@@ -1545,11 +1545,11 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
     </div>
     <!-- Panel: Habit key insight + habitual trend — hero only -->
     <div class="drill-panel" data-drill-for="hero">
-      <div style="display:flex;gap:1.5rem;align-items:flex-start;margin-top:1rem" class="reveal">
-        <div style="flex:1">{{HABIT_KEY_INSIGHT_HTML}}</div>
-        <div style="width:280px;flex-shrink:0">
-          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#D270F0;margin-bottom:.5rem">Habitual Rate Trend</div>
-          <div style="height:120px"><canvas id="chartHabitTrend"></canvas></div>
+      <div style="display:flex;gap:2rem;align-items:stretch;margin-top:1rem" class="reveal">
+        <div style="flex:1;min-width:0">{{HABIT_KEY_INSIGHT_HTML}}</div>
+        <div style="width:340px;flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem">
+          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#D270F0;margin-bottom:.75rem">Habitual Rate Trend</div>
+          <div style="height:160px"><canvas id="chartHabitTrend"></canvas></div>
         </div>
       </div>
     </div>
