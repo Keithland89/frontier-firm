@@ -52,7 +52,7 @@ If any gate fails, the pipeline stops with a clear error message. Fix the issue 
   3. Analyse the customer data thoroughly — every metric tells a story
   4. Generate all 30 `_ai_insights` keys (see `prompts/06-ai-insights.md` for block structure)
   5. Save into the data JSON file
-  6. Re-run: `npm run report -- --data data/{customer}.json`
+  6. Re-run: `npm run report -- --data data/{customer}.json --name "Customer Name" --v4`
 
 - **Exit 3:** Measure mapping needed. YOU must immediately:
   1. Read `temp/measure_mapping_request.json`
@@ -66,13 +66,10 @@ If any gate fails, the pipeline stops with a clear error message. Fix the issue 
 
 ```bash
 # Full pipeline: PBIX to report (AI insights generated automatically)
-npm run report -- --pbix "Customer Name" --output output/
+npm run report -- --pbix "Customer Name" --name "Customer Name" --v4
 
 # From existing data file
-npm run report -- --data data/{customer}.json --output output/
-
-# Skip AI insights (template fallback — for testing only)
-npm run report -- --data data/{customer}.json --output output/ --no-ai
+npm run report -- --data data/{customer}.json --name "Customer Name" --v4
 ```
 
 ## YOU are the insight engine
