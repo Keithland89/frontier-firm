@@ -151,6 +151,22 @@ if (typeof data.agents_keep === 'number' && typeof data.agents_review === 'numbe
     addVal(Math.round(data.agents_review / totalAgents * 100));
   }
 }
+// Habitual rate derived values (band_11_15_pct + band_16_plus_pct)
+if (typeof data.licensed_band_11_15_pct === 'number' && typeof data.licensed_band_16_plus_pct === 'number') {
+  var habitualRate = data.licensed_band_11_15_pct + data.licensed_band_16_plus_pct;
+  addVal(parseFloat(habitualRate.toFixed(1)));
+  addVal(Math.round(habitualRate));
+}
+if (typeof data.chat_band_11_15_pct === 'number' && typeof data.chat_band_16_plus_pct === 'number') {
+  var chatHabitualRate = data.chat_band_11_15_pct + data.chat_band_16_plus_pct;
+  addVal(parseFloat(chatHabitualRate.toFixed(1)));
+  addVal(Math.round(chatHabitualRate));
+}
+if (typeof data.agent_band_11_15_pct === 'number' && typeof data.agent_band_16_plus_pct === 'number') {
+  var agentHabitualRate = data.agent_band_11_15_pct + data.agent_band_16_plus_pct;
+  addVal(parseFloat(agentHabitualRate.toFixed(1)));
+  addVal(Math.round(agentHabitualRate));
+}
 // Recommendation KPI derived values
 if (data.m365_frequency) addVal(Math.max(Math.round(data.m365_frequency * 2), 25));
 if (data.agent_adoption) { addVal(Math.round(data.agent_adoption * 2)); addVal(data.agent_adoption * 2); }
@@ -213,7 +229,7 @@ if (supp && supp.retention_cohorts) {
 const frameworkNumbers = new Set([
   '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
   '11', '15', '16', '19', '20', '27',
-  '40', '50', '55', '70', '75', '85', '93', '100',  // scoring band threshold markers on gauges
+  '40', '50', '55', '70', '71', '75', '85', '93', '100',  // scoring band threshold markers on gauges + template static stats
   '30', '60', '90',                                  // recommendation timeframes (days) + P1 habit gate threshold
   '365',                                              // M365 text
   '2024', '2025', '2026', '2027',                    // years
