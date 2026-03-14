@@ -23,6 +23,8 @@ The **Frontier Firm Assessment** measures an organisation's Microsoft Copilot ma
 
 The AI handles extraction, analysis, narrative, and all 6 pipeline gates automatically. The output is a self-contained HTML file in `output/` — opens in any browser, no server needed.
 
+> Both tools use the **V4 template** (`ff_template_v4.html`) — the current production version.
+
 ---
 
 ## The Framework
