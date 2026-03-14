@@ -167,6 +167,37 @@ if (typeof data.agent_band_11_15_pct === 'number' && typeof data.agent_band_16_p
   addVal(parseFloat(agentHabitualRate.toFixed(1)));
   addVal(Math.round(agentHabitualRate));
 }
+// Concentration chart derived values (top 3 org shares)
+if (Array.isArray(data.org_scatter_data) && data.org_scatter_data.length >= 3) {
+  var concSorted = data.org_scatter_data.slice().sort(function(a,b){return (b.x||0)-(a.x||0);});
+  var concTotal = concSorted.reduce(function(s,o){return s+(o.x||0);},0);
+  concSorted.forEach(function(o){ if(concTotal>0) addVal(Math.round((o.x||0)/concTotal*1000)/10); });
+  var restPct = concTotal>0?Math.round(concSorted.slice(3).reduce(function(s,o){return s+(o.x||0);},0)/concTotal*1000)/10:0;
+  addVal(restPct);
+}
+// Org penetration count (orgs with both Copilot AND agents)
+if (Array.isArray(data.org_scatter_data)) {
+  var opOrgs = data.org_scatter_data.filter(function(o){return (o.x||0)>0 && (o.y||0)>0;}).length;
+  addVal(opOrgs);
+  addVal(data.org_scatter_data.length - opOrgs);
+}
+// Agent breadth categories (material/emerging/poc counts)
+if (Array.isArray(data.agent_table)) {
+  addVal(data.agent_table.filter(function(a){return (a.users||0)>=10;}).length);
+  addVal(data.agent_table.filter(function(a){return (a.users||0)>=3&&(a.users||0)<10;}).length);
+  addVal(data.agent_table.filter(function(a){return (a.users||0)>=1&&(a.users||0)<3;}).length);
+}
+// Per-month habitual rate trend values
+if (supp && supp.per_tier_active_day_bands) {
+  var htMonths = [];
+  supp.per_tier_active_day_bands.forEach(function(r){ if(htMonths.indexOf(r.month)<0) htMonths.push(r.month); });
+  htMonths.forEach(function(m){
+    var row = supp.per_tier_active_day_bands.find(function(r){return r.month===m && r.tier==='Licensed';});
+    if(row && row.band_11_15_pct !== undefined){
+      addVal(Math.round((row.band_11_15_pct + (row.band_16_plus_pct||0))*10)/10);
+    }
+  });
+}
 // Recommendation KPI derived values
 if (data.m365_frequency) addVal(Math.max(Math.round(data.m365_frequency * 2), 25));
 if (data.agent_adoption) { addVal(Math.round(data.agent_adoption * 2)); addVal(data.agent_adoption * 2); }

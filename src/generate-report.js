@@ -987,6 +987,11 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = safeSub(html, /\{\{AGENT_BREADTH\}\}/g, data.agent_breadth, 'agent_breadth');
   html = safeSub(html, /\{\{COMPLEX_SESSIONS\}\}/g, data.complex_sessions, 'complex_sessions');
   html = safeSub(html, /\{\{DEEP_INTERACTIONS_PCT\}\}/g, data.deep_interactions_pct, 'deep_interactions_pct');
+  // Deep interactions gauge thresholds from schema
+  var diMetric = schema && schema.metrics && schema.metrics.copilot_multiturn;
+  var diBands = (diMetric && diMetric.bands) || [10, 25];
+  html = html.replace(/\{\{DI_THRESHOLD_P2\}\}/g, String(diBands[0]));
+  html = html.replace(/\{\{DI_THRESHOLD_P3\}\}/g, String(diBands[1]));
   html = safeSub(html, /\{\{AGENT_HEALTH\}\}/g, data.agent_health, 'agent_health');
   html = safeSub(html, /\{\{AGENT_CREATORS_PCT\}\}/g, data.agent_creators_pct, 'agent_creators_pct');
   html = safeSub(html, /\{\{LICENSE_COVERAGE_PCT\}\}/g, data.license_coverage, 'license_coverage');
@@ -1215,6 +1220,17 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   // Total sessions per agent (for leaderboard chart — ranked by reach × depth)
   const topAgentTotalSessions = (Array.isArray(data.agent_table) ? data.agent_table : []).slice(0, 8).map(a => a.sessions || 0);
   html = html.replace(/\{\{TOP_AGENT_TOTAL_SESSIONS\}\}/g, JSON.stringify(topAgentTotalSessions));
+
+  // Agent breadth — portfolio health distribution
+  var _abAgents = Array.isArray(data.agent_table) ? data.agent_table : [];
+  var materialAgents = _abAgents.filter(function(a){ return (a.users||0) >= 10; }).length;
+  var emergingAgents = _abAgents.filter(function(a){ return (a.users||0) >= 3 && (a.users||0) < 10; }).length;
+  var pocAgents = _abAgents.filter(function(a){ return (a.users||0) >= 1 && (a.users||0) < 3; }).length;
+  html = html.replace(/\{\{AGENT_BREADTH_DATA_JSON\}\}/g, JSON.stringify({
+    labels: ['Material (10+ users)', 'Emerging (3\u20139 users)', 'Proof-of-concept (1\u20132 users)'],
+    values: [materialAgents, emergingAgents, pocAgents],
+    colors: ['rgba(13,148,136,.7)', 'rgba(14,165,233,.6)', 'rgba(148,163,184,.4)']
+  }));
 
   // Radar charts
   html = html.replace(/\{\{RADAR_REACH\}\}/g, safeJSON(data.radar_reach, 'radar_reach'));
@@ -1694,6 +1710,22 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
 
   // Concentration Index — already computed in derived-data phase above; no duplicate needed here
 
+  // Concentration chart data — top 3 orgs by user count vs rest
+  var concSorted = orgScatter.slice().sort(function(a,b){ return (b.x||0) - (a.x||0); });
+  var concTotal = concSorted.reduce(function(s,o){ return s + (o.x||0); }, 0);
+  var concTop3 = concSorted.slice(0,3);
+  var concRest = concSorted.slice(3);
+  var concLabels = concTop3.map(function(o){ return o.label; }).concat(['Others (' + concRest.length + ')']);
+  var concValues = concTop3.map(function(o){ return concTotal > 0 ? Math.round((o.x||0)/concTotal*1000)/10 : 0; });
+  var concRestPct = concTotal > 0 ? Math.round(concRest.reduce(function(s,o){return s+(o.x||0);},0)/concTotal*1000)/10 : 0;
+  concValues.push(concRestPct);
+  var concColors = ['rgba(132,119,251,.7)','rgba(132,119,251,.55)','rgba(132,119,251,.4)','rgba(14,165,233,.6)'];
+  html = html.replace(/\{\{CONCENTRATION_DATA_JSON\}\}/g, JSON.stringify({labels:concLabels, values:concValues, colors:concColors}));
+
+  // Org penetration count — orgs with both Copilot AND agent users
+  var orgPenetrationOrgs = orgScatter.filter(function(o){ return (o.x||0) > 0 && (o.y||0) > 0; }).length;
+  html = html.replace(/\{\{ORG_PENETRATION_ORGS\}\}/g, String(orgPenetrationOrgs));
+
   // Per-org pattern classification — SAME gate logic as company-level OVERALL row
   //
   // Rule (applied identically to every org and to the OVERALL row):
@@ -2171,8 +2203,15 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
         : ['Latest Month']
     };
     html = html.replace(/\{\{PER_TIER_ACTIVE_DAY_JSON\}\}/g, JSON.stringify(tierADData));
+
+    // Habitual rate trend — licensed habitual % per month
+    var habitTrendValues = extractTierBands('Licensed').map(function(b){
+      return Math.round((b.b11_19 + b.b20) * 10) / 10;
+    });
+    html = html.replace(/\{\{HABIT_TREND_JSON\}\}/g, JSON.stringify({labels: monthLabelsAD, values: habitTrendValues}));
   } else {
     html = html.replace(/\{\{PER_TIER_ACTIVE_DAY_JSON\}\}/g, 'null');
+    html = html.replace(/\{\{HABIT_TREND_JSON\}\}/g, JSON.stringify({labels:[], values:[]}));
   }
 
   // ── Habit: Monthly Users by Tier (V3 chartHabitTiers) ──
