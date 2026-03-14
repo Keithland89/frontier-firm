@@ -11,44 +11,17 @@ The **Frontier Firm Assessment** measures an organisation's Microsoft Copilot ma
 - **Node.js** >= 18
 - This repo cloned: `git clone https://github.com/Keithland89/frontier-firm.git`
 
-### 2 Steps
-
-**Step 1: Extract data from the PBIX**
-```bash
-node src/extract-from-pbix.js --pbix "Customer Name"
-```
-This connects to your open PBIX, extracts all fields via DAX, and saves to `data/{customer_slug}.json`.
-
-**Step 2: Generate the report**
-```bash
-node src/generate-report.js --data data/{customer_slug}.json --name "Customer Name" --v4
-```
-This scores the 13 metrics, generates narrative, and outputs the HTML report.
-
-**Open the report:**
-```
-output/customer_name_frontier_firm.html
-```
-Self-contained HTML — opens in any browser, no server needed.
-
-### Flags
-
-| Flag | Required | Description |
-|------|----------|-------------|
-| `--v4` | **Yes** | Use the V4 template (without this, old V1 template is used) |
-| `--name` | **Yes** | Customer name for the report title and narrative |
-| `--data` | **Yes** | Path to the extracted JSON data file |
-| `--no-ai` | No | Skip AI narrative generation (uses template fallbacks) |
+### With Claude Code
+1. Open the customer's PBIX in Power BI Desktop
+2. `cd frontier-firm && claude`
+3. **"Generate a Frontier Firm report for [Customer Name]"**
 
 ### With GitHub Copilot (Agent mode)
 1. Open the customer's PBIX in Power BI Desktop
 2. Open this repo in VS Code with GitHub Copilot
 3. Tell Copilot: **"Generate a Frontier Firm report for [Customer Name]"**
 
-### With Claude Code
-1. Open the customer's PBIX in Power BI Desktop
-2. `cd frontier-firm && claude`
-3. **"Generate a Frontier Firm report for [Customer]"**
+The AI handles extraction, analysis, narrative, and all 6 pipeline gates automatically. The output is a self-contained HTML file in `output/` — opens in any browser, no server needed.
 
 ---
 
