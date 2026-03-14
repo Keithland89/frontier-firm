@@ -47,11 +47,12 @@ If any gate fails, the pipeline stops with a clear error message. Fix the issue 
 ### Exit codes — handle automatically, DO NOT ask the user
 
 - **Exit 2:** Insights needed. YOU (the AI tool) must immediately:
-  1. Read `temp/insights_request.json`
-  2. Analyse the customer data thoroughly — every metric tells a story
-  3. Generate all 30 `_ai_insights` keys (see `prompts/06-ai-insights.md` for quality rules)
-  4. Save into the data JSON file
-  5. Re-run: `npm run report -- --data data/{customer}.json`
+  1. Read `RULES.md` — this governs tone, credibility, narrative quality, and output integrity
+  2. Read `temp/insights_request.json`
+  3. Analyse the customer data thoroughly — every metric tells a story
+  4. Generate all 30 `_ai_insights` keys (see `prompts/06-ai-insights.md` for block structure)
+  5. Save into the data JSON file
+  6. Re-run: `npm run report -- --data data/{customer}.json`
 
 - **Exit 3:** Measure mapping needed. YOU must immediately:
   1. Read `temp/measure_mapping_request.json`
@@ -78,17 +79,14 @@ npm run report -- --data data/{customer}.json --output output/ --no-ai
 
 This pipeline follows the [pbi-to-exec-deck](https://github.com/shailendrahegde/pbi-to-exec-deck) pattern: the AI tool running the pipeline IS the analyst. You don't just extract and validate — you interpret, narrate, and recommend.
 
+**Before generating any insights, read `RULES.md`.** It defines the standards for tone, credibility, narrative quality, headline style, recommendation structure, and the self-audit checklist you must complete before accepting output.
+
 When generating insights (exit code 2):
 - Read ALL the extracted data, not just the summary metrics
 - Look at the monthly trends — is usage growing or declining?
 - Compare tiers — how do licensed vs unlicensed vs agent users differ?
 - Examine the org scatter — which orgs are leading, which are lagging?
 - Study the agent leaderboard — is usage concentrated or distributed?
-- Every claim must reference a specific number from the data
-- Every recommendation must name a specific cohort, org, or target
-- Use simple language — the reader is a non-technical executive
-- "Habitual" = 11+ active days/month — never say "daily" unless 20+
-- No generic insights that could apply to any customer
 
 The quality of the insights IS the quality of the report. This is the value-add.
 
@@ -96,6 +94,7 @@ The quality of the insights IS the quality of the report. This is the value-add.
 
 | File | Purpose |
 |------|---------|
+| `RULES.md` | Narrative quality, tone, credibility, and output integrity rules — read before generating insights |
 | `schema/measure_map.json` | Declarative mapping: schema fields → PBIX measures/DAX |
 | `schema/ff_data_schema.json` | Required fields and type constraints (65 fields) |
 | `schema/ff_schema.json` | Metric definitions, scoring bands, signal groupings |
@@ -141,13 +140,12 @@ Data file can override with `reach_tier`, `habit_tier`, `skill_tier`, `value_tie
 
 ## Quality Rules
 
+Pipeline integrity (enforced by gates):
 - **No unresolved placeholders** — any `{{...}}` in output is an error
-- **No Contoso leakage** — customer name must appear, "Contoso" must not
-- **Every number must trace to data** — no hardcoded values
 - **No undefined/NaN/Infinity** — safeSub catches these at generation time
 - **10/10 charts must render** — Gate 4 verifies with pixel data
-- **Simple language** — written for a non-technical executive, no jargon
-- **"Habitual" = 11+ active days/month** — never say "daily" unless 20+
+
+Narrative and output quality — see **`RULES.md`** for the full standards covering tone, credibility, data accuracy, headline style, recommendations, and the self-audit checklist.
 
 ## Do NOT
 

@@ -241,13 +241,6 @@
     "description": "% of sessions (ThreadIds) with 5+ prompt messages — measures depth of multi-turn engagement."
   },
 
-  "agent_health": {
-    "type": "scalar",
-    "measures": ["[Agent Return Rate]", "[Avg Agent Return Rate %]"],
-    "transform": "toPct",
-    "description": "Agent ecosystem health — agent return rate as percentage."
-  },
-
   "agent_creators_pct": {
     "type": "scalar",
     "measures": ["[Credit Utilization Rate]"],
@@ -565,16 +558,17 @@
   "org_scatter_data": {
     "type": "tabular",
     "dax_variants": [
+      "EVALUATE TOPN(15, ADDCOLUMNS(SUMMARIZECOLUMNS('Chat + Agent Org Data'[Organization], \"LicUsers\", [NoOfActiveChatUsers (Licensed)], \"UnlicUsers\", [NoOfActiveChatUsers (Unlicensed)], \"LicAgents\", [UsersInteractingWithAgents (Licensed)], \"UnlicAgents\", [UsersInteractingWithAgents (Unlicensed)]), \"ActiveUsers\", [LicUsers] + [UnlicUsers], \"Agents\", [LicAgents] + [UnlicAgents]), [ActiveUsers], DESC)",
       "EVALUATE TOPN(15, SUMMARIZECOLUMNS('Chat + Agent Org Data'[Organization], \"ActiveUsers\", [Total Active Chat Users Last Month], \"Agents\", [UsersInteractingWithAgents, Last Month]), [ActiveUsers], DESC)",
       "EVALUATE TOPN(15, SUMMARIZECOLUMNS('Chat + Agent Org Data'[Organization], \"ActiveUsers\", COUNTROWS('Chat + Agent Org Data')), [ActiveUsers], DESC)"
     ],
     "columns": {
       "Organization": "label",
-      "ActiveUsers": "x",
-      "Agents": "used for y calculation"
+      "ActiveUsers": "x (licensed + unlicensed total)",
+      "Agents": "used for y calculation (licensed + unlicensed agent users)"
     },
     "post_process": "Map to {label: Organization, x: ActiveUsers, y: round(Agents/ActiveUsers*100, 1), r: ActiveUsers}. Take top 15.",
-    "description": "Organisation scatter bubble data — x=user count, y=agent adoption %, r=bubble size (user count)."
+    "description": "Organisation scatter bubble data — x=total user count (licensed + unlicensed), y=agent adoption % of total org users, r=bubble size (user count)."
   },
 
   "retained_users": {

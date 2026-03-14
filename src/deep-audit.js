@@ -167,8 +167,40 @@ if (supp && supp.license_priority_orgs) {
     if (org.ratio_unlicensed_to_licensed) addVal(org.ratio_unlicensed_to_licensed);
     // The template shows ratio as "X.Yx" — the integer part may appear separately
     if (org.ratio_unlicensed_to_licensed) addVal(Math.floor(org.ratio_unlicensed_to_licensed));
+    // Weekly session volumes shown in the license priority table
+    if (org.unlicensed_median_sessions_weekly) addVal(org.unlicensed_median_sessions_weekly);
+    // Computed unlicensed% column: unlicensed/(unlicensed+licensed)*100
+    if (org.unlicensed_users && org.licensed_users) {
+      var unlicPct = Math.round(org.unlicensed_users / (org.unlicensed_users + org.licensed_users) * 100);
+      addVal(unlicPct);
+    }
   });
 }
+// V4 per-org composite scores (computed by generator from org_scatter_data)
+if (Array.isArray(data.org_scatter_data) && data.org_scatter_data.length > 0) {
+  var _orgScatter = data.org_scatter_data;
+  var _totalUsers = (data.total_active_users || 1);
+  var _agentUsers = (data.agent_users || 0);
+  var _orgAgentRate = _agentUsers / _totalUsers;
+  var _maxOrgUsers = Math.max.apply(null, _orgScatter.map(function(o) { return o.x || 0; }).concat([1]));
+  var _hasOrgHabit = _orgScatter.some(function(o) { return typeof o.habitual_pct === 'number'; });
+  var _overallHabit = (typeof data.embedded_user_rate === 'number') ? data.embedded_user_rate : 0;
+  // Unified gate logic — normalised 0-100 scores for bar display (100 = P3 threshold)
+  // P3_HABIT = 30%, P3_AGENT = 15%
+  _orgScatter.forEach(function(org) {
+    var normHabit = (_hasOrgHabit && typeof org.habitual_pct === 'number')
+      ? Math.min(100, Math.round(org.habitual_pct / 30 * 100)) : 0;
+    var normSkill = Math.min(100, Math.round((org.y || 0) / 15 * 100));
+    var composite = Math.round((normHabit + normSkill) / 2);
+    addVal(normHabit); addVal(normSkill); addVal(composite);
+  });
+  // Overall row — same gate logic using company-level metrics
+  var _oNormHabit = Math.min(100, Math.round((_overallHabit / 30) * 100));
+  var _oNormSkill = Math.min(100, Math.round(((data.agent_adoption || 0) / 15) * 100));
+  var _oComp = Math.round((_oNormHabit + _oNormSkill) / 2);
+  addVal(_oNormHabit); addVal(_oNormSkill); addVal(_oComp);
+}
+
 // Retention cohort values
 if (supp && supp.retention_cohorts) {
   Object.values(supp.retention_cohorts).forEach(function(c) {
@@ -181,11 +213,12 @@ if (supp && supp.retention_cohorts) {
 const frameworkNumbers = new Set([
   '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
   '11', '15', '16', '19', '20', '27',
-  '50', '70', '85', '100',                          // threshold markers on charts
-  '30', '60', '90',                                  // recommendation timeframes (days)
+  '40', '50', '55', '70', '75', '85', '93', '100',  // scoring band threshold markers on gauges
+  '30', '60', '90',                                  // recommendation timeframes (days) + P1 habit gate threshold
   '365',                                              // M365 text
   '2024', '2025', '2026', '2027',                    // years
   '12', '13', '14', '18', '25', '63',                   // small structural numbers / defaults
+  '01', '02', '03', '04',                               // v4 metric counter labels
 ]);
 
 // Known framework terms
@@ -200,6 +233,7 @@ textOnly = textOnly.replace(/<script[\s\S]*?<\/script>/gi, '');
 textOnly = textOnly.replace(/<style[\s\S]*?<\/style>/gi, '');
 textOnly = textOnly.replace(/<[^>]+>/g, ' ');
 textOnly = textOnly.replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&')
+  .replace(/&ndash;/g, '-').replace(/&mdash;/g, '-')  // dashes → hyphen, not empty (prevents "6&ndash;10" → "610")
   .replace(/&#\d+;/g, '').replace(/&\w+;/g, '')
   .replace(/\u2014/g, '-').replace(/\u2019/g, "'").replace(/\u2013/g, '-');
 

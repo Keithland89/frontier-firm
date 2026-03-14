@@ -78,6 +78,13 @@ if (nameArg) {
 }
 console.log(`Loaded data for: ${data.customer_name}`);
 
+// Materiality thresholds — loaded from schema/ff_schema_v4.json → materiality_thresholds
+// To change what counts as a material agent or org, edit that file.
+const _mat = (schemaV4 && schemaV4.materiality_thresholds) || {};
+const MAT_AGENT_MIN_USERS  = (_mat.agents && _mat.agents.min_users_absolute)  || 10;
+const MAT_AGENT_MIN_SHARE  = (_mat.agents && _mat.agents.min_users_share_pct) || 5;   // % of agent users
+const MAT_ORG_MIN_SHARE    = (_mat.orgs   && _mat.orgs.min_users_share_pct)   || 3;   // % of total active users
+
 // ============================================================
 // DERIVED DATA FIELDS
 // ============================================================
@@ -98,15 +105,17 @@ if ((data.concentration_index === undefined || data.concentration_index === 'not
 }
 if (data.concentration_index === undefined) data.concentration_index = 'not_available';
 
-// Agent retention: prefer per-tier cohort data over scalar (scalar often = agent_health which is a different metric)
+// agent_health is always derived from agent_retention (agent user return rate, MoM cohort)
+// agent_health is not extracted from PBIX — it is computed here and used by template/scoring
+data.agent_health = typeof data.agent_retention === 'number' ? data.agent_retention : 'not_available';
+
+// Override agent_retention with per-tier cohort value if available (more precise than scalar)
 const _ptCohort = data._supplementary_metrics && data._supplementary_metrics.per_tier_retention_cohorts;
 if (_ptCohort && _ptCohort.length > 0) {
   const latestCohort = _ptCohort[_ptCohort.length - 1];
   if (typeof latestCohort.agent_retention_pct === 'number' && latestCohort.agent_retention_pct > 0) {
-    // If scalar agent_retention equals agent_health, it's the wrong metric — use cohort instead
-    if (data.agent_retention === data.agent_health) {
-      data.agent_retention = latestCohort.agent_retention_pct;
-    }
+    data.agent_retention = latestCohort.agent_retention_pct;
+    data.agent_health = data.agent_retention;
   }
 }
 
@@ -321,34 +330,41 @@ if (schemaV4) {
 
 // ============================================================
 // PATTERN PROFILE — P1/P2/P3 gateway classification
-// From PPTX: Absent / Nascent / Primary per pattern
+// Thresholds loaded from schema/ff_schema_v4.json → pattern_rules.company_pattern_gates
+// To change thresholds edit that file — no code change needed.
 // ============================================================
+var _cgates = (schemaV4 && schemaV4.pattern_rules && schemaV4.pattern_rules.company_pattern_gates) || {};
+const P1_PRESENCE_MIN  = (_cgates.p1 && _cgates.p1.presence_min_pct)     || 10;
+const P1_MATURITY_MIN  = (_cgates.p1 && _cgates.p1.maturity_min_pct)     || 30;
+const P2_PRESENCE_MIN  = (_cgates.p2 && _cgates.p2.presence_min_pct)     || 5;
+const P2_MATURITY_MIN  = (_cgates.p2 && _cgates.p2.maturity_min_pct)     || 40;
+const P3_HABITUAL_MIN  = (_cgates.p3 && _cgates.p3.habitual_min_pct)     || 20;
+const P3_MULTIUSER_MIN = (_cgates.p3 && _cgates.p3.multi_user_min_count)  || 5;
+const P3_ORGS_MIN      = (_cgates.p3 && _cgates.p3.maturity_min_orgs)    || 3;
+
 const patternProfile = { p1: 'Absent', p2: 'Absent', p3: 'Absent' };
 
 // P1: Foundation
-// Presence: ≥10% licensed users with ≥1 active day (≈ m365_enablement ≥ 10%)
-// Maturity: ≥30% in Frequent/Daily tier (≥11 active days) → licensed_band_11_15_pct + licensed_band_16_plus_pct ≥ 30
 const p1PresenceVal = _n('m365_enablement', 0);
 const p1MaturityVal = _n('licensed_band_11_15_pct', 0) + _n('licensed_band_16_plus_pct', 0);
-if (p1PresenceVal >= 10) {
-  patternProfile.p1 = p1MaturityVal >= 30 ? 'Primary' : 'Nascent';
+if (p1PresenceVal >= P1_PRESENCE_MIN) {
+  patternProfile.p1 = p1MaturityVal >= P1_MATURITY_MIN ? 'Primary' : 'Nascent';
 }
 
 // P2: Expansion
-// Presence: ≥5% of users with agent sessions (≈ agent_adoption ≥ 5%)
-// Maturity: agent return rate ≥ 40% (≈ agent_health ≥ 40)
 const p2PresenceVal = _n('agent_adoption', 0);
 const p2MaturityVal = _n('agent_health', 0);
-if (p2PresenceVal >= 5) {
-  patternProfile.p2 = p2MaturityVal >= 40 ? 'Primary' : 'Nascent';
+if (p2PresenceVal >= P2_PRESENCE_MIN) {
+  patternProfile.p2 = p2MaturityVal >= P2_MATURITY_MIN ? 'Primary' : 'Nascent';
 }
 
-// P3: Frontier
-// Presence: ≥5 active agents in portfolio OR ≥5% users in daily agent tier
-// Maturity: agents across ≥3 distinct business functions (use org_count with agents as proxy)
-const p3PresenceAgents = _n('multi_user_agents', 0) >= 5 || (_n('agent_habitual_rate', 0) >= 5);
-const p3MaturityVal = (Array.isArray(data.org_scatter_data) ? data.org_scatter_data.filter(function(o) { return (o.y || 0) >= 5; }).length : 0) >= 3;
-if (p3PresenceAgents) {
+// P3: Frontier — requires P2 >= Nascent (patterns are a progression)
+const p3HabitualRate = _n('agent_habitual_rate', 0);
+const p3MultiUsers = _n('multi_user_agents', 0);
+const p3PresenceAgents = p3HabitualRate >= P3_HABITUAL_MIN || p3MultiUsers >= P3_MULTIUSER_MIN;
+const p3OrgsMetCount = Array.isArray(data.org_scatter_data) ? data.org_scatter_data.filter(function(o) { return (o.y || 0) >= 5; }).length : 0;
+const p3MaturityVal = p3OrgsMetCount >= P3_ORGS_MIN;
+if (p3PresenceAgents && patternProfile.p2 !== 'Absent') {
   patternProfile.p3 = p3MaturityVal ? 'Primary' : 'Nascent';
 }
 
@@ -373,43 +389,44 @@ const patternProfileString = profileParts.join('  ·  ');
 console.log('Pattern Profile:', patternProfileString);
 console.log('  P1 gateway:', p1PresenceVal + '% enablement,', p1MaturityVal + '% habitual → ' + patternProfile.p1);
 console.log('  P2 gateway:', p2PresenceVal + '% agent adoption,', p2MaturityVal + '% return rate → ' + patternProfile.p2);
-console.log('  P3 gateway:', _n('multi_user_agents', 0) + ' multi-user agents,', (p3MaturityVal ? '3+' : '<3') + ' functions → ' + patternProfile.p3);
+console.log('  P3 gateway:', p3HabitualRate + '% habitual rate,', p3MultiUsers + ' multi-user agents,', (p3MaturityVal ? '3+' : '<3') + ' orgs at 5% → ' + patternProfile.p3);
 
 // ============================================================
 // NARRATIVE ENGINE — data-driven storytelling using P1/P2/P3 patterns
-// Determines headline, description, risk signal, and recommended action
+// All strings are anchored to this customer's metrics — no hardcoded generics.
+// These are fallbacks; LLM-generated _ai_insights keys override them at runtime.
 // ============================================================
 let cultureStage, cultureStageNum, cultureDesc, cultureRedFlag, cultureAction, cultureHeadline;
 const activeUserPct = _n('m365_enablement', 0);
 const habitualPct = _n('licensed_band_11_15_pct', 0) + _n('licensed_band_16_plus_pct', 0);
 const agentAdoptPct = _n('agent_adoption', 0);
 const breadthVal = _n('m365_breadth', 0);
+const _fmtN = n => typeof n === 'number' ? n.toLocaleString() : (typeof n === 'string' && n !== 'not_available' ? n : '0');
 
-// Determine dominant pattern narrative from P1/P2/P3 profile
 if (patternProfile.p3 === 'Primary') {
   cultureStage = 'Frontier Primary'; cultureStageNum = 4;
-  cultureHeadline = 'Agents are running real work \u2014 the question is governance';
-  cultureDesc = 'This organisation has crossed the agent inflection point. Frontier-level agent operations are active across multiple functions \u2014 agents don\u2019t just assist, they execute. Employees are becoming "agent bosses," orchestrating outcomes by directing autonomous agents. The question is no longer "should we use AI?" \u2014 it\u2019s "why isn\u2019t AI handling this?"';
-  cultureRedFlag = 'The risk is over-automation without oversight. Agents running substantial workflows need review cadences, escalation protocols, and governance frameworks. Speed without judgment isn\u2019t maturity \u2014 it\u2019s risk.';
-  cultureAction = 'Structure teams with clear AI roles and delegation norms. Build continuous feedback loops. Embed AI competency in hiring and governance.';
+  cultureHeadline = `${_fmtN(_n('agent_users'))} users running agents across ${_n('org_count')} orgs \u2014 ${_n('multi_user_agents')} agents have moved beyond their creator to team-level use`;
+  cultureDesc = `Agent adoption sits at ${_n('agent_adoption')}% with ${_fmtN(_n('agent_users'))} active users and ${_n('multi_user_agents')} multi-user agents in the portfolio. Agent return rate at ${_n('agent_health')}% confirms these are active workflows, not one-off experiments. The breadth across ${_n('org_count')} organisations shows uptake is distributed rather than concentrated in a single team.`;
+  cultureRedFlag = `${_n('agent_band_1_5_pct')}% of agent users engage only 1\u20135 days per month \u2014 shallow engagement with workflows that may carry real business consequences. ${_fmtN(_n('total_agents') - _n('multi_user_agents'))} of ${_fmtN(_n('total_agents'))} agents still have a single user. Without defined review cadences and scope boundaries, the agent portfolio will grow faster than the organisation\u2019s ability to measure what it\u2019s doing.`;
+  cultureAction = `Audit the ${_n('multi_user_agents')} multi-user agents \u2014 document what made them stick and use that as the governance template for the next expansion wave. Set agent retention thresholds using the current ${_n('agent_health')}% return rate as the baseline, and define escalation paths for agents running workflows in the ${_n('org_count')} orgs.`;
 } else if (patternProfile.p2 === 'Primary' || (patternProfile.p2 === 'Nascent' && patternProfile.p1 === 'Primary')) {
   cultureStage = 'Foundation\u2192Expansion Transition'; cultureStageNum = 3;
-  cultureHeadline = 'AI is landing \u2014 but it hasn\u2019t changed how people work yet';
-  cultureDesc = 'People are using Copilot as a personal assistant \u2014 drafting, summarising, researching. Some teams are starting to delegate to agents. But for most of the organisation, AI is still something people reach for when they remember, not something they depend on. The question is shifting from "AI helps me do my job" to "we work differently because of AI" \u2014 but most haven\u2019t made that jump yet.';
-  cultureRedFlag = 'This is the hardest transition on the maturity ladder. AI assistants require you to learn a tool. AI agents require something fundamentally different: trusting a colleague. Most organisations haven\u2019t built the norms for that \u2014 when to delegate, how to review, what "good enough" looks like from a machine.';
-  cultureAction = 'Redesign workflows around human-AI collaboration. Establish agent trust norms \u2014 delegation playbooks, review cadences, shared handoff protocols. Gartner recommends at least 30% of AI budget goes to change management. Most organisations spend less than 5%.';
+  cultureHeadline = `${_n('m365_frequency')}% habitual, ${_n('agent_adoption')}% agent adoption \u2014 individual productivity is established, team-level orchestration is beginning`;
+  cultureDesc = `${_fmtN(_n('band_6_10'))} licensed users are at 6\u201310 active days \u2014 they\u2019ve found value but haven\u2019t rebuilt workflows around AI yet. ${_fmtN(_n('agent_users'))} users are engaging with agents, and the ${_n('agent_health')}% return rate shows those agents are earning repeat use. The gap between the ${(_n('band_11_15_pct') + _n('band_16_plus_pct')).toFixed(1)}% who are habitual and the ${_n('band_1_5_pct')}% who are still in occasional-use mode is where the next stage of maturity is won.`;
+  cultureRedFlag = `The ${_n('agent_band_1_5_pct')}% of agent users at only 1\u20135 active days signals that agent adoption is broad but shallow \u2014 the top-line adoption rate overstates depth of use. The ${_fmtN(_n('band_6_10'))} users at 6\u201310 active days are the highest-leverage cohort: converting 30% of them to 11+ days would nearly double the habitual base without a single new deployment.`;
+  cultureAction = `Target the ${_fmtN(_n('band_6_10'))} users at 6\u201310 active days with workflow-specific nudges \u2014 they\u2019ve cleared the motivation barrier, they need a reason to make AI the default rather than the occasional option. Evaluate which agents to scale using the ${_n('agent_health')}% return rate as the minimum bar before expanding to new orgs.`;
 } else if (patternProfile.p1 === 'Primary' || patternProfile.p1 === 'Nascent') {
   cultureStage = 'Foundation Dominant'; cultureStageNum = 2;
-  cultureHeadline = 'Copilot is deployed \u2014 but the culture hasn\u2019t shifted yet';
-  cultureDesc = 'Champions have emerged \u2014 a group of enthusiasts who use Copilot intensively and see real value. But adoption is siloed. The superusers make the averages look healthier than reality, while the silent majority haven\u2019t found their entry point. Microsoft data shows 78% of employees bring their own AI tools to work \u2014 the demand is there, but the organisation hasn\u2019t channelled it into shared ways of working.';
-  cultureRedFlag = 'The adoption paradox: usage goes up, but organisational capability stays flat. The tools are deployed, the dashboards show growing activity \u2014 and yet the organisation isn\u2019t fundamentally working any differently. If the top 10% of users account for 60%+ of activity, you\u2019re not scaling \u2014 you\u2019re dependent on a handful of enthusiasts.';
-  cultureAction = 'Find and empower your champions. Fund quick wins that show value in real workflows. Build peer-to-peer sharing \u2014 the knowledge that lives in superusers needs to get out to everyone else. Make AI use visible through manager modeling and team rituals.';
+  cultureHeadline = `${_n('m365_enablement')}% license activation across ${_n('org_count')} orgs \u2014 the foundation is set, habit is the next gate`;
+  cultureDesc = `${_fmtN(_n('licensed_users'))} users hold M365 Copilot licenses and ${_n('m365_enablement')}% are actively using them. ${_n('band_1_5_pct')}% of active users engage only 1\u20135 days per month \u2014 the majority are exploring, not depending on AI. The ${_fmtN(_n('band_6_10'))} users at 6\u201310 active days are the leading indicator: they\u2019ve found enough value to return, but haven\u2019t yet embedded AI into a daily workflow.`;
+  cultureRedFlag = `${_fmtN(_n('inactive_licenses'))} licenses are completely idle \u2014 ${((parseFloat(_n('inactive_licenses', 0)) / Math.max(parseFloat(_n('total_licensed_seats', 1)), 1)) * 100).toFixed(0)}% of the licensed investment with no measurable return. ${typeof data.concentration_index === 'number' ? `The ${data.concentration_index}% concentration score signals uneven uptake across orgs` : 'Usage concentration signals uneven uptake across orgs'} \u2014 if habitual use is clustered in the top-quartile orgs, the overall metrics are masking a narrower active base.`;
+  cultureAction = `Identify which of the ${_n('org_count')} orgs have the highest habitual rates and document the conditions that got them there \u2014 manager modelling, workflow integration, or peer sharing. Use those conditions as the activation playbook for the ${_fmtN(_n('inactive_licenses'))} idle license holders, starting with orgs that have the highest unlicensed Chat usage as a demand signal.`;
 } else {
   cultureStage = 'Pre-Foundation'; cultureStageNum = 1;
-  cultureHeadline = 'AI is talked about, but not yet part of how people work';
-  cultureDesc = 'Leadership mentions AI in strategy decks. A few pilots exist, usually tucked away in IT or an innovation team. Employees bounce between excitement and anxiety. AI is someone else\u2019s project \u2014 not yet part of the daily rhythm of how work gets done.';
-  cultureRedFlag = 'MIT\u2019s 2025 research found that 95% of AI pilots never make it past the pilot stage. S&P Global reported that 42% of companies scrapped most of their AI initiatives in 2025, up from 17% a year earlier. The danger isn\u2019t being early \u2014 it\u2019s not knowing you\u2019re stuck.';
-  cultureAction = 'Leaders must use AI visibly themselves. Share what worked, what surprised you, what flopped. Create psychological safety \u2014 frame AI as augmentation, not replacement. Give people explicit permission to experiment.';
+  cultureHeadline = `${_fmtN(_n('total_active_users'))} users activated, ${_n('m365_enablement')}% license utilisation \u2014 deployment is the current gate`;
+  cultureDesc = `${_fmtN(_n('total_active_users'))} users have engaged with AI tools, but ${_fmtN(_n('inactive_licenses'))} licenses remain unused and ${_n('band_1_5_pct')}% of active users are at 1\u20135 active days. The ${_fmtN(_n('chat_users'))} unlicensed Chat users represent organic demand \u2014 people who found and started using AI without a formal deployment \u2014 and are the most efficient base to build activation from.`;
+  cultureRedFlag = `With ${_n('m365_frequency')}% habitual use and ${_fmtN(_n('inactive_licenses'))} inactive licenses, ${((parseFloat(_n('inactive_licenses', 0)) / Math.max(parseFloat(_n('total_licensed_seats', 1)), 1)) * 100).toFixed(0)}% of the licensed investment is generating no measured return. The ${_fmtN(_n('chat_users'))} unlicensed Chat users show the demand exists \u2014 the gap is in activation and workflow integration, not appetite.`;
+  cultureAction = `License the most engaged subset of the ${_fmtN(_n('chat_users'))} unlicensed Chat users \u2014 they are self-selected adopters who have already cleared the motivation barrier. Use their usage patterns as the activation playbook for the ${_fmtN(_n('inactive_licenses'))} idle license holders rather than running broad enablement campaigns.`;
 }
 
 console.log('Narrative:', cultureStage, '(' + cultureStageNum + '/4)');
@@ -544,10 +561,6 @@ Return ONLY the JSON object, no markdown code fences.`;
 function generateTemplateInsights(data, signalTiers, pattern) {
   // Guard: ensure numeric fields used in template text don't produce NaN
   const safe = (v, fallback) => typeof v === 'number' && isFinite(v) ? v : fallback;
-  // Derive agent_health from agent_retention BEFORE copying to d
-  if ((data.agent_health === undefined || data.agent_health === 'not_available') && typeof data.agent_retention === 'number') {
-    data.agent_health = data.agent_retention;
-  }
   // Patch data with safe defaults for template text generation
   const d = Object.assign({}, data);
   d.m365_enablement = safe(d.m365_enablement, 0);
@@ -594,11 +607,8 @@ function generateTemplateInsights(data, signalTiers, pattern) {
   if (d.concentration_index === undefined) d.concentration_index = 'not_available';
   // Agent retention: leave as not_available if no agent-specific data — NEVER proxy from m365_retention (different population)
   if (d.agent_retention === undefined) d.agent_retention = 'not_available';
-  // Agent health = agent return rate (same concept, same population) — derive from agent_retention if extracted
-  if ((d.agent_health === undefined || d.agent_health === 'not_available') && typeof d.agent_retention === 'number') {
-    d.agent_health = d.agent_retention;
-  }
-  if (d.agent_health === undefined) d.agent_health = 'not_available';
+  // agent_health is always derived at top of file from agent_retention — propagate into d
+  d.agent_health = data.agent_health;
   // Licensed band percentages: derive from per-tier band data (Licensed tier, latest month)
   // NEVER copy from band_*_pct — those are Chat (unlicensed) population bands
   if (d.licensed_band_1_5_pct === undefined) {
@@ -626,14 +636,14 @@ function generateTemplateInsights(data, signalTiers, pattern) {
   const fmt = n => typeof n === 'number' ? n.toLocaleString() : n;
 
   return {
-    EXEC_SUMMARY_GOOD: `<strong>${fmt(data.total_active_users)} people</strong> have used AI across ${data.org_count} organisations. ${fmt(data.licensed_users)} hold M365 Copilot licenses, and ${Math.round(safe(data.m365_enablement, 0))}% are actively used. Month-over-month, ${data.m365_retention}% of users come back. The deployment has landed. The technology is there. But tracking AI actions without measuring whether the culture is shifting is like tracking gym attendance without checking whether anyone\u2019s getting fitter.`,
-    EXEC_SUMMARY_GAP: `Here\u2019s the adoption paradox: usage goes up, but organisational capability stays flat. <strong>Only ${data.m365_frequency}% of licensed users have built a genuine daily habit.</strong> Most stick to ${data.m365_breadth} apps out of 27 available. ${data.band_1_5_pct}% engage fewer than 6 days a month \u2014 they\u2019re trying it, not relying on it. ${cultureRedFlag}`,
-    EXEC_SUMMARY_OPP: `The path forward is clear: <strong>${cultureAction}</strong> There are ${fmt(data.band_6_10)} users in the 6\u201310 active day bracket who are one nudge from habitual \u2014 engaged enough to see the value, not yet embedded enough to depend on it. Meanwhile, ${fmt(data.inactive_licenses)} licenses sit completely idle, representing spend that could be redirected to orgs where demand is already proven.`,
-    INSIGHT_REACH: `<strong>${Math.round(data.m365_enablement)}% of licenses are active</strong> \u2014 which sounds like progress. But a Frontier Firm isn\u2019t one where AI is available \u2014 it\u2019s one where AI is spreading equitably across every team and function. MIT\u2019s 2025 research found 95% of AI pilots never scale. The ${fmt(data.inactive_licenses)} idle licenses and the concentration gap between top and bottom organisations show this isn\u2019t a deployment problem anymore \u2014 it\u2019s a reach problem. The organisations already at P2 and P3 prove the model works; the P1 orgs need the same enabling conditions.`,
+    EXEC_SUMMARY_GOOD: `<strong>${fmt(data.total_active_users)} people</strong> have used AI across ${data.org_count} organisations. ${fmt(data.licensed_users)} hold M365 Copilot licenses and ${Math.round(safe(data.m365_enablement, 0))}% are actively used. Month-over-month, ${data.m365_retention}% of users come back \u2014 the deployment has landed and retention confirms ongoing engagement.`,
+    EXEC_SUMMARY_GAP: `<strong>${data.m365_frequency}% of licensed users have built a genuine daily habit</strong> \u2014 ${data.band_1_5_pct}% engage fewer than 6 days a month. Most users stick to ${data.m365_breadth} apps out of 27 available surfaces. ${cultureRedFlag}`,
+    EXEC_SUMMARY_OPP: `${cultureAction} The ${fmt(data.band_6_10)} users at 6\u201310 active days are the highest-leverage cohort \u2014 engaged enough to see value, not yet embedded enough to depend on it. ${fmt(data.inactive_licenses)} licenses sit completely idle, representing spend that could be redirected to orgs where demand is already proven.`,
+    INSIGHT_REACH: `<strong>${Math.round(data.m365_enablement)}% of licenses are active</strong> across ${data.org_count} organisations. The ${fmt(data.inactive_licenses)} idle licenses and the concentration gap between top and bottom organisations show this isn\u2019t a deployment problem \u2014 it\u2019s a reach problem. The organisations already at P2 and P3 in this tenant prove the enabling conditions exist; the question is which levers accelerate the lagging orgs.`,
     INSIGHT_HABIT: `<strong>Retention is ${data.m365_retention > 85 ? 'world-class' : 'healthy'} at ${data.m365_retention}%</strong> \u2014 people are coming back. But on the Frontier Firm journey, coming back isn\u2019t enough. The difference between a P1 organisation and a P2 organisation isn\u2019t technology \u2014 it\u2019s habit depth. Habitual use (11+ active days) sits at just ${data.m365_frequency}%. Frontier Firms show 71% of employees thriving vs 39% globally \u2014 and that gap maps directly to whether AI has become embedded in daily working rhythms or remains something people reach for occasionally.`,
     INSIGHT_SKILL: `<strong>Most users stick to ${data.m365_breadth} apps out of 27 available surfaces.</strong> ${patternProfile.p2 === 'Absent' || patternProfile.p2 === 'Nascent' ? 'This is the P1 pattern: AI is a better search bar, a faster first draft, a smarter autocomplete. Users stay in control the whole time. Moving to P2 (Expansion) requires a fundamentally different relationship: trusting AI to take on tasks, not just answer questions.' : 'The P2 transition is underway \u2014 people are starting to delegate to agents. But the jump from "AI helps me" to "we work differently because of AI" is where most organisations stall. That shift requires new norms: when to delegate, how to review agent output, what good enough looks like from a machine colleague.'}`,
     SPOTLIGHT_HABIT: `<strong>${fmt(data.band_6_10)} users are in the 6\u201310 active day bracket</strong> \u2014 the most important cohort in the entire dataset. They\u2019ve found enough value to keep coming back, but they haven\u2019t crossed the threshold from "I use it sometimes" to "I can\u2019t work without it." If 30% of this group convert to 11+ active days, the habitual user base nearly doubles. The intervention isn\u2019t more training \u2014 it\u2019s peer benchmarks, manager modeling, and use-case nudges that make AI the default rather than the alternative.`,
-    SPOTLIGHT_MATURITY: `<strong>${cultureHeadline}.</strong> ${cultureDesc} Microsoft\u2019s Frontier Firm research is clear: organisations that reach P3 see 3x higher ROI from AI, and 71% of their employees say their company is thriving \u2014 compared with just 39% globally. The difference isn\u2019t better technology or more licenses. It\u2019s that their leaders changed how the organisation actually works \u2014 redesigning workflows, building trust norms for AI collaboration, and measuring whether the culture shifted, not just whether the tools were used. The highest-leverage move right now: <em>${cultureAction}</em>`,
+    SPOTLIGHT_MATURITY: `<strong>${cultureHeadline}.</strong> ${cultureDesc} The highest-leverage move right now: <em>${cultureAction}</em>`,
     PULLQUOTE_0: `${fmt(data.total_active_users)} users deployed. The technology has landed. The question now is whether working norms are shifting to match.`,
     PULLQUOTE_1: `Scale is won. But are people actually coming back?`,
     PULLQUOTE_2: `They\u2019re coming back \u2014 but what are they doing with it?`,
@@ -643,7 +653,7 @@ function generateTemplateInsights(data, signalTiers, pattern) {
     REC_1_TITLE: `Build the habit: convert ${fmt(data.band_6_10)} users from trying to depending`,
     REC_1_DESC: `The ${fmt(data.band_6_10)} users in the 6\u201310 active day bracket are the most important cohort in the data. They\u2019ve found enough value to keep coming back but haven\u2019t crossed the threshold to daily dependence. The intervention isn\u2019t more training \u2014 it\u2019s peer benchmarks that show what good looks like, manager modeling that makes AI use visible, and use-case nudges tied to their actual workflows. If 30% convert to 11+ active days, the habitual user base nearly doubles.`,
     REC_2_TITLE: `Break the ${data.m365_breadth}-app loop: redesign workflows around AI`,
-    REC_2_DESC: `Most users are stuck in a narrow pattern \u2014 ${data.m365_breadth} apps out of 27 available. This isn\u2019t a feature awareness problem; it\u2019s a workflow design problem. Gartner recommends allocating at least 30% of AI budget to change management, yet most organisations spend less than 5%. Identify the 3-4 highest-value workflows per function, redesign them with AI embedded, and surface the top multi-user agents through a curated catalogue that makes discovery effortless.`,
+    REC_2_DESC: `Users average ${data.m365_breadth} apps out of 27 available surfaces \u2014 a workflow design problem, not a feature awareness problem. Identify the 3\u20134 highest-value workflows per function and redesign them with AI embedded. Surface the ${_n('multi_user_agents')} multi-user agents through a curated catalogue to make discovery effortless and reduce the ${_n('total_agents') - _n('multi_user_agents')} single-user agents that never reached team-level adoption.`,
     REC_3_TITLE: `Redirect ${fmt(data.inactive_licenses)} idle licenses to proven demand`,
     REC_3_DESC: `${(safe(data.total_licensed_seats, 1) > 0 ? ((safe(data.inactive_licenses, 0) / safe(data.total_licensed_seats, 1)) * 100).toFixed(0) : '0')}% of licenses show zero activity across the entire analysis period \u2014 that\u2019s real spend with zero return. Meanwhile, ${fmt(data.chat_users)} unlicensed users are already using Copilot Chat on their own \u2014 organic demand that doesn\u2019t need convincing, just licensing. Segment inactive licenses by function, match them against the orgs with highest unlicensed-to-licensed ratios, and reallocate.`,
     TITLE_REACH: Math.round(safe(data.m365_enablement, 0)) + '% of licenses are active. But is AI actually spreading?',
@@ -651,6 +661,10 @@ function generateTemplateInsights(data, signalTiers, pattern) {
     TITLE_SKILL: data.m365_breadth + ' apps per user, ' + safe(data.agent_adoption, 0) + '% agent adoption. Are they going deep?',
     TITLE_VALUE: fmt(data.inactive_licenses || 0) + ' idle licenses, ' + fmt(data.chat_users || 0) + ' users showing demand',
     TITLE_MATURITY: cultureHeadline,
+    CULTURE_HEADLINE: cultureHeadline,
+    CULTURE_DESC: cultureDesc,
+    CULTURE_RED_FLAG: cultureRedFlag,
+    CULTURE_ACTION: cultureAction,
     SUBTITLE_REACH: 'Copilot is deployed across ' + data.org_count + ' organisations with ' + fmt(data.total_licensed_seats) + ' seats. The technology has landed. But ' + (safe(data.total_licensed_seats, 1) > 0 ? ((safe(data.inactive_licenses, 0) / safe(data.total_licensed_seats, 1)) * 100).toFixed(0) : '0') + '% of licenses are gathering dust, and the gap between "deployed" and "embedded" is where most organisations get stuck.',
     SUBTITLE_HABIT: 'People are coming back \u2014 that\u2019s the good news. The harder question is whether they\u2019re building real routines or just checking in. The difference between monthly visitors and daily dependence is the culture shift that separates AI leaders from the rest.',
     SUBTITLE_SKILL: 'This is where the data reveals what dashboards usually miss. It\u2019s not enough to use AI \u2014 the question is whether people are using it in ways that actually change how they work. Breadth across surfaces, depth of multi-turn engagement, and the emergence of agent-based workflows all point to the same thing: how sophisticated is the relationship with AI becoming?',
@@ -1241,7 +1255,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{RETENTION_TIER_LABEL\}\}/g, data.m365_retention >= 85 ? 'Frontier-tier' : data.m365_retention >= 70 ? 'Expansion-tier' : 'Foundation-tier');
 
   // Pattern / Maturity placeholders
-  html = html.replace(/\{\{PATTERN_LABEL\}\}/g, cultureHeadline);
+  html = html.replace(/\{\{PATTERN_LABEL\}\}/g, insights.CULTURE_HEADLINE || '');
   html = html.replace(/\{\{PATTERN_NUMBER\}\}/g, String(pattern.number));
   html = html.replace(/\{\{PATTERN_NEXT\}\}/g, String(Math.min(pattern.number + 1, 3)));
 
@@ -1249,11 +1263,11 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{PATTERN_PROFILE_STRING\}\}/g, patternProfileString);
   html = html.replace(/\{\{CULTURE_STAGE\}\}/g, cultureStage);
   html = html.replace(/\{\{CULTURE_STAGE_NUM\}\}/g, String(cultureStageNum));
-  html = html.replace(/\{\{CULTURE_DESC\}\}/g, cultureDesc);
-  html = html.replace(/\{\{CULTURE_RED_FLAG\}\}/g, cultureRedFlag);
-  html = html.replace(/\{\{CULTURE_ACTION\}\}/g, cultureAction);
-  html = html.replace(/\{\{CULTURE_HEADLINE\}\}/g, cultureHeadline);
-  html = html.replace(/\{\{NARRATIVE_HEADLINE\}\}/g, cultureHeadline);
+  html = html.replace(/\{\{CULTURE_DESC\}\}/g, insights.CULTURE_DESC || '');
+  html = html.replace(/\{\{CULTURE_RED_FLAG\}\}/g, insights.CULTURE_RED_FLAG || '');
+  html = html.replace(/\{\{CULTURE_ACTION\}\}/g, insights.CULTURE_ACTION || '');
+  html = html.replace(/\{\{CULTURE_HEADLINE\}\}/g, insights.CULTURE_HEADLINE || '');
+  html = html.replace(/\{\{NARRATIVE_HEADLINE\}\}/g, insights.CULTURE_HEADLINE || '');
   // Dominant pattern — full Frontier Firm name
   const patternNames = { 1: 'Foundation', 2: 'Expansion', 3: 'Frontier' };
   const patternDescs = {
@@ -1276,6 +1290,44 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{P2_GATEWAY_VAL\}\}/g, String(Math.round(p2PresenceVal * 10) / 10));
   html = html.replace(/\{\{P2_MATURITY_VAL\}\}/g, String(Math.round(p2MaturityVal * 10) / 10));
   html = html.replace(/\{\{P3_MULTI_AGENTS\}\}/g, String(n('multi_user_agents')));
+
+  // Pattern gateway progress HTML — injected into each pattern card
+  // Shows current vs threshold with a mini progress bar and gap label
+  var p3OrgsMet = p3OrgsMetCount;
+  function _gRow(label, valStr, threshold, pct, met, accentHex) {
+    var barColor = met ? '#34d399' : (pct >= 80 ? '#fbbf24' : accentHex);
+    var valColor = met ? '#34d399' : (pct >= 80 ? '#fbbf24' : 'rgba(255,255,255,.5)');
+    return '<div style="display:flex;flex-direction:column;gap:.22rem">' +
+      '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:.35rem">' +
+      '<span style="font-size:.58rem;color:rgba(255,255,255,.42);flex:1">' + label + '</span>' +
+      '<span style="font-size:.66rem;font-weight:700;color:' + valColor + ';white-space:nowrap;font-variant-numeric:tabular-nums">' + valStr +
+      (met ? '&nbsp;<span style="font-size:.55rem">✓</span>' :
+             '&nbsp;<span style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.28)">/ ' + threshold + '</span>') +
+      '</span></div>' +
+      '<div style="height:3px;background:rgba(255,255,255,.07);border-radius:2px">' +
+      '<div style="width:' + Math.min(100, pct) + '%;height:100%;border-radius:2px;background:' + barColor + '"></div>' +
+      '</div></div>';
+  }
+  function _gBlock(rows) {
+    return '<div style="margin-top:1rem;display:flex;flex-direction:column;gap:.55rem;padding-top:.85rem;border-top:1px solid rgba(255,255,255,.07)">' +
+      '<div style="font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.28);margin-bottom:.1rem">Pattern gates</div>' +
+      rows.join('') + '</div>';
+  }
+  var p1GatewayHtml = _gBlock([
+    _gRow('Activation ≥' + P1_PRESENCE_MIN + '%',          Math.round(p1PresenceVal) + '%',               P1_PRESENCE_MIN + '%', Math.min(100, Math.round(p1PresenceVal / P1_PRESENCE_MIN * 100)),   p1PresenceVal >= P1_PRESENCE_MIN, 'rgb(59,130,246)'),
+    _gRow('Habitual licensed users ≥' + P1_MATURITY_MIN + '%', Math.round(p1MaturityVal * 10) / 10 + '%', P1_MATURITY_MIN + '%', Math.min(100, Math.round(p1MaturityVal / P1_MATURITY_MIN * 100)),   p1MaturityVal >= P1_MATURITY_MIN, 'rgb(59,130,246)')
+  ]);
+  var p2GatewayHtml = _gBlock([
+    _gRow('Agent adoption ≥' + P2_PRESENCE_MIN + '%',      Math.round(p2PresenceVal * 10) / 10 + '%',    P2_PRESENCE_MIN + '%', Math.min(100, Math.round(p2PresenceVal / P2_PRESENCE_MIN * 100)),    p2PresenceVal >= P2_PRESENCE_MIN, 'rgb(16,185,129)'),
+    _gRow('Agent user return ≥' + P2_MATURITY_MIN + '%',   Math.round(p2MaturityVal * 10) / 10 + '%',    P2_MATURITY_MIN + '%', Math.min(100, Math.round(p2MaturityVal / P2_MATURITY_MIN * 100)),   p2MaturityVal >= P2_MATURITY_MIN, 'rgb(16,185,129)')
+  ]);
+  var p3GatewayHtml = _gBlock([
+    _gRow('Habitual agent users ≥' + P3_HABITUAL_MIN + '%', Math.round(p3HabitualRate * 10) / 10 + '%', P3_HABITUAL_MIN + '%',    Math.min(100, Math.round(p3HabitualRate / P3_HABITUAL_MIN * 100)), p3HabitualRate >= P3_HABITUAL_MIN, 'rgb(139,92,246)'),
+    _gRow('Orgs at agent ≥5%  ≥' + P3_ORGS_MIN,            p3OrgsMet + ' orgs',                         P3_ORGS_MIN + ' orgs',    Math.min(100, Math.round(p3OrgsMet / P3_ORGS_MIN * 100)),          p3OrgsMet >= P3_ORGS_MIN,         'rgb(139,92,246)')
+  ]);
+  html = html.replace(/\{\{P1_GATEWAY_HTML\}\}/g, p1GatewayHtml);
+  html = html.replace(/\{\{P2_GATEWAY_HTML\}\}/g, p2GatewayHtml);
+  html = html.replace(/\{\{P3_GATEWAY_HTML\}\}/g, p3GatewayHtml);
 
   // Signal tier labels and CSS classes
   const tierClass = t => t === 'P3' ? 'tier-4' : t === 'P2' ? 'tier-3' : 'tier-2';
@@ -1642,76 +1694,75 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
 
   // Concentration Index — already computed in derived-data phase above; no duplicate needed here
 
-  // Per-org Frontier Firm maturity — composite score across available signals
-  // Combines: Reach (user count as % of total), Habit (relative scale), Skill (agent adoption %)
-  // Score 0-100, classified into Pattern 1/2/3
+  // Per-org pattern classification — SAME gate logic as company-level OVERALL row
+  //
+  // Rule (applied identically to every org and to the OVERALL row):
+  //   P3 (Frontier):  habitual_rate >= 30%  AND  agent_adoption >= 15%
+  //   P2 (Expansion): habitual_rate >= 15%  AND  agent_adoption >= 5%
+  //   P1 (Foundation): either threshold below P2
+  //
+  // Both thresholds must be met to qualify — no averaging, no substitution.
+  // Thresholds loaded from schema/ff_schema_v4.json → pattern_rules.org_pattern_gates
+  // To change the classification thresholds, edit that file — no code change needed.
+  var _gates = (schemaV4 && schemaV4.pattern_rules && schemaV4.pattern_rules.org_pattern_gates) || {};
+  var ORG_P2_HABIT = (_gates.p2_expansion && _gates.p2_expansion.habit_min_pct) || 15;
+  var ORG_P2_AGENT = (_gates.p2_expansion && _gates.p2_expansion.agent_min_pct) || 5;
+  var ORG_P3_HABIT = (_gates.p3_frontier  && _gates.p3_frontier.habit_min_pct)  || 30;
+  var ORG_P3_AGENT = (_gates.p3_frontier  && _gates.p3_frontier.agent_min_pct)  || 15;
+
+  function classifyOrgPattern(habitPct, agentPct) {
+    if (habitPct >= ORG_P3_HABIT && agentPct >= ORG_P3_AGENT) return 'Frontier';
+    if (habitPct >= ORG_P2_HABIT && agentPct >= ORG_P2_AGENT) return 'Expansion';
+    return 'Foundation';
+  }
+
   var orgPatternCounts = { Foundation: 0, Expansion: 0, Frontier: 0 };
   var orgPatternList = [];
   if (orgScatter.length > 0) {
-    var totalUsers = n('total_active_users', 1);
-    var totalAgentUsers = n('agent_users', 0);
-    var orgAgentRate = totalUsers > 0 ? totalAgentUsers / totalUsers : 0; // org-wide agent adoption rate
-
-    var maxOrgUsers = Math.max.apply(null, orgScatter.map(function(o) { return o.x || 0; }).concat([1]));
     var hasOrgHabit = orgScatter.some(function(o) { return typeof o.habitual_pct === 'number'; });
-    var overallHabitualRate = _n('embedded_user_rate', 0); // org-wide habitual rate for normalisation
 
     orgScatter.forEach(function(org) {
-      var users = org.x || 0;
-      var agentAdoptPct = org.y || 0; // agent adoption % for this org
+      var agentPct = org.y || 0;
+      var habitPct = (hasOrgHabit && typeof org.habitual_pct === 'number') ? org.habitual_pct : 0;
 
-      // Reach (0-100): org's user count as % of the largest org
-      var reachScore = Math.min(100, Math.round(users / maxOrgUsers * 100));
+      // Gate classification (agent-only fallback when no per-org habit data)
+      var orgPattern = hasOrgHabit
+        ? classifyOrgPattern(habitPct, agentPct)
+        : (agentPct >= ORG_P3_AGENT ? 'Frontier' : agentPct >= ORG_P2_AGENT ? 'Expansion' : 'Foundation');
 
-      // Habit (0-100): org's habitual user % relative to overall average
-      // If per-org habit data available: normalise so overall rate = 50
-      var habitScore = 0;
-      if (hasOrgHabit && typeof org.habitual_pct === 'number' && overallHabitualRate > 0) {
-        habitScore = Math.min(100, Math.round(org.habitual_pct / overallHabitualRate * 50));
-      }
-
-      // Skill (0-100): org's agent adoption % relative to overall average
-      // Average = 50, double average = 100
-      var skillScore = orgAgentRate > 0 ? Math.min(100, Math.round(agentAdoptPct / (orgAgentRate * 100) * 50)) : 0;
-
-      // Composite: equal weight across available signals
-      var composite;
-      if (hasOrgHabit) {
-        composite = Math.round(reachScore * 0.33 + habitScore * 0.33 + skillScore * 0.34);
-      } else {
-        composite = Math.round(reachScore * 0.5 + skillScore * 0.5);
-      }
-
-      var orgPattern;
-      if (composite >= 60) orgPattern = 'Frontier';
-      else if (composite >= 30) orgPattern = 'Expansion';
-      else orgPattern = 'Foundation';
+      // Normalised 0-100 scores for bar display only (100 = P3 threshold)
+      var normHabit = Math.min(100, Math.round(habitPct / ORG_P3_HABIT * 100));
+      var normSkill  = Math.min(100, Math.round(agentPct  / ORG_P3_AGENT  * 100));
+      var composite  = Math.round((normHabit + normSkill) / 2);
 
       orgPatternCounts[orgPattern]++;
       orgPatternList.push({
         label: org.label,
         pattern: orgPattern,
-        agentPct: agentAdoptPct,
-        users: users,
+        agentPct: agentPct,
+        habitPct: habitPct,
+        users: org.x || 0,
         composite: composite,
-        scores: { reach: reachScore, habit: habitScore, skill: skillScore }
+        scores: { reach: 0, habit: normHabit, skill: normSkill }
       });
     });
   }
-  // Add org-wide overall bar at the top
+  // OVERALL row — same gate logic, using company-level metrics
   if (orgPatternList.length > 0) {
-    var overallReach = Math.min(100, Math.round(_n('m365_enablement', 0)));
-    var overallHabit = Math.min(100, Math.round((_n('embedded_user_rate', 0) / 40) * 100)); // 40% = frontier threshold
-    var overallSkill = Math.min(100, Math.round((_n('agent_adoption', 0) / 30) * 100)); // 30% = frontier threshold
-    var overallComposite = Math.round(overallReach * 0.33 + overallHabit * 0.33 + overallSkill * 0.34);
-    var overallPattern = overallComposite >= 60 ? 'Frontier' : overallComposite >= 30 ? 'Expansion' : 'Foundation';
+    var overallHabitPct = _n('embedded_user_rate', 0);
+    var overallAgentPct = _n('agent_adoption', 0);
+    var overallOrgPattern = classifyOrgPattern(overallHabitPct, overallAgentPct);
+    var overallNormHabit = Math.min(100, Math.round(overallHabitPct / ORG_P3_HABIT * 100));
+    var overallNormSkill = Math.min(100, Math.round(overallAgentPct / ORG_P3_AGENT * 100));
+    var overallOrgComposite = Math.round((overallNormHabit + overallNormSkill) / 2);
     orgPatternList.unshift({
       label: 'OVERALL',
-      pattern: overallPattern,
-      agentPct: _n('agent_adoption', 0),
+      pattern: overallOrgPattern,
+      agentPct: overallAgentPct,
+      habitPct: overallHabitPct,
       users: n('total_active_users', 0),
-      composite: overallComposite,
-      scores: { reach: overallReach, habit: overallHabit, skill: overallSkill },
+      composite: overallOrgComposite,
+      scores: { reach: 0, habit: overallNormHabit, skill: overallNormSkill },
       isOverall: true
     });
   }
@@ -1987,9 +2038,14 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     html = html.replace(/\{\{DEPTH_TREND_LABELS_JSON\}\}/g, '[]');
     html = html.replace(/\{\{DEPTH_TREND_VALUES_JSON\}\}/g, '[]');
   }
-  // Per-agent depth — sessions per user, top 8 sorted
+  // Per-agent depth — sessions per user, top 8 sorted — material agents only
+  var _agentUsersTotal = n('agent_users', 1);
+  function isMaterialAgent(a) {
+    var u = a.users || 0;
+    return u >= MAT_AGENT_MIN_USERS && (_agentUsersTotal > 0 ? u / _agentUsersTotal * 100 >= MAT_AGENT_MIN_SHARE : true);
+  }
   var agentDepthArr = (Array.isArray(data.agent_table) ? data.agent_table : [])
-    .filter(function(a) { return (a.users || 0) >= 5 && (a.sessions_per_user > 0 || (a.users > 0 && a.sessions > 0)); })
+    .filter(function(a) { return isMaterialAgent(a) && (a.sessions_per_user > 0 || (a.users > 0 && a.sessions > 0)); })
     .map(function(a) { return { name: a.name, spu: a.sessions_per_user || Math.round(a.sessions / a.users * 10) / 10 }; })
     .sort(function(a, b) { return b.spu - a.spu; })
     .slice(0, 8);
@@ -2007,7 +2063,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
 
   // Agent Stickiness bubble chart — reach (users) vs depth (sessions/user)
   var stickinessAgents = (Array.isArray(data.agent_table) ? data.agent_table : [])
-    .filter(function(a) { return (a.users || 0) >= 5; })
+    .filter(function(a) { return isMaterialAgent(a); })
     .map(function(a) {
       var spu = a.sessions_per_user || (a.users > 0 ? Math.round(a.sessions / a.users * 10) / 10 : 0);
       return { name: a.name, users: a.users, spu: spu, sessions: a.sessions, type: a.type || 'Unknown' };
@@ -2315,9 +2371,10 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
 
     // Agent spotlight HTML — CSS-only intensity bars
     var agentSpotHtml = '';
-    if (Array.isArray(data.agent_table) && data.agent_table.length > 0) {
-      var spotMaxSess = Math.max.apply(null, data.agent_table.map(function(a) { return a.sessions_per_user || a.sessions || 0; }));
-      data.agent_table.slice(0, 8).forEach(function(agent) {
+    var materialAgents = (Array.isArray(data.agent_table) ? data.agent_table : []).filter(isMaterialAgent);
+    if (materialAgents.length > 0) {
+      var spotMaxSess = Math.max.apply(null, materialAgents.map(function(a) { return a.sessions_per_user || a.sessions || 0; }));
+      materialAgents.slice(0, 8).forEach(function(agent) {
         var sessPerUser = agent.sessions_per_user || (agent.users > 0 ? Math.round(agent.sessions / agent.users * 10) / 10 : 0);
         var barW = spotMaxSess > 0 ? Math.max(5, Math.round(sessPerUser / spotMaxSess * 100)) : 5;
         var isCustom = (agent.type || '').toLowerCase().includes('builder') || (agent.type || '').toLowerCase().includes('lob');
@@ -2342,32 +2399,43 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     html = html.replace(/\{\{AGENT_SPOTLIGHT_HTML\}\}/g, agentSpotHtml || '<p style="color:var(--text-muted);font-size:.82rem">No agent data available.</p>');
     html = html.replace(/\{\{AGENT_LEADERBOARD_HTML\}\}/g, agentSpotHtml || '');
 
-    // Org table (V4 style — HTML table with inline score bars)
+    // Org table — shows the two gate metrics directly so the classification is self-evident
+    // Columns: Organisation | Pattern | Habit % | Agent % | Users
+    // Habit %  gate: ≥15% → P2 eligible, ≥30% → P3 eligible
+    // Agent %  gate: ≥5%  → P2 eligible, ≥15% → P3 eligible
     var orgTableHtml = '';
     if (orgPatternList && orgPatternList.length > 0) {
-      orgTableHtml += '<div style="overflow-x:auto;border:1px solid var(--border-subtle);border-radius:var(--radius)">';
-      orgTableHtml += '<table style="width:100%;border-collapse:collapse;font-size:.82rem">';
+      var th = 'background:var(--bg-surface,#1a2d50);padding:10px 14px;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted,#64748b)';
+      orgTableHtml += '<div style="overflow-x:auto;border:1px solid var(--border-subtle);border-radius:var(--radius)"><table style="width:100%;border-collapse:collapse;font-size:.82rem">';
       orgTableHtml += '<thead><tr style="border-bottom:1px solid var(--border-medium)">';
-      orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:left;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted,#64748b)">Organisation</th>';
-      orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:center;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted,#64748b)">Pattern</th>';
-      orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:left;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted,#64748b)">Score</th>';
-      orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:right;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:rgb(var(--dim-reach,52,211,153))">Reach</th>';
-      orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:right;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:rgb(var(--dim-habit,251,191,36))">Habit</th>';
-      orgTableHtml += '<th style="background:var(--bg-surface,#1a2d50);padding:10px 14px;text-align:right;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:rgb(var(--dim-skill,96,165,250))">Skill</th>';
+      orgTableHtml += '<th style="' + th + ';text-align:left">Organisation</th>';
+      orgTableHtml += '<th style="' + th + ';text-align:center">Pattern</th>';
+      orgTableHtml += '<th style="' + th + ';text-align:right;color:rgba(251,191,36,.85)">Copilot Chat Habit %<br><span style="font-weight:400;opacity:.55;font-size:.6rem">of all active users &nbsp;·&nbsp; ≥' + ORG_P2_HABIT + '% → P2 &nbsp; ≥' + ORG_P3_HABIT + '% → P3</span></th>';
+      orgTableHtml += '<th style="' + th + ';text-align:right;color:rgba(96,165,250,.85)">Agent Adoption %<br><span style="font-weight:400;opacity:.55;font-size:.6rem">of all active users &nbsp;·&nbsp; ≥' + ORG_P2_AGENT + '% → P2 &nbsp; ≥' + ORG_P3_AGENT + '% → P3</span></th>';
+      orgTableHtml += '<th style="' + th + ';text-align:right">Active Users<br><span style="font-weight:400;opacity:.55;font-size:.6rem">licensed + unlicensed</span></th>';
       orgTableHtml += '</tr></thead><tbody>';
-      var sortedOrgs = orgPatternList.filter(function(o) { return o.isOverall || (o.users || 0) >= 10; }).sort(function(a, b) { if (a.isOverall) return -1; if (b.isOverall) return 1; return (b.composite || 0) - (a.composite || 0); });
+      var sortedOrgs = orgPatternList.filter(function(o) { return o.isOverall || (o.users || 0) >= 10; })
+        .sort(function(a, b) { if (a.isOverall) return -1; if (b.isOverall) return 1; return (b.composite || 0) - (a.composite || 0); });
       var patMap = { Foundation: 'P1', Expansion: 'P2', Frontier: 'P3' };
       sortedOrgs.forEach(function(org) {
         var p = patMap[org.pattern] || 'P1';
         var badgeCls = p === 'P3' ? 'background:rgba(139,92,246,.12);color:rgb(139,92,246)' : p === 'P2' ? 'background:rgba(16,185,129,.12);color:rgb(16,185,129)' : 'background:rgba(59,130,246,.12);color:rgb(59,130,246)';
         var isOv = org.isOverall;
+        var hp = typeof org.habitPct === 'number' ? org.habitPct : 0;
+        var ap = typeof org.agentPct === 'number' ? org.agentPct : 0;
+        // Habit % colour: green if P2 gate met, amber if close, muted if not met
+        var habitColor = hp >= ORG_P3_HABIT ? 'color:#34d399' : hp >= ORG_P2_HABIT ? 'color:#fbbf24' : 'color:rgba(255,255,255,.35)';
+        // Agent % colour: green if P2 gate met, blue if close, muted if not met
+        var agentColor = ap >= ORG_P3_AGENT ? 'color:#34d399' : ap >= ORG_P2_AGENT ? 'color:#60a5fa' : 'color:rgba(255,255,255,.35)';
+        // Gate check marks
+        var habitGate = hp >= ORG_P2_HABIT ? (hp >= ORG_P3_HABIT ? ' ✓✓' : ' ✓') : '';
+        var agentGate = ap >= ORG_P2_AGENT ? (ap >= ORG_P3_AGENT ? ' ✓✓' : ' ✓') : '';
         orgTableHtml += '<tr style="border-bottom:1px solid var(--border-subtle,rgba(255,255,255,.06))' + (isOv ? ';background:rgba(255,255,255,.03)' : '') + '">';
         orgTableHtml += '<td style="padding:10px 14px;font-weight:' + (isOv ? '900' : '700') + ';color:var(--text-primary,#f0f4fc)">' + org.label + '</td>';
         orgTableHtml += '<td style="padding:10px 14px;text-align:center"><span style="display:inline-block;padding:.14rem .48rem;border-radius:100px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;' + badgeCls + '">' + p + '</span></td>';
-        orgTableHtml += '<td style="padding:10px 14px"><div style="display:flex;align-items:center;gap:8px"><div style="height:5px;border-radius:3px;background:rgba(255,255,255,.06);width:72px;overflow:hidden"><div style="height:100%;border-radius:3px;width:' + org.composite + '%;background:var(--accent,#3b82f6)"></div></div><span style="font-size:.8rem;font-weight:700;font-variant-numeric:tabular-nums;min-width:22px">' + org.composite + '</span></div></td>';
-        orgTableHtml += '<td style="padding:10px 14px;text-align:right;color:rgb(var(--dim-reach,52,211,153));font-weight:600">' + (org.scores ? org.scores.reach : 0) + '</td>';
-        orgTableHtml += '<td style="padding:10px 14px;text-align:right;color:rgb(var(--dim-habit,251,191,36));font-weight:600">' + (org.scores ? (org.scores.habit || '—') : '—') + '</td>';
-        orgTableHtml += '<td style="padding:10px 14px;text-align:right;color:rgb(var(--dim-skill,96,165,250));font-weight:600">' + (org.scores ? org.scores.skill : 0) + '</td>';
+        orgTableHtml += '<td style="padding:10px 14px;text-align:right;' + habitColor + ';font-weight:700;font-variant-numeric:tabular-nums">' + hp.toFixed(1) + '%' + habitGate + '</td>';
+        orgTableHtml += '<td style="padding:10px 14px;text-align:right;' + agentColor + ';font-weight:700;font-variant-numeric:tabular-nums">' + ap.toFixed(1) + '%' + agentGate + '</td>';
+        orgTableHtml += '<td style="padding:10px 14px;text-align:right;color:var(--text-muted);font-weight:500">' + (org.users || 0).toLocaleString() + '</td>';
         orgTableHtml += '</tr>';
       });
       orgTableHtml += '</tbody></table></div>';

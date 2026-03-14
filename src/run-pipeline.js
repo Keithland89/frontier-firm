@@ -27,6 +27,8 @@ const outputDir = args.find((a, i) => args[i - 1] === '--output') || 'output/';
 const noAI = args.includes('--no-ai');
 const isV2 = args.includes('--v2');
 const isV3 = args.includes('--v3');
+const isV4 = args.includes('--v4');
+const nameArg = args.find((a, i) => args[i - 1] === '--name');
 
 if (!dataPath && !pbixName) {
   console.error('Usage: node run-pipeline.js --pbix "Customer Name" [--output dir] [--no-ai]');
@@ -84,22 +86,22 @@ if (!noAI) {
 
 // Gate 2: Generate report
 const generator = isV2 ? 'generate-report-v2.js' : 'generate-report.js';
-const genFlags = (noAI ? ' --no-ai' : '') + (isV3 ? ' --v3' : '');
+const genFlags = (noAI ? ' --no-ai' : '') + (isV3 ? ' --v3' : '') + (isV4 ? ' --v4' : '') + (nameArg ? ' --name "' + nameArg + '"' : '');
 gates.push({
-  name: 'Gate 2: Generate Report' + (isV2 ? ' (v2)' : isV3 ? ' (v3)' : ''),
+  name: 'Gate 2: Generate Report' + (isV2 ? ' (v2)' : isV3 ? ' (v3)' : isV4 ? ' (v4)' : ''),
   cmd: 'node src/' + generator + ' --data "' + dataPath + '" --output "' + outputDir + '"' + genFlags
 });
 
 // Gate 3: Validate HTML
 gates.push({
   name: 'Gate 3: Validate HTML',
-  cmd: 'node src/validate-report.js --report "' + reportPath + '" --data "' + dataPath + '"'
+  cmd: 'node src/validate-report.js --report "' + reportPath + '" --data "' + dataPath + '"' + (isV3 ? ' --v3' : '') + (isV4 ? ' --v4' : '')
 });
 
 // Gate 4: Visual check
 gates.push({
   name: 'Gate 4: Visual Check',
-  cmd: 'node src/visual-check.js --report "' + reportPath + '" --data "' + dataPath + '"'
+  cmd: 'node src/visual-check.js --report "' + reportPath + '" --data "' + dataPath + '"' + (isV3 ? ' --v3' : '') + (isV4 ? ' --v4' : '')
 });
 
 // Gate 5: Deep audit

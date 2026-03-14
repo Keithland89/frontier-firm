@@ -21,6 +21,8 @@ const path = require('path');
 const args = process.argv.slice(2);
 const reportPath = args.find((a, i) => args[i - 1] === '--report');
 const dataPath = args.find((a, i) => args[i - 1] === '--data');
+const isV3 = args.includes('--v3');
+const isV4 = args.includes('--v4');
 
 if (!reportPath || !dataPath) {
   console.error('Usage: node visual-check.js --report <report.html> --data <data.json>');
@@ -41,11 +43,11 @@ try {
   process.exit(1);
 }
 
-const expectedCharts = [
-  'chartTiers', 'chartMonthlyUsers', 'chartEngagement', 'chartWeekly',
-  'chartOrgScatter', 'chartRetention', 'chartCohortFlow', 'chartHabit',
-  'chartAgentHealth', 'chartLicense'
-];
+const expectedCharts = isV4
+  ? ['chartTiers', 'chartOrgScatter', 'chartRetention', 'chartAgentBar', 'chartAgentDepth', 'chartAgentStickiness', 'chartAppSurface', 'chartDepthTrend', 'chartSessionsPerOrg']
+  : isV3
+  ? ['chartTiers', 'chartEngagement', 'chartOrgScatter', 'chartRetention', 'chartWeeklyTrend', 'chartHabitTiers', 'chartAgentBar', 'chartAppSurface']
+  : ['chartTiers', 'chartMonthlyUsers', 'chartEngagement', 'chartWeekly', 'chartOrgScatter', 'chartRetention', 'chartCohortFlow', 'chartHabit', 'chartAgentHealth', 'chartLicense'];
 
 (async () => {
   console.log('\n=== Gate 4: Visual Check ===\n');

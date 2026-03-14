@@ -1,7 +1,6 @@
 {
   "$schema": "Frontier Firm Scorecard v4 — Two Lanes × Three Pillars",
   "description": "2 lanes (M365 Copilot, Agents) × 3 pillars (Skill, Consistency, Reach) = 13 metrics. Pattern = weaker lane.",
-
   "lanes": {
     "copilot": {
       "label": "M365 Copilot",
@@ -14,7 +13,6 @@
       "description": "Team-level AI — are agents embedded in real workflows?"
     }
   },
-
   "pillars": {
     "reach": {
       "label": "Reach",
@@ -32,23 +30,167 @@
       "color_accent": "#0891B2"
     }
   },
-
   "metrics": {
-    "copilot_app_breadth":    { "lane": "copilot", "pillar": "skill",       "name": "App Surface Breadth",   "unit": "apps/user",  "bands": [4, 7],    "data_field": "m365_breadth",         "description": "Avg distinct M365 app surfaces used per user" },
-    "copilot_multiturn":      { "lane": "copilot", "pillar": "skill",       "name": "Deep Interactions",       "unit": "%",        "bands": [10, 25],  "data_field": "deep_interactions_pct", "description": "% of sessions (ThreadIds) with 5+ prompt messages — measures depth of multi-turn engagement", "hero": true },
-    "copilot_habitual":       { "lane": "copilot", "pillar": "consistency", "name": "Habitual User Rate",    "unit": "%",          "bands": [20, 40],  "data_field": "embedded_user_rate",   "description": "Adaptive: 3+ months = avg 6+ days AND present 2/3 months; 2 months = avg 6+ days AND present in both; 1 month = 16+ active days", "hero": true },
-    "copilot_retention":      { "lane": "copilot", "pillar": "consistency", "name": "Licensed User Return Rate", "unit": "%", "bands": [80, 93],  "data_field": "m365_retention",       "description": "% of licensed M365 Copilot users (all activity types incl. chat, agents, apps) who return the following month" },
-    "copilot_activation":     { "lane": "copilot", "pillar": "reach",      "name": "License Activation",    "unit": "%",          "bands": [70, 90],  "data_field": "m365_enablement",      "description": "% of assigned Copilot licenses that are actively used", "hero": true },
-    "copilot_coverage":       { "lane": "copilot", "pillar": "reach",      "name": "License Coverage",      "unit": "%",          "bands": [40, 70],  "data_field": "license_coverage",     "description": "% of total active users who hold a license" },
-    "copilot_concentration":  { "lane": "copilot", "pillar": "reach",      "name": "Usage Spread",          "unit": "%",          "bands": [50, 75],  "data_field": "concentration_index",  "description": "% of total users outside the top 3 orgs — higher means AI is spreading, not concentrated" },
-    "agent_breadth":          { "lane": "agents",  "pillar": "skill",      "name": "Agent Breadth",         "unit": "agents/user","bands": [2, 5],    "data_field": "agent_breadth",        "description": "Avg distinct agents per user" },
-    "agent_return":           { "lane": "agents",  "pillar": "skill",      "name": "Agent Return Rate",     "unit": "%",          "bands": [55, 85],  "data_field": "agent_health",         "description": "Return rate for multi-user agents only (2+ distinct users)" },
-    "agent_habitual":         { "lane": "agents",  "pillar": "consistency", "name": "Agent Habitual Rate",   "unit": "%",          "bands": [8, 20],   "data_field": "agent_habitual_rate",  "description": "% of agent users with 6+ active days per month" },
-    "agent_retention":        { "lane": "agents",  "pillar": "consistency", "name": "Agent User Return Rate", "unit": "%",  "bands": [55, 80],  "data_field": "agent_retention",      "description": "% of agent users specifically who return the following month — typically higher than licensed return rate as agent users are power users" },
-    "agent_adoption":         { "lane": "agents",  "pillar": "reach",      "name": "Agent Adoption",        "unit": "%",          "bands": [12, 30],  "data_field": "agent_adoption",       "description": "% of active users engaging with agents" },
-    "agent_org_penetration":  { "lane": "agents",  "pillar": "reach",      "name": "Org Penetration",       "unit": "%",          "bands": [30, 60],  "data_field": "org_penetration_pct",  "description": "% of active orgs where BOTH licensed Copilot users AND agent users are present" }
+    "copilot_app_breadth": {
+      "lane": "copilot",
+      "pillar": "skill",
+      "name": "App Surface Breadth",
+      "unit": "apps/user",
+      "bands": [
+        4,
+        7
+      ],
+      "data_field": "m365_breadth",
+      "description": "Avg distinct M365 app surfaces used per user"
+    },
+    "copilot_multiturn": {
+      "lane": "copilot",
+      "pillar": "skill",
+      "name": "Deep Interactions",
+      "unit": "%",
+      "bands": [
+        10,
+        25
+      ],
+      "data_field": "deep_interactions_pct",
+      "description": "% of sessions (ThreadIds) with 5+ prompt messages — measures depth of multi-turn engagement",
+      "hero": true
+    },
+    "copilot_habitual": {
+      "lane": "copilot",
+      "pillar": "consistency",
+      "name": "Habitual User Rate",
+      "unit": "%",
+      "bands": [
+        20,
+        40
+      ],
+      "data_field": "embedded_user_rate",
+      "description": "Adaptive: 3+ months = avg 6+ days AND present 2/3 months; 2 months = avg 6+ days AND present in both; 1 month = 16+ active days",
+      "hero": true
+    },
+    "copilot_retention": {
+      "lane": "copilot",
+      "pillar": "consistency",
+      "name": "Licensed User Return Rate",
+      "unit": "%",
+      "bands": [
+        80,
+        93
+      ],
+      "data_field": "m365_retention",
+      "description": "% of licensed M365 Copilot users (all activity types incl. chat, agents, apps) who return the following month"
+    },
+    "copilot_activation": {
+      "lane": "copilot",
+      "pillar": "reach",
+      "name": "License Activation",
+      "unit": "%",
+      "bands": [
+        70,
+        90
+      ],
+      "data_field": "m365_enablement",
+      "description": "% of assigned Copilot licenses that are actively used",
+      "hero": true
+    },
+    "copilot_coverage": {
+      "lane": "copilot",
+      "pillar": "reach",
+      "name": "License Coverage",
+      "unit": "%",
+      "bands": [
+        40,
+        70
+      ],
+      "data_field": "license_coverage",
+      "description": "% of total active users who hold a license"
+    },
+    "copilot_concentration": {
+      "lane": "copilot",
+      "pillar": "reach",
+      "name": "Usage Spread",
+      "unit": "%",
+      "bands": [
+        50,
+        75
+      ],
+      "data_field": "concentration_index",
+      "description": "% of total users outside the top 3 orgs — higher means AI is spreading, not concentrated"
+    },
+    "agent_breadth": {
+      "lane": "agents",
+      "pillar": "skill",
+      "name": "Agent Breadth",
+      "unit": "agents/user",
+      "bands": [
+        2,
+        5
+      ],
+      "data_field": "agent_breadth",
+      "description": "Avg distinct agents per user"
+    },
+    "agent_return": {
+      "lane": "agents",
+      "pillar": "skill",
+      "name": "Agent User Return Rate",
+      "unit": "%",
+      "bands": [
+        55,
+        85
+      ],
+      "data_field": "agent_health",
+      "description": "% of agent users who return the following month — measures whether the agent-using population as a whole is coming back, not per-agent stickiness. Derived from agent_retention (never extracted separately)."
+    },
+    "agent_habitual": {
+      "lane": "agents",
+      "pillar": "consistency",
+      "name": "Agent Habitual Rate",
+      "unit": "%",
+      "bands": [
+        8,
+        20
+      ],
+      "data_field": "agent_habitual_rate",
+      "description": "% of agent users with 6+ active days per month"
+    },
+    "agent_retention": {
+      "lane": "agents",
+      "pillar": "consistency",
+      "name": "Agent User Return Rate",
+      "unit": "%",
+      "bands": [
+        55,
+        80
+      ],
+      "data_field": "agent_retention",
+      "description": "% of agent users specifically who return the following month — typically higher than licensed return rate as agent users are power users"
+    },
+    "agent_adoption": {
+      "lane": "agents",
+      "pillar": "reach",
+      "name": "Agent Adoption",
+      "unit": "%",
+      "bands": [
+        12,
+        30
+      ],
+      "data_field": "agent_adoption",
+      "description": "% of active users engaging with agents"
+    },
+    "agent_org_penetration": {
+      "lane": "agents",
+      "pillar": "reach",
+      "name": "Org Penetration",
+      "unit": "%",
+      "bands": [
+        30,
+        60
+      ],
+      "data_field": "org_penetration_pct",
+      "description": "% of active orgs where BOTH licensed Copilot users AND agent users are present"
+    }
   },
-
   "pattern_rules": {
     "description": "Pattern determined by the weaker lane. Each lane tier = weakest pillar. Each pillar tier = weakest metric.",
     "pillar_tier": "Weakest metric in the pillar",
@@ -56,6 +198,79 @@
     "overall_pattern": "The weaker lane",
     "p1_foundation": "Either lane at Foundation",
     "p2_expansion": "Both lanes at Expansion+",
-    "p3_frontier": "Both lanes at Frontier"
+    "p3_frontier": "Both lanes at Frontier",
+    "company_pattern_gates": {
+      "description": "Company-level P1/P2/P3 pattern profile classification. Patterns are hierarchical — P3 requires P2 ≥ Nascent, P2 requires P1 ≥ Nascent. To change thresholds edit this file — no code change needed.",
+      "p1": {
+        "presence_field": "m365_enablement",
+        "presence_min_pct": 10,
+        "maturity_field": "licensed_band_11_15_pct + licensed_band_16_plus_pct",
+        "maturity_min_pct": 30,
+        "rule": "Nascent: activation >= 10%. Primary: also habitual licensed users >= 30%."
+      },
+      "p2": {
+        "presence_field": "agent_adoption",
+        "presence_min_pct": 5,
+        "maturity_field": "agent_health",
+        "maturity_min_pct": 40,
+        "rule": "Nascent: agent adoption >= 5%. Primary: also agent user return >= 40%. Requires P1 >= Nascent."
+      },
+      "p3": {
+        "presence_field": "agent_habitual_rate OR multi_user_agents",
+        "habitual_min_pct": 20,
+        "multi_user_min_count": 5,
+        "maturity_field": "orgs with agent_adoption >= 5%",
+        "maturity_min_orgs": 3,
+        "rule": "Nascent: habitual agent users >= 20% OR multi-user agents >= 5. Primary: also 3+ orgs at 5% agent adoption. Requires P2 >= Nascent."
+      }
+    },
+    "org_pattern_gates": {
+      "description": "Unified gate logic applied identically to every org row and the OVERALL company row. Both thresholds must be met to qualify for a level. No averaging — a miss on either metric holds the classification at the lower level.",
+      "metrics": {
+        "habit": {
+          "field": "habitual_pct (per org) or embedded_user_rate (company)",
+          "population": "All active users — M365 Copilot licensed users AND unlicensed Copilot Chat users",
+          "activity": "Copilot Chat sessions only (not agent sessions)",
+          "definition": "% of all active users averaging 6+ Copilot Chat active days/month for 2+ consecutive months",
+          "note": "Denominator is total_active_users (licensed + unlicensed). Per-org habitual_pct is estimated from licensed habitual rate + unlicensed rate derived from company average."
+        },
+        "agent": {
+          "field": "y (per org) or agent_adoption (company)",
+          "population": "All active users — M365 Copilot licensed users AND unlicensed Copilot Chat users",
+          "activity": "Agent sessions (any agent type)",
+          "definition": "% of all active users who engaged with at least one agent in the period",
+          "note": "Denominator is total_active_users (licensed + unlicensed). This is NOT % of licensed users — e.g. ZYX: 180 agent users / 4,201 total = 4.3%, whereas 180 / 1,616 licensed = 11.1%."
+        }
+      },
+      "p2_expansion": {
+        "habit_min_pct": 15,
+        "agent_min_pct": 5,
+        "rule": "habit >= 15% AND agent >= 5%  (both as % of all active users)"
+      },
+      "p3_frontier": {
+        "habit_min_pct": 30,
+        "agent_min_pct": 15,
+        "rule": "habit >= 30% AND agent >= 15% (both as % of all active users)"
+      },
+      "p1_foundation": {
+        "rule": "Either threshold below P2 minimum"
+      }
+    }
+  },
+  "materiality_thresholds": {
+    "description": "Minimum size an agent, org, or cohort must reach before it can be cited as a best-practice example, model, or recommendation target. Applies to both generated HTML (spotlight, depth chart) and AI narrative (insights). Edit these values to change what counts as material.",
+    "agents": {
+      "min_users_absolute": 10,
+      "min_users_share_pct": 5,
+      "share_denominator": "agent_users (total users who engaged with any agent in the period)",
+      "rule": "agent.users >= min_users_absolute AND agent.users / agent_users * 100 >= min_users_share_pct",
+      "note": "Both conditions must be met. A single-user agent with 400 sessions/user is an outlier — frame as proof-of-concept depth, not a model to replicate."
+    },
+    "orgs": {
+      "min_users_share_pct": 3,
+      "share_denominator": "total_active_users",
+      "rule": "org.users / total_active_users * 100 >= min_users_share_pct",
+      "note": "Prevents naming a 50-person org as a role model in a 5,000-person company purely on rate metrics."
+    }
   }
 }

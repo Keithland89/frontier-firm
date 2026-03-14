@@ -8,7 +8,7 @@
  * Checks:
  * 1. No unresolved {{PLACEHOLDER}} tokens
  * 2. Customer name appears in the report
- * 3. No "Contoso" leakage (unless customer IS Contoso)
+ * 3. No "Contoso" in output — enforced unconditionally
  * 4. Key data values appear in the output
  * 5. Factual consistency checks
  * 6. No known stale values
@@ -25,6 +25,8 @@ const path = require('path');
 const args = process.argv.slice(2);
 const reportPath = args.find((a, i) => args[i - 1] === '--report');
 const dataPath = args.find((a, i) => args[i - 1] === '--data');
+const isV3 = args.includes('--v3');
+const isV4 = args.includes('--v4');
 
 if (!reportPath || !dataPath) {
   console.error('Usage: node validate-report.js --report <report.html> --data <data.json>');
@@ -54,13 +56,11 @@ if (data.customer_name && !html.includes(data.customer_name)) {
 }
 
 // ============================================================
-// CHECK 3: No Contoso leakage
+// CHECK 3: No Contoso in output — enforced unconditionally
 // ============================================================
-if (data.customer_name !== 'Contoso') {
-  const contosoMatches = html.match(/Contoso/gi);
-  if (contosoMatches) {
-    errors.push('Found "Contoso" in report (' + contosoMatches.length + ' occurrences) — should be "' + data.customer_name + '"');
-  }
+const contosoMatches = html.match(/Contoso/gi);
+if (contosoMatches) {
+  errors.push('Found "Contoso" in report (' + contosoMatches.length + ' occurrences) — replace with real customer name before sharing');
 }
 
 // ============================================================
@@ -99,11 +99,9 @@ if (html.includes('outnumber')) {
 // CHECK 6: No stale known values
 // ============================================================
 const staleValues = ['57,126', '38,075', '18,991', '4,846'];
-if (data.customer_name !== 'Contoso') {
-  for (const stale of staleValues) {
-    if (html.includes(stale)) {
-      warnings.push('Found known Contoso-era value "' + stale + '" in report — may be stale');
-    }
+for (const stale of staleValues) {
+  if (html.includes(stale)) {
+    warnings.push('Found known Contoso sample value "' + stale + '" in report — verify this is real customer data');
   }
 }
 
@@ -130,7 +128,11 @@ if (objObjMatches) {
 // ============================================================
 // CHECK 8: All required sections present
 // ============================================================
-const requiredSections = ['overview', 'framework', 'summary', 'reach', 'habit', 'skill', 'value', 'maturity', 'actions'];
+const requiredSections = isV4
+  ? ['overview', 'framework', 'verdict', 'reach', 'habit', 'skill', 'orgs', 'actions']
+  : isV3
+  ? ['overview', 'framework', 'summary', 'reach', 'habit', 'skill', 'actions']
+  : ['overview', 'framework', 'summary', 'reach', 'habit', 'skill', 'value', 'maturity', 'actions'];
 for (const section of requiredSections) {
   if (!html.includes('id="' + section + '"')) {
     errors.push('Missing section: #' + section);
@@ -140,7 +142,11 @@ for (const section of requiredSections) {
 // ============================================================
 // CHECK 9: All expected chart canvases present
 // ============================================================
-const expectedCharts = ['chartTiers', 'chartMonthlyUsers', 'chartEngagement', 'chartWeekly', 'chartOrgScatter', 'chartRetention', 'chartCohortFlow', 'chartHabit', 'chartAgentHealth', 'chartLicense'];
+const expectedCharts = isV4
+  ? ['chartTiers', 'chartOrgScatter', 'chartRetention', 'chartAgentBar', 'chartAgentDepth', 'chartAgentStickiness', 'chartAppSurface', 'chartDepthTrend', 'chartSessionsPerOrg']
+  : isV3
+  ? ['chartTiers', 'chartEngagement', 'chartOrgScatter', 'chartRetention', 'chartWeeklyTrend', 'chartHabitTiers', 'chartAgentBar', 'chartAppSurface']
+  : ['chartTiers', 'chartMonthlyUsers', 'chartEngagement', 'chartWeekly', 'chartOrgScatter', 'chartRetention', 'chartCohortFlow', 'chartHabit', 'chartAgentHealth', 'chartLicense'];
 for (const chartId of expectedCharts) {
   if (!html.includes('id="' + chartId + '"')) {
     errors.push('Missing chart canvas: #' + chartId);

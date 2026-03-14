@@ -91,7 +91,7 @@ if (num('m365_enablement') !== null && data.m365_enablement > 100) {
 // 3. Percentages that MUST be large (>1%) — catch unconverted 0-1 decimal rates
 const mustBeLargePct = [
   'm365_enablement', 'm365_adoption', 'm365_retention', 'chat_retention', 'agent_retention',
-  'agent_health', 'license_coverage',
+  'license_coverage',
   'band_1_5_pct', 'band_6_10_pct',
   'chat_band_1_5_pct', 'chat_band_6_10_pct',
   'agent_band_1_5_pct', 'agent_band_6_10_pct'
