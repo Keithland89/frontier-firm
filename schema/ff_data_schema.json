@@ -68,7 +68,6 @@
     "org_scatter_data",
     "retained_users",
     "churned_users",
-    "concentration_index",
     "agent_habitual_rate",
     "org_penetration_pct",
     "embedded_user_rate",

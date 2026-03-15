@@ -1359,9 +1359,9 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem">
         <div class="metric-card" data-drill-idx="1" tabindex="0">
           <div class="metric-card-header"></div>
-          <div class="metric-card-name">Copilot Usage Spread</div>
-          <div class="metric-card-value" style="color:#0891B2">{{CONCENTRATION_INDEX}}%</div>
-          <div class="metric-card-unit">outside top 3 orgs</div>
+          <div class="metric-card-name">Active Organisations</div>
+          <div class="metric-card-value" style="color:#0891B2">{{ORG_COUNT}}</div>
+          <div class="metric-card-unit">with Copilot usage</div>
         </div>
         <div class="metric-card" data-drill-idx="3" tabindex="0">
           <div class="metric-card-header"><span style="font-size:.42rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:rgba(132,119,251,.1);color:#8477FB">Agents</span></div>
@@ -1375,10 +1375,9 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <div class="drill-panel" data-drill-for="1">
         <div class="reveal" style="margin-top:1.5rem">
           <div class="chart-card" style="border-left:4px solid #0891B2">
-            <div class="chart-card-title">Usage Concentration</div>
-            <div class="chart-card-sub">Distribution of active users across organisations &mdash; top 3 vs rest</div>
+            <div class="chart-card-title">Org Spread by User Count</div>
+            <div class="chart-card-sub">Distribution of active users across organisations</div>
             <div style="position:relative;height:200px"><canvas id="chartConcentration"></canvas></div>
-            <div style="margin-top:.5rem;font-size:.72rem;color:var(--text-2)">Concentration index: <strong style="color:#0891B2">{{CONCENTRATION_INDEX}}%</strong> of usage comes from outside the top 3 orgs</div>
           </div>
         </div>
         <div class="reveal" style="margin-top:1.5rem">{{LICENSE_PRIORITY_TABLE}}</div>

@@ -1166,24 +1166,6 @@ async function main() {
     } catch(e) { console.log('  embedded_user_rate fallback failed: ' + e.message.substring(0, 80)); }
   }
 
-  // concentration_index: inverse normalised HHI — measures how evenly users spread across orgs
-  // HHI = sum of squared shares; normalised removes the N-dependent floor
-  // Result: 0% = all users in one org, 100% = perfectly even spread
-  if (data.concentration_index === 'not_available' || data.concentration_index === undefined) {
-    if (Array.isArray(data.org_scatter_data) && data.org_scatter_data.length >= 2) {
-      const orgs = data.org_scatter_data.filter(o => (o.x || 0) > 0);
-      const totalUsers = orgs.reduce((sum, o) => sum + (o.x || 0), 0);
-      const N = orgs.length;
-      if (totalUsers > 0 && N >= 2) {
-        const hhi = orgs.reduce((sum, o) => { const s = (o.x || 0) / totalUsers; return sum + s * s; }, 0);
-        const normHHI = (hhi - 1 / N) / (1 - 1 / N);
-        data.concentration_index = Math.round((1 - normHHI) * 1000) / 10;
-        const top3 = orgs.slice().sort((a, b) => (b.x || 0) - (a.x || 0)).slice(0, 3);
-        const top3Pct = Math.round(top3.reduce((s, o) => s + (o.x || 0), 0) / totalUsers * 100);
-        console.log('  concentration_index: usage spread = ' + data.concentration_index + '% (HHI=' + hhi.toFixed(3) + ', top 3 = ' + top3Pct + '% of users)');
-      }
-    }
-  }
 
   // agent_habitual_rate: % of agent users with 6+ active days per month
   if (data.agent_habitual_rate === 'not_available' || data.agent_habitual_rate === undefined) {
