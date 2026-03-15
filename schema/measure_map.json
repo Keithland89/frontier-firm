@@ -267,13 +267,6 @@
     "description": "Habitual agent users — same measure as agent_frequency (16+ or 20+ active day rate)."
   },
 
-  "concentration_index": {
-    "type": "scalar",
-    "measures": [],
-    "derive_from": "org_scatter_data",
-    "description": "Concentration index (inverse top-3) — % of total users outside the top 3 orgs. High = evenly spread, low = concentrated in a few departments."
-  },
-
   "agent_habitual_rate": {
     "type": "scalar",
     "measures": [],
@@ -485,7 +478,8 @@
   "multi_user_agents": {
     "type": "scalar",
     "measures": ["[High Impact Agents]", "[Agents with Credits]"],
-    "description": "Agents used by multiple users. Try High Impact Agents first, then Agents with Credits."
+    "description": "Count of agents used by 5 or more distinct users. P3 presence gate. If PBIX measure counts 2+ users, override in data JSON or derive from agent_table at runtime.",
+    "user_threshold": 5
   },
 
   "agents_keep": {

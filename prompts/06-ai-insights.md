@@ -88,9 +88,9 @@ All 34 must be populated or explicitly skipped with a stated reason.
 
 | Key | What to write |
 |---|---|
-| `EXEC_SUMMARY_GOOD` | What is working well. Lead with the strongest metric, name the org or cohort, say why it matters to the business. **2 sentences max.** |
-| `EXEC_SUMMARY_GAP` | The most important gap as a quantified opportunity. State the size of the prize. **2 sentences max.** |
-| `EXEC_SUMMARY_OPP` | The single highest-leverage action. Name the cohort, org, or metric. State the expected outcome. **2 sentences max.** |
+| `EXEC_SUMMARY_GOOD` | What is working — **must justify the `m365_enablement` % (license activation rate)**. Lead with that number, explain what it proves about deployment health. 2 sentences max. |
+| `EXEC_SUMMARY_GAP` | The gap — **must justify the `band_6_10` number** (users at 6–10 active days). Explain why this cohort is the critical conversion zone and what closing that gap is worth. Do NOT draw from `chat_users` or unlicensed users — that belongs in OPP. 2 sentences max. |
+| `EXEC_SUMMARY_OPP` | The opportunity — **must justify the `chat_users` number** (unlicensed active users). Explain who they are, why they are low-risk to licence, and what it would deliver. 2 sentences max. |
 
 ### Section Headlines and Subtitles
 
@@ -164,6 +164,7 @@ They must be grounded in this customer's specific metrics — no pattern-generic
 | `CULTURE_DESC` | Where they are strong and where the gap is. Actual metrics only. **2 sentences max.** |
 | `CULTURE_RED_FLAG` | The specific risk, the metric, and the business consequence. Opportunity-framed. **1 sentence.** |
 | `CULTURE_ACTION` | The highest-leverage move, the specific cohort or count, the measurable target. **1 sentence.** |
+| `HERO_HEADLINE` | **The single sentence at the top of the report** — the executive's three-question diagnostic in one breath. Must answer all three: **(1) Is access widespread?** Use `total_active_users` and `org_count`. **(2) Are habits strong?** Use `band_11_15 + band_16_plus` as the count of habitual users **across all tiers** (licensed + unlicensed + agent combined) — do NOT use `embedded_user_rate`, which is licensed-only and flatters organisations that selectively licensed their most engaged people. Express as a raw count: "X users building daily AI habits". **(3) What is the one move to the next pattern?** Name the exact metric, its current value, and the threshold to cross. Format: `"[total_active_users] active across [org_count] divisions, [band_11_15+band_16_plus] building daily AI habits — [metric at X%] is [distance] from [next pattern]"`. **16–22 words. No verdict statements. No analogies. Provably true from the data.** Example: "4,201 users active across 8 divisions, 398 building daily AI habits — agent adoption at 4.3% is one step from Pattern 2". |
 
 ---
 

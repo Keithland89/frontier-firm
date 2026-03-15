@@ -476,9 +476,8 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 .metric-card-bar-fill{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.16,1,.3,1)}
 
 /* Signal metrics — responsive grids */
-/* All signal metric grids: 4 cards (Reach) or 3 cards (Habit/Skill) */
-.reach-metrics{grid-template-columns:repeat(4,1fr)!important}
-.habit-metrics,.skill-metrics{grid-template-columns:repeat(3,1fr)!important}
+/* All signal metric grids: 3 cards */
+.reach-metrics,.habit-metrics,.skill-metrics{grid-template-columns:repeat(3,1fr)!important}
 @media(max-width:900px){.reach-metrics,.habit-metrics,.skill-metrics{grid-template-columns:repeat(2,1fr)!important}}
 @media(max-width:600px){.reach-metrics,.habit-metrics,.skill-metrics{grid-template-columns:1fr 1fr!important}}
 
@@ -503,8 +502,8 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 /* Metric cards — persistent clickable footer */
 .metric-card::after{content:'Explore ↓'!important;position:absolute!important;bottom:.6rem!important;right:.7rem!important;font-size:.55rem!important;font-weight:700!important;text-transform:uppercase!important;letter-spacing:.06em!important;color:var(--tier-color,#007fff)!important;opacity:.5!important;transition:all .3s!important}
 .metric-card:hover::after{opacity:1!important;transform:translateY(-2px)!important}
-.metric-card{padding-bottom:2.2rem!important}
-.metric-card .metric-card-bar{margin-bottom:.25rem}
+.metric-card{padding-bottom:2.2rem!important;display:flex!important;flex-direction:column!important;min-height:148px}
+.metric-card .metric-card-bar{margin-top:auto;margin-bottom:.25rem}
 
 /* Explore prompt — visual connector between hero/hint and cards below */
 .explore-prompt{display:flex;align-items:center;gap:.6rem;margin:1rem 0 .5rem;opacity:.4;transition:opacity .3s}
@@ -1128,9 +1127,9 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
         <div class="hero-kpi-val"><span class="counter" data-target="{{AGENT_USERS}}">0</span></div>
         <div class="hero-kpi-label">Agent Users</div>
       </div>
-      <div class="hero-kpi" style="--kpi-color:#0D9488;cursor:pointer" data-target-section="habit" title="Explore in Habit">
-        <div class="hero-kpi-val"><span class="counter" data-target="{{M365_RETENTION_INT}}" data-suffix="%">0</span></div>
-        <div class="hero-kpi-label">MoM Retention</div>
+      <div class="hero-kpi" style="--kpi-color:#fbbf24">
+        <div class="hero-kpi-val"><span class="counter" data-target="{{EMBEDDED_USER_RATE}}" data-suffix="%">0</span></div>
+        <div class="hero-kpi-label">Habitual Users<br><span style="font-size:.55rem;opacity:.6;text-transform:none;letter-spacing:0">licensed · 11+ active days/mo</span></div>
       </div>
     </div>
 
@@ -1333,9 +1332,9 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
             <div class="drill-insight" style="--di-color:#007fff;margin-top:1rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Key Insight</span></div><div class="drill-insight-body">{{INSIGHT_REACH_TIER}}</div></div>
           </div>
           <div style="display:flex;flex-direction:column;gap:1rem">
-            <div class="stat-callout" style="--accent:#007fff"><div class="stat-callout-val"><span class="counter" data-target="{{LICENSED_USERS}}">0</span></div><div class="stat-callout-label">Licensed M365 Copilot users <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(34,100,229,.1);color:#007fff;border:1px solid rgba(34,100,229,.15);margin-left:.4rem;vertical-align:middle">M365 Copilot</span></div></div>
-            <div class="stat-callout" style="--accent:#8477FB"><div class="stat-callout-val"><span class="counter" data-target="{{CHAT_USERS}}">0</span></div><div class="stat-callout-label">Unlicensed Chat users <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(14,165,233,.1);color:#0891B2;border:1px solid rgba(14,165,233,.15);margin-left:.4rem;vertical-align:middle">Copilot Chat</span></div></div>
-            <div class="stat-callout" style="--accent:#0891B2"><div class="stat-callout-val"><span class="counter" data-target="{{AGENT_USERS}}">0</span></div><div class="stat-callout-label">Agent users &mdash; {{AGENT_ADOPTION}}% adoption <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(123,47,242,.1);color:#8477FB;border:1px solid rgba(123,47,242,.15);margin-left:.4rem;vertical-align:middle">Agents</span></div></div>
+            <div class="stat-callout" style="--accent:#007fff"><div class="stat-callout-val"><span class="counter" data-target="{{LICENSED_AVG_PROMPTS}}" data-decimals="1">0</span></div><div class="stat-callout-label">avg prompts per user &mdash; {{LICENSED_USERS}} licensed <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(34,100,229,.1);color:#007fff;border:1px solid rgba(34,100,229,.15);margin-left:.4rem;vertical-align:middle">M365 Copilot</span></div></div>
+            <div class="stat-callout" style="--accent:#8477FB"><div class="stat-callout-val"><span class="counter" data-target="{{UNLICENSED_AVG_PROMPTS}}" data-decimals="1">0</span></div><div class="stat-callout-label">avg prompts per user &mdash; {{CHAT_USERS}} unlicensed <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(14,165,233,.1);color:#0891B2;border:1px solid rgba(14,165,233,.15);margin-left:.4rem;vertical-align:middle">Copilot Chat</span></div></div>
+            <div class="stat-callout" style="--accent:#0891B2"><div class="stat-callout-val"><span class="counter" data-target="{{AGENT_RETENTION}}" data-suffix="%">0</span></div><div class="stat-callout-label">return each month &mdash; {{AGENT_USERS}} agent users <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(123,47,242,.1);color:#8477FB;border:1px solid rgba(123,47,242,.15);margin-left:.4rem;vertical-align:middle">Agents</span></div></div>
             <div class="drill-insight" style="--di-color:#0891B2"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Context</span></div><div class="drill-insight-body"><strong>{{TOTAL_LICENSED_SEATS}} seats</strong> with {{M365_ENABLEMENT}}% activation. {{INACTIVE_LICENSES}} inactive licenses are the fastest path to growth.</div></div>
           </div>
         </div>
@@ -1458,20 +1457,22 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <div class="drill-panel" data-drill-for="0">
         <div class="slide-frame reveal" style="--signal-accent:#D270F0;margin-top:1.5rem">
           <div class="slide-label">Retention Strength</div>
-          <div class="retention-grid reveal reveal-d1" style="background:var(--section-dark);border-radius:16px;padding:2rem;color:#fff;border:1px solid rgba(245,158,11,.15)">
-            <div>
-              <div class="retention-bar-container"><div class="retention-bar-label"><span>Licensed M365 Copilot</span><span>{{M365_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{M365_RETENTION}}" style="width:0;background:linear-gradient(90deg,#007fff,#4A8AFF)"></div><div class="retention-threshold" style="left:50%"><span class="retention-threshold-label">50%</span></div><div class="retention-threshold" style="left:70%"><span class="retention-threshold-label">70%</span></div><div class="retention-threshold" style="left:85%"><span class="retention-threshold-label">85%</span></div></div></div>
-              <div class="retention-bar-container"><div class="retention-bar-label"><span>Unlicensed Chat</span><span>{{CHAT_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{CHAT_RETENTION}}" style="width:0;background:linear-gradient(90deg,#8477FB,#9B5FFF)"></div></div></div>
-              <div class="retention-bar-container"><div class="retention-bar-label"><span>Agent Users</span><span>{{AGENT_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{AGENT_RETENTION}}" style="width:0;background:linear-gradient(90deg,#0891B2,#38BDF8)"></div></div></div>
-              <div style="padding:.75rem 1rem;background:rgba(245,158,11,.06);border-left:3px solid #D270F0;border-radius:0 8px 8px 0;margin-top:1rem;font-size:.75rem;color:rgba(255,255,255,.6);line-height:1.5">{{RETENTION_CORRECTION_NOTE}}</div>
-            </div>
-            <div style="text-align:center">
-              <div style="height:240px"><canvas id="chartRetention"></canvas></div>
-              <p style="font-size:.78rem;color:rgba(255,255,255,.5);margin-top:.4rem;line-height:1.4">Average MoM retention: <strong style="color:#fff">{{M365_RETENTION}}%</strong></p>
-            </div>
+          <div class="reveal reveal-d1" style="background:var(--section-dark);border-radius:16px;padding:2rem;color:#fff;border:1px solid rgba(245,158,11,.15)">
+            <div class="retention-bar-container"><div class="retention-bar-label"><span>Licensed M365 Copilot</span><span>{{M365_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{M365_RETENTION}}" style="width:0;background:linear-gradient(90deg,#007fff,#4A8AFF)"></div><div class="retention-threshold" style="left:50%"><span class="retention-threshold-label">50%</span></div><div class="retention-threshold" style="left:70%"><span class="retention-threshold-label">70%</span></div><div class="retention-threshold" style="left:85%"><span class="retention-threshold-label">85%</span></div></div></div>
+            <div class="retention-bar-container"><div class="retention-bar-label"><span>Unlicensed Chat</span><span>{{CHAT_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{CHAT_RETENTION}}" style="width:0;background:linear-gradient(90deg,#8477FB,#9B5FFF)"></div></div></div>
+            <div class="retention-bar-container"><div class="retention-bar-label"><span>Agent Users</span><span>{{AGENT_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{AGENT_RETENTION}}" style="width:0;background:linear-gradient(90deg,#0891B2,#38BDF8)"></div></div></div>
+            <div style="padding:.75rem 1rem;background:rgba(245,158,11,.06);border-left:3px solid #D270F0;border-radius:0 8px 8px 0;margin-top:1rem;font-size:.75rem;color:rgba(255,255,255,.6);line-height:1.5">{{RETENTION_CORRECTION_NOTE}}</div>
           </div>
         </div>
         <div class="drill-insight reveal" style="--di-color:#D270F0;margin-top:1.25rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">So What</span></div><div class="drill-insight-body">{{INSIGHT_HABIT}}</div></div>
+      </div>
+      <!-- Panel: Agent leaderboard — card 1 (Agent User Return Rate) -->
+      <div class="drill-panel" data-drill-for="1">
+        <div class="slide-frame reveal" style="--signal-accent:#8477FB;margin-top:1.5rem">
+          <div class="slide-label">Agent Leaderboard — Sessions per User</div>
+          {{AGENT_LEADERBOARD_TABLE}}
+        </div>
+        <div class="drill-insight reveal" style="--di-color:#8477FB;margin-top:1.25rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Key Insight</span></div><div class="drill-insight-body">{{TAKEAWAY_AGENT_LEADERBOARD}}</div></div>
       </div>
       <button class="close-drill" style="font-size:.6rem;color:var(--text-3);background:none;border:1px solid var(--border);padding:.3rem .8rem;border-radius:6px;cursor:pointer;margin-top:1rem;display:block">Close detail</button>
       </div><!-- /deep-dive-content Retention -->

@@ -97,13 +97,6 @@ if (!data.license_coverage) {
     ? Math.round(_n('licensed_users') / Math.max(_n('total_active_users'), 1) * 1000) / 10
     : 0;
 }
-// Concentration index: compute from org_scatter_data if not already set
-if ((data.concentration_index === undefined || data.concentration_index === 'not_available') && Array.isArray(data.org_scatter_data) && data.org_scatter_data.length >= 2) {
-  var _usages = data.org_scatter_data.map(function(o) { return o.x || 0; }).sort(function(a, b) { return a - b; });
-  var _median = _usages[Math.floor(_usages.length / 2)];
-  data.concentration_index = Math.round(_usages.filter(function(u) { return u >= _median; }).length / _usages.length * 100);
-}
-if (data.concentration_index === undefined) data.concentration_index = 'not_available';
 
 // agent_health is always derived from agent_retention (agent user return rate, MoM cohort)
 // agent_health is not extracted from PBIX — it is computed here and used by template/scoring
@@ -334,13 +327,13 @@ if (schemaV4) {
 // To change thresholds edit that file — no code change needed.
 // ============================================================
 var _cgates = (schemaV4 && schemaV4.pattern_rules && schemaV4.pattern_rules.company_pattern_gates) || {};
-const P1_PRESENCE_MIN  = (_cgates.p1 && _cgates.p1.presence_min_pct)     || 10;
+const P1_PRESENCE_MIN  = (_cgates.p1 && _cgates.p1.presence_min_pct)     || 40;
 const P1_MATURITY_MIN  = (_cgates.p1 && _cgates.p1.maturity_min_pct)     || 30;
 const P2_PRESENCE_MIN  = (_cgates.p2 && _cgates.p2.presence_min_pct)     || 5;
 const P2_MATURITY_MIN  = (_cgates.p2 && _cgates.p2.maturity_min_pct)     || 40;
-const P3_HABITUAL_MIN  = (_cgates.p3 && _cgates.p3.habitual_min_pct)     || 20;
-const P3_MULTIUSER_MIN = (_cgates.p3 && _cgates.p3.multi_user_min_count)  || 5;
-const P3_ORGS_MIN      = (_cgates.p3 && _cgates.p3.maturity_min_orgs)    || 3;
+const P3_HABITUAL_MIN      = (_cgates.p3 && _cgates.p3.presence_min_pct)       || 15;
+const P3_ORG_AGENT_MIN     = (_cgates.p3 && _cgates.p3.maturity_org_agent_pct)  || 10;
+const P3_ORGS_MATURITY_PCT = (_cgates.p3 && _cgates.p3.maturity_min_orgs_pct)  || 50;
 
 const patternProfile = { p1: 'Absent', p2: 'Absent', p3: 'Absent' };
 
@@ -359,11 +352,16 @@ if (p2PresenceVal >= P2_PRESENCE_MIN) {
 }
 
 // P3: Frontier — requires P2 >= Nascent (patterns are a progression)
-const p3HabitualRate = _n('agent_habitual_rate', 0);
-const p3MultiUsers = _n('multi_user_agents', 0);
-const p3PresenceAgents = p3HabitualRate >= P3_HABITUAL_MIN || p3MultiUsers >= P3_MULTIUSER_MIN;
-const p3OrgsMetCount = Array.isArray(data.org_scatter_data) ? data.org_scatter_data.filter(function(o) { return (o.y || 0) >= 5; }).length : 0;
-const p3MaturityVal = p3OrgsMetCount >= P3_ORGS_MIN;
+// Gate 1 (Presence): agent habitual rate >= P3_HABITUAL_MIN (15%) — agents in the daily work rhythm
+// Gate 2 (Maturity): >= P3_ORGS_MATURITY_PCT% of orgs at >= P3_ORG_AGENT_MIN% agent adoption
+const p3HabitualRate = (typeof data.agent_band_11_15_pct === 'number' && typeof data.agent_band_16_plus_pct === 'number')
+  ? Math.round((data.agent_band_11_15_pct + data.agent_band_16_plus_pct) * 10) / 10
+  : _n('agent_habitual_rate', _n('agent_habitual', 0));
+const p3PresenceAgents = p3HabitualRate >= P3_HABITUAL_MIN;
+const p3OrgsMetCount = Array.isArray(data.org_scatter_data) ? data.org_scatter_data.filter(function(o) { return (o.y || 0) >= P3_ORG_AGENT_MIN; }).length : 0;
+const p3TotalOrgs = Array.isArray(data.org_scatter_data) ? data.org_scatter_data.length : (_n('org_count', 1));
+const p3OrgsPct = p3TotalOrgs > 0 ? Math.round(p3OrgsMetCount / p3TotalOrgs * 100) : 0;
+const p3MaturityVal = p3OrgsPct >= P3_ORGS_MATURITY_PCT;
 if (p3PresenceAgents && patternProfile.p2 !== 'Absent') {
   patternProfile.p3 = p3MaturityVal ? 'Primary' : 'Nascent';
 }
@@ -389,7 +387,7 @@ const patternProfileString = profileParts.join('  ·  ');
 console.log('Pattern Profile:', patternProfileString);
 console.log('  P1 gateway:', p1PresenceVal + '% enablement,', p1MaturityVal + '% habitual → ' + patternProfile.p1);
 console.log('  P2 gateway:', p2PresenceVal + '% agent adoption,', p2MaturityVal + '% return rate → ' + patternProfile.p2);
-console.log('  P3 gateway:', p3HabitualRate + '% habitual rate,', p3MultiUsers + ' multi-user agents,', (p3MaturityVal ? '3+' : '<3') + ' orgs at 5% → ' + patternProfile.p3);
+console.log('  P3 gateway:', p3HabitualRate + '% agent habitual (need ' + P3_HABITUAL_MIN + '%),', p3OrgsPct + '% of orgs at ' + P3_ORG_AGENT_MIN + '%+ adoption (need ' + P3_ORGS_MATURITY_PCT + '%) → ' + patternProfile.p3);
 
 // ============================================================
 // NARRATIVE ENGINE — data-driven storytelling using P1/P2/P3 patterns
@@ -419,7 +417,7 @@ if (patternProfile.p3 === 'Primary') {
   cultureStage = 'Foundation Dominant'; cultureStageNum = 2;
   cultureHeadline = `${_n('m365_enablement')}% license activation across ${_n('org_count')} orgs \u2014 the foundation is set, habit is the next gate`;
   cultureDesc = `${_fmtN(_n('licensed_users'))} users hold M365 Copilot licenses and ${_n('m365_enablement')}% are actively using them. ${_n('band_1_5_pct')}% of active users engage only 1\u20135 days per month \u2014 the majority are exploring, not depending on AI. The ${_fmtN(_n('band_6_10'))} users at 6\u201310 active days are the leading indicator: they\u2019ve found enough value to return, but haven\u2019t yet embedded AI into a daily workflow.`;
-  cultureRedFlag = `${_fmtN(_n('inactive_licenses'))} licenses are completely idle \u2014 ${((parseFloat(_n('inactive_licenses', 0)) / Math.max(parseFloat(_n('total_licensed_seats', 1)), 1)) * 100).toFixed(0)}% of the licensed investment with no measurable return. ${typeof data.concentration_index === 'number' ? `The ${data.concentration_index}% concentration score signals uneven uptake across orgs` : 'Usage concentration signals uneven uptake across orgs'} \u2014 if habitual use is clustered in the top-quartile orgs, the overall metrics are masking a narrower active base.`;
+  cultureRedFlag = `${_fmtN(_n('inactive_licenses'))} licenses are completely idle \u2014 ${((parseFloat(_n('inactive_licenses', 0)) / Math.max(parseFloat(_n('total_licensed_seats', 1)), 1)) * 100).toFixed(0)}% of the licensed investment with no measurable return. If habitual use is clustered in the top-quartile orgs, the overall metrics are masking a narrower active base.`;
   cultureAction = `Identify which of the ${_n('org_count')} orgs have the highest habitual rates and document the conditions that got them there \u2014 manager modelling, workflow integration, or peer sharing. Use those conditions as the activation playbook for the ${_fmtN(_n('inactive_licenses'))} idle license holders, starting with orgs that have the highest unlicensed Chat usage as a demand signal.`;
 } else {
   cultureStage = 'Pre-Foundation'; cultureStageNum = 1;
@@ -483,9 +481,9 @@ Key data points:
 Generate the following JSON object with narrative text blocks. Each should be 1-3 sentences, written for a non-technical executive. Use specific numbers. Be direct and insight-driven — not generic.
 
 {
-  "EXEC_SUMMARY_GOOD": "The good news headline + 2-sentence description",
-  "EXEC_SUMMARY_GAP": "The gap headline + 2-sentence description",
-  "EXEC_SUMMARY_OPP": "The opportunity headline + 2-sentence description",
+  "EXEC_SUMMARY_GOOD": "What's working — narrative MUST justify the license activation rate (m365_enablement %). Lead with that number, explain what it proves. 2 sentences max.",
+  "EXEC_SUMMARY_GAP": "The gap — narrative MUST justify the band_6_10 number (users at 6–10 active days). Explain why this cohort is the critical conversion zone and what closing that gap is worth. 2 sentences max.",
+  "EXEC_SUMMARY_OPP": "The opportunity — narrative MUST justify the chat_users number (unlicensed active users). Explain who they are, why they are low-risk, and what licensing them would deliver. 2 sentences max.",
   "INSIGHT_REACH": "So-what callout for the Reach section (what does the reach data mean?)",
   "INSIGHT_HABIT": "So-what callout for the Habit section",
   "INSIGHT_SKILL": "So-what callout for the Skill section",
@@ -593,18 +591,17 @@ function generateTemplateInsights(data, signalTiers, pattern) {
   if ((d.agent_adoption === 'not_available' || d.agent_adoption === undefined) && typeof d.agent_users === 'number' && typeof d.total_active_users === 'number' && d.total_active_users > 0) {
     d.agent_adoption = Math.round(d.agent_users / d.total_active_users * 1000) / 10;
   }
-  // Agent habitual rate: field name alias (some extractions use agent_habitual, schema expects agent_habitual_rate)
-  if ((d.agent_habitual_rate === undefined || d.agent_habitual_rate === 'not_available') && typeof d.agent_habitual === 'number') {
+  // Agent habitual rate: ALWAYS recompute from band percentages when available — never trust a
+  // pre-stored value which may have been derived from a single-month denominator (e.g. 4/45 = 8.9%).
+  // Correct formula: (agent_band_11_15_pct + agent_band_16_plus_pct) = % of total agent_users
+  // who are habitual across the full reporting period.
+  if (typeof d.agent_band_11_15_pct === 'number' && typeof d.agent_band_16_plus_pct === 'number') {
+    d.agent_habitual_rate = Math.round((d.agent_band_11_15_pct + d.agent_band_16_plus_pct) * 10) / 10;
+  } else if (typeof d.agent_habitual === 'number') {
+    // Fallback: agent_habitual field (also = band pct sum if set by early normalisation above)
     d.agent_habitual_rate = d.agent_habitual >= 1 ? d.agent_habitual : Math.round(d.agent_habitual * 1000) / 10;
   }
   if (d.agent_habitual_rate === undefined) d.agent_habitual_rate = 'not_available';
-  // Concentration index: compute from org_scatter_data if not already set
-  if ((d.concentration_index === undefined || d.concentration_index === 'not_available') && Array.isArray(d.org_scatter_data) && d.org_scatter_data.length >= 2) {
-    var usages = d.org_scatter_data.map(function(o) { return o.x || 0; }).sort(function(a, b) { return a - b; });
-    var median = usages[Math.floor(usages.length / 2)];
-    d.concentration_index = Math.round(usages.filter(function(u) { return u >= median; }).length / usages.length * 100);
-  }
-  if (d.concentration_index === undefined) d.concentration_index = 'not_available';
   // Agent retention: leave as not_available if no agent-specific data — NEVER proxy from m365_retention (different population)
   if (d.agent_retention === undefined) d.agent_retention = 'not_available';
   // agent_health is always derived at top of file from agent_retention — propagate into d
@@ -997,7 +994,6 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = safeSub(html, /\{\{LICENSE_COVERAGE_PCT\}\}/g, data.license_coverage, 'license_coverage');
   html = safeSub(html, /\{\{LICENSE_COVERAGE\}\}/g, data.license_coverage, 'license_coverage');
   html = safeSub(html, /\{\{ORG_PENETRATION_PCT\}\}/g, data.org_penetration_pct, 'org_penetration_pct');
-  html = safeSub(html, /\{\{CONCENTRATION_INDEX\}\}/g, data.concentration_index, 'concentration_index');
   html = safeSub(html, /\{\{EMBEDDED_USER_RATE\}\}/g, data.embedded_user_rate, 'embedded_user_rate');
   html = safeSub(html, /\{\{AGENT_HABITUAL_PCT\}\}/g, typeof data.agent_habitual_rate === 'number' ? data.agent_habitual_rate : (typeof data.agent_habitual === 'number' ? data.agent_habitual : 'not_available'), 'agent_habitual_pct');
   html = safeSub(html, /\{\{COHORT_CHURN_DELTA\}\}/g,
@@ -1055,6 +1051,41 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     '<div><strong style="color:var(--text)">' + n('m365_breadth') + ' apps/user</strong> out of 27 available — ' + (n('m365_breadth') >= 5 ? 'good breadth, approaching P3 levels' : n('m365_breadth') >= 3 ? 'moderate breadth — room to expand beyond the core 2-3 apps' : 'narrow adoption concentrated in BizChat — the biggest proficiency gap') + '</div>' +
     '<div><strong style="color:#8477FB">' + n('agent_breadth') + ' agents/user</strong> — ' + (n('agent_breadth') >= 2 ? 'users engaging with multiple agents signals genuine delegation' : 'most users interact with just one agent — discovery is the bottleneck') + '</div>' +
     '</div>');
+
+  // Agent leaderboard table (drill panel — sorted by sessions/user desc)
+  (function() {
+    var agents = Array.isArray(data.agent_table) ? data.agent_table.slice() : [];
+    agents.sort(function(a, b) { return (b.sessions_per_user || 0) - (a.sessions_per_user || 0); });
+    var th = 'background:var(--bg-surface,#1a2d50);padding:8px 12px;font-weight:700;font-size:.65rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted,#64748b);border-bottom:1px solid rgba(255,255,255,.1)';
+    var tbl = '<table style="width:100%;border-collapse:collapse;font-size:.8rem">';
+    tbl += '<thead><tr>';
+    tbl += '<th style="' + th + ';text-align:left">Agent</th>';
+    tbl += '<th style="' + th + ';text-align:right">Users</th>';
+    tbl += '<th style="' + th + ';text-align:right">Sessions / User</th>';
+    tbl += '<th style="' + th + ';text-align:right">Total Sessions</th>';
+    tbl += '</tr></thead><tbody>';
+    var maxSPU = agents.length > 0 ? (agents[0].sessions_per_user || 1) : 1;
+    agents.forEach(function(a, i) {
+      var spu = a.sessions_per_user || 0;
+      var barW = Math.round(spu / maxSPU * 100);
+      var isTop = i === 0;
+      var rowBg = i % 2 === 0 ? 'background:rgba(255,255,255,.02)' : '';
+      var nameColor = isTop ? 'color:#0D9488;font-weight:700' : 'color:var(--text-primary,#f0f4fc);font-weight:600';
+      tbl += '<tr style="border-bottom:1px solid rgba(255,255,255,.05);' + rowBg + '">';
+      tbl += '<td style="padding:9px 12px;' + nameColor + '">' + (a.name || '—') + '</td>';
+      tbl += '<td style="padding:9px 12px;text-align:right;color:rgba(255,255,255,.6);font-variant-numeric:tabular-nums">' + (a.users || 0) + '</td>';
+      tbl += '<td style="padding:9px 12px;text-align:right">';
+      tbl += '<div style="display:flex;align-items:center;gap:8px;justify-content:flex-end">';
+      tbl += '<div style="width:80px;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:' + barW + '%;background:' + (isTop ? '#0D9488' : '#8477FB') + ';border-radius:2px"></div></div>';
+      tbl += '<span style="font-weight:700;color:' + (isTop ? '#0D9488' : 'rgba(255,255,255,.85)') + ';font-variant-numeric:tabular-nums;min-width:36px;text-align:right">' + spu.toFixed(1) + '</span>';
+      tbl += '</div></td>';
+      tbl += '<td style="padding:9px 12px;text-align:right;color:rgba(255,255,255,.45);font-variant-numeric:tabular-nums">' + (a.sessions || 0).toLocaleString() + '</td>';
+      tbl += '</tr>';
+    });
+    tbl += '</tbody></table>';
+    if (agents.length === 0) tbl = '<p style="color:rgba(255,255,255,.4);font-size:.8rem;padding:1rem">Agent detail not available in this dataset.</p>';
+    html = html.replace(/\{\{AGENT_LEADERBOARD_TABLE\}\}/g, tbl);
+  })();
 
   // Agent leaderboard
   var topAgent = (data.top_agent_names || [])[0] || 'N/A';
@@ -1270,6 +1301,15 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{HABITUAL_USERS_FMT\}\}/g, fmtN(n('band_11_15') + n('band_16_plus')));
   html = html.replace(/\{\{RETENTION_TIER_LABEL\}\}/g, data.m365_retention >= 85 ? 'Frontier-tier' : data.m365_retention >= 70 ? 'Expansion-tier' : 'Foundation-tier');
 
+  // Bold numbers/percentages in exec summary text (for pre-stored insights without <strong> tags)
+  function boldNumbers(text) {
+    if (!text || text.includes('<strong>')) return text; // already marked up
+    return text.replace(/(\d[\d,]*\.?\d*%|\d[\d,]+)/g, '<strong>$1</strong>');
+  }
+  insights.EXEC_SUMMARY_GOOD = boldNumbers(insights.EXEC_SUMMARY_GOOD);
+  insights.EXEC_SUMMARY_GAP  = boldNumbers(insights.EXEC_SUMMARY_GAP);
+  insights.EXEC_SUMMARY_OPP  = boldNumbers(insights.EXEC_SUMMARY_OPP);
+
   // Pattern / Maturity placeholders
   html = html.replace(/\{\{PATTERN_LABEL\}\}/g, insights.CULTURE_HEADLINE || '');
   html = html.replace(/\{\{PATTERN_NUMBER\}\}/g, String(pattern.number));
@@ -1283,7 +1323,25 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{CULTURE_RED_FLAG\}\}/g, insights.CULTURE_RED_FLAG || '');
   html = html.replace(/\{\{CULTURE_ACTION\}\}/g, insights.CULTURE_ACTION || '');
   html = html.replace(/\{\{CULTURE_HEADLINE\}\}/g, insights.CULTURE_HEADLINE || '');
-  html = html.replace(/\{\{NARRATIVE_HEADLINE\}\}/g, insights.CULTURE_HEADLINE || '');
+  // Hero headline — preferred key is HERO_HEADLINE; fall back to computed then CULTURE_HEADLINE
+  if (!insights.HERO_HEADLINE) {
+    const _totalU     = _n('total_active_users', 0);
+    const _orgs       = _n('org_count', 0);
+    // Total habitual across all tiers:
+    //   Licensed habitual  = embedded_user_rate % of licensed_users
+    //   Unlicensed habitual = band_11_15 + band_16_plus (confirmed = unlicensed-only counts from PBI)
+    const _licHabitual   = Math.round(_n('embedded_user_rate', 0) / 100 * _n('licensed_users', 0));
+    const _unlicHabitual = _n('band_11_15', 0) + _n('band_16_plus', 0);
+    const _habitCount    = _licHabitual + _unlicHabitual;
+    const _agent      = _n('agent_adoption', 0);
+    const _nextPattern = domNum === 1 ? 'Pattern 2' : domNum === 2 ? 'Pattern 3' : 'the next level';
+    const _lever  = domNum <= 1
+      ? `agent adoption at ${_agent}% is one step from ${_nextPattern}`
+      : `deepening habit beyond ${_habitCount} users is the path to ${_nextPattern}`;
+    insights.HERO_HEADLINE =
+      `${_fmtN(_totalU)} users active across ${_orgs} divisions, ${_fmtN(_habitCount)} building daily AI habits — ${_lever}`;
+  }
+  html = html.replace(/\{\{NARRATIVE_HEADLINE\}\}/g, insights.HERO_HEADLINE || '');
   // Dominant pattern — full Frontier Firm name
   const patternNames = { 1: 'Foundation', 2: 'Expansion', 3: 'Frontier' };
   const patternDescs = {
@@ -1298,6 +1356,8 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{DOMINANT_PATTERN_NUM\}\}/g, String(domNum));
   const patternTierNames = { 1: 'Pattern 1', 2: 'Pattern 2', 3: 'Pattern 3' };
   html = html.replace(/\{\{DOMINANT_PATTERN_TIER\}\}/g, patternTierNames[domNum] || 'Pattern 1');
+  const patternWorkingNames = { 1: 'Human with Assistant', 2: 'Human-Agent Teams', 3: 'Human-led, Agent-Operated' };
+  html = html.replace(/\{\{PATTERN_WORKING_NAME\}\}/g, patternWorkingNames[domNum] || 'Human with Assistant');
   html = html.replace(/\{\{P1_STATUS\}\}/g, patternProfile.p1);
   html = html.replace(/\{\{P2_STATUS\}\}/g, patternProfile.p2);
   html = html.replace(/\{\{P3_STATUS\}\}/g, patternProfile.p3);
@@ -1309,24 +1369,23 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
 
   // Pattern gateway progress HTML — injected into each pattern card
   // Shows current vs threshold with a mini progress bar and gap label
-  var p3OrgsMet = p3OrgsMetCount;
   function _gRow(label, valStr, threshold, pct, met, accentHex) {
     var barColor = met ? '#34d399' : (pct >= 80 ? '#fbbf24' : accentHex);
-    var valColor = met ? '#34d399' : (pct >= 80 ? '#fbbf24' : 'rgba(255,255,255,.5)');
-    return '<div style="display:flex;flex-direction:column;gap:.22rem">' +
-      '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:.35rem">' +
-      '<span style="font-size:.58rem;color:rgba(255,255,255,.42);flex:1">' + label + '</span>' +
-      '<span style="font-size:.66rem;font-weight:700;color:' + valColor + ';white-space:nowrap;font-variant-numeric:tabular-nums">' + valStr +
-      (met ? '&nbsp;<span style="font-size:.55rem">✓</span>' :
-             '&nbsp;<span style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.28)">/ ' + threshold + '</span>') +
+    var valColor = met ? '#34d399' : (pct >= 80 ? '#fbbf24' : 'rgba(255,255,255,.65)');
+    return '<div style="display:flex;flex-direction:column;gap:.35rem">' +
+      '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:.5rem">' +
+      '<span style="font-size:.72rem;color:rgba(255,255,255,.6);flex:1;line-height:1.3">' + label + '</span>' +
+      '<span style="font-size:.82rem;font-weight:700;color:' + valColor + ';white-space:nowrap;font-variant-numeric:tabular-nums">' + valStr +
+      (met ? '&nbsp;<span style="font-size:.7rem">✓</span>' :
+             '&nbsp;<span style="font-size:.68rem;font-weight:400;color:rgba(255,255,255,.35)">/ ' + threshold + '</span>') +
       '</span></div>' +
-      '<div style="height:3px;background:rgba(255,255,255,.07);border-radius:2px">' +
-      '<div style="width:' + Math.min(100, pct) + '%;height:100%;border-radius:2px;background:' + barColor + '"></div>' +
+      '<div style="height:5px;background:rgba(255,255,255,.08);border-radius:3px">' +
+      '<div style="width:' + Math.min(100, pct) + '%;height:100%;border-radius:3px;background:' + barColor + '"></div>' +
       '</div></div>';
   }
   function _gBlock(rows) {
-    return '<div style="margin-top:1rem;display:flex;flex-direction:column;gap:.55rem;padding-top:.85rem;border-top:1px solid rgba(255,255,255,.07)">' +
-      '<div style="font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.28);margin-bottom:.1rem">Pattern gates</div>' +
+    return '<div style="margin-top:1.25rem;display:flex;flex-direction:column;gap:.75rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.10)">' +
+      '<div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:.15rem">Pattern Gates</div>' +
       rows.join('') + '</div>';
   }
   var p1GatewayHtml = _gBlock([
@@ -1338,8 +1397,8 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     _gRow('Agent user return ≥' + P2_MATURITY_MIN + '%',   Math.round(p2MaturityVal * 10) / 10 + '%',    P2_MATURITY_MIN + '%', Math.min(100, Math.round(p2MaturityVal / P2_MATURITY_MIN * 100)),   p2MaturityVal >= P2_MATURITY_MIN, 'rgb(16,185,129)')
   ]);
   var p3GatewayHtml = _gBlock([
-    _gRow('Habitual agent users ≥' + P3_HABITUAL_MIN + '%', Math.round(p3HabitualRate * 10) / 10 + '%', P3_HABITUAL_MIN + '%',    Math.min(100, Math.round(p3HabitualRate / P3_HABITUAL_MIN * 100)), p3HabitualRate >= P3_HABITUAL_MIN, 'rgb(139,92,246)'),
-    _gRow('Orgs at agent ≥5%  ≥' + P3_ORGS_MIN,            p3OrgsMet + ' orgs',                         P3_ORGS_MIN + ' orgs',    Math.min(100, Math.round(p3OrgsMet / P3_ORGS_MIN * 100)),          p3OrgsMet >= P3_ORGS_MIN,         'rgb(139,92,246)')
+    _gRow('Agent habitual rate (≥' + P3_HABITUAL_MIN + '% needed)', Math.round(p3HabitualRate * 10) / 10 + '%', P3_HABITUAL_MIN + '%', Math.min(100, Math.round(p3HabitualRate / P3_HABITUAL_MIN * 100)), p3HabitualRate >= P3_HABITUAL_MIN, 'rgb(139,92,246)'),
+    _gRow('Divisions at ≥' + P3_ORG_AGENT_MIN + '% agent adoption (need ' + P3_ORGS_MATURITY_PCT + '%+)', p3OrgsPct + '% (' + p3OrgsMetCount + ' divs)', P3_ORGS_MATURITY_PCT + '%', Math.min(100, Math.round(p3OrgsPct / P3_ORGS_MATURITY_PCT * 100)), p3OrgsPct >= P3_ORGS_MATURITY_PCT, 'rgb(139,92,246)')
   ]);
   html = html.replace(/\{\{P1_GATEWAY_HTML\}\}/g, p1GatewayHtml);
   html = html.replace(/\{\{P2_GATEWAY_HTML\}\}/g, p2GatewayHtml);
@@ -1844,6 +1903,64 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{VALUE_MULTIPLIER\}\}/g, engagementMultiplier);
   html = html.replace(/\{\{VALUE_CHAT_CURRENT_K\}\}/g, fmtN(chatCurrentSavingsK));
   html = html.replace(/\{\{VALUE_CHAT_UPLIFT_K\}\}/g, fmtN(chatUpliftK));
+
+  // Org agent breakdown table — per-org licensed vs unlicensed with agent adoption %
+  const orgAgentData = data.org_agent_breakdown;
+  if (Array.isArray(orgAgentData) && orgAgentData.length) {
+    const maxPct = Math.max(...orgAgentData.map(o => Math.max(o.licensed_agent_pct || 0, o.unlicensed_agent_pct || 0)), 10);
+    const thBase = 'padding:10px 14px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(255,255,255,.10)';
+    const thSurf = 'background:rgba(26,45,80,.9)';
+    let tbl = '<div style="overflow-x:auto">';
+    tbl += '<table style="width:100%;border-collapse:collapse;font-size:.82rem">';
+    tbl += '<thead><tr>';
+    tbl += '<th style="' + thBase + ';' + thSurf + ';text-align:left;color:rgba(255,255,255,.5)">Organisation</th>';
+    // Licensed group header
+    tbl += '<th colspan="2" style="' + thBase + ';background:rgba(0,127,255,.08);text-align:center;color:#007fff;border-left:1px solid rgba(0,127,255,.2)">M365 Copilot (Licensed)</th>';
+    // Unlicensed group header
+    tbl += '<th colspan="2" style="' + thBase + ';background:rgba(132,119,251,.08);text-align:center;color:#8477FB;border-left:1px solid rgba(132,119,251,.2)">Copilot Chat (Unlicensed)</th>';
+    tbl += '</tr>';
+    // Sub-header row
+    tbl += '<tr>';
+    tbl += '<th style="' + thBase + ';' + thSurf + ';text-align:left;color:rgba(255,255,255,.3);font-size:.62rem;border-bottom:1px solid rgba(255,255,255,.08)"></th>';
+    tbl += '<th style="' + thBase + ';background:rgba(0,127,255,.05);text-align:right;color:rgba(0,127,255,.7);font-size:.62rem;border-left:1px solid rgba(0,127,255,.2);border-bottom:1px solid rgba(255,255,255,.08)">Users</th>';
+    tbl += '<th style="' + thBase + ';background:rgba(0,127,255,.05);text-align:right;color:rgba(0,127,255,.7);font-size:.62rem;border-bottom:1px solid rgba(255,255,255,.08)">Using agents</th>';
+    tbl += '<th style="' + thBase + ';background:rgba(132,119,251,.05);text-align:right;color:rgba(132,119,251,.7);font-size:.62rem;border-left:1px solid rgba(132,119,251,.2);border-bottom:1px solid rgba(255,255,255,.08)">Users</th>';
+    tbl += '<th style="' + thBase + ';background:rgba(132,119,251,.05);text-align:right;color:rgba(132,119,251,.7);font-size:.62rem;border-bottom:1px solid rgba(255,255,255,.08)">Using agents</th>';
+    tbl += '</tr></thead>';
+    tbl += '<tbody>';
+    const tdBase = 'padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.05)';
+    orgAgentData.forEach(function(org, rowIdx) {
+      const licPct  = org.licensed_agent_pct  || 0;
+      const unlicPct = org.unlicensed_agent_pct || 0;
+      const licBarW  = Math.round(licPct  / maxPct * 100);
+      const unlicBarW = Math.round(unlicPct / maxPct * 100);
+      const rowBg = rowIdx % 2 === 1 ? 'background:rgba(255,255,255,.02)' : '';
+      tbl += '<tr style="' + rowBg + '">';
+      // Org name
+      tbl += '<td style="' + tdBase + ';font-weight:700;color:rgba(255,255,255,.9)">' + org.label + '</td>';
+      // Licensed users count
+      tbl += '<td style="' + tdBase + ';text-align:right;color:rgba(255,255,255,.55);background:rgba(0,127,255,.03);border-left:1px solid rgba(0,127,255,.12);font-variant-numeric:tabular-nums">' + fmtN(org.licensed) + '</td>';
+      // Licensed agent % with inline bar
+      tbl += '<td style="' + tdBase + ';background:rgba(0,127,255,.03)">';
+      tbl += '<div style="display:flex;align-items:center;gap:.5rem;justify-content:flex-end">';
+      tbl += '<div style="width:60px;height:5px;background:rgba(255,255,255,.07);border-radius:3px"><div style="width:' + licBarW + '%;height:100%;background:#007fff;border-radius:3px"></div></div>';
+      tbl += '<span style="font-weight:700;color:#007fff;min-width:2.2rem;text-align:right;font-variant-numeric:tabular-nums">' + licPct + '%</span>';
+      tbl += '</div></td>';
+      // Unlicensed users count
+      tbl += '<td style="' + tdBase + ';text-align:right;color:rgba(255,255,255,.55);background:rgba(132,119,251,.03);border-left:1px solid rgba(132,119,251,.12);font-variant-numeric:tabular-nums">' + fmtN(org.unlicensed) + '</td>';
+      // Unlicensed agent % with inline bar
+      tbl += '<td style="' + tdBase + ';background:rgba(132,119,251,.03)">';
+      tbl += '<div style="display:flex;align-items:center;gap:.5rem;justify-content:flex-end">';
+      tbl += '<div style="width:60px;height:5px;background:rgba(255,255,255,.07);border-radius:3px"><div style="width:' + unlicBarW + '%;height:100%;background:#8477FB;border-radius:3px"></div></div>';
+      tbl += '<span style="font-weight:700;color:#8477FB;min-width:2.2rem;text-align:right;font-variant-numeric:tabular-nums">' + unlicPct + '%</span>';
+      tbl += '</div></td>';
+      tbl += '</tr>';
+    });
+    tbl += '</tbody></table></div>';
+    html = html.replace(/\{\{ORG_AGENT_BREAKDOWN_GRID\}\}/g, tbl);
+  } else {
+    html = html.replace(/\{\{ORG_AGENT_BREAKDOWN_GRID\}\}/g, '<p style="font-size:.82rem;color:rgba(255,255,255,.4)">Per-org agent breakdown data not available.</p>');
+  }
 
   // License priority table — from supplementary data or placeholder
   const licPriorityOrgs = data._supplementary_metrics && data._supplementary_metrics.license_priority_orgs;

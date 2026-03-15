@@ -38,7 +38,9 @@ const REQUIRED_KEYS = [
   'REC_1_TITLE', 'REC_1_DESC', 'REC_2_TITLE', 'REC_2_DESC',
   'REC_3_TITLE', 'REC_3_DESC', 'REC_4_TITLE', 'REC_4_DESC',
   // Maturity narrative — replaces all hardcoded per-pattern strings
-  'CULTURE_HEADLINE', 'CULTURE_DESC', 'CULTURE_RED_FLAG', 'CULTURE_ACTION'
+  'CULTURE_HEADLINE', 'CULTURE_DESC', 'CULTURE_RED_FLAG', 'CULTURE_ACTION',
+  // Hero headline — written for the top of the report, not the maturity section
+  'HERO_HEADLINE'
 ];
 
 console.log('\n=== Insight Generation Check ===');
@@ -152,9 +154,9 @@ process.exit(2);
 
 function getKeyDescription(key) {
   const descriptions = {
-    EXEC_SUMMARY_GOOD: 'What is working well — lead with the strongest metric, name the org or cohort achieving it, then say why it matters to the business. 2 sentences max.',
-    EXEC_SUMMARY_GAP: 'The most important gap — frame it as a quantified opportunity, not a failure. State the size of the prize: what becomes possible if this gap closes. 2 sentences max.',
-    EXEC_SUMMARY_OPP: 'The single highest-leverage action — name the specific cohort, org, or metric, state the expected outcome in measurable terms. 2 sentences max.',
+    EXEC_SUMMARY_GOOD: 'What is working — narrative MUST justify the license activation rate (m365_enablement %). Lead with that number, explain what it proves about deployment health. 2 sentences max.',
+    EXEC_SUMMARY_GAP: 'The gap — narrative MUST justify the band_6_10 number (users at 6–10 active days). Explain why this cohort is the critical conversion zone and what closing that gap is worth. Do NOT reference chat_users or unlicensed users — that belongs in OPP. 2 sentences max.',
+    EXEC_SUMMARY_OPP: 'The opportunity — narrative MUST justify the chat_users number (unlicensed active users). Explain who they are, why they are low-risk, and what licensing them would deliver. 2 sentences max.',
     INSIGHT_REACH: 'Signal + Stakes + Move for Reach. One sentence each. The Stakes sentence must answer: what does this activation level mean for the business? Name the best-performing org if one stands out. 3 sentences max.',
     INSIGHT_HABIT: 'Signal + Stakes + Move for Habit. Name the most important cohort (e.g. the 6-10 day group). State what converting them is worth in concrete numbers. 3 sentences max.',
     INSIGHT_SKILL: 'Signal + Stakes + Move for Skill. If one agent or surface stands out for stickiness, name it. 3 sentences max.',
@@ -185,7 +187,8 @@ function getKeyDescription(key) {
     CULTURE_HEADLINE: 'One sentence with a metric. e.g. "8,072 users at 6–10 active days — the foundation is built, habit is the next gate". No generic phrases.',
     CULTURE_DESC: '2 sentences: where they are strong and where the gap is. Actual metrics only — no external benchmarks.',
     CULTURE_RED_FLAG: 'One sentence: the specific risk, the metric, and the business consequence. Opportunity-framed, not failure language.',
-    CULTURE_ACTION: 'One sentence: the highest-leverage move, the specific cohort or count, and the measurable target.'
+    CULTURE_ACTION: 'One sentence: the highest-leverage move, the specific cohort or count, and the measurable target.',
+    HERO_HEADLINE: 'The single sentence at the top of the report — the executive\'s three-question diagnostic in one breath. Must answer: (1) Is access widespread? — use total_active_users and org_count. (2) Are habits strong? — use (band_11_15 + band_16_plus) as the count of habitual users across ALL tiers (licensed + unlicensed + agent), NOT embedded_user_rate which only covers licensed users and flatters organisations that selectively licensed their most engaged people. Express habit as a raw count: "X users building daily AI habits". (3) What is the one move to the next pattern? — name the exact metric, current value, and threshold to cross. Format: "[total_active_users] active across [org_count] divisions, [band_11_15+band_16_plus] building daily AI habits — [metric at X%] is [distance] from [next pattern]". 16–22 words. No verdict statements. No analogies. Provably true from the data.'
   };
   return descriptions[key] || key;
 }

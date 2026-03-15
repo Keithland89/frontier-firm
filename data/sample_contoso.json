@@ -74,6 +74,12 @@
   "churned_users": 4608,
   "retention_cohort": 32104,
 
+  "agent_habitual_rate": 5.0,
+  "org_penetration_pct": 42.3,
+  "embedded_user_rate": 18.6,
+  "licensed_avg_days": 4.8,
+  "unlicensed_avg_days": 4.3,
+
   "top_agent_names": [
     "Service Remedy",
     "Draft Coach",

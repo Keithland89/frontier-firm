@@ -106,18 +106,6 @@
       "data_field": "license_coverage",
       "description": "% of total active users who hold a license"
     },
-    "copilot_concentration": {
-      "lane": "copilot",
-      "pillar": "reach",
-      "name": "Usage Spread",
-      "unit": "%",
-      "bands": [
-        50,
-        75
-      ],
-      "data_field": "concentration_index",
-      "description": "% of total users outside the top 3 orgs — higher means AI is spreading, not concentrated"
-    },
     "agent_breadth": {
       "lane": "agents",
       "pillar": "skill",
@@ -203,10 +191,10 @@
       "description": "Company-level P1/P2/P3 pattern profile classification. Patterns are hierarchical — P3 requires P2 ≥ Nascent, P2 requires P1 ≥ Nascent. To change thresholds edit this file — no code change needed.",
       "p1": {
         "presence_field": "m365_enablement",
-        "presence_min_pct": 10,
+        "presence_min_pct": 40,
         "maturity_field": "licensed_band_11_15_pct + licensed_band_16_plus_pct",
         "maturity_min_pct": 30,
-        "rule": "Nascent: activation >= 10%. Primary: also habitual licensed users >= 30%."
+        "rule": "Nascent: activation >= 40%. Primary: also habitual licensed users >= 30%."
       },
       "p2": {
         "presence_field": "agent_adoption",
@@ -216,12 +204,12 @@
         "rule": "Nascent: agent adoption >= 5%. Primary: also agent user return >= 40%. Requires P1 >= Nascent."
       },
       "p3": {
-        "presence_field": "agent_habitual_rate OR multi_user_agents",
-        "habitual_min_pct": 20,
-        "multi_user_min_count": 5,
-        "maturity_field": "orgs with agent_adoption >= 5%",
-        "maturity_min_orgs": 3,
-        "rule": "Nascent: habitual agent users >= 20% OR multi-user agents >= 5. Primary: also 3+ orgs at 5% agent adoption. Requires P2 >= Nascent."
+        "presence_field": "agent_habitual_rate",
+        "presence_min_pct": 15,
+        "maturity_field": "orgs with agent_adoption >= 10%",
+        "maturity_org_agent_pct": 10,
+        "maturity_min_orgs_pct": 50,
+        "rule": "Nascent: agent habitual rate >= 15%. Primary: also >= 50% of orgs at 10% agent adoption. Requires P2 >= Nascent."
       }
     },
     "org_pattern_gates": {

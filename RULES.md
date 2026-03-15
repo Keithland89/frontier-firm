@@ -239,7 +239,33 @@ Rank recommendations by: **cohort size × expected uplift**. Name the cohort, qu
 
 ---
 
-## 7. Materiality Test
+## 7. Equitable Access Principle
+
+**Never recommend restricting, reallocating, or removing access from any user or group.** Recommendations must always expand access, not redistribute it at someone else's expense.
+
+### What this means in practice
+
+- **Do not suggest revoking licenses** from low-activity users to fund new ones. Low activity is a signal to investigate and address — not a justification for removal.
+- **Do not suggest moving licenses** from one division to another. Every division deserves AI access on its own merits.
+- **Do not frame any cohort as "not ready" for AI** in a way that implies access should be withheld. Readiness is built through enablement, not gatekeeping.
+- **Always lean toward expanding the licensed base**, not optimising within a fixed envelope.
+
+### Frame unlicensed users as underserved, not as non-priority
+
+> "2,585 unlicensed users are already active — they have demonstrated demand without the full toolset. The question is when to extend access, not whether."
+
+The unlicensed cohort represents unmet potential, not users who have been correctly categorised. Recommendations involving them should always move toward greater access.
+
+### Inactive licenses are a deployment problem, not a reallocation opportunity
+
+| Do not say | Say instead |
+|---|---|
+| "Reallocate the 342 idle licenses to higher-demand orgs" | "342 licenses are inactive — investigate the barrier in those teams and activate them" |
+| "Remove licenses from users with fewer than 5 active days" | "Users at 1–5 active days are the earliest-stage cohort — targeted onboarding, not licence removal, is the move" |
+
+---
+
+## 8. Materiality Test
 
 **Before naming any agent or organisation as a model, example, or leading cohort, it must pass the materiality test.**
 
@@ -264,7 +290,7 @@ An org qualifies as a model only when its user count is ≥ 3% of total active u
 
 ---
 
-## 8. Output Integrity
+## 9. Output Integrity
 
 - **"Contoso" must never appear in any report output** — replace with the real customer name before generating; a report containing "Contoso" is not ready to share under any circumstances
 - Pattern (Foundation / Expansion / Frontier) must be derived from scoring — never asserted without basis in the metric tiers
@@ -274,7 +300,7 @@ An org qualifies as a model only when its user count is ≥ 3% of total active u
 
 ---
 
-## 9. Self-Audit Checklist
+## 10. Self-Audit Checklist
 
 Before accepting any report as complete:
 
@@ -296,4 +322,5 @@ Before accepting any report as complete:
 - [ ] No unverified time period qualifiers — "weekly", "monthly", "daily" only appear when confirmed by the field definition or PBIX measure name
 - [ ] Licensed vs unlicensed cohort differences are explicitly called out where material (engagement gap ≥ 2x, habit gap ≥ 10pp, agent concentration)
 - [ ] Exactly 4 recommendations, each targeting Reach / Adoption / Agent usage with named cohort, quantified uplift, and ROI justification
+- [ ] No recommendation restricts, reallocates, or removes access from any user or group — all recommendations expand or deepen access
 - [ ] Every agent or org cited as a model passes the materiality test (≥10 users AND ≥5% of agent cohort for agents; ≥3% of total active users for orgs) — outliers are framed as proof-of-concept, not replicable models
