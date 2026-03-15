@@ -92,13 +92,16 @@ These are consulting boilerplate. If the sentence could appear unedited in a McK
 
 ### Headlines
 
-Prefer insight-driven headlines that lead with a finding. Descriptive headlines are acceptable when anchored to evidence — a section title that names a specific number, trend, or pattern qualifies.
+Headlines must be **retellable** — the executive should be able to repeat them from memory at their next leadership meeting without notes. Lead with the finding in plain words. Avoid framework jargon ("Reach signal", "Habit pillar") — the reader doesn't know the framework.
 
-Formula (preferred): `[Specific number or trend] — [implication or action]`
-Formula (acceptable): `[Descriptive label] + [evidence qualifier]`
+**The Dinner Party Test:** If someone asked "how's AI adoption going?" the headline should be a complete answer. If it requires explaining the framework first, rewrite it.
 
-- Best: `"34% habitual rate in Finance — 3x the org average and a replicable playbook"`
-- Acceptable: `"Habit Signal — strongest in Finance (34%) and Legal (28%)"`
+Formula (preferred): `[Specific number + human story] — [so what in plain words]`
+Formula (acceptable): `[Specific number or trend] — [implication or action]`
+
+- Best: `"149 people are one nudge away from making AI a daily habit"`
+- Good: `"34% habitual rate in Finance — 3x the org average and a replicable playbook"`
+- Not acceptable: `"Habit Signal — strongest in Finance (34%) and Legal (28%)"` (uses framework label)
 - Not acceptable: `"Habit Signal Overview"` (no evidence, no anchor)
 
 ### Storyboard flow

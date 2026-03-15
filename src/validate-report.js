@@ -143,7 +143,7 @@ for (const section of requiredSections) {
 // CHECK 9: All expected chart canvases present
 // ============================================================
 const expectedCharts = isV4
-  ? ['chartTiers', 'chartOrgScatter', 'chartRetention', 'chartAgentBar', 'chartAgentDepth', 'chartAgentStickiness', 'chartAppSurface', 'chartDepthSparkline', 'chartSessionsPerOrg', 'chartConcentration', 'chartAgentBreadth', 'chartOrgDonut', 'chartCoverage']
+  ? ['chartTiers', 'chartOrgScatter', 'chartRetention', 'chartAgentBar', 'chartAgentDepth', 'chartAgentStickiness', 'chartAppSurface', 'chartDepthSparkline', 'chartSessionsPerOrg', 'chartConcentration', 'chartAgentBreadth', 'chartOrgDonut', 'chartCoverage', 'chartHabitTrend']
   : isV3
   ? ['chartTiers', 'chartEngagement', 'chartOrgScatter', 'chartRetention', 'chartWeeklyTrend', 'chartHabitTiers', 'chartAgentBar', 'chartAppSurface']
   : ['chartTiers', 'chartMonthlyUsers', 'chartEngagement', 'chartWeekly', 'chartOrgScatter', 'chartRetention', 'chartCohortFlow', 'chartHabit', 'chartAgentHealth', 'chartLicense'];

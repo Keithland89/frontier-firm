@@ -94,14 +94,16 @@ All 34 must be populated or explicitly skipped with a stated reason.
 
 ### Section Headlines and Subtitles
 
-Each headline must lead with a specific number or trend. Format: `[number or trend] — [implication or action]`.
+Each headline must be **retellable** — the executive should be able to repeat it from memory at their next leadership meeting. Lead with a specific number, then the "so what" in plain words. Avoid framework jargon (don't say "Reach signal" or "Habit pillar").
+
+**The Dinner Party Test:** If someone asked "what did the report say about adoption?" the headline should be the answer. If the headline requires explaining the framework first, rewrite it.
 
 | Key | What to write |
 |---|---|
-| `TITLE_REACH` | e.g. "75% of licences active across 14 orgs — deployed but not yet embedded". 8–12 words. |
-| `TITLE_HABIT` | e.g. "51% return each month — the question is whether they are building a routine". 8–12 words. |
-| `TITLE_SKILL` | e.g. "2.3 apps per user out of 27 available — the depth question is still open". 8–12 words. |
-| `TITLE_VALUE` | e.g. "12,421 idle licences, 18,991 unlicensed users showing demand — the maths is clear". 8–12 words. |
+| `TITLE_REACH` | e.g. "9 out of 10 licences are in use — the problem isn't adoption, it's depth". 8–15 words. Must be retellable without knowing the framework. |
+| `TITLE_HABIT` | e.g. "149 people are one nudge away from making AI a daily habit". 8–15 words. Lead with the human story, not the metric name. |
+| `TITLE_SKILL` | e.g. "Agents went from 9 users to 106 in four months — that's the signal". 8–15 words. Name the trend the executive should care about. |
+| `TITLE_VALUE` | e.g. "Licensed users generate 8x more prompts — every licence conversion pays for itself". 8–15 words. |
 | `SUBTITLE_REACH` | One sentence that advances the story from the headline — adds the "so what" or "therefore". Not a restatement. |
 | `SUBTITLE_HABIT` | One sentence — the business implication of the habit data. |
 | `SUBTITLE_SKILL` | One sentence — the business implication of the skill/breadth data. |

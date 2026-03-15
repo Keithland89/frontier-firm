@@ -99,11 +99,12 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
    SECTIONS & LAYOUT
    ═══════════════════════════════════════════════════════════ */
 .section{position:relative;overflow:hidden}
-.section-inner{max-width:1120px;margin:0 auto;padding:5rem 2.5rem}
+.section:nth-of-type(even){background:#0C0C0F}
+.section-inner{max-width:1120px;margin:0 auto;padding:6rem 2.5rem}
 .section-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:var(--brand);margin-bottom:.75rem;display:inline-flex;align-items:center;gap:.5rem}
 .section-label::before{content:'';width:20px;height:2px;background:currentColor}
-.section-title{font-family:'Helvetica Now Display','DM Sans','Outfit',sans-serif;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;line-height:1.2;margin-bottom:.6rem;color:var(--text);letter-spacing:-.02em}
-.section-subtitle{font-size:.95rem;color:var(--text-2);max-width:620px;line-height:1.75;font-weight:400;margin-bottom:2rem}
+.section-title{font-family:'Helvetica Now Display','DM Sans','Outfit',sans-serif;font-size:clamp(.95rem,1.8vw,1.15rem);font-weight:600;line-height:1.4;margin-bottom:.5rem;color:var(--text-2);letter-spacing:-.005em}
+.section-subtitle{font-size:.85rem;color:var(--text-3);max-width:620px;line-height:1.7;font-weight:400;margin-bottom:2rem}
 
 /* ═══════════════════════════════════════════════════════════
    SCROLL REVEAL ANIMATIONS
@@ -248,15 +249,15 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
    8. METRICS GRID
    ═══════════════════════════════════════════════════════════ */
 .metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-top:1.5rem}
-.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem;border-left:3px solid var(--tier-color,var(--border));transition:transform .2s,box-shadow .2s}
-.metric-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.06)}
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem .85rem;transition:transform .2s,box-shadow .2s}
+.metric-card:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.06);border-color:rgba(255,255,255,.12)}
 .metric-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem}
 .metric-card-id{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3)}
 .metric-tier-badge{padding:.15rem .45rem;border-radius:100px;font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#fff}
 .tier-1{background:var(--tier-1)}.tier-2{background:var(--tier-2)}.tier-3{background:var(--tier-3)}.tier-4{background:var(--tier-4)}
-.metric-card-name{font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:.3rem;line-height:1.3}
-.metric-card-value{font-size:1.3rem;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
-.metric-card-unit{font-size:.65rem;color:var(--text-3);margin-top:.1rem}
+.metric-card-name{font-size:.68rem;font-weight:600;color:var(--text-2);margin-bottom:.2rem;line-height:1.3}
+.metric-card-value{font-size:1rem;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
+.metric-card-unit{font-size:.55rem;color:var(--text-3);margin-top:.05rem}
 .metric-card{cursor:pointer;position:relative}
 .metric-card::after{content:'Click for PBI detail';position:absolute;bottom:.35rem;right:.5rem;font-size:.5rem;color:var(--text-3);opacity:0;transition:opacity .2s;text-transform:uppercase;letter-spacing:.04em}
 .metric-card:hover::after{opacity:.7}
@@ -460,7 +461,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 @keyframes matrixReveal{from{opacity:0;transform:translateY(-12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 
 /* 18 Metrics grid -- dashboard treatment */
-.metric-card{border-left:4px solid var(--tier-color,var(--border));overflow:hidden;transition:all .3s cubic-bezier(.16,1,.3,1)}
+.metric-card{border-left:none;overflow:hidden;transition:all .3s cubic-bezier(.16,1,.3,1)}
 .metric-card::after{content:'Click to explore';position:absolute;bottom:.5rem;right:.65rem;font-size:.5rem;color:var(--tier-color,var(--text-3));opacity:0;transition:opacity .3s,transform .3s;text-transform:uppercase;letter-spacing:.06em;font-weight:600;transform:translateY(4px)}
 .metric-card:hover::after{opacity:.5;transform:translateY(0)}
 .metric-card:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 8px 32px rgba(0,0,0,.06),0 0 0 1px var(--tier-color,var(--border));z-index:2}
@@ -653,7 +654,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 [data-theme="dark"] .signal-card:hover{box-shadow:0 12px 40px rgba(0,0,0,.3),0 0 0 1px var(--signal-color,var(--brand))}
 .signal-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--signal-color) 10%,transparent);margin-bottom:.6rem}
 .signal-icon svg{width:18px;height:18px;stroke:var(--signal-color);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.signal-question{font-size:.85rem;color:var(--text-3);font-weight:500;font-style:italic;margin-bottom:.75rem;line-height:1.5;max-width:620px}
+.signal-question{font-family:'Helvetica Now Display','DM Sans','Outfit',sans-serif;font-size:clamp(1.4rem,2.8vw,1.9rem);color:var(--text);font-weight:700;font-style:normal;margin-bottom:.75rem;line-height:1.25;max-width:700px;letter-spacing:-.015em}
 .signal-value{font-family:'Helvetica Now Display','DM Sans','Outfit',sans-serif;font-size:1.6rem;font-weight:700;color:var(--text);line-height:1;margin-bottom:.15rem;letter-spacing:-.02em}
 .signal-sub{font-size:.62rem;color:var(--text-3);font-weight:500;margin-bottom:.6rem}
 .signal-gauge{height:5px;border-radius:3px;background:var(--border);position:relative;margin-bottom:.2rem;overflow:visible}
@@ -868,7 +869,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 .sub-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:2.5rem 0}
 
 /* More breathing room in signal sections */
-.signal-section .section-inner{padding-top:4rem;padding-bottom:4rem}
+.signal-section .section-inner{padding-top:5rem;padding-bottom:5rem}
 .signal-section .two-col,.signal-section .two-col-60{margin-bottom:1.5rem}
 
 /* Chart cards need more bottom margin */
@@ -1194,8 +1195,14 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
         <span style="display:block;width:20px;height:2px;background:var(--brand)"></span>
         Frontier Firm Framework
       </div>
-      <h2 style="font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;letter-spacing:-.02em;color:var(--text);margin-bottom:.5rem;line-height:1.2">Where does {{CUSTOMER_NAME}} sit on the journey?</h2>
+      <h2 style="font-size:clamp(1.4rem,2.8vw,1.9rem);font-weight:700;letter-spacing:-.015em;color:var(--text);margin-bottom:.5rem;line-height:1.25">{{CUSTOMER_NAME}} is at <span style="color:var(--amber)">{{DOMINANT_PATTERN_NAME}}</span> — {{CULTURE_STAGE}}</h2>
+      <p style="font-size:.88rem;color:var(--text-2);margin-bottom:1rem;max-width:700px;line-height:1.6">{{CULTURE_DESC}}</p>
     </div>
+
+    <button onclick="var d=document.getElementById('fw-detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.fw-arrow').textContent=d.style.display==='none'?'+':'\u2212'" style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text-2);font-size:.78rem;font-weight:600;padding:.5rem 1rem;border-radius:8px;cursor:pointer;margin-bottom:1.5rem;transition:all .2s">
+      <span class="fw-arrow">+</span> How we scored this &mdash; the three patterns
+    </button>
+    <div id="fw-detail" style="display:none">
 
     <!-- Intro callout -->
     <div class="reveal reveal-d1" style="margin:1.5rem 0 2rem;max-width:780px;padding:1.25rem 1.5rem;background:var(--surface);border-radius:12px;border:1px solid var(--border);border-left:3px solid var(--brand)">
@@ -1256,6 +1263,8 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <p style="font-size:.875rem;color:var(--text-2);line-height:1.72;max-width:740px">{{CULTURE_ACTION}}</p>
     </div>
 
+  </div><!-- /collapsible framework detail -->
+
   </div>
 </section>
 
@@ -1275,151 +1284,137 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
     <div class="section-label reveal">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:.2rem"><path d="M11.29 5.81c.38-1.08 1.9-1.08 2.28 0l.86 2.45a1.2 1.2 0 00.76.76l2.45.86c1.08.38 1.08 1.9 0 2.28l-2.45.86a1.2 1.2 0 00-.76.76l-.86 2.45c-.38 1.08-1.9 1.08-2.28 0l-.86-2.45a1.2 1.2 0 00-.76-.76l-2.45-.86c-1.08-.38-1.08-1.9 0-2.28l2.45-.86a1.2 1.2 0 00.76-.76l.86-2.45z" fill="#0891B2"/></svg>
       Reach
-    </div><div class="signal-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Reach</div>
+    </div>
+    <div class="signal-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Reach</div>
     <div class="signal-question reveal">{{LICENSED_USERS_FMT}} licensed users. How many are actually showing up?</div>
     <h2 class="section-title reveal reveal-d1">{{TITLE_REACH}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_REACH}}</p>
-    <div class="headline-stat reveal reveal-d2" style="--signal-accent:#0891B2">
-      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem"><span class="hero-drill-btn" data-hero-card="hero" style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;background:rgba(14,165,233,.12);color:#0891B2;border:1px solid rgba(14,165,233,.2);cursor:pointer;transition:all .2s">Hero Metric &middot; License Spread <span class="hero-arrow"><svg viewBox="0 0 12 12"><path d="M6 2v8M3 7l3 3 3-3"/></svg></span></span></div>
-      <div class="headline-stat-value">{{LICENSE_COVERAGE_PCT}}%</div>
-      <div class="headline-stat-label">of {{TOTAL_ACTIVE_USERS}} active users hold a Copilot license &mdash; showing how far licensing has spread across the organisation</div>
-      <span class="headline-stat-tier {{REACH_TIER_CLASS}}" style="background:rgba(14,165,233,.1);color:#0891B2;border:1px solid rgba(14,165,233,.15)">{{REACH_TIER}}</span>
+
+    <!-- ─── Subsection: Activity ─── -->
+    <div class="reveal reveal-d2" style="margin:2rem 0;padding:1.5rem 1.75rem;background:var(--surface);border:1px solid var(--border);border-radius:14px">
+      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#0891B2;margin-bottom:.6rem">Activity</div>
+      <div style="font-size:.82rem;color:var(--text-2);line-height:1.6;margin-bottom:1.25rem">Activation is strong &mdash; the gap now is between <strong style="color:#007fff">licensed users ({{LICENSE_PRIORITY}}x more engaged)</strong> and the <span style="color:#8477FB">{{AGENT_ADOPTION}}%</span> exploring agents. Every licence conversion delivers an immediate step-up in use.</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem">
+        <div class="metric-card" data-drill-idx="0" tabindex="0">
+          <div class="metric-card-header"><span style="font-size:.42rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:rgba(0,127,255,.1);color:#007fff">M365 Copilot</span></div>
+          <div class="metric-card-name">Copilot Licence Activation</div>
+          <div class="metric-card-value" style="color:#007fff">{{M365_ENABLEMENT}}%</div>
+          <div class="metric-card-unit">of {{TOTAL_LICENSED_SEATS}} seats</div>
+        </div>
+        <div class="metric-card" data-drill-idx="0" tabindex="0">
+          <div class="metric-card-header"></div>
+          <div class="metric-card-name">Copilot Licence Coverage</div>
+          <div class="metric-card-value" style="color:#0891B2">{{LICENSE_COVERAGE_PCT}}%</div>
+          <div class="metric-card-unit">of active users licensed</div>
+        </div>
+        <div class="metric-card" data-drill-idx="2" tabindex="0">
+          <div class="metric-card-header"><span style="font-size:.42rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:rgba(132,119,251,.1);color:#8477FB">Agents</span></div>
+          <div class="metric-card-name">Agent Adoption</div>
+          <div class="metric-card-value" style="color:#8477FB">{{AGENT_ADOPTION}}%</div>
+          <div class="metric-card-unit">{{AGENT_USERS}} users</div>
+        </div>
+      </div>
+      <div class="deep-dive-content">
+      <!-- Panel: User Population — card 0 (Active Licensed Users) + hero -->
+      <div class="drill-panel" data-drill-for="0,hero" style="margin-top:1.5rem">
+        <div class="slide-frame reveal" style="--signal-accent:#0891B2"><div class="slide-label">User Population</div>
+        <div style="display:flex;gap:1.5rem;align-items:center;margin-bottom:1.25rem" class="reveal">
+          <div style="width:160px;height:160px;flex-shrink:0"><canvas id="chartCoverage"></canvas></div>
+          <div>
+            <div style="font-size:1.6rem;font-weight:800;color:#0891B2">{{LICENSE_COVERAGE_PCT}}%</div>
+            <div style="font-size:.82rem;color:var(--text-2);line-height:1.5">of active users hold a Copilot license. <strong>{{INACTIVE_LICENSES_FMT}} assigned seats</strong> remain inactive.</div>
+          </div>
+        </div>
+        <div class="two-col-60 two-col reveal reveal-d3">
+          <div class="chart-card">
+            <div class="chart-card-title">User Population by Tier</div>
+            <div class="chart-card-sub">Total unique users across all access tiers</div>
+            <div style="height:280px"><canvas id="chartTiers"></canvas></div>
+            <div class="drill-insight" style="--di-color:#007fff;margin-top:1rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Key Insight</span></div><div class="drill-insight-body">{{INSIGHT_REACH_TIER}}</div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:1rem">
+            <div class="stat-callout" style="--accent:#007fff"><div class="stat-callout-val"><span class="counter" data-target="{{LICENSED_USERS}}">0</span></div><div class="stat-callout-label">Licensed M365 Copilot users <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(34,100,229,.1);color:#007fff;border:1px solid rgba(34,100,229,.15);margin-left:.4rem;vertical-align:middle">M365 Copilot</span></div></div>
+            <div class="stat-callout" style="--accent:#8477FB"><div class="stat-callout-val"><span class="counter" data-target="{{CHAT_USERS}}">0</span></div><div class="stat-callout-label">Unlicensed Chat users <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(14,165,233,.1);color:#0891B2;border:1px solid rgba(14,165,233,.15);margin-left:.4rem;vertical-align:middle">Copilot Chat</span></div></div>
+            <div class="stat-callout" style="--accent:#0891B2"><div class="stat-callout-val"><span class="counter" data-target="{{AGENT_USERS}}">0</span></div><div class="stat-callout-label">Agent users &mdash; {{AGENT_ADOPTION}}% adoption <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(123,47,242,.1);color:#8477FB;border:1px solid rgba(123,47,242,.15);margin-left:.4rem;vertical-align:middle">Agents</span></div></div>
+            <div class="drill-insight" style="--di-color:#0891B2"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Context</span></div><div class="drill-insight-body"><strong>{{TOTAL_LICENSED_SEATS}} seats</strong> with {{M365_ENABLEMENT}}% activation. {{INACTIVE_LICENSES}} inactive licenses are the fastest path to growth.</div></div>
+          </div>
+        </div>
+        <div class="drill-insight reveal" style="--di-color:#0891B2;margin-top:1.25rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">So What</span></div><div class="drill-insight-body">{{INSIGHT_REACH}}</div></div>
+        </div>
+      </div>
+      <!-- Panel: Agent Adoption by Org — card 2 (Agent Adoption) -->
+      <div class="drill-panel" data-drill-for="2">
+        <div class="two-col reveal reveal-d4" style="margin-top:1.5rem">
+          <div class="chart-card"><div class="chart-card-title">Agent Adoption &mdash; by Organisation</div><div class="chart-card-sub">% of licensed users engaging with agents (user count in brackets)</div><div style="height:380px"><canvas id="chartSessionsPerOrg"></canvas></div></div>
+          <div class="drill-insight" style="--di-color:#8477FB;display:flex;flex-direction:column;justify-content:center"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Key Insight</span></div><div class="drill-insight-body">{{ORG_SCATTER_INSIGHTS}}</div></div>
+        </div>
+      </div>
+      <button class="close-drill" style="font-size:.6rem;color:var(--text-3);background:none;border:1px solid var(--border);padding:.3rem .8rem;border-radius:6px;cursor:pointer;margin-top:1rem;display:block">Close detail</button>
+      </div><!-- /deep-dive-content Activity -->
     </div>
 
-    <div class="explore-prompt reveal reveal-d2" style="--signal-accent:#0891B2"><span class="explore-prompt-line"></span><span class="explore-prompt-text"><svg viewBox="0 0 12 12"><path d="M6 2v8M3 7l3 3 3-3"/></svg> Select a metric to explore</span><span class="explore-prompt-line"></span></div>
-
-    <!-- Reach metric cards — 4 supporting metrics (hero shown above) -->
-    <div class="signal-metrics reach-metrics reveal reveal-d3" style="display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin:1.5rem 0">
-
-      <!-- 1. License Activation — M365 Copilot -->
-      <div class="metric-card" data-drill-idx="0" style="--tier-color:#007fff" tabindex="0">
-        <div class="metric-card-header">
-          <span class="metric-card-id">01</span>
-          <span style="font-size:.48rem;font-weight:700;padding:.12rem .4rem;border-radius:100px;background:rgba(0,127,255,.12);color:#007fff;border:1px solid rgba(0,127,255,.2)">M365 Copilot</span>
+    <!-- ─── Subsection: Org Spread ─── -->
+    <div class="reveal reveal-d3" style="margin:2rem 0;padding:1.5rem 1.75rem;background:var(--surface);border:1px solid var(--border);border-radius:14px">
+      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#0891B2;margin-bottom:.6rem">Org Spread</div>
+      <div style="font-size:.82rem;color:var(--text-2);line-height:1.6;margin-bottom:1.25rem">Usage is well-distributed with <strong style="color:#8477FB">{{ORG_PENETRATION_ORGS}} of {{ORG_COUNT}}</strong> orgs running both Copilot and agents &mdash; the question is whether lagging orgs need enablement or just time.</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem">
+        <div class="metric-card" data-drill-idx="1" tabindex="0">
+          <div class="metric-card-header"></div>
+          <div class="metric-card-name">Copilot Usage Spread</div>
+          <div class="metric-card-value" style="color:#0891B2">{{CONCENTRATION_INDEX}}%</div>
+          <div class="metric-card-unit">outside top 3 orgs</div>
         </div>
-        <div class="metric-card-name">Active Licensed Users</div>
-        <div class="metric-card-value" style="color:#007fff">{{M365_ENABLEMENT}}%</div>
-        <div class="metric-card-unit">of {{TOTAL_LICENSED_SEATS}} assigned seats</div>
-        <div class="metric-card-bar"><div class="metric-card-bar-fill" style="width:{{M365_ENABLEMENT}}%;background:#007fff"></div></div>
-      </div>
-
-      <!-- 2. Usage Concentration -->
-      <div class="metric-card" data-drill-idx="1" style="--tier-color:#0891B2" tabindex="0">
-        <div class="metric-card-header">
-          <span class="metric-card-id">02</span>
-          <span style="font-size:.48rem;font-weight:700;padding:.12rem .4rem;border-radius:100px;background:rgba(14,165,233,.12);color:#0891B2;border:1px solid rgba(14,165,233,.2)">Concentration</span>
+        <div class="metric-card" data-drill-idx="3" tabindex="0">
+          <div class="metric-card-header"><span style="font-size:.42rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:rgba(132,119,251,.1);color:#8477FB">Agents</span></div>
+          <div class="metric-card-name">Dual-Lane Org Penetration</div>
+          <div class="metric-card-value" style="color:#8477FB">{{ORG_PENETRATION_PCT}}%</div>
+          <div class="metric-card-unit">orgs with both lanes</div>
         </div>
-        <div class="metric-card-name">Usage Concentration</div>
-        <div class="metric-card-value" style="color:#0891B2">{{CONCENTRATION_INDEX}}%</div>
-        <div class="metric-card-unit">outside top 3 orgs</div>
-        <div class="metric-card-bar"><div class="metric-card-bar-fill" style="width:{{CONCENTRATION_INDEX}}%;background:#0891B2"></div></div>
       </div>
-
-      <!-- 3. Agent Adoption — Agents -->
-      <div class="metric-card" data-drill-idx="2" style="--tier-color:#8477FB" tabindex="0">
-        <div class="metric-card-header">
-          <span class="metric-card-id">03</span>
-          <span style="font-size:.48rem;font-weight:700;padding:.12rem .4rem;border-radius:100px;background:rgba(132,119,251,.12);color:#8477FB;border:1px solid rgba(132,119,251,.2)">Agents</span>
+      <div class="deep-dive-content">
+      <!-- Panel: Usage Concentration chart + table — card 1 (Usage Concentration) -->
+      <div class="drill-panel" data-drill-for="1">
+        <div class="reveal" style="margin-top:1.5rem">
+          <div class="chart-card" style="border-left:4px solid #0891B2">
+            <div class="chart-card-title">Usage Concentration</div>
+            <div class="chart-card-sub">Distribution of active users across organisations &mdash; top 3 vs rest</div>
+            <div style="position:relative;height:200px"><canvas id="chartConcentration"></canvas></div>
+            <div style="margin-top:.5rem;font-size:.72rem;color:var(--text-2)">Concentration index: <strong style="color:#0891B2">{{CONCENTRATION_INDEX}}%</strong> of usage comes from outside the top 3 orgs</div>
+          </div>
         </div>
-        <div class="metric-card-name">Agent Adoption</div>
-        <div class="metric-card-value" style="color:#8477FB">{{AGENT_ADOPTION}}%</div>
-        <div class="metric-card-unit">of users using agents</div>
-        <div class="metric-card-bar"><div class="metric-card-bar-fill" style="width:{{AGENT_ADOPTION}}%;background:#8477FB"></div></div>
+        <div class="reveal" style="margin-top:1.5rem">{{LICENSE_PRIORITY_TABLE}}</div>
       </div>
-
-      <!-- 4. Org Penetration — Agents -->
-      <div class="metric-card" data-drill-idx="3" style="--tier-color:#8477FB" tabindex="0">
-        <div class="metric-card-header">
-          <span class="metric-card-id">04</span>
-          <span style="font-size:.48rem;font-weight:700;padding:.12rem .4rem;border-radius:100px;background:rgba(132,119,251,.12);color:#8477FB;border:1px solid rgba(132,119,251,.2)">Agents</span>
+      <!-- Panel: Org Scatter — card 3 (Org Penetration) -->
+      <div class="drill-panel" data-drill-for="3">
+        <div style="display:flex;gap:1.5rem;align-items:center;margin:1.5rem 0" class="reveal">
+          <div style="width:160px;height:160px;flex-shrink:0"><canvas id="chartOrgDonut"></canvas></div>
+          <div>
+            <div style="font-size:1.6rem;font-weight:800;color:#8477FB">{{ORG_PENETRATION_ORGS}} of {{ORG_COUNT}}</div>
+            <div style="font-size:.82rem;color:var(--text-2);line-height:1.5">organisations have both M365 Copilot <strong>and</strong> agent users &mdash; {{ORG_PENETRATION_PCT}}% dual-lane penetration</div>
+          </div>
         </div>
-        <div class="metric-card-name">Org Penetration</div>
-        <div class="metric-card-value" style="color:#8477FB">{{ORG_PENETRATION_PCT}}%</div>
-        <div class="metric-card-unit">orgs with both Copilot + agents</div>
-        <div class="metric-card-bar"><div class="metric-card-bar-fill" style="width:{{ORG_PENETRATION_PCT}}%;background:#8477FB"></div></div>
+        <div style="margin-top:1.5rem" class="reveal reveal-d5">
+          <h3 style="font-size:1rem;font-weight:700;margin-bottom:.5rem">{{ORG_SCATTER_HEADLINE}}</h3>
+          <p style="font-size:.78rem;color:var(--text-2);margin-bottom:1rem">Each bubble = an organisation. X = M365 Copilot users, Y = % using agents. Size = total sessions.</p>
+          <div style="height:320px"><canvas id="chartOrgScatter"></canvas></div>
+          <div style="display:flex;gap:1.25rem;justify-content:center;margin-top:.6rem;flex-wrap:wrap">
+            <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0D9488"></span> 12%+ agents</span>
+            <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0891B2"></span> 8-12%</span>
+            <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#8477FB"></span> 5-8%</span>
+            <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#94A3B8"></span> &lt;5%</span>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-top:1.25rem">
+            <span style="color:#0D9488;font-weight:600;font-size:.8rem">Intensity signal:</span> <span style="font-size:.82rem;color:var(--text-2)">{{ORG_INTENSITY_COMPARISON}}</span>
+          </div>
+          <div class="drill-insight" style="--di-color:#0891B2;margin-top:1rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Organisation Insight</span></div><div class="drill-insight-body">{{ORG_AGENT_INSIGHT}}</div></div>
+        </div>
       </div>
-
+      <button class="close-drill" style="font-size:.6rem;color:var(--text-3);background:none;border:1px solid var(--border);padding:.3rem .8rem;border-radius:6px;cursor:pointer;margin-top:1rem;display:block">Close detail</button>
+      </div><!-- /deep-dive-content Org Spread -->
     </div>
 
-    <button class="dive-deeper-btn close-drill" style="--accent:#0891B2">Close detail <span class="dd-arrow">&times;</span></button>
-    <div class="deep-dive-content">
-
-    <!-- Panel: User Population — card 0 (Active Licensed Users) + hero -->
-    <div class="drill-panel" data-drill-for="0,hero" style="margin-top:1.5rem">
-      <div class="slide-frame reveal" style="--signal-accent:#0891B2"><div class="slide-label">User Population</div>
-      <div style="display:flex;gap:1.5rem;align-items:center;margin-bottom:1.25rem" class="reveal">
-        <div style="width:160px;height:160px;flex-shrink:0"><canvas id="chartCoverage"></canvas></div>
-        <div>
-          <div style="font-size:1.6rem;font-weight:800;color:#0891B2">{{LICENSE_COVERAGE_PCT}}%</div>
-          <div style="font-size:.82rem;color:var(--text-2);line-height:1.5">of active users hold a Copilot license. <strong>{{INACTIVE_LICENSES_FMT}} assigned seats</strong> remain inactive.</div>
-        </div>
-      </div>
-      <div class="two-col-60 two-col reveal reveal-d3">
-        <div class="chart-card">
-          <div class="chart-card-title">User Population by Tier</div>
-          <div class="chart-card-sub">Total unique users across all access tiers</div>
-          <div style="height:280px"><canvas id="chartTiers"></canvas></div>
-          <div class="drill-insight" style="--di-color:#007fff;margin-top:1rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Key Insight</span></div><div class="drill-insight-body">{{INSIGHT_REACH_TIER}}</div></div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:1rem">
-          <div class="stat-callout" style="--accent:#007fff"><div class="stat-callout-val"><span class="counter" data-target="{{LICENSED_USERS}}">0</span></div><div class="stat-callout-label">Licensed M365 Copilot users <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(34,100,229,.1);color:#007fff;border:1px solid rgba(34,100,229,.15);margin-left:.4rem;vertical-align:middle">M365 Copilot</span></div></div>
-          <div class="stat-callout" style="--accent:#8477FB"><div class="stat-callout-val"><span class="counter" data-target="{{CHAT_USERS}}">0</span></div><div class="stat-callout-label">Unlicensed Chat users <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(14,165,233,.1);color:#0891B2;border:1px solid rgba(14,165,233,.15);margin-left:.4rem;vertical-align:middle">Copilot Chat</span></div></div>
-          <div class="stat-callout" style="--accent:#0891B2"><div class="stat-callout-val"><span class="counter" data-target="{{AGENT_USERS}}">0</span></div><div class="stat-callout-label">Agent users &mdash; {{AGENT_ADOPTION}}% adoption <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(123,47,242,.1);color:#8477FB;border:1px solid rgba(123,47,242,.15);margin-left:.4rem;vertical-align:middle">Agents</span></div></div>
-          <div class="drill-insight" style="--di-color:#0891B2"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Context</span></div><div class="drill-insight-body"><strong>{{TOTAL_LICENSED_SEATS}} seats</strong> with {{M365_ENABLEMENT}}% activation. {{INACTIVE_LICENSES}} inactive licenses are the fastest path to growth.</div></div>
-        </div>
-      </div>
-      <div class="drill-insight reveal" style="--di-color:#0891B2;margin-top:1.25rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">So What</span></div><div class="drill-insight-body">{{INSIGHT_REACH}}</div></div>
-      </div>
-    </div>
-
-    <!-- Panel: Agent Adoption by Org — card 2 (Agent Adoption) -->
-    <div class="drill-panel" data-drill-for="2">
-      <div class="two-col reveal reveal-d4" style="margin-top:1.5rem">
-        <div class="chart-card"><div class="chart-card-title">Agent Adoption &mdash; by Organisation</div><div class="chart-card-sub">% of licensed users engaging with agents (user count in brackets)</div><div style="height:380px"><canvas id="chartSessionsPerOrg"></canvas></div></div>
-        <div class="drill-insight" style="--di-color:#8477FB;display:flex;flex-direction:column;justify-content:center"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Key Insight</span></div><div class="drill-insight-body">{{ORG_SCATTER_INSIGHTS}}</div></div>
-      </div>
-    </div>
-
-    <!-- Panel: Org Scatter — card 3 (Org Penetration) -->
-    <div class="drill-panel" data-drill-for="3">
-      <div style="display:flex;gap:1.5rem;align-items:center;margin:1.5rem 0" class="reveal">
-        <div style="width:160px;height:160px;flex-shrink:0"><canvas id="chartOrgDonut"></canvas></div>
-        <div>
-          <div style="font-size:1.6rem;font-weight:800;color:#8477FB">{{ORG_PENETRATION_ORGS}} of {{ORG_COUNT}}</div>
-          <div style="font-size:.82rem;color:var(--text-2);line-height:1.5">organisations have both M365 Copilot <strong>and</strong> agent users &mdash; {{ORG_PENETRATION_PCT}}% dual-lane penetration</div>
-        </div>
-      </div>
-      <div style="margin-top:1.5rem" class="reveal reveal-d5">
-        <h3 style="font-size:1rem;font-weight:700;margin-bottom:.5rem">{{ORG_SCATTER_HEADLINE}}</h3>
-        <p style="font-size:.78rem;color:var(--text-2);margin-bottom:1rem">Each bubble = an organisation. X = M365 Copilot users, Y = % using agents. Size = total sessions.</p>
-        <div style="height:320px"><canvas id="chartOrgScatter"></canvas></div>
-        <div style="display:flex;gap:1.25rem;justify-content:center;margin-top:.6rem;flex-wrap:wrap">
-          <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0D9488"></span> 12%+ agents</span>
-          <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0891B2"></span> 8-12%</span>
-          <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#8477FB"></span> 5-8%</span>
-          <span style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--text-2)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#94A3B8"></span> &lt;5%</span>
-        </div>
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-top:1.25rem">
-          <span style="color:#0D9488;font-weight:600;font-size:.8rem">Intensity signal:</span> <span style="font-size:.82rem;color:var(--text-2)">{{ORG_INTENSITY_COMPARISON}}</span>
-        </div>
-        <div class="drill-insight" style="--di-color:#0891B2;margin-top:1rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Organisation Insight</span></div><div class="drill-insight-body">{{ORG_AGENT_INSIGHT}}</div></div>
-      </div>
-    </div>
-
-    <!-- Panel: Usage Concentration chart + table — card 1 (Usage Concentration) -->
-    <div class="drill-panel" data-drill-for="1">
-      <div class="reveal" style="margin-top:1.5rem">
-        <div class="chart-card" style="border-left:4px solid #0891B2">
-          <div class="chart-card-title">Usage Concentration</div>
-          <div class="chart-card-sub">Distribution of active users across organisations &mdash; top 3 vs rest</div>
-          <div style="position:relative;height:200px"><canvas id="chartConcentration"></canvas></div>
-          <div style="margin-top:.5rem;font-size:.72rem;color:var(--text-2)">Concentration index: <strong style="color:#0891B2">{{CONCENTRATION_INDEX}}%</strong> of usage comes from outside the top 3 orgs</div>
-        </div>
-      </div>
-      <div class="reveal" style="margin-top:1.5rem">{{LICENSE_PRIORITY_TABLE}}</div>
-    </div>
-
-    </div><!-- /deep-dive-content -->
+    <!-- So What insight -->
+    <div class="drill-insight reveal" style="--di-color:#0891B2;margin:1rem 0"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">So What</span></div><div class="drill-insight-body">{{INSIGHT_REACH}}</div></div>
 
     <!-- V4 So What Callout -->
     <div class="sowhat" style="background:rgba(14,165,233,.04);border:1px solid rgba(14,165,233,.15);border-left:4px solid #0891B2"><p>{{INSIGHT_REACH}}</p></div>
@@ -1434,159 +1429,138 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 <section class="section signal-section" id="habit" style="--signal-accent:#D270F0">
   <div class="section-inner">
 
-    <div class="section-label reveal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:.2rem"><path d="M11.29 5.81c.38-1.08 1.9-1.08 2.28 0l.86 2.45a1.2 1.2 0 00.76.76l2.45.86c1.08.38 1.08 1.9 0 2.28l-2.45.86a1.2 1.2 0 00-.76.76l-.86 2.45c-.38 1.08-1.9 1.08-2.28 0l-.86-2.45a1.2 1.2 0 00-.76-.76l-2.45-.86c-1.08-.38-1.08-1.9 0-2.28l2.45-.86a1.2 1.2 0 00.76-.76l.86-2.45z" fill="#D270F0"/></svg>Habit</div><div class="signal-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Habit</div>
-    <div class="signal-question reveal">{{M365_RETENTION_INT}}% come back month-over-month. But how deep does the habit run?</div>
+    <div class="section-label reveal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:.2rem"><path d="M11.29 5.81c.38-1.08 1.9-1.08 2.28 0l.86 2.45a1.2 1.2 0 00.76.76l2.45.86c1.08.38 1.08 1.9 0 2.28l-2.45.86a1.2 1.2 0 00-.76.76l-.86 2.45c-.38 1.08-1.9 1.08-2.28 0l-.86-2.45a1.2 1.2 0 00-.76-.76l-2.45-.86c-1.08-.38-1.08-1.9 0-2.28l2.45-.86a1.2 1.2 0 00.76-.76l.86-2.45z" fill="#D270F0"/></svg>Habit</div>
+    <div class="signal-badge"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Habit</div>
+    <div class="signal-question reveal">{{M365_RETENTION_INT}}% come back. But are they building a habit?</div>
     <h2 class="section-title reveal reveal-d1">{{TITLE_HABIT}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_HABIT}}</p>
-    <div class="headline-stat reveal reveal-d2" style="--signal-accent:#D270F0">
-      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem"><span class="hero-drill-btn" data-hero-card="hero" style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;background:rgba(210,112,240,.12);color:#D270F0;border:1px solid rgba(210,112,240,.2);cursor:pointer;transition:all .2s">Hero Metric &middot; Habitual User Rate <span class="hero-arrow"><svg viewBox="0 0 12 12"><path d="M6 2v8M3 7l3 3 3-3"/></svg></span></span></div>
-      <div class="headline-stat-value">{{EMBEDDED_USER_RATE}}%</div>
-      <div class="headline-stat-label">of licensed users are habitual (6+ active days over 3 months) &mdash; MoM retention is {{M365_RETENTION}}%</div>
-      <span class="headline-stat-tier {{HABIT_TIER_CLASS}}" style="background:rgba(210,112,240,.1);color:#D270F0;border:1px solid rgba(210,112,240,.15)">{{HABIT_TIER}}</span>
-    </div>
 
-    <div class="explore-prompt reveal reveal-d2" style="--signal-accent:#D270F0"><span class="explore-prompt-line"></span><span class="explore-prompt-text"><svg viewBox="0 0 12 12"><path d="M6 2v8M3 7l3 3 3-3"/></svg> Select a metric to explore</span><span class="explore-prompt-line"></span></div>
-
-    <!-- Habit metric cards — 3 supporting metrics (hero shown above) -->
-    <div class="signal-metrics habit-metrics reveal reveal-d3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:1.5rem 0">
-      <div class="metric-card" data-drill-idx="0" style="--tier-color:#D270F0" tabindex="0">
-        <div class="metric-card-header"><span class="metric-card-id">01</span><span style="font-size:.48rem;font-weight:700;padding:.12rem .4rem;border-radius:100px;background:rgba(210,112,240,.12);color:#D270F0;border:1px solid rgba(210,112,240,.2)">M365 Copilot</span></div>
-        <div class="metric-card-name">Licensed User Return Rate</div>
-        <div class="metric-card-value" style="color:#D270F0">{{M365_RETENTION}}%</div>
-        <div class="metric-card-unit">licensed users returning each month</div>
-        <div class="metric-card-bar"><div class="metric-card-bar-fill" style="width:{{M365_RETENTION}}%;background:#D270F0"></div></div>
-      </div>
-      <div class="metric-card" data-drill-idx="1" style="--tier-color:#8477FB" tabindex="0">
-        <div class="metric-card-header"><span class="metric-card-id">02</span><span style="font-size:.48rem;font-weight:700;padding:.12rem .4rem;border-radius:100px;background:rgba(132,119,251,.12);color:#8477FB;border:1px solid rgba(132,119,251,.2)">Agents</span></div>
-        <div class="metric-card-name">Agent User Return Rate</div>
-        <div class="metric-card-value" style="color:#8477FB">{{AGENT_RETENTION}}%</div>
-        <div class="metric-card-unit">agent users returning each month</div>
-        <div class="metric-card-bar"><div class="metric-card-bar-fill" style="width:{{AGENT_RETENTION}}%;background:#8477FB"></div></div>
-      </div>
-      <div class="metric-card" data-drill-idx="2" style="--tier-color:#8477FB" tabindex="0">
-        <div class="metric-card-header"><span class="metric-card-id">03</span><span style="font-size:.48rem;font-weight:700;padding:.12rem .4rem;border-radius:100px;background:rgba(132,119,251,.12);color:#8477FB;border:1px solid rgba(132,119,251,.2)">Agents</span></div>
-        <div class="metric-card-name">Agent Habitual Rate</div>
-        <div class="metric-card-value" style="color:#8477FB">{{AGENT_HABITUAL_PCT}}%</div>
-        <div class="metric-card-unit">agent users with 6+ days</div>
-        <div class="metric-card-bar"><div class="metric-card-bar-fill" style="width:{{AGENT_HABITUAL_PCT}}%;background:#8477FB"></div></div>
-      </div>
-    </div>
-
-    <button class="dive-deeper-btn close-drill" style="--accent:#D270F0">Close detail <span class="dd-arrow">&times;</span></button>
-    <div class="deep-dive-content">
-
-    <!-- Panel: Retention bars + chart — card 0 (Licensed User Return Rate) -->
-    <div class="drill-panel" data-drill-for="0">
-      <div class="slide-frame reveal" style="--signal-accent:#D270F0;margin-top:1.5rem">
-        <div class="slide-label">Retention Strength</div>
-        <div class="retention-grid reveal reveal-d1" style="background:var(--section-dark);border-radius:16px;padding:2rem;color:#fff;border:1px solid rgba(245,158,11,.15)">
-          <div>
-            <div class="retention-bar-container"><div class="retention-bar-label"><span>Licensed M365 Copilot</span><span>{{M365_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{M365_RETENTION}}" style="width:0;background:linear-gradient(90deg,#007fff,#4A8AFF)"></div><div class="retention-threshold" style="left:50%"><span class="retention-threshold-label">50%</span></div><div class="retention-threshold" style="left:70%"><span class="retention-threshold-label">70%</span></div><div class="retention-threshold" style="left:85%"><span class="retention-threshold-label">85%</span></div></div></div>
-            <div class="retention-bar-container"><div class="retention-bar-label"><span>Unlicensed Chat</span><span>{{CHAT_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{CHAT_RETENTION}}" style="width:0;background:linear-gradient(90deg,#8477FB,#9B5FFF)"></div></div></div>
-            <div class="retention-bar-container"><div class="retention-bar-label"><span>Agent Users</span><span>{{AGENT_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{AGENT_RETENTION}}" style="width:0;background:linear-gradient(90deg,#0891B2,#38BDF8)"></div></div></div>
-            <div style="padding:.75rem 1rem;background:rgba(245,158,11,.06);border-left:3px solid #D270F0;border-radius:0 8px 8px 0;margin-top:1rem;font-size:.75rem;color:rgba(255,255,255,.6);line-height:1.5">{{RETENTION_CORRECTION_NOTE}}</div>
-          </div>
-          <div style="text-align:center">
-            <div style="height:240px"><canvas id="chartRetention"></canvas></div>
-            <p style="font-size:.78rem;color:rgba(255,255,255,.5);margin-top:.4rem;line-height:1.4">Average MoM retention: <strong style="color:#fff">{{M365_RETENTION}}%</strong></p>
-          </div>
+    <!-- ─── Subsection: Retention ─── -->
+    <div class="reveal reveal-d2" style="margin:2rem 0;padding:1.5rem 1.75rem;background:var(--surface);border:1px solid var(--border);border-radius:14px">
+      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#D270F0;margin-bottom:.6rem">Retention</div>
+      <div style="font-size:.82rem;color:var(--text-2);line-height:1.6;margin-bottom:1.25rem">Licensed users are sticky at <span style="color:#007fff;font-weight:700">{{M365_RETENTION}}%</span> return rate &mdash; the <span style="color:#0891B2;font-weight:700">{{CHAT_RETENTION}}%</span> unlicensed gap signals churn risk without licence conversion.</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem">
+        <div class="metric-card" data-drill-idx="0" tabindex="0">
+          <div class="metric-card-header"><span style="font-size:.42rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:rgba(0,127,255,.1);color:#007fff">M365 Copilot</span></div>
+          <div class="metric-card-name">Copilot Licensed Return Rate</div>
+          <div class="metric-card-value" style="color:#007fff">{{M365_RETENTION}}%</div>
+          <div class="metric-card-unit">month-over-month</div>
+        </div>
+        <div class="metric-card" data-drill-idx="1" tabindex="0">
+          <div class="metric-card-header"><span style="font-size:.42rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:rgba(132,119,251,.1);color:#8477FB">Agents</span></div>
+          <div class="metric-card-name">Agent User Return Rate</div>
+          <div class="metric-card-value" style="color:#8477FB">{{AGENT_RETENTION}}%</div>
+          <div class="metric-card-unit">month-over-month</div>
         </div>
       </div>
-      <div class="drill-insight reveal" style="--di-color:#D270F0;margin-top:1.25rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">So What</span></div><div class="drill-insight-body">{{INSIGHT_HABIT}}</div></div>
-    </div>
-
-    <!-- Panel: Agent Retention — card 1 (Agent User Return Rate) -->
-    <div class="drill-panel" data-drill-for="1">
-      <div class="slide-frame reveal" style="--signal-accent:#8477FB;margin-top:1.5rem">
-        <div class="slide-label">Agent Retention</div>
-        <div style="background:var(--section-dark);border-radius:16px;padding:2rem;color:#fff;border:1px solid rgba(132,119,251,.15)">
-          <div class="retention-bar-container"><div class="retention-bar-label"><span>Agent Users</span><span>{{AGENT_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{AGENT_RETENTION}}" style="width:0;background:linear-gradient(90deg,#8477FB,#9B5FFF)"></div><div class="retention-threshold" style="left:50%"><span class="retention-threshold-label">50%</span></div><div class="retention-threshold" style="left:70%"><span class="retention-threshold-label">70%</span></div><div class="retention-threshold" style="left:85%"><span class="retention-threshold-label">85%</span></div></div></div>
-          <div style="display:flex;gap:1rem;margin-top:1.25rem">
-            <div style="flex:1;padding:.75rem;background:rgba(0,127,255,.08);border-radius:8px;text-align:center">
-              <div style="font-size:1.1rem;font-weight:800;color:#007fff">{{M365_RETENTION}}%</div>
-              <div style="font-size:.65rem;color:rgba(255,255,255,.5)">Licensed Copilot</div>
+      <div class="deep-dive-content">
+      <!-- Panel: Retention bars + chart — card 0 (Licensed User Return Rate) -->
+      <div class="drill-panel" data-drill-for="0">
+        <div class="slide-frame reveal" style="--signal-accent:#D270F0;margin-top:1.5rem">
+          <div class="slide-label">Retention Strength</div>
+          <div class="retention-grid reveal reveal-d1" style="background:var(--section-dark);border-radius:16px;padding:2rem;color:#fff;border:1px solid rgba(245,158,11,.15)">
+            <div>
+              <div class="retention-bar-container"><div class="retention-bar-label"><span>Licensed M365 Copilot</span><span>{{M365_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{M365_RETENTION}}" style="width:0;background:linear-gradient(90deg,#007fff,#4A8AFF)"></div><div class="retention-threshold" style="left:50%"><span class="retention-threshold-label">50%</span></div><div class="retention-threshold" style="left:70%"><span class="retention-threshold-label">70%</span></div><div class="retention-threshold" style="left:85%"><span class="retention-threshold-label">85%</span></div></div></div>
+              <div class="retention-bar-container"><div class="retention-bar-label"><span>Unlicensed Chat</span><span>{{CHAT_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{CHAT_RETENTION}}" style="width:0;background:linear-gradient(90deg,#8477FB,#9B5FFF)"></div></div></div>
+              <div class="retention-bar-container"><div class="retention-bar-label"><span>Agent Users</span><span>{{AGENT_RETENTION}}%</span></div><div class="retention-track"><div class="retention-fill" data-width="{{AGENT_RETENTION}}" style="width:0;background:linear-gradient(90deg,#0891B2,#38BDF8)"></div></div></div>
+              <div style="padding:.75rem 1rem;background:rgba(245,158,11,.06);border-left:3px solid #D270F0;border-radius:0 8px 8px 0;margin-top:1rem;font-size:.75rem;color:rgba(255,255,255,.6);line-height:1.5">{{RETENTION_CORRECTION_NOTE}}</div>
             </div>
-            <div style="flex:1;padding:.75rem;background:rgba(132,119,251,.12);border-radius:8px;text-align:center;border:1px solid rgba(132,119,251,.25)">
-              <div style="font-size:1.1rem;font-weight:800;color:#8477FB">{{AGENT_RETENTION}}%</div>
-              <div style="font-size:.65rem;color:rgba(255,255,255,.5)">Agent Users</div>
-            </div>
-            <div style="flex:1;padding:.75rem;background:rgba(14,165,233,.08);border-radius:8px;text-align:center">
-              <div style="font-size:1.1rem;font-weight:800;color:#0891B2">{{CHAT_RETENTION}}%</div>
-              <div style="font-size:.65rem;color:rgba(255,255,255,.5)">Unlicensed Chat</div>
+            <div style="text-align:center">
+              <div style="height:240px"><canvas id="chartRetention"></canvas></div>
+              <p style="font-size:.78rem;color:rgba(255,255,255,.5);margin-top:.4rem;line-height:1.4">Average MoM retention: <strong style="color:#fff">{{M365_RETENTION}}%</strong></p>
             </div>
           </div>
         </div>
+        <div class="drill-insight reveal" style="--di-color:#D270F0;margin-top:1.25rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">So What</span></div><div class="drill-insight-body">{{INSIGHT_HABIT}}</div></div>
       </div>
+      <button class="close-drill" style="font-size:.6rem;color:var(--text-3);background:none;border:1px solid var(--border);padding:.3rem .8rem;border-radius:6px;cursor:pointer;margin-top:1rem;display:block">Close detail</button>
+      </div><!-- /deep-dive-content Retention -->
     </div>
 
-    <!-- Panel: Licensed active day distribution — card 0 (Licensed User Return Rate) + hero -->
-    <div class="drill-panel" data-drill-for="0,hero">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-top:1.5rem" class="reveal">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#D270F0;margin-bottom:1.25rem">Active Day Distribution &mdash; Licensed M365 Copilot Users</div>
-        <div style="display:flex;flex-direction:column;gap:.65rem">
-          <div style="display:flex;align-items:center;gap:.75rem">
-            <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">1&ndash;5 days</span>
-            <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden"><div class="retention-fill" data-width="{{LIC_BAND_1_5_PCT}}" style="width:0;background:rgba(148,163,184,.35);display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{LIC_BAND_1_5_PCT}}%</span></div></div>
-          </div>
-          <div style="display:flex;align-items:center;gap:.75rem">
-            <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">6&ndash;10 days</span>
-            <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden;position:relative"><div class="retention-fill" data-width="{{LIC_BAND_6_10_PCT}}" style="width:0;background:rgba(210,112,240,.5);display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{LIC_BAND_6_10_PCT}}%</span></div><span style="position:absolute;right:.5rem;top:50%;transform:translateY(-50%);font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#D270F0;background:rgba(210,112,240,.15);padding:.15rem .5rem;border-radius:100px;border:1px solid rgba(210,112,240,.25)">Conversion zone</span></div>
-          </div>
-          <div style="display:flex;align-items:center;gap:.75rem">
-            <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">11&ndash;15 days</span>
-            <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden"><div class="retention-fill" data-width="{{LIC_BAND_11_15_PCT}}" style="width:0;background:rgba(210,112,240,.7);display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{LIC_BAND_11_15_PCT}}%</span></div></div>
-          </div>
-          <div style="display:flex;align-items:center;gap:.75rem">
-            <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">16+ days</span>
-            <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden"><div class="retention-fill" data-width="{{LIC_BAND_16_PLUS_PCT}}" style="width:0;background:#0D9488;display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{LIC_BAND_16_PLUS_PCT}}%</span></div></div>
+    <!-- ─── Subsection: Habitual Users ─── -->
+    <div class="reveal reveal-d3" style="margin:2rem 0;padding:1.5rem 1.75rem;background:var(--surface);border:1px solid var(--border);border-radius:14px">
+      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#D270F0;margin-bottom:.6rem">Habitual Users</div>
+      <div style="font-size:.82rem;color:var(--text-2);line-height:1.6;margin-bottom:1.25rem">The <span style="color:#D270F0;font-weight:700">conversion zone</span> (6&ndash;10 days) holds {{LIC_BAND_6_10_PCT}}% of licensed users &mdash; converting even a third would meaningfully shift the habitual base from <span style="color:#007fff;font-weight:700">{{EMBEDDED_USER_RATE}}%</span>.</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem">
+        <div class="metric-card" data-drill-idx="0" tabindex="0">
+          <div class="metric-card-header"><span style="font-size:.42rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:rgba(0,127,255,.1);color:#007fff">M365 Copilot</span></div>
+          <div class="metric-card-name">Copilot Habitual Rate</div>
+          <div class="metric-card-value" style="color:#007fff">{{EMBEDDED_USER_RATE}}%</div>
+          <div class="metric-card-unit">11+ active days/month</div>
+        </div>
+        <div class="metric-card" data-drill-idx="2" tabindex="0">
+          <div class="metric-card-header"><span style="font-size:.42rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:rgba(132,119,251,.1);color:#8477FB">Agents</span></div>
+          <div class="metric-card-name">Agent Habitual Rate</div>
+          <div class="metric-card-value" style="color:#8477FB">{{AGENT_HABITUAL_RATE}}%</div>
+          <div class="metric-card-unit">11+ active days/month</div>
+        </div>
+      </div>
+      <div class="deep-dive-content">
+      <!-- Panel: Licensed active day distribution — card 0 (Licensed User Return Rate) + hero -->
+      <div class="drill-panel" data-drill-for="0,hero">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-top:1.5rem" class="reveal">
+          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#D270F0;margin-bottom:1.25rem">Active Day Distribution &mdash; Licensed M365 Copilot Users</div>
+          <div style="display:flex;flex-direction:column;gap:.65rem">
+            <div style="display:flex;align-items:center;gap:.75rem">
+              <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">1&ndash;5 days</span>
+              <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden"><div class="retention-fill" data-width="{{LIC_BAND_1_5_PCT}}" style="width:0;background:rgba(148,163,184,.35);display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{LIC_BAND_1_5_PCT}}%</span></div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:.75rem">
+              <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">6&ndash;10 days</span>
+              <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden;position:relative"><div class="retention-fill" data-width="{{LIC_BAND_6_10_PCT}}" style="width:0;background:rgba(210,112,240,.5);display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{LIC_BAND_6_10_PCT}}%</span></div><span style="position:absolute;right:.5rem;top:50%;transform:translateY(-50%);font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#D270F0;background:rgba(210,112,240,.15);padding:.15rem .5rem;border-radius:100px;border:1px solid rgba(210,112,240,.25)">Conversion zone</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:.75rem">
+              <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">11&ndash;15 days</span>
+              <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden"><div class="retention-fill" data-width="{{LIC_BAND_11_15_PCT}}" style="width:0;background:rgba(210,112,240,.7);display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{LIC_BAND_11_15_PCT}}%</span></div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:.75rem">
+              <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">16+ days</span>
+              <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden"><div class="retention-fill" data-width="{{LIC_BAND_16_PLUS_PCT}}" style="width:0;background:#0D9488;display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{LIC_BAND_16_PLUS_PCT}}%</span></div></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <!-- Panel: Habit key insight + habitual trend — hero only -->
-    <div class="drill-panel" data-drill-for="hero">
-      <div style="display:flex;gap:2rem;align-items:stretch;margin-top:1rem" class="reveal">
-        <div style="flex:1;min-width:0">{{HABIT_KEY_INSIGHT_HTML}}</div>
-        <div style="width:340px;flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem">
-          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#D270F0;margin-bottom:.75rem">Habitual Rate Trend</div>
-          <div style="height:160px"><canvas id="chartHabitTrend"></canvas></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Panel: Agent active day distribution — card 2 (Agent Habitual Rate) -->
-    <div class="drill-panel" data-drill-for="2">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-top:1.5rem" class="reveal">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8477FB;margin-bottom:1.25rem">Active Day Distribution &mdash; Agent Users</div>
-        <div style="display:flex;flex-direction:column;gap:.65rem">
-          <div style="display:flex;align-items:center;gap:.75rem">
-            <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">1&ndash;5 days</span>
-            <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden"><div class="retention-fill" data-width="{{AGENT_BAND_1_5_PCT}}" style="width:0;background:rgba(148,163,184,.35);display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{AGENT_BAND_1_5_PCT}}%</span></div></div>
-          </div>
-          <div style="display:flex;align-items:center;gap:.75rem">
-            <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">6&ndash;10 days</span>
-            <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden"><div class="retention-fill" data-width="{{AGENT_BAND_6_10_PCT}}" style="width:0;background:rgba(132,119,251,.5);display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{AGENT_BAND_6_10_PCT}}%</span></div></div>
-          </div>
-          <div style="display:flex;align-items:center;gap:.75rem">
-            <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">11&ndash;15 days</span>
-            <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden"><div class="retention-fill" data-width="{{AGENT_BAND_11_15_PCT}}" style="width:0;background:rgba(132,119,251,.7);display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{AGENT_BAND_11_15_PCT}}%</span></div></div>
-          </div>
-          <div style="display:flex;align-items:center;gap:.75rem">
-            <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">16+ days</span>
-            <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden"><div class="retention-fill" data-width="{{AGENT_BAND_16_PLUS_PCT}}" style="width:0;background:#0D9488;display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{AGENT_BAND_16_PLUS_PCT}}%</span></div></div>
+      <!-- Panel: Habit key insight + habitual trend — hero only -->
+      <div class="drill-panel" data-drill-for="hero">
+        <div style="display:flex;gap:2rem;align-items:stretch;margin-top:1rem" class="reveal">
+          <div style="flex:1;min-width:0">{{HABIT_KEY_INSIGHT_HTML}}</div>
+          <div style="width:340px;flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem">
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#D270F0;margin-bottom:.75rem">Habitual Rate Trend</div>
+            <div style="height:160px"><canvas id="chartHabitTrend"></canvas></div>
           </div>
         </div>
-        <div style="margin-top:1rem">{{AGENT_HABIT_INSIGHT_HTML}}</div>
       </div>
+      <!-- Panel: Agent active day distribution — card 2 (Agent Habitual Rate) -->
+      <div class="drill-panel" data-drill-for="2">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-top:1.5rem" class="reveal">
+          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8477FB;margin-bottom:1.25rem">Active Day Distribution &mdash; Agent Users</div>
+          <div style="display:flex;flex-direction:column;gap:.65rem">
+            <div style="display:flex;align-items:center;gap:.75rem">
+              <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">1&ndash;5 days</span>
+              <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden"><div class="retention-fill" data-width="{{AGENT_BAND_1_5_PCT}}" style="width:0;background:rgba(148,163,184,.35);display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{AGENT_BAND_1_5_PCT}}%</span></div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:.75rem">
+              <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">6&ndash;10 days</span>
+              <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden"><div class="retention-fill" data-width="{{AGENT_BAND_6_10_PCT}}" style="width:0;background:rgba(132,119,251,.5);display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{AGENT_BAND_6_10_PCT}}%</span></div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:.75rem">
+              <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">11&ndash;15 days</span>
+              <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden"><div class="retention-fill" data-width="{{AGENT_BAND_11_15_PCT}}" style="width:0;background:rgba(132,119,251,.7);display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{AGENT_BAND_11_15_PCT}}%</span></div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:.75rem">
+              <span style="font-size:.72rem;font-weight:600;color:var(--text-2);width:80px;text-align:right;flex-shrink:0">16+ days</span>
+              <div style="flex:1;height:32px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden"><div class="retention-fill" data-width="{{AGENT_BAND_16_PLUS_PCT}}" style="width:0;background:#0D9488;display:flex;align-items:center;padding:0 8px"><span style="font-size:.72rem;font-weight:700;color:#fff">{{AGENT_BAND_16_PLUS_PCT}}%</span></div></div>
+            </div>
+          </div>
+          <div style="margin-top:1rem">{{AGENT_HABIT_INSIGHT_HTML}}</div>
+        </div>
+      </div>
+      <button class="close-drill" style="font-size:.6rem;color:var(--text-3);background:none;border:1px solid var(--border);padding:.3rem .8rem;border-radius:6px;cursor:pointer;margin-top:1rem;display:block">Close detail</button>
+      </div><!-- /deep-dive-content Habitual Users -->
     </div>
 
-    <!-- Panel: Conversion spotlight — cards 0,1 (both Return Rate cards) -->
-    <div class="drill-panel" data-drill-for="0,1">
-      <div class="drill-insight reveal" style="--di-color:#D270F0;margin-top:1.5rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Conversion Opportunity</span></div><div class="drill-insight-body">{{SPOTLIGHT_HABIT}}</div></div>
-      <div class="drill-insight reveal" style="--di-color:#FBBF24;margin-top:1rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Geographic Pattern</span></div><div class="drill-insight-body">{{GEO_PATTERN_INSIGHT}}</div></div>
-    </div>
-
-    </div><!-- /deep-dive-content -->
+    <!-- So What insight -->
+    <div class="drill-insight reveal" style="--di-color:#D270F0;margin:1rem 0"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">So What</span></div><div class="drill-insight-body">{{INSIGHT_HABIT}}</div></div>
 
     <!-- V4 So What Callout -->
     <div class="sowhat" style="background:rgba(245,158,11,.04);border:1px solid rgba(245,158,11,.15);border-left:4px solid #D270F0"><p>{{INSIGHT_HABIT}}</p></div>
@@ -1601,135 +1575,124 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 <section class="section signal-section" id="skill" style="background:var(--bg);--signal-accent:#8477FB">
   <div class="section-inner">
 
-    <div class="section-label reveal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:.2rem"><path d="M11.29 5.81c.38-1.08 1.9-1.08 2.28 0l.86 2.45a1.2 1.2 0 00.76.76l2.45.86c1.08.38 1.08 1.9 0 2.28l-2.45.86a1.2 1.2 0 00-.76.76l-.86 2.45c-.38 1.08-1.9 1.08-2.28 0l-.86-2.45a1.2 1.2 0 00-.76-.76l-2.45-.86c-1.08-.38-1.08-1.9 0-2.28l2.45-.86a1.2 1.2 0 00.76-.76l.86-2.45z" fill="#8477FB"/></svg>Skill</div><div class="signal-badge"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Skill</div>
-    <div class="signal-question reveal">{{M365_BREADTH}} apps per user. {{AGENT_ADOPTION}}% agent adoption. Are people building proficiency &mdash; or still stuck in basic use?</div>
+    <div class="section-label reveal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:.2rem"><path d="M11.29 5.81c.38-1.08 1.9-1.08 2.28 0l.86 2.45a1.2 1.2 0 00.76.76l2.45.86c1.08.38 1.08 1.9 0 2.28l-2.45.86a1.2 1.2 0 00-.76.76l-.86 2.45c-.38 1.08-1.9 1.08-2.28 0l-.86-2.45a1.2 1.2 0 00-.76-.76l-2.45-.86c-1.08-.38-1.08-1.9 0-2.28l2.45-.86a1.2 1.2 0 00.76-.76l.86-2.45z" fill="#8477FB"/></svg>Skill</div>
+    <div class="signal-badge"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Skill</div>
+    <div class="signal-question reveal">Are people going deeper &mdash; or still stuck in basic use?</div>
     <h2 class="section-title reveal reveal-d1">{{TITLE_SKILL}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{SUBTITLE_SKILL}}</p>
-    <div class="headline-stat reveal reveal-d2" style="--signal-accent:#8477FB">
-      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem"><span class="hero-drill-btn" data-hero-card="hero" style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;background:rgba(132,119,251,.12);color:#8477FB;border:1px solid rgba(132,119,251,.2);cursor:pointer;transition:all .2s">Hero Metric &middot; Deep Interactions <span class="hero-arrow"><svg viewBox="0 0 12 12"><path d="M6 2v8M3 7l3 3 3-3"/></svg></span></span></div>
-      <div class="headline-stat-value">{{DEEP_INTERACTIONS_PCT}}%</div>
-      <div class="headline-stat-label">of sessions have 5+ prompts &mdash; measuring depth of engagement across {{M365_BREADTH}} app surfaces</div>
-      <span class="headline-stat-tier {{SKILL_TIER_CLASS}}" style="background:rgba(132,119,251,.1);color:#8477FB;border:1px solid rgba(132,119,251,.15)">{{SKILL_TIER}}</span>
-    </div>
 
-    <div class="explore-prompt reveal reveal-d2" style="--signal-accent:#8477FB"><span class="explore-prompt-line"></span><span class="explore-prompt-text"><svg viewBox="0 0 12 12"><path d="M6 2v8M3 7l3 3 3-3"/></svg> Select a metric to explore</span><span class="explore-prompt-line"></span></div>
-
-    <!-- Skill metric cards — 3 supporting metrics (hero shown above) -->
-    <div class="signal-metrics skill-metrics reveal reveal-d3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:1.5rem 0">
-      <div class="metric-card" data-drill-idx="0" style="--tier-color:#8477FB" tabindex="0">
-        <div class="metric-card-header"><span class="metric-card-id">01</span><span style="font-size:.48rem;font-weight:700;padding:.12rem .4rem;border-radius:100px;background:rgba(132,119,251,.12);color:#8477FB;border:1px solid rgba(132,119,251,.2)">M365 Copilot</span></div>
-        <div class="metric-card-name">App Surface Breadth</div>
-        <div class="metric-card-value" style="color:#8477FB">{{M365_BREADTH}}</div>
-        <div class="metric-card-unit">apps per user</div>
-        <div class="metric-card-bar"><div class="metric-card-bar-fill" style="width:calc({{M365_BREADTH}} / 27 * 100%);background:#8477FB"></div></div>
+    <!-- ─── Subsection: Breadth ─── -->
+    <div class="reveal reveal-d2" style="margin:2rem 0;padding:1.5rem 1.75rem;background:var(--surface);border:1px solid var(--border);border-radius:14px">
+      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#8477FB;margin-bottom:.6rem">Breadth</div>
+      <div style="font-size:.82rem;color:var(--text-2);line-height:1.6;margin-bottom:1.25rem">Most users stick to 2&ndash;3 apps &mdash; moving from <span style="color:#007fff;font-weight:700">{{M365_BREADTH}} surfaces</span> to 4+ would transform AI from a side tool to a core workflow. Agent users explore <span style="color:#8477FB;font-weight:700">{{AGENT_BREADTH}} agents</span> each.</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem">
+        <div class="metric-card" data-drill-idx="0" tabindex="0">
+          <div class="metric-card-header"><span style="font-size:.42rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:rgba(0,127,255,.1);color:#007fff">M365 Copilot</span></div>
+          <div class="metric-card-name">Copilot App Breadth</div>
+          <div class="metric-card-value" style="color:#007fff">{{M365_BREADTH}}</div>
+          <div class="metric-card-unit">apps per user</div>
+        </div>
+        <div class="metric-card" data-drill-idx="1" tabindex="0">
+          <div class="metric-card-header"><span style="font-size:.42rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:rgba(132,119,251,.1);color:#8477FB">Agents</span></div>
+          <div class="metric-card-name">Agent Breadth</div>
+          <div class="metric-card-value" style="color:#8477FB">{{AGENT_BREADTH}}</div>
+          <div class="metric-card-unit">agents per user</div>
+        </div>
       </div>
-      <div class="metric-card" data-drill-idx="1" style="--tier-color:#0891B2" tabindex="0">
-        <div class="metric-card-header"><span class="metric-card-id">02</span><span style="font-size:.48rem;font-weight:700;padding:.12rem .4rem;border-radius:100px;background:rgba(14,165,233,.12);color:#0891B2;border:1px solid rgba(14,165,233,.2)">Agents</span></div>
-        <div class="metric-card-name">Agent Breadth</div>
-        <div class="metric-card-value" style="color:#0891B2">{{AGENT_BREADTH}}</div>
-        <div class="metric-card-unit">agents per user</div>
-        <div class="metric-card-bar"><div class="metric-card-bar-fill" style="width:calc({{AGENT_BREADTH}} / 10 * 100%);background:#0891B2"></div></div>
-      </div>
-      <div class="metric-card" data-drill-idx="2" style="--tier-color:#0891B2" tabindex="0">
-        <div class="metric-card-header"><span class="metric-card-id">03</span><span style="font-size:.48rem;font-weight:700;padding:.12rem .4rem;border-radius:100px;background:rgba(14,165,233,.12);color:#0891B2;border:1px solid rgba(14,165,233,.2)">Agents</span></div>
-        <div class="metric-card-name">Agent Return Rate</div>
-        <div class="metric-card-value" style="color:#0891B2">{{AGENT_HEALTH}}%</div>
-        <div class="metric-card-unit">users returning to agents</div>
-        <div class="metric-card-bar"><div class="metric-card-bar-fill" style="width:{{AGENT_HEALTH}}%;background:#0891B2"></div></div>
-      </div>
-    </div>
-
-    <button class="dive-deeper-btn close-drill" style="--accent:#8477FB">Close detail <span class="dd-arrow">&times;</span></button>
-    <div class="deep-dive-content">
-
-    <!-- Panel: Deep Interactions hero — metric gauge + per-agent depth -->
-    <div class="drill-panel" data-drill-for="hero">
-      <div class="two-col reveal reveal-d2" style="margin-top:1.5rem">
-        <div class="chart-card" style="border-left:4px solid #8477FB">
-          <div class="chart-card-title">Deep Interactions &mdash; Sessions with 5+ Prompts</div>
-          <div class="chart-card-sub">Measuring multi-turn conversation depth across all users</div>
-          <div style="display:flex;align-items:center;gap:1.5rem;margin:1.5rem 0">
-            <div style="font-size:2.8rem;font-weight:900;color:#8477FB;font-family:'Outfit',sans-serif;line-height:1">{{DEEP_INTERACTIONS_PCT}}%</div>
-            <div style="font-size:.78rem;color:var(--text-2);line-height:1.5">of sessions involve 5 or more prompts &mdash; indicating users are going deeper than single-shot queries</div>
+      <div class="deep-dive-content">
+      <!-- Panel: App Surface chart — card 0 (App Surface Breadth) -->
+      <div class="drill-panel" data-drill-for="0">
+        <div class="two-col reveal reveal-d2" style="margin-top:1.5rem">
+          <div class="chart-card" style="border-left:4px solid #8477FB">
+            <div class="chart-card-title">App Surface Distribution</div>
+            <div class="chart-card-sub">Copilot usage by M365 application</div>
+            <div style="position:relative;height:280px"><canvas id="chartAppSurface"></canvas></div>
           </div>
-          <div style="position:relative;height:28px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden;margin-bottom:.75rem">
-            <div class="retention-fill" data-width="{{DEEP_INTERACTIONS_PCT}}" style="width:0;background:linear-gradient(90deg,#8477FB,#9B5FFF);border-radius:6px;height:100%"></div>
-            <div class="retention-threshold" style="left:{{DI_THRESHOLD_P2}}%"><span class="retention-threshold-label">{{DI_THRESHOLD_P2}}%</span></div>
-            <div class="retention-threshold" style="left:{{DI_THRESHOLD_P3}}%"><span class="retention-threshold-label">{{DI_THRESHOLD_P3}}%</span></div>
+          <div class="drill-insight" style="--di-color:#8477FB;display:flex;flex-direction:column;justify-content:center"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Key Insight &middot; App Surface</span></div><div class="drill-insight-body">{{TAKEAWAY_APP_SURFACE}}</div></div>
+        </div>
+      </div>
+      <!-- Panel: Agent Leaderboard — card 1 (Agent Breadth) -->
+      <div class="drill-panel" data-drill-for="1">
+        <div class="chart-card reveal" style="border-left:4px solid #0891B2;margin-top:1.5rem;margin-bottom:1rem">
+          <div class="chart-card-title">Agent Portfolio Health</div>
+          <div class="chart-card-sub">Agent breadth: {{AGENT_BREADTH}} agents per user &mdash; how many agents have meaningful adoption?</div>
+          <div style="position:relative;height:160px"><canvas id="chartAgentBreadth"></canvas></div>
+        </div>
+        <div class="two-col reveal reveal-d2" style="margin-top:1.5rem">
+          <div class="chart-card" style="border-left:4px solid #0891B2">
+            <div class="chart-card-title">Agent Leaderboard</div>
+            <div class="chart-card-sub">Top agents by total sessions</div>
+            <div style="position:relative;height:280px"><canvas id="chartAgentBar"></canvas></div>
           </div>
-          <div style="font-size:.68rem;color:var(--text-3);margin-top:.5rem">{{COMPLEX_SESSIONS}} prompts per active day &middot; Agent share trend:</div>
-          <div style="height:100px;margin-top:.5rem"><canvas id="chartDepthSparkline"></canvas></div>
-        </div>
-        <div class="chart-card" style="border-left:4px solid #0891B2">
-          <div class="chart-card-title">Depth by Agent &mdash; Sessions per User</div>
-          <div class="chart-card-sub">Repeat engagement depth across material agents</div>
-          <div style="position:relative;height:280px"><canvas id="chartAgentDepth"></canvas></div>
+          <div class="drill-insight" style="--di-color:#0891B2;display:flex;flex-direction:column;justify-content:center"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Key Insight &middot; Agent Portfolio</span></div><div class="drill-insight-body">{{TAKEAWAY_AGENT_LEADERBOARD}}</div></div>
         </div>
       </div>
-      <div class="drill-insight reveal" style="--di-color:#8477FB;margin-top:1rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Key Insight</span></div><div class="drill-insight-body">{{DEEP_INTERACTION_HERO_INSIGHT}}</div></div>
+      <button class="close-drill" style="font-size:.6rem;color:var(--text-3);background:none;border:1px solid var(--border);padding:.3rem .8rem;border-radius:6px;cursor:pointer;margin-top:1rem;display:block">Close detail</button>
+      </div><!-- /deep-dive-content Breadth -->
     </div>
 
-    <!-- Panel: App Surface chart — card 0 (App Surface Breadth) -->
-    <div class="drill-panel" data-drill-for="0">
-      <div class="two-col reveal reveal-d2" style="margin-top:1.5rem">
-        <div class="chart-card" style="border-left:4px solid #8477FB">
-          <div class="chart-card-title">App Surface Distribution</div>
-          <div class="chart-card-sub">Copilot usage by M365 application</div>
-          <div style="position:relative;height:280px"><canvas id="chartAppSurface"></canvas></div>
+    <!-- ─── Subsection: Depth ─── -->
+    <div class="reveal reveal-d3" style="margin:2rem 0;padding:1.5rem 1.75rem;background:var(--surface);border:1px solid var(--border);border-radius:14px">
+      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#8477FB;margin-bottom:.6rem">Depth</div>
+      <div style="font-size:.82rem;color:var(--text-2);line-height:1.6;margin-bottom:1.25rem">Only <span style="color:#007fff;font-weight:700">{{DEEP_INTERACTIONS_PCT}}%</span> of sessions go beyond 5 prompts &mdash; users who do go deeper tend to stay. Agent conversations average <span style="color:#8477FB;font-weight:700">{{AGENT_INTENSITY}} prompts</span>, showing stronger depth than Copilot chat.</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem">
+        <div class="metric-card" data-drill-idx="0" tabindex="0">
+          <div class="metric-card-header"><span style="font-size:.42rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:rgba(0,127,255,.1);color:#007fff">M365 Copilot</span></div>
+          <div class="metric-card-name">Copilot Deep Interactions</div>
+          <div class="metric-card-value" style="color:#007fff">{{DEEP_INTERACTIONS_PCT}}%</div>
+          <div class="metric-card-unit">sessions with 5+ prompts</div>
         </div>
-        <div class="drill-insight" style="--di-color:#8477FB;display:flex;flex-direction:column;justify-content:center"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Key Insight &middot; App Surface</span></div><div class="drill-insight-body">{{TAKEAWAY_APP_SURFACE}}</div></div>
-      </div>
-    </div>
-
-    <!-- Panel: Agent Leaderboard — card 1 (Agent Breadth) -->
-    <div class="drill-panel" data-drill-for="1">
-      <div class="chart-card reveal" style="border-left:4px solid #0891B2;margin-top:1.5rem;margin-bottom:1rem">
-        <div class="chart-card-title">Agent Portfolio Health</div>
-        <div class="chart-card-sub">Agent breadth: {{AGENT_BREADTH}} agents per user &mdash; how many agents have meaningful adoption?</div>
-        <div style="position:relative;height:160px"><canvas id="chartAgentBreadth"></canvas></div>
-      </div>
-      <div class="two-col reveal reveal-d2" style="margin-top:1.5rem">
-        <div class="chart-card" style="border-left:4px solid #0891B2">
-          <div class="chart-card-title">Agent Leaderboard</div>
-          <div class="chart-card-sub">Top agents by total sessions</div>
-          <div style="position:relative;height:280px"><canvas id="chartAgentBar"></canvas></div>
-        </div>
-        <div class="drill-insight" style="--di-color:#0891B2;display:flex;flex-direction:column;justify-content:center"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Key Insight &middot; Agent Portfolio</span></div><div class="drill-insight-body">{{TAKEAWAY_AGENT_LEADERBOARD}}</div></div>
-      </div>
-    </div>
-
-    <!-- Panel: Agent Stickiness — card 2 (Agent Return Rate) -->
-    <div class="drill-panel" data-drill-for="2">
-      <div class="two-col reveal reveal-d2" style="margin-top:1.5rem">
-        <div class="chart-card" style="border-left:4px solid #0891B2">
-          <div class="chart-card-title">Agent Stickiness &mdash; Reach vs Depth</div>
-          <div class="chart-card-sub">Each bubble = one agent. X = unique users, Y = sessions/user, size = total sessions</div>
-          <div style="position:relative;height:340px"><canvas id="chartAgentStickiness"></canvas></div>
-        </div>
-        <div class="drill-insight" style="--di-color:#0891B2;display:flex;flex-direction:column;justify-content:center"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Key Insight &middot; Agent Stickiness</span></div><div class="drill-insight-body">{{AGENT_STICKINESS_INSIGHT}}</div></div>
-      </div>
-    </div>
-
-    <!-- Panel: Agent table — card 1 (Agent Breadth) -->
-    <div class="drill-panel" data-drill-for="1">
-      <div style="margin-top:2rem" class="reveal reveal-d4">
-        <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">Top Agents by Impact <span style="display:inline-block;padding:.15rem .5rem;border-radius:100px;font-size:.6rem;font-weight:600;background:rgba(123,47,242,.1);color:var(--purple);border:1px solid rgba(123,47,242,.2)">Agents</span></h3>
-        <p style="font-size:.85rem;color:var(--text-2);margin-bottom:1.25rem">The agents that matter most &mdash; ranked by total sessions with type, reach and stickiness.</p>
-        <div style="overflow-x:auto">
-          <table style="width:100%;border-collapse:collapse;font-size:.78rem">
-            <thead><tr style="border-bottom:2px solid var(--border)"><th style="text-align:left;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Agent</th><th style="text-align:left;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Type</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Users</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Sessions</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:var(--text-3);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;min-width:120px">Total Sess / User</th></tr></thead>
-            <tbody>{{AGENT_TABLE_ROWS}}</tbody>
-          </table>
+        <div class="metric-card" data-drill-idx="2" tabindex="0">
+          <div class="metric-card-header"><span style="font-size:.42rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:rgba(132,119,251,.1);color:#8477FB">Agents</span></div>
+          <div class="metric-card-name">Agent Intensity</div>
+          <div class="metric-card-value" style="color:#8477FB">{{AGENT_INTENSITY}}</div>
+          <div class="metric-card-unit">prompts per session</div>
         </div>
       </div>
+      <div class="deep-dive-content">
+      <!-- Panel: Deep Interactions hero — metric gauge + per-agent depth -->
+      <div class="drill-panel" data-drill-for="0">
+        <div class="two-col reveal reveal-d2" style="margin-top:1.5rem">
+          <div class="chart-card" style="border-left:4px solid #8477FB">
+            <div class="chart-card-title">Deep Interactions &mdash; Sessions with 5+ Prompts</div>
+            <div class="chart-card-sub">Measuring multi-turn conversation depth across all users</div>
+            <div style="display:flex;align-items:center;gap:1.5rem;margin:1.5rem 0">
+              <div style="font-size:2.8rem;font-weight:900;color:#8477FB;font-family:'Outfit',sans-serif;line-height:1">{{DEEP_INTERACTIONS_PCT}}%</div>
+              <div style="font-size:.78rem;color:var(--text-2);line-height:1.5">of sessions involve 5 or more prompts &mdash; indicating users are going deeper than single-shot queries</div>
+            </div>
+            <div style="position:relative;height:28px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden;margin-bottom:.75rem">
+              <div class="retention-fill" data-width="{{DEEP_INTERACTIONS_PCT}}" style="width:0;background:linear-gradient(90deg,#8477FB,#9B5FFF);border-radius:6px;height:100%"></div>
+              <div class="retention-threshold" style="left:{{DI_THRESHOLD_P2}}%"><span class="retention-threshold-label">{{DI_THRESHOLD_P2}}%</span></div>
+              <div class="retention-threshold" style="left:{{DI_THRESHOLD_P3}}%"><span class="retention-threshold-label">{{DI_THRESHOLD_P3}}%</span></div>
+            </div>
+            <div style="font-size:.68rem;color:var(--text-3);margin-top:.5rem">{{COMPLEX_SESSIONS}} prompts per active day &middot; Agent share trend:</div>
+            <div style="height:100px;margin-top:.5rem"><canvas id="chartDepthSparkline"></canvas></div>
+          </div>
+          <div class="chart-card" style="border-left:4px solid #0891B2">
+            <div class="chart-card-title">Depth by Agent &mdash; Sessions per User</div>
+            <div class="chart-card-sub">Repeat engagement depth across material agents</div>
+            <div style="position:relative;height:280px"><canvas id="chartAgentDepth"></canvas></div>
+          </div>
+        </div>
+        <div class="drill-insight reveal" style="--di-color:#8477FB;margin-top:1rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Key Insight</span></div><div class="drill-insight-body">{{DEEP_INTERACTION_HERO_INSIGHT}}</div></div>
+      </div>
+      <!-- Panel: Agent Stickiness — card 2 (Agent Return Rate) -->
+      <div class="drill-panel" data-drill-for="2">
+        <div class="two-col reveal reveal-d2" style="margin-top:1.5rem">
+          <div class="chart-card" style="border-left:4px solid #0891B2">
+            <div class="chart-card-title">Agent Stickiness &mdash; Reach vs Depth</div>
+            <div class="chart-card-sub">Each bubble = one agent. X = unique users, Y = sessions/user, size = total sessions</div>
+            <div style="position:relative;height:340px"><canvas id="chartAgentStickiness"></canvas></div>
+          </div>
+          <div class="drill-insight" style="--di-color:#0891B2;display:flex;flex-direction:column;justify-content:center"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Key Insight &middot; Agent Stickiness</span></div><div class="drill-insight-body">{{AGENT_STICKINESS_INSIGHT}}</div></div>
+        </div>
+      </div>
+      <button class="close-drill" style="font-size:.6rem;color:var(--text-3);background:none;border:1px solid var(--border);padding:.3rem .8rem;border-radius:6px;cursor:pointer;margin-top:1rem;display:block">Close detail</button>
+      </div><!-- /deep-dive-content Depth -->
     </div>
 
-    <!-- Panel: So What — shown for all cards -->
-    <div class="drill-panel" data-drill-for="0,1,2">
-      <div class="drill-insight reveal" style="--di-color:#8477FB;margin-top:1.25rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">So What</span></div><div class="drill-insight-body">{{INSIGHT_SKILL}}</div></div>
-    </div>
-
-    </div><!-- /deep-dive-content -->
+    <!-- So What insight -->
+    <div class="drill-insight reveal" style="--di-color:#8477FB;margin:1rem 0"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">So What</span></div><div class="drill-insight-body">{{INSIGHT_SKILL}}</div></div>
 
     <!-- V4 So What Callout -->
     <div class="sowhat" style="background:rgba(123,47,242,.04);border:1px solid rgba(123,47,242,.15);border-left:4px solid #8477FB"><p>{{INSIGHT_SKILL}}</p></div>
@@ -1746,7 +1709,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 <section class="section" id="orgs" style="background:var(--bg)">
   <div class="section-inner">
     <div class="section-label reveal">Frontier Firm Maturity by Organisation</div>
-    <div class="signal-question reveal">How far has each part of the business progressed from individual AI (Pattern 1) to agent-operated work (Pattern 3)?</div>
+    <div class="signal-question reveal">Which teams are leading &mdash; and which need a push?</div>
     <h2 class="section-title reveal reveal-d1">{{ORG_COUNT}} organisations on the Frontier Firm journey</h2>
     <p class="section-subtitle reveal reveal-d2">Each org scored across Reach (user scale), Habit (relative deployment), and Skill (agent adoption) to produce a composite Frontier Firm maturity score. Bars show the breakdown; score out of 100.</p>
     <!-- V4 Org Table (sortable, generated by pipeline — orgs with 10+ users only) -->
@@ -1765,7 +1728,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
 <section class="section" id="actions" style="background:var(--bg)">
   <div class="section-inner">
     <div class="section-label reveal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:.2rem"><path d="M11.29 5.81c.38-1.08 1.9-1.08 2.28 0l.86 2.45a1.2 1.2 0 00.76.76l2.45.86c1.08.38 1.08 1.9 0 2.28l-2.45.86a1.2 1.2 0 00-.76.76l-.86 2.45c-.38 1.08-1.9 1.08-2.28 0l-.86-2.45a1.2 1.2 0 00-.76-.76l-2.45-.86c-1.08-.38-1.08-1.9 0-2.28l2.45-.86a1.2 1.2 0 00.76-.76l.86-2.45z" fill="var(--brand)"/></svg>Recommendations</div>
-    <div class="signal-question reveal">Four moves to close the gap between where you are and where the data says you could be.</div>
+    <div class="signal-question reveal">What should we do next?</div>
     <h2 class="section-title reveal reveal-d1">{{ACTIONS_TITLE}}</h2>
     <p class="section-subtitle reveal reveal-d2">{{ACTIONS_SUBTITLE}}</p>
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:2rem" class="reveal reveal-d3">
@@ -1908,26 +1871,27 @@ window.toggleInsight=function(btn){btn.classList.toggle('open');btn.nextElementS
 window.addEventListener('scroll',()=>{const st=document.documentElement.scrollTop;const sh=document.documentElement.scrollHeight-window.innerHeight;const p=sh>0?(st/sh)*100:0;document.getElementById('scrollProgress').style.width=p+'%'});
 
 /* ── Metric Card → Drill-Down Panel Show/Hide ────────────── */
-/* Unified handler: works across Reach, Habit, Skill sections */
+/* Unified handler: works across Reach, Habit, Skill sections.
+   Each subsection now has its own .deep-dive-content inside it. */
 (function(){
   var navH=function(){var n=document.querySelector('.nav');return n?n.offsetHeight:60;};
 
   document.querySelectorAll('.signal-section').forEach(function(section){
     var metricsGrid=section.querySelector('.signal-metrics, .reach-metrics');
-    if(!metricsGrid)return;
-    var cards=metricsGrid.querySelectorAll('.metric-card');
-    var ddContent=section.querySelector('.deep-dive-content');
-    var ddBtn=section.querySelector('.dive-deeper-btn');
-    var panels=ddContent?ddContent.querySelectorAll('.drill-panel'):[];
+    var cards=section.querySelectorAll('.metric-card[data-drill-idx]');
+    if(!cards.length)return;
     var activeIdx=null;
 
-    function showPanelsFor(idx){
+    function showPanelsFor(ddContent,idx){
+      var panels=ddContent.querySelectorAll('.drill-panel');
       panels.forEach(function(p){
-        var forList=(p.dataset.drillFor||'').split(',').map(Number);
-        p.style.display=forList.indexOf(idx)>=0?'block':'none';
+        var forList=(p.dataset.drillFor||'').split(',').map(function(s){return s.trim();});
+        var match=forList.indexOf(String(idx))>=0;
+        p.style.display=match?'block':'none';
       });
     }
-    function showAll(){
+    function showAll(ddContent){
+      var panels=ddContent.querySelectorAll('.drill-panel');
       panels.forEach(function(p){p.style.display='block';});
     }
     function setActiveCard(idx){
@@ -1940,51 +1904,63 @@ window.addEventListener('scroll',()=>{const st=document.documentElement.scrollTo
 
     cards.forEach(function(card,i){
       card.addEventListener('click',function(){
+        /* Find the closest deep-dive-content (inside the same subsection) */
+        var subsection=this.closest('[style*="border-radius:14px"]')||this.parentElement.parentElement;
+        var ddContent=subsection.querySelector('.deep-dive-content');
+        if(!ddContent)return;
         /* Toggle: click same card again → show all */
-        if(activeIdx===i){
+        var drillIdx=parseInt(this.dataset.drillIdx,10);
+        if(activeIdx===drillIdx){
           activeIdx=null;
-          showAll();
+          showAll(ddContent);
           setActiveCard(-1);
           return;
         }
-        activeIdx=i;
+        activeIdx=drillIdx;
         setActiveCard(i);
         /* Open drill-down if closed */
-        if(ddContent&&!ddContent.classList.contains('expanded')){
+        if(!ddContent.classList.contains('expanded')){
           ddContent.classList.add('expanded');
-          if(ddBtn)ddBtn.classList.add('open');
         }
         /* Show only matching panels */
-        showPanelsFor(i);
+        showPanelsFor(ddContent,drillIdx);
         /* Scroll to first visible panel — offset for nav + sticky cards */
         setTimeout(function(){
           var first=ddContent.querySelector('.drill-panel[style*="display: block"], .drill-panel:not([style*="display: none"])');
           if(first){
-            var stickyH=metricsGrid.classList.contains('sticky')?metricsGrid.offsetHeight:0;
+            var stickyH=(metricsGrid&&metricsGrid.classList.contains('sticky'))?metricsGrid.offsetHeight:0;
             var y=first.getBoundingClientRect().top+window.pageYOffset-navH()-stickyH-24;
             window.scrollTo({top:y,behavior:'smooth'});
           }
         },350);
       });
     });
+  });
 
-    /* Close button — collapse drill-down and unstick cards */
-    if(ddBtn){
-      ddBtn.addEventListener('click',function(){
-        activeIdx=null;
-        setActiveCard(-1);
-        showAll();
-        if(ddContent){
-          ddContent.classList.remove('expanded');
-          ddBtn.classList.remove('open');
-        }
-        if(metricsGrid)metricsGrid.classList.remove('sticky');
-        /* Scroll back to section top */
+  /* Close detail buttons — collapse the parent deep-dive-content */
+  document.querySelectorAll('.close-drill').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var ddContent=this.closest('.deep-dive-content');
+      if(ddContent){
+        ddContent.classList.remove('expanded');
+        /* Show all panels again for next open */
+        ddContent.querySelectorAll('.drill-panel').forEach(function(p){p.style.display='block';});
+      }
+      /* Clear active state on cards in the same subsection */
+      var subsection=this.closest('[style*="border-radius:14px"]');
+      if(subsection){
+        subsection.querySelectorAll('.metric-card.active').forEach(function(c){
+          c.classList.remove('active');c.style.outline='';c.style.outlineOffset='';
+        });
+      }
+      /* Scroll back to subsection top */
+      var target=subsection||ddContent;
+      if(target){
         var navH2=document.querySelector('.nav')?document.querySelector('.nav').offsetHeight:60;
-        var y=section.getBoundingClientRect().top+window.pageYOffset-navH2-16;
+        var y=target.getBoundingClientRect().top+window.pageYOffset-navH2-16;
         window.scrollTo({top:y,behavior:'smooth'});
-      });
-    }
+      }
+    });
   });
 })();
 
@@ -1993,31 +1969,40 @@ document.querySelectorAll('.hero-drill-btn').forEach(function(btn){
   btn.addEventListener('click',function(){
     var section=this.closest('.signal-section');
     if(!section)return;
-    var ddContent=section.querySelector('.deep-dive-content');
-    var ddBtn=section.querySelector('.dive-deeper-btn');
-    if(ddContent&&!ddContent.classList.contains('expanded')){
-      ddContent.classList.add('expanded');
-      if(ddBtn)ddBtn.classList.add('open');
-    }
-    /* Show only panels matching the hero's target */
+    /* Open all deep-dive-content blocks in the section */
+    var allDD=section.querySelectorAll('.deep-dive-content');
+    allDD.forEach(function(dd){
+      if(!dd.classList.contains('expanded')){
+        dd.classList.add('expanded');
+      }
+    });
+    /* Show only panels matching the hero's target across all subsections */
     var heroCard=this.dataset.heroCard;
-    if(heroCard!==undefined){
-      ddContent.querySelectorAll('.drill-panel').forEach(function(p){
-        var forList=(p.dataset.drillFor||'').split(',');
-        var match=forList.indexOf(heroCard)>=0||forList.indexOf(String(parseInt(heroCard,10)))>=0;
-        p.style.display=match?'block':'none';
+    allDD.forEach(function(dd){
+      dd.querySelectorAll('.drill-panel').forEach(function(p){
+        if(heroCard!==undefined){
+          var forList=(p.dataset.drillFor||'').split(',');
+          var match=forList.indexOf(heroCard)>=0||forList.indexOf(String(parseInt(heroCard,10)))>=0;
+          p.style.display=match?'block':'none';
+        } else {
+          p.style.display='block';
+        }
       });
-    } else {
-      ddContent.querySelectorAll('.drill-panel').forEach(function(p){p.style.display='block';});
-    }
+    });
     section.querySelectorAll('.metric-card.active').forEach(function(c){c.classList.remove('active');c.style.outline='';c.style.outlineOffset='';});
     /* Scroll to first visible panel */
     var navH=document.querySelector('.nav')?document.querySelector('.nav').offsetHeight:60;
     setTimeout(function(){
-      var first=ddContent.querySelector('.drill-panel[style*="display: block"]');
-      var target=first||ddContent;
-      var y=target.getBoundingClientRect().top+window.pageYOffset-navH-24;
-      window.scrollTo({top:y,behavior:'smooth'});
+      var first=null;
+      for(var di=0;di<allDD.length;di++){
+        first=allDD[di].querySelector('.drill-panel[style*="display: block"]');
+        if(first)break;
+      }
+      var target=first||allDD[0];
+      if(target){
+        var y=target.getBoundingClientRect().top+window.pageYOffset-navH-24;
+        window.scrollTo({top:y,behavior:'smooth'});
+      }
     },300);
   });
 });
@@ -2364,6 +2349,14 @@ if(document.getElementById('chartHabitTrend')){
   var _htData=JSON.parse('{{HABIT_TREND_JSON}}');
   if(_htData&&_htData.labels&&_htData.labels.length>1){
     new Chart(document.getElementById('chartHabitTrend'),{type:'line',data:{labels:_htData.labels,datasets:[{data:_htData.values,borderColor:'#D270F0',backgroundColor:'rgba(210,112,240,.1)',fill:true,tension:.3,pointRadius:4,pointBackgroundColor:'#D270F0',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,color:'#D270F0',font:{size:9,weight:700},anchor:'end',align:'top',formatter:function(v){return v+'%'}}},scales:{x:{grid:{display:false},ticks:{color:cTickSub,font:{size:8}}},y:{grid:{color:cGrid},ticks:{color:cTickSub,callback:function(v){return v+'%'}}}}}});
+  }
+}
+
+/* Chart: Agent Growth — inline hero visual for Skill section */
+if(document.getElementById('chartAgentGrowth')){
+  var _agData=JSON.parse('{{AGENT_GROWTH_JSON}}');
+  if(_agData&&_agData.labels&&_agData.labels.length>1){
+    new Chart(document.getElementById('chartAgentGrowth'),{type:'line',data:{labels:_agData.labels,datasets:[{data:_agData.values,borderColor:'#8477FB',backgroundColor:'rgba(132,119,251,.1)',fill:true,tension:.3,pointRadius:5,pointBackgroundColor:'#8477FB',pointBorderColor:'#09090B',pointBorderWidth:2,borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,color:'#8477FB',font:{size:10,weight:700},anchor:'end',align:'top',formatter:function(v){return v}}},scales:{x:{grid:{display:false},ticks:{color:cTickSub,font:{size:9}}},y:{grid:{color:cGrid},ticks:{color:cTickSub}}}}});
   }
 }
 

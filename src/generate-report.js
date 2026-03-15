@@ -2145,9 +2145,28 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       agents: perTierMonthlyUsers.map(function(m) { return m.agents; })
     };
     html = html.replace(/\{\{PER_TIER_MONTHLY_USERS_JSON\}\}/g, JSON.stringify(tierData));
+
+    // Agent growth data — for inline Skill hero visual
+    html = html.replace(/\{\{AGENT_GROWTH_JSON\}\}/g, JSON.stringify({
+      labels: tierData.labels,
+      values: tierData.agents
+    }));
   } else {
     html = html.replace(/\{\{PER_TIER_MONTHLY_USERS_JSON\}\}/g, 'null');
+    html = html.replace(/\{\{AGENT_GROWTH_JSON\}\}/g, JSON.stringify({labels:[], values:[]}));
   }
+
+  // Inline top 3 agents — compact list for Skill hero
+  var top3Html = '';
+  var _t3Agents = (Array.isArray(data.agent_table) ? data.agent_table : []).slice(0, 3);
+  _t3Agents.forEach(function(a, i) {
+    top3Html += '<div style="display:flex;align-items:center;gap:.6rem;padding:.5rem 0;' + (i < 2 ? 'border-bottom:1px solid var(--border);' : '') + '">';
+    top3Html += '<div style="width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.65rem;color:#fff;background:rgba(132,119,251,.5)">' + (i+1) + '</div>';
+    top3Html += '<div><div style="font-size:.72rem;font-weight:700;color:var(--text)">' + a.name + '</div>';
+    top3Html += '<div style="font-size:.55rem;color:var(--text-3)">' + (a.users || 0) + ' users &middot; ' + (a.sessions_per_user || 0) + ' sess/user</div></div>';
+    top3Html += '</div>';
+  });
+  html = html.replace(/\{\{INLINE_TOP_3_AGENTS\}\}/g, top3Html || '<div style="color:var(--text-3);font-size:.72rem">No agent data</div>');
 
   if (perTierRetention) {
     const tierRetData = {
@@ -2511,7 +2530,6 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       // Number badge + dimension label
       actionsHtml += '<div style="display:flex;align-items:center;gap:.65rem;margin-bottom:.8rem">';
       actionsHtml += '<div style="width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#fff;flex-shrink:0;background:' + d.color + ';box-shadow:0 4px 12px ' + d.glow + '">' + (i + 1) + '</div>';
-      actionsHtml += '<span style="font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.15rem .5rem;border-radius:100px;color:' + d.color + ';background:' + d.glow + ';border:1px solid ' + d.border + '">' + d.label + '</span>';
       actionsHtml += '</div>';
       actionsHtml += '<h3 style="font-size:.95rem;font-weight:700;color:#f0f4fc;margin-bottom:.5rem;line-height:1.35">' + rec.title + '</h3>';
       actionsHtml += '<p style="font-size:.82rem;color:#94a3b8;line-height:1.68">' + rec.desc + '</p>';
