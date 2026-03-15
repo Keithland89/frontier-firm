@@ -371,9 +371,29 @@ async function main() {
           sessions_per_user: users > 0 ? Math.round(sessions / users * 10) / 10 : sessions
         };
       });
+      // Filter to Agents 365 only — exclude unpublished/test agents (type "Unknown")
+      const allAgents = data.agent_table;
+      const a365Agents = allAgents.filter(a => a.type !== 'Unknown');
+      const droppedCount = allAgents.length - a365Agents.length;
+      if (droppedCount > 0) {
+        console.log('  agent_table: filtered to Agents 365 — dropped ' + droppedCount + ' Unknown agents (' + allAgents.filter(a => a.type === 'Unknown').map(a => a.name).join(', ') + ')');
+      }
+      data.agent_table = a365Agents;
+      // Sort by sessions descending (after filter)
+      data.agent_table.sort((a, b) => (b.sessions || 0) - (a.sessions || 0));
       data.top_agent_names = data.agent_table.slice(0, 8).map(a => a.name);
       data.top_agent_sessions = data.agent_table.slice(0, 8).map(a => a.sessions_per_user);
-      console.log('  agent_table: ' + data.agent_table.length + ' agents (types from Agents 365 join)');
+      // Recalculate agent metrics from filtered Agents 365 set
+      data.total_agents = data.agent_table.length;
+      // Recalculate agent_users as sum of unique users across filtered agents
+      // (approximation — assumes minimal user overlap between agents)
+      var filteredAgentUsers = data.agent_table.reduce((s, a) => s + (a.users || 0), 0);
+      // Cap at original agent_users to avoid overcounting from overlap
+      if (data.agent_users && filteredAgentUsers < data.agent_users) {
+        console.log('  agent_users: adjusted from ' + data.agent_users + ' to ' + filteredAgentUsers + ' (Agents 365 only)');
+        data.agent_users = filteredAgentUsers;
+      }
+      console.log('  agent_table: ' + data.agent_table.length + ' Agents 365 agents (filtered from ' + allAgents.length + ' total)');
     } catch (e) {
       console.log('  agent_table: error - ' + e.message.substring(0, 150));
       set('agent_table', null);
@@ -1235,6 +1255,32 @@ async function main() {
   }
 
   // ============================================================
+  // PHASE 7.5: FINAL AGENT FILTER — Agents 365 only
+  // ============================================================
+  console.log('\n=== Phase 7.5: Final Agent Filter (Agents 365 Only) ===');
+  if (Array.isArray(data.agent_table)) {
+    const preFilterCount = data.agent_table.length;
+    data.agent_table = data.agent_table.filter(a => a.type !== 'Unknown');
+    const dropped = preFilterCount - data.agent_table.length;
+    if (dropped > 0) console.log('  Filtered: ' + preFilterCount + ' → ' + data.agent_table.length + ' (dropped ' + dropped + ' Unknown)');
+    data.total_agents = data.agent_table.length;
+    const filteredUsers = data.agent_table.reduce((s, a) => s + (a.users || 0), 0);
+    if (filteredUsers < (data.agent_users || Infinity)) {
+      console.log('  agent_users: ' + data.agent_users + ' → ' + filteredUsers);
+      data.agent_users = filteredUsers;
+    }
+    if (data.total_active_users > 0) {
+      data.agent_adoption = Math.round(data.agent_users / data.total_active_users * 1000) / 10;
+      console.log('  agent_adoption: ' + data.agent_adoption + '%');
+    }
+    data.agents_keep = data.agent_table.filter(a => (a.users || 0) >= 3).length;
+    data.agents_retire = data.agent_table.filter(a => (a.users || 0) === 0).length;
+    data.agents_review = data.agent_table.length - data.agents_keep - data.agents_retire;
+    data.agent_table.sort((a, b) => (b.sessions || 0) - (a.sessions || 0));
+    data.top_agent_names = data.agent_table.slice(0, 8).map(a => a.name);
+    data.top_agent_sessions = data.agent_table.slice(0, 8).map(a => a.sessions_per_user);
+  }
+
   // PHASE 8: ROUND ALL FLOATS, VALIDATE & SAVE
   // ============================================================
   console.log('\n=== Phase 8: Round, Validate & Save ===');
