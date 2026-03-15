@@ -3,7 +3,7 @@
   "$version": "1.0.0",
   "$notes": [
     "Newer PBIX templates (0803, 2302): 11-15 / 16+ day bands, Agent Return Rate",
-    "Older PBIX templates (MOJ, NR): 11-19 / 20+ day bands, Avg Agent Return Rate %",
+    "Older PBIX templates: 11-19 / 20+ day bands, Avg Agent Return Rate %",
     "All measures returning 0-1 rates need toPct transform (multiply by 100)",
     "Fallback measures are tried in order — first non-null wins",
     "CRITICAL: licensed_users, chat_users, agent_users are ALL-TIME cumulative measures. They count any user active at least once in the full analysis period. DO NOT overwrite with monthly_backfill — the PBIX cards show cumulative counts and the report must match exactly.",

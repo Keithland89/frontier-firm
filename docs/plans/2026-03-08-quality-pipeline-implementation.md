@@ -44,7 +44,7 @@ Required fields (~55):
 
 **Step 2: Verify against both data files**
 
-Run a manual check: load `data/sample_contoso.json` and `data/network_rail.json`, verify every required field exists (or is `"not_available"` for NR).
+Run a manual check: load `data/sample_contoso.json` and `data/network_rail.json`, verify every required field exists (or is `"not_available"` where applicable).
 
 **Step 3: Commit**
 
@@ -139,7 +139,7 @@ Expected: PASS (all fields present)
 **Step 3: Test with network_rail.json — expect pass with not_available notes**
 
 Run: `node src/validate-data.js --data data/network_rail.json`
-Expected: PASS with "not_available" fields listed. If any fields are truly missing (not marked), update the NR data file to add `"not_available"` for those fields.
+Expected: PASS with "not_available" fields listed. If any fields are truly missing (not marked), update the data file to add `"not_available"` for those fields.
 
 **Step 4: Test failure case — remove a field temporarily**
 
@@ -318,7 +318,7 @@ const keyFields = [
 ];
 ```
 
-**Step 6: Test — validate the NR report**
+**Step 6: Test — validate the Customer A report**
 
 Run: `node src/validate-report.js --report output/network_rail_frontier_firm.html --data data/network_rail.json`
 Expected: PASS
@@ -356,7 +356,7 @@ Use the pattern from `C:\tmp\full_interactive_check.js` as a starting point — 
 - Check Chart.js dataset values are non-zero (not just "instance exists")
 - Gracefully handle missing Playwright (warn but don't fail the pipeline if Playwright isn't installed — downgrade to a warning)
 
-**Step 2: Test with NR report**
+**Step 2: Test with Customer A report**
 
 Run: `node src/visual-check.js --report output/network_rail_frontier_firm.html --data data/network_rail.json`
 Expected: PASS with 10/10 charts verified
@@ -406,7 +406,7 @@ console.log('\nDEEP AUDIT PASSED');
 process.exit(0);
 ```
 
-**Step 4: Test with NR report**
+**Step 4: Test with Customer A report**
 
 Run: `node src/deep-audit.js --report output/network_rail_frontier_firm.html --data data/network_rail.json`
 Expected: PASS (or identify numbers that need to be added to the legitimate set)
@@ -462,23 +462,23 @@ Reference implementations from this session:
 - `C:\tmp\debug_agents.js` — agent leaderboard with correct column names
 - `C:\Users\keithmcgrane\frontier-firm\src\extract-nr.js` — PBI MCP connection boilerplate
 
-**Step 2: Test with Network Rail PBIX**
+**Step 2: Test with Customer A PBIX**
 
-Open the NR PBIX, run:
+Open a customer PBIX, run:
 ```bash
-node src/extract-from-pbix.js --pbix "Network Rail" --output data/
+node src/extract-from-pbix.js --pbix "Customer A" --output data/
 ```
-Expected: `data/network_rail.json` created with all fields populated or marked `"not_available"`.
+Expected: `data/customer_a.json` created with all fields populated or marked `"not_available"`.
 
-Compare output against the existing `data/network_rail.json` for accuracy.
+Compare output against the existing data file for accuracy.
 
-**Step 3: Test with a different PBIX (MOJ)**
+**Step 3: Test with a different PBIX (Customer B)**
 
-Open the MOJ PBIX, run:
+Open a second customer PBIX, run:
 ```bash
-node src/extract-from-pbix.js --pbix "MOJ" --output data/
+node src/extract-from-pbix.js --pbix "Customer B" --output data/
 ```
-Expected: `data/moj.json` created. Some fields may differ (MOJ has Agent365 data that NR doesn't).
+Expected: `data/customer_b.json` created. Some customers have Agent365 data that others don't.
 
 **Step 4: Commit**
 

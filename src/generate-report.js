@@ -3,7 +3,7 @@
  * Frontier Firm Report Generator
  *
  * Usage:
- *   node generate-report.js --data customer_data.json --name "Vodafone" --v4
+ *   node generate-report.js --data customer_data.json --name "Customer Name" --v4
  *   node generate-report.js --data customer_data.json --name "Company Name" --output ./reports/
  *   node generate-report.js --data customer_data.json --output ./reports/ --no-ai
  *

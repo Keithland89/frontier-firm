@@ -113,7 +113,7 @@ Table format (not horizontal bars). Columns: Org | Pattern Badge | Composite Sco
 
 ## Testing
 
-- Generate with both MOJ and VF data
+- Generate with multiple customer datasets
 - Verify all placeholders populated (no `{{...}}` in output)
 - Check expandable sections toggle correctly
 - Verify CSS bars render without Chart.js

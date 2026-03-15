@@ -4,7 +4,7 @@
  *
  * Usage:
  *   node extract-from-pbix.js --pbix "Customer Name" --output data/
- *   node extract-from-pbix.js --pbix "Network Rail" --output data/ --mcp-exe /path/to/exe
+ *   node extract-from-pbix.js --pbix "Customer Name" --output data/ --mcp-exe /path/to/exe
  *
  * Driven by schema/measure_map.json — no hardcoded measure names.
  * Validates output against ff_data_schema.json before saving.

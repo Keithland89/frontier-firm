@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Network Rail — Frontier Firm Data Extraction via PBI MCP
+ * Customer-specific extraction template
  */
 
 const { spawn } = require('child_process');
@@ -93,11 +93,11 @@ async function main() {
   notify('notifications/initialized');
   await new Promise(r => setTimeout(r, 500));
 
-  console.log(`Connecting to Network Rail on port ${NR_PORT}...`);
+  console.log(`Connecting to customer on port ${NR_PORT}...`);
   await callTool('connection_operations', { operation: 'Connect', dataSource: `localhost:${NR_PORT}` });
   console.log('Connected.\n');
 
-  const data = { customer_name: 'Network Rail' };
+  const data = { customer_name: 'Customer' };
 
   // Helper for running a EVALUATE ROW query and getting a single value
   async function getScalar(measureExpr, label) {
