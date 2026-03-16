@@ -371,6 +371,7 @@ const profileStatusOrder = { 'Absent': 0, 'Nascent': 1, 'Primary': 2 };
 let dominantPatternLabel = 'P1';
 if (profileStatusOrder[patternProfile.p2] > profileStatusOrder[patternProfile.p1]) dominantPatternLabel = 'P2';
 if (profileStatusOrder[patternProfile.p3] > profileStatusOrder[patternProfile.p2] && profileStatusOrder[patternProfile.p3] > profileStatusOrder[patternProfile.p1]) dominantPatternLabel = 'P3';
+const domPatternNum = dominantPatternLabel === 'P3' ? 3 : dominantPatternLabel === 'P2' ? 2 : 1;
 
 // Build human-readable profile string: "Pattern 1 primary  ·  Pattern 2 nascent  ·  Pattern 3 absent"
 const patternLabels = { p1: 'Pattern 1', p2: 'Pattern 2', p3: 'Pattern 3' };
@@ -2069,12 +2070,22 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
 
   // ── NEW v3 PLACEHOLDERS ──────────────────────────────────
 
-  // Actions section
-  // Build pattern-aware actions title
+  // Actions section — pattern-aware title
+  var actionsPatternNum = domPatternNum || 1;
+  var actionsTitleMap = {
+    1: 'Four moves to cross from P1 to P2 \u2014 from assisted to agent-led',
+    2: 'Four moves to cross from P2 to P3 \u2014 from orchestration to autonomous workflows',
+    3: 'Four moves to sustain Frontier status and extend the lead'
+  };
+  var actionsSubtitleMap = {
+    1: (data.customer_name || data.name || 'This organisation') + ' is at ' + (_n('agent_adoption',0)) + '% agent adoption \u2014 ' + Math.max(0, Math.ceil(((_cgates.p2&&_cgates.p2.presence_min_pct)||5)/100*(_n('total_active_users',_n('licensed_users',0)+_n('chat_users',0))))-Math.round(_n('agent_adoption',0)/100*(_n('total_active_users',_n('licensed_users',0)+_n('chat_users',0))))) + ' users short of the P2 Expansion gate. These recommendations are ordered by leverage: the agent adoption gap is the single gate to unlock, everything else compounds from there.',
+    2: 'Each recommendation targets one of the two P3 gates: agent habitual rate \u2265 15% and \u2265 50% of orgs at 10%+ agent adoption. The skill and culture moves build the infrastructure that makes those gates achievable.',
+    3: 'These recommendations protect the depth that defines Frontier status and extend the model to the parts of the organisation that haven\'t yet caught up.'
+  };
   html = html.replace(/\{\{ACTIONS_TITLE\}\}/g,
-    'Four moves towards becoming a Frontier Firm');
+    actionsTitleMap[actionsPatternNum] || actionsTitleMap[1]);
   html = html.replace(/\{\{ACTIONS_SUBTITLE\}\}/g,
-    'Each recommendation targets a specific dimension of maturity \u2014 building the habits, proficiency, and reach that separate organisations where AI is deployed from those where it\u2019s truly embedded.');
+    actionsSubtitleMap[actionsPatternNum] || actionsSubtitleMap[1]);
 
   // Recommendation KPIs — data-driven
   html = html.replace(/\{\{REC_1_KPI\}\}/g,
@@ -2628,17 +2639,210 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     // Actions HTML — 4 recommendation cards with vivid dimension colours
     var actionsHtml = '';
     var recDims = [
-      { color: '#34D399', bg: 'rgba(52,211,153,.08)', border: 'rgba(52,211,153,.25)', glow: 'rgba(52,211,153,.12)', label: 'Reach' },
+      { color: '#8477FB', bg: 'rgba(132,119,251,.08)', border: 'rgba(132,119,251,.25)', glow: 'rgba(132,119,251,.12)', label: 'Agents' },
       { color: '#FBBF24', bg: 'rgba(251,191,36,.08)', border: 'rgba(251,191,36,.25)', glow: 'rgba(251,191,36,.12)', label: 'Habit' },
       { color: '#60A5FA', bg: 'rgba(96,165,250,.08)', border: 'rgba(96,165,250,.25)', glow: 'rgba(96,165,250,.12)', label: 'Skill' },
-      { color: '#8477FB', bg: 'rgba(132,119,251,.08)', border: 'rgba(132,119,251,.25)', glow: 'rgba(132,119,251,.12)', label: 'Agents' }
+      { color: '#34D399', bg: 'rgba(52,211,153,.08)', border: 'rgba(52,211,153,.25)', glow: 'rgba(52,211,153,.12)', label: 'Reach' }
     ];
-    var recs = [
-      { title: 'Redirect idle licenses to proven demand', desc: 'Reallocate ' + fmt(data.inactive_licenses) + ' inactive licenses to the ' + fmt(data.chat_users) + ' unlicensed users already showing organic demand.', target: 'Target: ' + Math.round(_n('license_coverage', 0) * 1.5) + '% license coverage within 90 days' },
-      { title: 'Convert the 6\u201310 day cohort to habitual', desc: 'The ' + fmt(data.band_6_10) + ' users averaging 6\u201310 active days are one nudge from building routine. Peer benchmarks, manager modelling, and workflow-tied nudges.', target: 'Target: 30% of cohort reaching 11+ days within 60 days' },
-      { title: 'Embed AI into 3\u20134 high-value workflows per function', desc: 'Users average ' + _n('m365_breadth', 0) + ' apps out of 27. Moving from ' + _n('m365_breadth', 0) + ' to 4+ surfaces transforms AI from a side tool to a core workflow.', target: 'Target: ' + Math.round(_n('m365_breadth', 0) + 2) + '+ app surfaces per user' },
-      { title: 'Scale agent governance before the footprint outpaces it', desc: _n('agent_adoption', 0) + '% of users engage with agents. Define delegation norms, review cadences, and escalation protocols for the agent portfolio.', target: 'Target: governance framework for all ' + (data.total_agents || 0) + ' agents within 45 days' }
-    ];
+
+    // ── Pattern-aware, data-specific recommendation builder ──────────────────
+    // Derives specific orgs, cohorts, and agents from the actual data so every
+    // recommendation names who to act on and why.
+
+    // Pre-compute org analysis from scatter data
+    var recOrgScatter = Array.isArray(data.org_scatter_data) ? data.org_scatter_data : [];
+    var orgsSortedByAgent = recOrgScatter.slice().sort(function(a,b){ return (b.y||0)-(a.y||0); });
+    var orgsLeadingAgent = orgsSortedByAgent.filter(function(o){ return (o.y||0) >= _n('agent_adoption',0); });
+    var orgsLaggingAgent = orgsSortedByAgent.slice().reverse().filter(function(o){ return (o.y||0) < _n('agent_adoption',0); });
+    var topAgentOrg = orgsSortedByAgent[0] || {};
+    var worstAgentOrg = orgsLaggingAgent[0] || {};
+
+    // Pre-compute agent analysis from agent_table
+    var agentTable = Array.isArray(data.agent_table) ? data.agent_table.slice() : [];
+    var deepAgents = agentTable.filter(function(a){ return (a.sessions_per_user||0) >= 50 && (a.users||0) >= 5; })
+                               .sort(function(a,b){ return (b.sessions_per_user||0)-(a.sessions_per_user||0); });
+    var broadAgents = agentTable.filter(function(a){ return (a.users||0) >= 20; })
+                                .sort(function(a,b){ return (b.users||0)-(a.users||0); });
+    var topDeepAgent = deepAgents[0] || agentTable.sort(function(a,b){ return (b.sessions_per_user||0)-(a.sessions_per_user||0); })[0] || {};
+    var secondDeepAgent = deepAgents[1] || {};
+    var topBroadAgent = broadAgents[0] || agentTable.sort(function(a,b){ return (b.users||0)-(a.users||0); })[0] || {};
+
+    // P2 gate specifics
+    var p2AdoptionGate = (_cgates.p2 && _cgates.p2.presence_min_pct) || 5;
+    var currentAgentAdoption = _n('agent_adoption', 0);
+    var totalActive = _n('total_active_users', _n('licensed_users',0) + _n('chat_users',0));
+    var currentAgentUsers = Math.round(currentAgentAdoption / 100 * totalActive);
+    var agentUsersNeededForP2 = Math.max(0, Math.ceil(p2AdoptionGate / 100 * totalActive) - currentAgentUsers);
+
+    // Specific orgs close to the P2 agent threshold (within 2pp below)
+    var orgsNearP2Threshold = orgsSortedByAgent.filter(function(o){
+      return (o.y||0) >= p2AdoptionGate - 2 && (o.y||0) < p2AdoptionGate;
+    });
+    var orgsBelowP2Threshold = orgsSortedByAgent.filter(function(o){ return (o.y||0) < p2AdoptionGate; });
+    // Largest org below threshold = highest impact to nudge
+    var biggestLaggardOrg = orgsBelowP2Threshold.slice().sort(function(a,b){ return (b.x||0)-(a.x||0); })[0] || {};
+    var biggestLaggardAgentUsersNeeded = biggestLaggardOrg.x ? Math.max(1, Math.ceil((p2AdoptionGate / 100) * biggestLaggardOrg.x) - Math.round((biggestLaggardOrg.y||0) / 100 * biggestLaggardOrg.x)) : 0;
+
+    // Habit cohort
+    var band610Count = _n('band_6_10', 0);
+    var band610Pct = _n('band_6_10_pct', _n('licensed_band_6_10_pct', 0));
+    var habitualRate = _n('embedded_user_rate', _n('m365_frequency', 0));
+    var habitualCount = Math.round(habitualRate / 100 * _n('licensed_users', 0));
+    var convert30pctBand610 = Math.round(band610Count * 0.30);
+    var newHabitualCount = habitualCount + convert30pctBand610;
+    var newHabitualRate = totalActive > 0 ? Math.round(newHabitualCount / _n('licensed_users',1) * 100) : 0;
+    // Best orgs to target for habit: large licensed orgs already showing some agent engagement (culture amenable)
+    var habitTargetOrgs = orgsSortedByAgent.slice(1, 3).map(function(o){ return o.label; }).join(' and ');
+
+    // Skill / deep-agent specifics
+    var deepAgentUsers = deepAgents.reduce(function(s,a){ return s + (a.users||0); }, 0);
+    var deepAgentNames = deepAgents.slice(0,2).map(function(a){ return a.name || a.agent_name || '—'; }).join(' and ');
+    var deepAgentSpu1 = topDeepAgent.sessions_per_user ? topDeepAgent.sessions_per_user.toFixed(1) : '—';
+    var deepAgentSpu2 = secondDeepAgent.sessions_per_user ? secondDeepAgent.sessions_per_user.toFixed(1) : null;
+    var deepAgentName1 = topDeepAgent.name || topDeepAgent.agent_name || '—';
+    var deepAgentName2 = secondDeepAgent.name || secondDeepAgent.agent_name || null;
+    var deepAgentUsers1 = topDeepAgent.users || 0;
+    var deepAgentUsers2 = secondDeepAgent.users || 0;
+
+    // Reach / licensing specifics
+    var unlicensedCount = _n('chat_users', 0);
+    var recLicensedAvgP = _n('licensed_avg_prompts', 0);
+    var recUnlicensedAvgP = _n('unlicensed_avg_prompts', 0);
+    var recEngagementMultiplier = (recUnlicensedAvgP > 0 && recLicensedAvgP > 0) ? (recLicensedAvgP / recUnlicensedAvgP).toFixed(1) : '3.1';
+    var licenseTargetCount = Math.min(200, Math.round(unlicensedCount * 0.08));
+    // Best orgs for licensing: those leading on agent adoption (culture already there)
+    var licensingTargetOrgs = orgsLeadingAgent.slice(0,2).map(function(o){ return o.label; }).join(' and ');
+    if (!licensingTargetOrgs) licensingTargetOrgs = orgsSortedByAgent.slice(0,2).map(function(o){ return o.label; }).join(' and ');
+
+    // ── Build the 4 recs ordered by P1→P2 leverage ──────────────────────────
+    var currentPattern = domPatternNum || 1; // 1, 2, or 3
+    var recs;
+
+    if (currentPattern <= 1) {
+      // P1 → P2: primary gate = agent adoption. Order: Agents → Habit → Skill → Reach
+      var agentGapDesc = agentUsersNeededForP2 > 0
+        ? 'Agent adoption sits at ' + currentAgentAdoption + '% — just ' + agentUsersNeededForP2 + ' users short of the ' + p2AdoptionGate + '% P2 threshold.'
+        : 'Agent adoption is at the P2 threshold.';
+      var biggestLaggardDesc = biggestLaggardOrg.label
+        ? ' ' + biggestLaggardOrg.label + ' (' + (biggestLaggardOrg.y||0).toFixed(1) + '% agent adoption, ' + fmt(biggestLaggardOrg.x) + ' licensed users) is the highest-impact single target: ' + biggestLaggardAgentUsersNeeded + ' new agent users there crosses that division to ' + p2AdoptionGate + '% and closes a significant share of the company-wide gap.'
+        : '';
+      var broadAgentDesc = topBroadAgent.name || topBroadAgent.agent_name
+        ? ' ' + (topBroadAgent.name || topBroadAgent.agent_name) + ' (' + fmt(topBroadAgent.users||0) + ' users) is the proven adoption vehicle — it has the widest footprint and the lowest barrier to entry for new users.'
+        : '';
+      var orgsAboveGateDesc = orgsLeadingAgent.length
+        ? ' ' + orgsLeadingAgent.map(function(o){ return o.label + ' (' + o.y.toFixed(1) + '%)'; }).join(', ') + (orgsLeadingAgent.length === 1 ? ' has' : ' have') + ' already crossed the ' + p2AdoptionGate + '% threshold — proof the model works inside this organisation.'
+        : '';
+
+      var deepAgentDesc = '';
+      if (deepAgentName1 !== '—') {
+        deepAgentDesc = deepAgentName1 + ' runs at ' + deepAgentSpu1 + ' sessions/user';
+        if (deepAgentName2) deepAgentDesc += '; ' + deepAgentName2 + ' at ' + deepAgentSpu2 + ' sessions/user';
+        deepAgentDesc += ' — these aren\'t tools being used occasionally, they\'re active colleagues embedded in daily routines.';
+      }
+      var deepAgentScaleDesc = (deepAgentUsers > 0 && deepAgentName1 !== '—')
+        ? ' The ' + deepAgentUsers + ' users running ' + deepAgents.slice(0,2).map(function(a){ return (a.name||a.agent_name||'—'); }).join(' and ') + ' at depth are the internal proof case. Running structured 4-week onboarding sprints in ' + (biggestLaggardOrg.label || 'the lagging divisions') + ' targeting their specific workflows is the fastest route to P2 maturity.'
+        : ' Run structured onboarding sprints in the lagging divisions and benchmark against the orgs already above the ' + p2AdoptionGate + '% threshold.';
+
+      var habitDesc = fmt(band610Count) + ' licensed users average 6–10 active days — engaged enough to see value, not yet embedded enough to depend on it.';
+      var habitConvertDesc = convert30pctBand610 > 0
+        ? ' Converting ' + fmt(convert30pctBand610) + ' of them (30%) to 11+ days lifts the habitual rate from ' + habitualRate + '% to ~' + newHabitualRate + '%, growing the habitual base from ' + fmt(habitualCount) + ' to ' + fmt(newHabitualCount) + ' users.'
+        : '';
+      var habitOrgDesc = (topAgentOrg.label && orgsLeadingAgent.length)
+        ? ' Start with ' + (habitTargetOrgs || orgsLeadingAgent[0].label) + ' — these orgs are already leading on agent adoption, meaning the culture of AI engagement is there; the habit just needs anchoring into daily routine.'
+        : '';
+
+      var reachDesc = '';
+      if (unlicensedCount > 0 && recLicensedAvgP > 0 && recUnlicensedAvgP > 0) {
+        reachDesc = fmt(unlicensedCount) + ' unlicensed Chat users already average ' + recUnlicensedAvgP + ' prompts/user — a ' + recEngagementMultiplier + 'x engagement uplift waits the moment they get a full licence (' + recLicensedAvgP + ' prompts/user licensed vs ' + recUnlicensedAvgP + ' unlicensed).';
+        if (licensingTargetOrgs) reachDesc += ' ' + licensingTargetOrgs + ' lead the organisation on agent adoption — their unlicensed Chat users are proven demand, not cold-start risk. Prioritise the top ' + licenseTargetCount + ' by session count from those divisions for the next licence tranche.';
+      } else {
+        reachDesc = fmt(unlicensedCount) + ' unlicensed Chat users are already using Copilot — proven demand ready to convert. Prioritise the top ' + licenseTargetCount + ' by activity in ' + (licensingTargetOrgs || 'the leading orgs') + ' for the next licence allocation.';
+      }
+
+      recs = [
+        {
+          title: agentUsersNeededForP2 > 0
+            ? 'Cross the P2 gate: ' + agentUsersNeededForP2 + ' more agent users reaches Expansion'
+            : 'Deepen agent adoption across all divisions',
+          desc: agentGapDesc + biggestLaggardDesc + broadAgentDesc + orgsAboveGateDesc,
+          target: 'Agent adoption: ' + currentAgentAdoption + '% \u2192 ' + p2AdoptionGate + '%+ within 60 days'
+            + (biggestLaggardOrg.label ? ' | ' + biggestLaggardOrg.label + ': ' + (biggestLaggardOrg.y||0).toFixed(1) + '% \u2192 ' + p2AdoptionGate + '%' : '')
+        },
+        {
+          title: 'Convert ' + fmt(convert30pctBand610) + ' conversion-zone users — lift habitual rate to ~' + newHabitualRate + '%',
+          desc: habitDesc + habitConvertDesc + habitOrgDesc + ' The nudge isn\'t more training — it\'s manager modelling, peer benchmarks showing what \'good\' looks like in this organisation, and one high-value workflow embedded into the weekly routine.',
+          target: 'Habitual rate: ' + habitualRate + '% \u2192 ~' + newHabitualRate + '%+ in 90 days | Focus: ' + (habitTargetOrgs || 'top 2 orgs by size')
+        },
+        {
+          title: deepAgentName1 !== '—'
+            ? 'Scale ' + deepAgents.slice(0,2).map(function(a){ return (a.name||a.agent_name||'—'); }).join(' + ') + ' — ' + deepAgentUsers + ' users already working at P2 depth'
+            : 'Scale the highest-intensity agents as internal proof cases',
+          desc: (deepAgentDesc || 'The highest-intensity agents in the portfolio have already crossed from tool to colleague.') + deepAgentScaleDesc,
+          target: deepAgentUsers > 0
+            ? (deepAgents.slice(0,2).map(function(a){ return (a.name||a.agent_name||'—'); }).join(' + ') + ': ' + deepAgentUsers + ' \u2192 ' + Math.round(deepAgentUsers * 2.5) + ' users in 60 days')
+            : 'Double deep-agent user count in 60 days'
+        },
+        {
+          title: 'License the most active Chat users in ' + (licensingTargetOrgs || 'leading orgs') + ' — ' + recEngagementMultiplier + 'x engagement multiplier',
+          desc: reachDesc,
+          target: 'License top ' + licenseTargetCount + ' Chat users in ' + (licensingTargetOrgs || 'leading orgs') + ' | Coverage: ' + Math.round(_n('license_coverage',0)) + '% \u2192 ' + Math.min(100, Math.round(_n('license_coverage',0) + 5)) + '%+'
+        }
+      ];
+    } else if (currentPattern === 2) {
+      // P2 → P3: primary gate = agent habitual rate + org coverage
+      var p3HabitMin = (_cgates.p3 && _cgates.p3.presence_min_pct) || 15;
+      var p3OrgAgentMin = (_cgates.p3 && _cgates.p3.maturity_org_agent_pct) || 10;
+      var p3OrgsPctMin = (_cgates.p3 && _cgates.p3.maturity_min_orgs_pct) || 50;
+      var aHabitualRate = _n('agent_habitual_rate', 0);
+      var orgsAtP3Agent = recOrgScatter.filter(function(o){ return (o.y||0) >= p3OrgAgentMin; }).length;
+      var orgsPct = recOrgScatter.length > 0 ? Math.round(orgsAtP3Agent / recOrgScatter.length * 100) : 0;
+      recs = [
+        {
+          title: 'Drive agent habitual rate to ' + p3HabitMin + '%+ — the P3 presence gate',
+          desc: 'Agent habitual rate (' + aHabitualRate + '%) needs to reach ' + p3HabitMin + '% for P3 Nascent. The deepest agents in the portfolio (' + deepAgentName1 + ' at ' + deepAgentSpu1 + ' sessions/user) show what embedded agent use looks like — scale their user base and run structured delegation cadences to build the daily habit.',
+          target: 'Agent habitual rate: ' + aHabitualRate + '% \u2192 ' + p3HabitMin + '%+'
+        },
+        {
+          title: 'Get ' + p3OrgsPctMin + '% of divisions to ' + p3OrgAgentMin + '%+ agent adoption — P3 maturity gate',
+          desc: orgsAtP3Agent + ' of ' + recOrgScatter.length + ' orgs (' + orgsPct + '%) are at ' + p3OrgAgentMin + '%+ agent adoption. Need ' + p3OrgsPctMin + '%. Target ' + (biggestLaggardOrg.label || 'lagging divisions') + ' with structured agent deployment sprints modelled on ' + (topAgentOrg.label || 'leading orgs') + '\'s playbook.',
+          target: 'Orgs at ' + p3OrgAgentMin + '%+ agent adoption: ' + orgsAtP3Agent + '/' + recOrgScatter.length + ' \u2192 ' + Math.ceil(recOrgScatter.length * p3OrgsPctMin / 100) + '/' + recOrgScatter.length
+        },
+        {
+          title: 'Embed AI into every major workflow — move beyond 1:1 assistance',
+          desc: 'Users average ' + _n('m365_breadth',0) + ' app surfaces. Frontier Firms redesign workflows rather than augmenting them. Identify 2–3 complete end-to-end workflows per function where agents can own execution, not just assist.',
+          target: 'Workflow redesign complete in top 3 functions within 90 days'
+        },
+        {
+          title: 'Establish delegation norms and agent review cadences',
+          desc: 'The P2 → P3 jump requires trusting agents with whole workflows, not just tasks. Define clear delegation boundaries, output review protocols, and escalation paths for each agent in the portfolio — before scaling deployment.',
+          target: 'Governance framework published for all ' + (data.total_agents || 0) + ' agents within 45 days'
+        }
+      ];
+    } else {
+      // P3 / Frontier — sustain and extend
+      recs = [
+        {
+          title: 'Sustain frontier depth: protect ' + (topDeepAgent.name||topDeepAgent.agent_name||'top agents') + '\'s ' + deepAgentSpu1 + ' sessions/user intensity',
+          desc: 'Frontier-level agent use depends on continued investment in the workflows that drive depth. Protect dedicated time, funding, and tooling for the highest-intensity agents.',
+          target: 'Maintain agent habitual rate above 15% and ' + p2AdoptionGate + '%+ org coverage'
+        },
+        {
+          title: 'Replicate the frontier model to lagging divisions',
+          desc: (biggestLaggardOrg.label ? biggestLaggardOrg.label + ' still lags at ' + (biggestLaggardOrg.y||0).toFixed(1) + '% agent adoption. ' : '') + 'Pair leading orgs as internal coaches for the bottom quartile.',
+          target: 'All ' + recOrgScatter.length + ' orgs above ' + p2AdoptionGate + '% agent adoption within 90 days'
+        },
+        {
+          title: 'Move from task delegation to workflow ownership',
+          desc: 'Agents handling individual tasks is P2. Agents owning entire workflows with human governance is P3. Identify 2–3 workflows where agents can own end-to-end execution and pilot structured human-review cadences.',
+          target: '2+ full workflow delegations live within 60 days'
+        },
+        {
+          title: 'Build the AI governance infrastructure for scale',
+          desc: 'At Frontier scale, agent governance becomes critical. Establish output quality standards, audit trails, and review cadences across the ' + (data.total_agents||0) + '-agent portfolio.',
+          target: 'Full governance framework operational within 30 days'
+        }
+      ];
+    }
     recs.forEach(function(rec, i) {
       var d = recDims[i];
       actionsHtml += '<div style="background:' + d.bg + ';border:1px solid ' + d.border + ';border-radius:16px;padding:1.75rem;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s">';
