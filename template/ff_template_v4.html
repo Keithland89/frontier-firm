@@ -1194,14 +1194,11 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
         <span style="display:block;width:20px;height:2px;background:var(--brand)"></span>
         Frontier Firm Framework
       </div>
-      <h2 style="font-size:clamp(1.4rem,2.8vw,1.9rem);font-weight:700;letter-spacing:-.015em;color:var(--text);margin-bottom:.5rem;line-height:1.25">{{CUSTOMER_NAME}} is at <span style="color:var(--amber)">{{DOMINANT_PATTERN_NAME}}</span> — {{CULTURE_STAGE}}</h2>
+      <h2 style="font-size:clamp(1.4rem,2.8vw,1.9rem);font-weight:700;letter-spacing:-.015em;color:var(--text);margin-bottom:.5rem;line-height:1.25">{{CUSTOMER_NAME}} is at <span style="color:var(--amber)">{{DOMINANT_PATTERN_TIER}}</span> — {{CULTURE_STAGE}}</h2>
       <p style="font-size:.88rem;color:var(--text-2);margin-bottom:1rem;max-width:700px;line-height:1.6">{{CULTURE_DESC}}</p>
     </div>
 
-    <button onclick="var d=document.getElementById('fw-detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.fw-arrow').textContent=d.style.display==='none'?'+':'\u2212'" style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text-2);font-size:.78rem;font-weight:600;padding:.5rem 1rem;border-radius:8px;cursor:pointer;margin-bottom:1.5rem;transition:all .2s">
-      <span class="fw-arrow">+</span> How we scored this &mdash; the three patterns
-    </button>
-    <div id="fw-detail" style="display:none">
+    <div id="fw-detail">
 
     <!-- Intro callout -->
     <div class="reveal reveal-d1" style="margin:1.5rem 0 2rem;max-width:780px;padding:1.25rem 1.5rem;background:var(--surface);border-radius:12px;border:1px solid var(--border);border-left:3px solid var(--brand)">
@@ -1227,7 +1224,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <div style="background:var(--surface);border:1px solid rgba(59,130,246,.3);border-radius:16px;padding:1.75rem;position:relative;box-shadow:0 0 0 1px rgba(59,130,246,.15),0 4px 24px rgba(0,0,0,.2)" id="patternCard1">
         <div id="currentPin" style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:rgb(59,130,246);color:#fff;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.22rem .8rem;border-radius:100px;white-space:nowrap;display:none">Dominant Pattern — {{CUSTOMER_NAME}}</div>
         <div style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;margin-bottom:1rem;background:rgba(59,130,246,.12);color:rgb(59,130,246)">P1</div>
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgb(59,130,246);margin-bottom:.4rem">Foundation</div>
+        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgb(59,130,246);margin-bottom:.4rem">Pattern 1</div>
         <h3 style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">AI helps individuals. Humans drive.</h3>
         <p style="font-size:.82rem;color:var(--text-2);line-height:1.65;margin-bottom:1rem">AI tools assist individual employees in completing tasks faster. Each person works with AI independently — but there is no team-level orchestration and no delegated execution.</p>
         <div style="color:rgb(59,130,246)"><strong style="font-size:1.4rem;font-weight:800;display:block;margin-bottom:.1rem;font-variant-numeric:tabular-nums">{{ORG_FOUNDATION_COUNT}}</strong><span style="font-size:.68rem;color:var(--text-3)">of {{ORG_COUNT}} orgs at this pattern</span></div>
@@ -1237,7 +1234,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <!-- P2 -->
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.75rem;position:relative" id="patternCard2">
         <div style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;margin-bottom:1rem;background:rgba(16,185,129,.1);color:rgb(16,185,129)">P2</div>
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgb(16,185,129);margin-bottom:.4rem">Expansion</div>
+        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgb(16,185,129);margin-bottom:.4rem">Pattern 2</div>
         <h3 style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Humans orchestrate. Agents execute.</h3>
         <p style="font-size:.82rem;color:var(--text-2);line-height:1.65;margin-bottom:1rem">Employees become "agent bosses" — they set goals, agents handle execution, humans review outputs. Tasks are delegated, not just assisted.</p>
         <div style="color:rgb(16,185,129)"><strong style="font-size:1.4rem;font-weight:800;display:block;margin-bottom:.1rem;font-variant-numeric:tabular-nums">{{ORG_EXPANSION_COUNT}}</strong><span style="font-size:.68rem;color:var(--text-3)">of {{ORG_COUNT}} orgs at this pattern</span></div>
@@ -1247,7 +1244,7 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <!-- P3 -->
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.75rem;position:relative" id="patternCard3">
         <div style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;margin-bottom:1rem;background:rgba(139,92,246,.1);color:rgb(139,92,246)">P3</div>
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgb(139,92,246);margin-bottom:.4rem">Frontier</div>
+        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgb(139,92,246);margin-bottom:.4rem">Pattern 3</div>
         <h3 style="font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3">Agents handle whole workflows.</h3>
         <p style="font-size:.82rem;color:var(--text-2);line-height:1.65;margin-bottom:1rem">Agents operate autonomously across entire workflows with minimal human prompting. Humans focus on exceptions, governance, and outcomes.</p>
         <div style="color:rgb(139,92,246)"><strong style="font-size:1.4rem;font-weight:800;display:block;margin-bottom:.1rem;font-variant-numeric:tabular-nums">{{ORG_FRONTIER_COUNT}}</strong><span style="font-size:.68rem;color:var(--text-3)">of {{ORG_COUNT}} orgs at this pattern</span></div>
@@ -1294,17 +1291,17 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
       <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#0891B2;margin-bottom:.6rem">Activity</div>
       <div style="font-size:.82rem;color:var(--text-2);line-height:1.6;margin-bottom:1.25rem">Activation is strong &mdash; the gap now is between <strong style="color:#007fff">licensed users ({{LICENSE_PRIORITY}}x more engaged)</strong> and the <span style="color:#8477FB">{{AGENT_ADOPTION}}%</span> exploring agents. Every licence conversion delivers an immediate step-up in use.</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem">
+        <div class="metric-card" data-drill-idx="1" tabindex="0">
+          <div class="metric-card-header"></div>
+          <div class="metric-card-name">Copilot Licence Coverage</div>
+          <div class="metric-card-value" style="color:#0891B2">{{LICENSE_COVERAGE_PCT}}%</div>
+          <div class="metric-card-unit">of active users licensed</div>
+        </div>
         <div class="metric-card" data-drill-idx="0" tabindex="0">
           <div class="metric-card-header"><span style="font-size:.42rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:rgba(0,127,255,.1);color:#007fff">M365 Copilot</span></div>
           <div class="metric-card-name">Copilot Licence Activation</div>
           <div class="metric-card-value" style="color:#007fff">{{M365_ENABLEMENT}}%</div>
           <div class="metric-card-unit">of {{TOTAL_LICENSED_SEATS}} seats</div>
-        </div>
-        <div class="metric-card" data-drill-idx="0" tabindex="0">
-          <div class="metric-card-header"></div>
-          <div class="metric-card-name">Copilot Licence Coverage</div>
-          <div class="metric-card-value" style="color:#0891B2">{{LICENSE_COVERAGE_PCT}}%</div>
-          <div class="metric-card-unit">of active users licensed</div>
         </div>
         <div class="metric-card" data-drill-idx="2" tabindex="0">
           <div class="metric-card-header"><span style="font-size:.42rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;background:rgba(132,119,251,.1);color:#8477FB">Agents</span></div>
@@ -1314,16 +1311,23 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
         </div>
       </div>
       <div class="deep-dive-content">
-      <!-- Panel: User Population — card 0 (Active Licensed Users) + hero -->
-      <div class="drill-panel" data-drill-for="0,hero" style="margin-top:1.5rem">
-        <div class="slide-frame reveal" style="--signal-accent:#0891B2"><div class="slide-label">User Population</div>
-        <div style="display:flex;gap:1.5rem;align-items:center;margin-bottom:1.25rem" class="reveal">
-          <div style="width:160px;height:160px;flex-shrink:0"><canvas id="chartCoverage"></canvas></div>
+      <!-- Panel: Coverage donut — card 1 (Copilot Licence Coverage) -->
+      <div class="drill-panel" data-drill-for="1" style="margin-top:1.5rem">
+        <div class="slide-frame reveal" style="--signal-accent:#0891B2"><div class="slide-label">Licence Coverage</div>
+        <div style="display:flex;gap:1.5rem;align-items:center" class="reveal">
+          <div style="width:180px;height:180px;flex-shrink:0"><canvas id="chartCoverage"></canvas></div>
           <div>
-            <div style="font-size:1.6rem;font-weight:800;color:#0891B2">{{LICENSE_COVERAGE_PCT}}%</div>
-            <div style="font-size:.82rem;color:var(--text-2);line-height:1.5">of active users hold a Copilot license. <strong>{{INACTIVE_LICENSES_FMT}} assigned seats</strong> remain inactive.</div>
+            <div style="font-size:2rem;font-weight:800;color:#0891B2">{{LICENSE_COVERAGE_PCT}}%</div>
+            <div style="font-size:.88rem;color:var(--text-2);line-height:1.6;margin-top:.4rem">of active users hold a Copilot license.</div>
+            <div style="font-size:.82rem;color:var(--text-2);line-height:1.6"><strong style="color:#f0f4fc">{{INACTIVE_LICENSES_FMT}} assigned seats</strong> remain inactive — the fastest path to activation growth.</div>
           </div>
         </div>
+        <div class="drill-insight reveal" style="--di-color:#0891B2;margin-top:1.25rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">So What</span></div><div class="drill-insight-body">{{INSIGHT_REACH}}</div></div>
+        </div>
+      </div>
+      <!-- Panel: Activation — bar chart + engagement — card 0 (Licence Activation) + hero -->
+      <div class="drill-panel" data-drill-for="0,hero" style="margin-top:1.5rem">
+        <div class="slide-frame reveal" style="--signal-accent:#007fff"><div class="slide-label">Activation &amp; Engagement</div>
         <div class="two-col-60 two-col reveal reveal-d3">
           <div class="chart-card">
             <div class="chart-card-title">User Population by Tier</div>
@@ -1335,10 +1339,9 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
             <div class="stat-callout" style="--accent:#007fff"><div class="stat-callout-val"><span class="counter" data-target="{{LICENSED_AVG_PROMPTS}}" data-decimals="1">0</span></div><div class="stat-callout-label">avg prompts per user &mdash; {{LICENSED_USERS}} licensed <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(34,100,229,.1);color:#007fff;border:1px solid rgba(34,100,229,.15);margin-left:.4rem;vertical-align:middle">M365 Copilot</span></div></div>
             <div class="stat-callout" style="--accent:#8477FB"><div class="stat-callout-val"><span class="counter" data-target="{{UNLICENSED_AVG_PROMPTS}}" data-decimals="1">0</span></div><div class="stat-callout-label">avg prompts per user &mdash; {{CHAT_USERS}} unlicensed <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(14,165,233,.1);color:#0891B2;border:1px solid rgba(14,165,233,.15);margin-left:.4rem;vertical-align:middle">Copilot Chat</span></div></div>
             <div class="stat-callout" style="--accent:#0891B2"><div class="stat-callout-val"><span class="counter" data-target="{{AGENT_RETENTION}}" data-suffix="%">0</span></div><div class="stat-callout-label">return each month &mdash; {{AGENT_USERS}} agent users <span style="display:inline-block;padding:.12rem .5rem;border-radius:100px;font-size:.58rem;font-weight:600;background:rgba(123,47,242,.1);color:#8477FB;border:1px solid rgba(123,47,242,.15);margin-left:.4rem;vertical-align:middle">Agents</span></div></div>
-            <div class="drill-insight" style="--di-color:#0891B2"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Context</span></div><div class="drill-insight-body"><strong>{{TOTAL_LICENSED_SEATS}} seats</strong> with {{M365_ENABLEMENT}}% activation. {{INACTIVE_LICENSES}} inactive licenses are the fastest path to growth.</div></div>
+            <div class="drill-insight" style="--di-color:#007fff"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">Context</span></div><div class="drill-insight-body"><strong>{{TOTAL_LICENSED_SEATS}} seats</strong> with {{M365_ENABLEMENT}}% activation. {{INACTIVE_LICENSES}} inactive licenses are the fastest path to growth.</div></div>
           </div>
         </div>
-        <div class="drill-insight reveal" style="--di-color:#0891B2;margin-top:1.25rem"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">So What</span></div><div class="drill-insight-body">{{INSIGHT_REACH}}</div></div>
         </div>
       </div>
       <!-- Panel: Agent Adoption by Org — card 2 (Agent Adoption) -->
@@ -1371,15 +1374,8 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
         </div>
       </div>
       <div class="deep-dive-content">
-      <!-- Panel: Usage Concentration chart + table — card 1 (Usage Concentration) -->
+      <!-- Panel: Usage Concentration table — card 1 (Usage Concentration) -->
       <div class="drill-panel" data-drill-for="1">
-        <div class="reveal" style="margin-top:1.5rem">
-          <div class="chart-card" style="border-left:4px solid #0891B2">
-            <div class="chart-card-title">Org Spread by User Count</div>
-            <div class="chart-card-sub">Distribution of active users across organisations</div>
-            <div style="position:relative;height:200px"><canvas id="chartConcentration"></canvas></div>
-          </div>
-        </div>
         <div class="reveal" style="margin-top:1.5rem">{{LICENSE_PRIORITY_TABLE}}</div>
       </div>
       <!-- Panel: Org Scatter — card 3 (Org Penetration) -->
@@ -1414,8 +1410,6 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
     <!-- So What insight -->
     <div class="drill-insight reveal" style="--di-color:#0891B2;margin:1rem 0"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">So What</span></div><div class="drill-insight-body">{{INSIGHT_REACH}}</div></div>
 
-    <!-- V4 So What Callout -->
-    <div class="sowhat" style="background:rgba(14,165,233,.04);border:1px solid rgba(14,165,233,.15);border-left:4px solid #0891B2"><p>{{INSIGHT_REACH}}</p></div>
 
   </div>
 </section>
@@ -1562,8 +1556,6 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
     <!-- So What insight -->
     <div class="drill-insight reveal" style="--di-color:#D270F0;margin:1rem 0"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">So What</span></div><div class="drill-insight-body">{{INSIGHT_HABIT}}</div></div>
 
-    <!-- V4 So What Callout -->
-    <div class="sowhat" style="background:rgba(245,158,11,.04);border:1px solid rgba(245,158,11,.15);border-left:4px solid #D270F0"><p>{{INSIGHT_HABIT}}</p></div>
 
   </div>
 </section>
@@ -1694,8 +1686,6 @@ body{font-family:'Helvetica Now Text','DM Sans','Inter',-apple-system,BlinkMacSy
     <!-- So What insight -->
     <div class="drill-insight reveal" style="--di-color:#8477FB;margin:1rem 0"><div class="drill-insight-header"><svg class="drill-insight-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.5 4.5H14l-3.5 2.7 1.3 4.3L8 10l-3.8 2.5 1.3-4.3L2 5.5h4.5z" fill="currentColor"/></svg><span class="drill-insight-label">So What</span></div><div class="drill-insight-body">{{INSIGHT_SKILL}}</div></div>
 
-    <!-- V4 So What Callout -->
-    <div class="sowhat" style="background:rgba(123,47,242,.04);border:1px solid rgba(123,47,242,.15);border-left:4px solid #8477FB"><p>{{INSIGHT_SKILL}}</p></div>
 
   </div>
 </section>

@@ -403,29 +403,55 @@ const breadthVal = _n('m365_breadth', 0);
 const _fmtN = n => typeof n === 'number' ? n.toLocaleString() : (typeof n === 'string' && n !== 'not_available' ? n : '0');
 
 if (patternProfile.p3 === 'Primary') {
-  cultureStage = 'Frontier Primary'; cultureStageNum = 4;
+  cultureStage = 'Pattern 3 Primary'; cultureStageNum = 4;
   cultureHeadline = `${_fmtN(_n('agent_users'))} users running agents across ${_n('org_count')} orgs \u2014 ${_n('multi_user_agents')} agents have moved beyond their creator to team-level use`;
   cultureDesc = `Agent adoption sits at ${_n('agent_adoption')}% with ${_fmtN(_n('agent_users'))} active users and ${_n('multi_user_agents')} multi-user agents in the portfolio. Agent return rate at ${_n('agent_health')}% confirms these are active workflows, not one-off experiments. The breadth across ${_n('org_count')} organisations shows uptake is distributed rather than concentrated in a single team.`;
   cultureRedFlag = `${_n('agent_band_1_5_pct')}% of agent users engage only 1\u20135 days per month \u2014 shallow engagement with workflows that may carry real business consequences. ${_fmtN(_n('total_agents') - _n('multi_user_agents'))} of ${_fmtN(_n('total_agents'))} agents still have a single user. Without defined review cadences and scope boundaries, the agent portfolio will grow faster than the organisation\u2019s ability to measure what it\u2019s doing.`;
   cultureAction = `Audit the ${_n('multi_user_agents')} multi-user agents \u2014 document what made them stick and use that as the governance template for the next expansion wave. Set agent retention thresholds using the current ${_n('agent_health')}% return rate as the baseline, and define escalation paths for agents running workflows in the ${_n('org_count')} orgs.`;
 } else if (patternProfile.p2 === 'Primary' || (patternProfile.p2 === 'Nascent' && patternProfile.p1 === 'Primary')) {
-  cultureStage = 'Foundation\u2192Expansion Transition'; cultureStageNum = 3;
+  cultureStage = 'Pattern 1\u2192Pattern 2 Transition'; cultureStageNum = 3;
   cultureHeadline = `${_n('m365_frequency')}% habitual, ${_n('agent_adoption')}% agent adoption \u2014 individual productivity is established, team-level orchestration is beginning`;
   cultureDesc = `${_fmtN(_n('band_6_10'))} licensed users are at 6\u201310 active days \u2014 they\u2019ve found value but haven\u2019t rebuilt workflows around AI yet. ${_fmtN(_n('agent_users'))} users are engaging with agents, and the ${_n('agent_health')}% return rate shows those agents are earning repeat use. The gap between the ${(_n('band_11_15_pct') + _n('band_16_plus_pct')).toFixed(1)}% who are habitual and the ${_n('band_1_5_pct')}% who are still in occasional-use mode is where the next stage of maturity is won.`;
   cultureRedFlag = `The ${_n('agent_band_1_5_pct')}% of agent users at only 1\u20135 active days signals that agent adoption is broad but shallow \u2014 the top-line adoption rate overstates depth of use. The ${_fmtN(_n('band_6_10'))} users at 6\u201310 active days are the highest-leverage cohort: converting 30% of them to 11+ days would nearly double the habitual base without a single new deployment.`;
   cultureAction = `Target the ${_fmtN(_n('band_6_10'))} users at 6\u201310 active days with workflow-specific nudges \u2014 they\u2019ve cleared the motivation barrier, they need a reason to make AI the default rather than the occasional option. Evaluate which agents to scale using the ${_n('agent_health')}% return rate as the minimum bar before expanding to new orgs.`;
 } else if (patternProfile.p1 === 'Primary' || patternProfile.p1 === 'Nascent') {
-  cultureStage = 'Foundation Dominant'; cultureStageNum = 2;
+  cultureStage = 'Pattern 1 Dominant'; cultureStageNum = 2;
   cultureHeadline = `${_n('m365_enablement')}% license activation across ${_n('org_count')} orgs \u2014 the foundation is set, habit is the next gate`;
   cultureDesc = `${_fmtN(_n('licensed_users'))} users hold M365 Copilot licenses and ${_n('m365_enablement')}% are actively using them. ${_n('band_1_5_pct')}% of active users engage only 1\u20135 days per month \u2014 the majority are exploring, not depending on AI. The ${_fmtN(_n('band_6_10'))} users at 6\u201310 active days are the leading indicator: they\u2019ve found enough value to return, but haven\u2019t yet embedded AI into a daily workflow.`;
   cultureRedFlag = `${_fmtN(_n('inactive_licenses'))} licenses are completely idle \u2014 ${((parseFloat(_n('inactive_licenses', 0)) / Math.max(parseFloat(_n('total_licensed_seats', 1)), 1)) * 100).toFixed(0)}% of the licensed investment with no measurable return. If habitual use is clustered in the top-quartile orgs, the overall metrics are masking a narrower active base.`;
   cultureAction = `Identify which of the ${_n('org_count')} orgs have the highest habitual rates and document the conditions that got them there \u2014 manager modelling, workflow integration, or peer sharing. Use those conditions as the activation playbook for the ${_fmtN(_n('inactive_licenses'))} idle license holders, starting with orgs that have the highest unlicensed Chat usage as a demand signal.`;
 } else {
-  cultureStage = 'Pre-Foundation'; cultureStageNum = 1;
+  cultureStage = 'Pre-Pattern 1'; cultureStageNum = 1;
   cultureHeadline = `${_fmtN(_n('total_active_users'))} users activated, ${_n('m365_enablement')}% license utilisation \u2014 deployment is the current gate`;
   cultureDesc = `${_fmtN(_n('total_active_users'))} users have engaged with AI tools, but ${_fmtN(_n('inactive_licenses'))} licenses remain unused and ${_n('band_1_5_pct')}% of active users are at 1\u20135 active days. The ${_fmtN(_n('chat_users'))} unlicensed Chat users represent organic demand \u2014 people who found and started using AI without a formal deployment \u2014 and are the most efficient base to build activation from.`;
   cultureRedFlag = `With ${_n('m365_frequency')}% habitual use and ${_fmtN(_n('inactive_licenses'))} inactive licenses, ${((parseFloat(_n('inactive_licenses', 0)) / Math.max(parseFloat(_n('total_licensed_seats', 1)), 1)) * 100).toFixed(0)}% of the licensed investment is generating no measured return. The ${_fmtN(_n('chat_users'))} unlicensed Chat users show the demand exists \u2014 the gap is in activation and workflow integration, not appetite.`;
   cultureAction = `License the most engaged subset of the ${_fmtN(_n('chat_users'))} unlicensed Chat users \u2014 they are self-selected adopters who have already cleared the motivation barrier. Use their usage patterns as the activation playbook for the ${_fmtN(_n('inactive_licenses'))} idle license holders rather than running broad enablement campaigns.`;
+}
+
+// Pattern justification — always computed from gate data, used in place of CULTURE_DESC
+let patternJustification;
+{
+  const _act    = _n('m365_enablement', 0);
+  const _adopt  = _n('agent_adoption', 0);
+  const _ret    = _n('agent_health', 0);
+  const _habit3 = typeof data.agent_habitual_rate === 'number' ? data.agent_habitual_rate
+    : Math.round((_n('agent_band_11_15_pct', 0) + _n('agent_band_16_plus_pct', 0)) * 10) / 10;
+  const _co     = data.customer_name || 'This organisation';
+  const _needed = Math.max(1, Math.ceil(_n('total_active_users', 0) * 0.05 - _n('agent_users', 0)));
+  if (patternProfile.p3 === 'Primary') {
+    patternJustification = `${_co} is at Pattern 3 — ${_habit3}% of agent users engage with agents on 6+ days a month and agents are running across the majority of organisations. AI is no longer a productivity tool; it is operating as part of the workflow itself.`;
+  } else if (patternProfile.p2 === 'Primary') {
+    patternJustification = `${_co} is at Pattern 2 — ${_adopt}% of active users are working with agents and ${_ret}% come back the following month, which means agents are earning repeat use. To reach Pattern 3, the share of users running agents daily needs to grow to 15%.`;
+  } else if (patternProfile.p2 === 'Nascent' && patternProfile.p1 === 'Primary') {
+    patternJustification = `${_co} is moving into Pattern 2 — agent adoption has reached ${_adopt}%, but only ${_ret}% of agent users return the following month. Agents need to prove consistent value before delegation becomes the default. Growing that return rate above 40% is what solidifies the Pattern 2 classification.`;
+  } else if (patternProfile.p1 === 'Primary') {
+    patternJustification = `${_co} is at Pattern 1 — Copilot is active across ${_act}% of licensed users, but only ${_adopt}% of all active users are working with agents. Getting approximately ${_needed} more users to engage with agents regularly is what moves ${_co} into Pattern 2: Human-Agent Teams.`;
+  } else if (patternProfile.p1 === 'Nascent') {
+    const _habitLic = (_n('licensed_band_11_15_pct', 0) + _n('licensed_band_16_plus_pct', 0)).toFixed(1);
+    patternJustification = `${_co} is building Pattern 1 — ${_act}% of licences are active, but only ${_habitLic}% of licensed users have built a consistent daily habit. Strengthening that habitual base to 30% is the immediate priority before moving toward agents.`;
+  } else {
+    patternJustification = `${_co} is building toward Pattern 1 — ${_act}% of assigned licences are currently active. The immediate focus is completing deployment and getting more of the licensed base using Copilot regularly before expanding to agents.`;
+  }
 }
 
 console.log('Narrative:', cultureStage, '(' + cultureStageNum + '/4)');
@@ -1320,7 +1346,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{PATTERN_PROFILE_STRING\}\}/g, patternProfileString);
   html = html.replace(/\{\{CULTURE_STAGE\}\}/g, cultureStage);
   html = html.replace(/\{\{CULTURE_STAGE_NUM\}\}/g, String(cultureStageNum));
-  html = html.replace(/\{\{CULTURE_DESC\}\}/g, insights.CULTURE_DESC || '');
+  html = html.replace(/\{\{CULTURE_DESC\}\}/g, patternJustification || insights.CULTURE_DESC || '');
   html = html.replace(/\{\{CULTURE_RED_FLAG\}\}/g, insights.CULTURE_RED_FLAG || '');
   html = html.replace(/\{\{CULTURE_ACTION\}\}/g, insights.CULTURE_ACTION || '');
   html = html.replace(/\{\{CULTURE_HEADLINE\}\}/g, insights.CULTURE_HEADLINE || '');
@@ -1355,7 +1381,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   html = html.replace(/\{\{DOMINANT_PATTERN_NAME\}\}/g, patternNames[domNum]);
   html = html.replace(/\{\{DOMINANT_PATTERN_DESC\}\}/g, patternDescs[domNum]);
   html = html.replace(/\{\{DOMINANT_PATTERN_NUM\}\}/g, String(domNum));
-  const patternTierNames = { 1: 'Pattern 1', 2: 'Pattern 2', 3: 'Pattern 3' };
+  const patternTierNames = { 1: 'Pattern 1: Human with Assistant', 2: 'Pattern 2: Human-Agent Teams', 3: 'Pattern 3: Human-led, Agent-operated' };
   html = html.replace(/\{\{DOMINANT_PATTERN_TIER\}\}/g, patternTierNames[domNum] || 'Pattern 1');
   const patternWorkingNames = { 1: 'Human with Assistant', 2: 'Human-Agent Teams', 3: 'Human-led, Agent-Operated' };
   html = html.replace(/\{\{PATTERN_WORKING_NAME\}\}/g, patternWorkingNames[domNum] || 'Human with Assistant');
@@ -1445,7 +1471,11 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
     pattern.number === 2 ? ';box-shadow:0 0 0 2px #8477FB,0 8px 32px rgba(123,47,242,.25)' : '');
 
   // Agent-specific metrics — NEVER proxy from m365_frequency (different population)
-  html = html.replace(/\{\{AGENT_HABITUAL_RATE\}\}/g, String(typeof data.agent_habitual_rate === 'number' ? data.agent_habitual_rate : '—'));
+  const agentHabitualRate = typeof data.agent_habitual_rate === 'number' ? data.agent_habitual_rate
+    : (typeof data.agent_band_11_15_pct === 'number' && typeof data.agent_band_16_plus_pct === 'number')
+      ? Math.round((data.agent_band_11_15_pct + data.agent_band_16_plus_pct) * 10) / 10
+      : (typeof data.agent_habitual === 'number' ? data.agent_habitual : null);
+  html = html.replace(/\{\{AGENT_HABITUAL_RATE\}\}/g, agentHabitualRate !== null ? String(agentHabitualRate) : '—');
   html = html.replace(/\{\{AGENT_SESSIONS_PER_USER\}\}/g, String(typeof data.agent_sessions_per_user === 'number' ? data.agent_sessions_per_user : (typeof data.agent_intensity === 'number' ? data.agent_intensity : '—')));
 
   // Agent governance formatted
@@ -1967,7 +1997,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
   const licPriorityOrgs = data._supplementary_metrics && data._supplementary_metrics.license_priority_orgs;
   if (licPriorityOrgs && licPriorityOrgs.length) {
     let tbl = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.78rem">';
-    tbl += '<thead><tr style="border-bottom:2px solid rgba(255,255,255,.1)"><th style="text-align:left;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Organisation</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Unlicensed</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Licensed</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">% Unlicensed</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Sessions/Wk</th></tr></thead><tbody>';
+    tbl += '<thead><tr style="border-bottom:2px solid rgba(255,255,255,.1)"><th style="text-align:left;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Organisation</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Unlicensed</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">Licensed</th><th style="text-align:right;padding:.5rem .4rem;font-weight:600;color:rgba(255,255,255,.4);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em">% Unlicensed</th></tr></thead><tbody>';
     licPriorityOrgs.slice(0, 10).forEach(function(org) {
       const unlicCount = org.unlicensed_users || org.unlicensed || 0;
       const licCount = org.licensed_users || org.licensed || 0;
@@ -1975,7 +2005,7 @@ function populateTemplate(template, data, insights, signalTiers, pattern, gauges
       const ratioStr = typeof ratioVal === 'number' && ratioVal < 900 ? ratioVal.toFixed(1) + 'x' : '—';
       const total = licCount + unlicCount;
       const unlicPct = total > 0 ? Math.round(unlicCount / total * 100) : 0;
-      tbl += '<tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:.5rem .4rem;color:#fff;font-weight:600">' + org.org + '</td><td style="text-align:right;padding:.5rem .4rem;color:#0891B2">' + fmtN(unlicCount) + '</td><td style="text-align:right;padding:.5rem .4rem;color:#007fff">' + fmtN(licCount) + '</td><td style="text-align:right;padding:.5rem .4rem;color:#D270F0;font-weight:700">' + unlicPct + '%</td><td style="text-align:right;padding:.5rem .4rem;color:rgba(255,255,255,.7)">' + (org.unlicensed_median_sessions_weekly || '—') + '</td></tr>';
+      tbl += '<tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:.5rem .4rem;color:#fff;font-weight:600">' + org.org + '</td><td style="text-align:right;padding:.5rem .4rem;color:#0891B2">' + fmtN(unlicCount) + '</td><td style="text-align:right;padding:.5rem .4rem;color:#007fff">' + fmtN(licCount) + '</td><td style="text-align:right;padding:.5rem .4rem;color:#D270F0;font-weight:700">' + unlicPct + '%</td></tr>';
     });
     tbl += '</tbody></table></div>';
     html = html.replace(/\{\{LICENSE_PRIORITY_TABLE\}\}/g, tbl);
