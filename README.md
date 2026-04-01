@@ -7,7 +7,7 @@ The **Frontier Firm Assessment** measures an organisation's Microsoft Copilot ma
 ## Quick Start
 
 ### Prerequisites
-- **Power BI Desktop** with the customer's AI-in-One Dashboard PBIX open
+- **Power BI Desktop** with the customer's [AI-in-One Dashboard](https://github.com/microsoft/AI-in-One-Dashboard) PBIX open
 - **Node.js** >= 18
 - This repo cloned: `git clone https://github.com/Keithland89/frontier-firm.git`
 
